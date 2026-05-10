@@ -12,7 +12,13 @@ export const metadata: Metadata = {
   keywords: ['VR', 'virtual reality', 'mobile gaming', 'event entertainment', 'party entertainment', 'corporate events', 'school events'],
   generator: 'v0.app',
   icons: {
-    icon: '/images/logo.png',
+    icon: [
+      {
+        url: '/images/logo.png',
+        type: 'image/png',
+        sizes: '192x192',
+      },
+    ],
     apple: '/images/logo.png',
   },
 }
