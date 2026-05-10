@@ -44,16 +44,24 @@ export default function Home() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Headset className="h-8 w-8 text-primary" />
+          <div className="flex items-center justify-between h-20">
+            <Link href="/" className="flex items-center gap-0">
+              <div className="relative h-16 w-16 sm:h-18 sm:w-18">
+                <Image
+                  src="/images/logo.png"
+                  alt="Virtual Reality Guyz logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
               <span className="text-xl font-bold">
                 Virtual Reality <span className="text-primary">Guys</span>
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
+            <div className="flex items-center gap-8">
               <Link
                 href="#about"
                 className="text-muted-foreground hover:text-foreground transition-colors"
@@ -258,11 +266,11 @@ export default function Home() {
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">500+</div>
+                  <div className="text-4xl font-bold text-primary">20+</div>
                   <div className="text-muted-foreground">Events Completed</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">10K+</div>
+                  <div className="text-4xl font-bold text-primary">20+</div>
                   <div className="text-muted-foreground">Happy Guests</div>
                 </div>
               </div>
@@ -375,7 +383,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Starter"
-              price="299"
+              price="999"
               duration="2 hours"
               players="Up to 10 players"
               features={[
@@ -388,7 +396,7 @@ export default function Home() {
             />
             <PricingCard
               title="Standard"
-              price="499"
+              price="1999"
               duration="3 hours"
               players="Up to 20 players"
               featured
@@ -403,7 +411,7 @@ export default function Home() {
             />
             <PricingCard
               title="Premium"
-              price="799"
+              price="2999"
               duration="4 hours"
               players="Up to 40 players"
               features={[
@@ -596,7 +604,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Call us</p>
-                    <p className="font-semibold">(555) 123-4567</p>
+                    <p className="font-semibold">+27 71 780 0323</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -605,7 +613,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Email us</p>
-                    <p className="font-semibold">hello@virtualrealityguys.com</p>
+                    <p className="font-semibold">virtualrealityguyz@gmail.com</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -614,7 +622,7 @@ export default function Home() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Service area</p>
-                    <p className="font-semibold">Greater Metro Area & Surrounds</p>
+                    <p className="font-semibold">Cape Town CPT</p>
                   </div>
                 </div>
               </div>
@@ -767,9 +775,9 @@ export default function Home() {
             <div>
               <h3 className="font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-muted-foreground">
-                <li>(555) 123-4567</li>
-                <li>hello@virtualrealityguys.com</li>
-                <li>Greater Metro Area</li>
+                <li>+27 71 780 0323</li>
+                <li>virtualrealityguyz@gmail.com</li>
+                <li>Cape Town CPT</li>
               </ul>
             </div>
           </div>
@@ -835,7 +843,7 @@ function PricingCard({
       )}
       <h3 className="text-2xl font-bold mb-2">{title}</h3>
       <div className="mb-6">
-        <span className="text-4xl font-bold">${price}</span>
+        <span className="text-4xl font-bold">R {price}</span>
         <span className={featured ? "text-primary-foreground/70" : "text-muted-foreground"}>
           /event
         </span>
