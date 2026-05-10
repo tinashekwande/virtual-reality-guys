@@ -61,7 +61,7 @@ export default function Home() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8 bg-green-500">
+            <div className="hidden md:flex items-center gap-8">
               <Link
                 href="#about"
                 className="text-muted-foreground hover:text-foreground transition-colors"
