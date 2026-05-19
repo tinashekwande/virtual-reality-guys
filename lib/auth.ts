@@ -1,0 +1,20 @@
+import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
+
+/**
+ * Checks session validity in an API route.
+ * Returns { user } if authenticated, or { error: NextResponse } if not.
+ */
+export async function requireAdmin() {
+  const supabase = await createClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return {
+      user: null,
+      error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
+    }
+  }
+
+  return { user, error: null }
+}

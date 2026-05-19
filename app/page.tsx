@@ -1,6 +1,5 @@
-"use client";
-
-import { useState } from "react";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { Media, Category, TeamMember } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -22,8 +21,7 @@ import {
   Truck,
   Gamepad2,
   Star,
-  Menu,
-  X,
+
   Phone,
   Mail,
   MapPin,
@@ -36,8 +34,30 @@ import {
   PartyPopper,
 } from "lucide-react";
 
-export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+import MobileNav from "@/components/MobileNav";
+import GallerySection from "@/components/GallerySection";
+import BookingForm from "@/components/BookingForm";
+
+async function fetchPublicData() {
+  try {
+    const admin = createAdminClient();
+    const [{ data: media }, { data: categories }, { data: team }] = await Promise.all([
+      admin.from("media").select("*, categories(id, name)").order("created_at", { ascending: false }),
+      admin.from("categories").select("*").order("name"),
+      admin.from("team_members").select("*").order("sort_order").order("created_at"),
+    ]);
+    return {
+      media: (media ?? []) as Media[],
+      categories: (categories ?? []) as Category[],
+      team: (team ?? []) as TeamMember[],
+    };
+  } catch {
+    return { media: [], categories: [], team: [] };
+  }
+}
+
+export default async function Home() {
+  const { media, categories, team } = await fetchPublicData();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -102,68 +122,11 @@ export default function Home() {
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+            <MobileNav />
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-background border-b border-border">
-            <div className="px-4 py-4 space-y-4">
-              <Link
-                href="#about"
-                className="block text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                href="#experiences"
-                className="block text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Experiences
-              </Link>
-              <Link
-                href="#packages"
-                className="block text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Packages
-              </Link>
-              <Link
-                href="#gallery"
-                className="block text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Gallery
-              </Link>
-              <Link
-                href="#contact"
-                className="block text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
-              <Button asChild className="w-full">
-                <Link href="#contact" onClick={() => setMobileMenuOpen(false)}>
-                  Book Now
-                </Link>
-              </Button>
-            </div>
-          </div>
-        )}
+
       </nav>
 
       {/* Hero Section */}
@@ -452,56 +415,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="lg:col-span-2 lg:row-span-2 relative group overflow-hidden rounded-2xl">
-              <Image
-                src="/images/vr-hero.jpg"
-                alt="VR Party Experience"
-                width={800}
-                height={600}
-                className="object-cover w-full h-full min-h-[300px] lg:min-h-[500px] transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-lg font-semibold">Party VR Experience</p>
-              </div>
-            </div>
-            <div className="relative group overflow-hidden rounded-2xl">
-              <Image
-                src="/images/vr-school.jpg"
-                alt="School VR Event"
-                width={400}
-                height={300}
-                className="object-cover w-full h-full min-h-[200px] transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="font-semibold">School Events</p>
-              </div>
-            </div>
-            <div className="relative group overflow-hidden rounded-2xl">
-              <Image
-                src="/images/vr-corporate.jpg"
-                alt="Corporate VR Event"
-                width={400}
-                height={300}
-                className="object-cover w-full h-full min-h-[200px] transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="font-semibold">Corporate Team Building</p>
-              </div>
-            </div>
-            <div className="relative group overflow-hidden rounded-2xl lg:col-span-2">
-              <Image
-                src="/images/vr-party.jpg"
-                alt="Birthday Party VR"
-                width={800}
-                height={300}
-                className="object-cover w-full h-full min-h-[200px] transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <p className="font-semibold">Birthday Parties</p>
-              </div>
-            </div>
-          </div>
+          <GallerySection media={media} categories={categories} />
         </div>
       </section>
 
@@ -536,6 +450,34 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Team Section — dynamic from DB */}
+      {team.length > 0 && (
+        <section id="team" className="py-24 sm:py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <p className="text-primary font-semibold tracking-wide uppercase mb-4">Our Team</p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">Meet the VR Guys</h2>
+              <p className="text-lg text-muted-foreground">The passionate crew behind every epic VR experience.</p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {team.map(member => (
+                <div key={member.id} className="bg-card rounded-2xl p-6 border border-border text-center hover:border-primary/40 transition-colors">
+                  <div className="w-24 h-24 rounded-full bg-secondary mx-auto mb-4 overflow-hidden">
+                    {member.image_url
+                      ? <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
+                      : <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-primary">{member.name[0]}</div>
+                    }
+                  </div>
+                  <h3 className="font-bold text-lg">{member.name}</h3>
+                  <p className="text-primary text-sm font-medium mb-2">{member.role}</p>
+                  {member.bio && <p className="text-sm text-muted-foreground leading-relaxed">{member.bio}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How It Works Section */}
       <section className="py-24 sm:py-32">
@@ -628,77 +570,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-secondary rounded-2xl p-8 border border-border">
-              <form className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-sm font-medium">
-                      Name
-                    </label>
-                    <Input
-                      id="name"
-                      placeholder="Your name"
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-sm font-medium">
-                      Email
-                    </label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      className="bg-background"
-                    />
-                  </div>
-                </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="phone" className="text-sm font-medium">
-                      Phone
-                    </label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="(555) 000-0000"
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="event-type" className="text-sm font-medium">
-                      Event Type
-                    </label>
-                    <Select>
-                      <SelectTrigger className="bg-background">
-                        <SelectValue placeholder="Select event type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="birthday">Birthday Party</SelectItem>
-                        <SelectItem value="school">School Event</SelectItem>
-                        <SelectItem value="corporate">Corporate Event</SelectItem>
-                        <SelectItem value="festival">Festival</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="message" className="text-sm font-medium">
-                    Tell us about your event
-                  </label>
-                  <Textarea
-                    id="message"
-                    placeholder="Event date, number of guests, any special requirements..."
-                    rows={4}
-                    className="bg-background"
-                  />
-                </div>
-                <Button type="submit" size="lg" className="w-full">
-                  Book Your VR Experience <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </form>
-            </div>
+            <BookingForm />
           </div>
         </div>
       </section>
