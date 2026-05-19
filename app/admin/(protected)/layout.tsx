@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
-  Users, ClipboardList, LogOut, Headset, Menu, X
+  Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { href: "/admin/categories", label: "Categories", icon: FolderOpen },
   { href: "/admin/team", label: "Team", icon: Users },
   { href: "/admin/requests", label: "Requests", icon: ClipboardList },
+  { href: "/admin/admins", label: "Admins", icon: ShieldCheck },
 ]
 
 function AdminSidebar({ onClose }: { onClose?: () => void }) {

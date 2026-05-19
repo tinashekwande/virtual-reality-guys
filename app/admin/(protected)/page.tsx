@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Image as ImageIcon, FolderOpen, Users, ClipboardList, Upload, Plus, UserPlus, Inbox, Trash2 } from "lucide-react"
+import { Image as ImageIcon, FolderOpen, Users, ClipboardList, Upload, Plus, UserPlus, Inbox, Trash2, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { StatCard } from "@/components/admin/stat-card"
@@ -86,6 +86,9 @@ export default function AdminDashboardPage() {
           </Button>
           <Button asChild variant="outline" size="sm">
             <Link href="/admin/requests"><Inbox className="h-4 w-4 mr-2" />View Requests</Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/admin/admins"><ShieldCheck className="h-4 w-4 mr-2" />Manage Admins</Link>
           </Button>
         </div>
       </div>
