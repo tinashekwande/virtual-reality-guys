@@ -2,19 +2,18 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 import type { Media, Category } from "@/types"
 
 interface Props {
   media: Media[]
   categories: Category[]
+  preview?: boolean
 }
 
-export default function GallerySection({ media, categories }: Props) {
+export default function GallerySection({ media, categories, preview = false }: Props) {
   const [activeCategory, setActiveCategory] = useState("all")
-
-  const filtered = activeCategory === "all"
-    ? media
-    : media.filter(m => m.category_id === activeCategory)
 
   // If no DB data, fallback to nothing (admin needs to upload)
   if (media.length === 0) {
@@ -25,10 +24,16 @@ export default function GallerySection({ media, categories }: Props) {
     )
   }
 
+  const displayMedia = preview ? media.slice(0, 6) : media
+
+  const filtered = activeCategory === "all"
+    ? displayMedia
+    : displayMedia.filter(m => m.category_id === activeCategory)
+
   return (
     <div>
       {/* Category filter tabs */}
-      {categories.length > 0 && (
+      {!preview && categories.length > 0 && (
         <div className="flex flex-wrap justify-center gap-3 mb-10">
           <button
             onClick={() => setActiveCategory("all")}
@@ -81,6 +86,19 @@ export default function GallerySection({ media, categories }: Props) {
           </div>
         ))}
       </div>
+
+      {/* View Full Gallery CTA */}
+      {preview && (
+        <div className="flex justify-center mt-12">
+          <Link
+            href="/gallery"
+            className="inline-flex items-center justify-center px-8 py-4 rounded-xl text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300 gap-2 group"
+          >
+            View Full Gallery
+            <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

@@ -38,6 +38,9 @@ import MobileNav from "@/components/MobileNav";
 import GallerySection from "@/components/GallerySection";
 import BookingForm from "@/components/BookingForm";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function fetchPublicData() {
   try {
     const admin = createAdminClient();
@@ -83,31 +86,31 @@ export default async function Home() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
               <Link
-                href="#about"
+                href="/#about"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 About
               </Link>
               <Link
-                href="#experiences"
+                href="/#experiences"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Experiences
               </Link>
               <Link
-                href="#packages"
+                href="/#packages"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Packages
               </Link>
               <Link
-                href="#gallery"
+                href="/#gallery"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Gallery
               </Link>
               <Link
-                href="#contact"
+                href="/#contact"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Contact
@@ -415,7 +418,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <GallerySection media={media} categories={categories} />
+          <GallerySection media={media} categories={categories} preview={true} />
         </div>
       </section>
 

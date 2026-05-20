@@ -6,11 +6,11 @@ import { Menu, X, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const NAV_LINKS = [
-  { href: "#about", label: "About" },
-  { href: "#experiences", label: "Experiences" },
-  { href: "#packages", label: "Packages" },
-  { href: "#gallery", label: "Gallery" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#about", label: "About" },
+  { href: "/#experiences", label: "Experiences" },
+  { href: "/#packages", label: "Packages" },
+  { href: "/#gallery", label: "Gallery" },
+  { href: "/#contact", label: "Contact" },
 ]
 
 export default function MobileNav() {

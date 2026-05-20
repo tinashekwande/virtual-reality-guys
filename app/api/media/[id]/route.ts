@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { revalidatePath } from 'next/cache'
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { error: authError } = await requireAdmin()
@@ -27,6 +28,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  
+  revalidatePath('/')
+  revalidatePath('/gallery')
+  
   return NextResponse.json(data)
 }
 
@@ -47,5 +52,9 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
 
   const { error } = await admin.from('media').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  
+  revalidatePath('/')
+  revalidatePath('/gallery')
+  
   return NextResponse.json({ success: true })
 }
