@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Event Gallery | Virtual Reality Guys',
     description: 'Browse actual event photos and video captures from our virtual reality mobile entertainment events in Cape Town.',
-    url: 'https://virtualrealityguys.co.za/gallery',
+    url: 'https://www.virtualrealityguyz.co.za/gallery',
   }
 }
 
