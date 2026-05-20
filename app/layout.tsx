@@ -13,7 +13,7 @@ const _geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.virtualrealityguys.co.za'),
+  metadataBase: new URL('https://virtualrealityguys.co.za'),
   title: {
     default: 'Virtual Reality Guys | Mobile VR Gaming Experiences for Events',
     template: '%s | Virtual Reality Guys',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtual Reality Guys | Mobile VR Gaming Experiences for Events',
     description: 'Bring the future of gaming to your event! Virtual Reality Guys provides immersive VR experiences for schools, parties, corporate events, and festivals in Cape Town.',
-    url: 'https://www.virtualrealityguys.co.za',
+    url: 'https://virtualrealityguys.co.za',
     siteName: 'Virtual Reality Guys',
     images: [
       {

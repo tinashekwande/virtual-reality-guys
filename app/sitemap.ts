@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.virtualrealityguys.co.za'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://virtualrealityguys.co.za'
 
   return [
     {
