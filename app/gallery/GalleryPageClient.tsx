@@ -211,6 +211,7 @@ export default function GalleryPageClient({ media, categories }: Props) {
                     <img
                       src={item.file_url}
                       alt={item.title ?? "VR Event"}
+                      loading="lazy"
                       className="object-cover w-full h-full absolute inset-0 transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>

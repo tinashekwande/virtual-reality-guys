@@ -73,7 +73,9 @@ export default function BookingForm() {
           <div className="space-y-2">
             <label htmlFor="event-type" className="text-sm font-medium">Event Type</label>
             <Select value={formType} onValueChange={setFormType}>
-              <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="event-type" className="bg-background" aria-label="Event Type">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="birthday">Birthday Party</SelectItem>
                 <SelectItem value="school">School Event</SelectItem>

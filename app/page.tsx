@@ -62,8 +62,86 @@ async function fetchPublicData() {
 export default async function Home() {
   const { media, categories, team } = await fetchPublicData();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Virtual Reality Guys",
+    "image": "https://www.virtualrealityguys.co.za/images/logo.png",
+    "@id": "https://www.virtualrealityguys.co.za/#organization",
+    "url": "https://www.virtualrealityguys.co.za",
+    "telephone": "+27717800323",
+    "email": "virtualrealityguyz@gmail.com",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Cape Town",
+      "addressRegion": "Western Cape",
+      "postalCode": "8000",
+      "addressCountry": "ZA"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": -33.9249,
+      "longitude": 18.4241
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "08:00",
+      "closes": "22:00"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "VR Mobile Gaming Packages",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Starter Package",
+            "description": "2 VR headsets, professional setup, trained supervisor, 30+ game selection. Perfect for small parties."
+          },
+          "price": "999",
+          "priceCurrency": "ZAR"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Standard Package",
+            "description": "4 VR headsets, professional setup, 2 trained supervisors, 60+ game selection, multiplayer tournaments."
+          },
+          "price": "1999",
+          "priceCurrency": "ZAR"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Premium Package",
+            "description": "6 VR headsets, professional setup, 3 trained supervisors, 100+ game selection, custom tournament brackets, photo & video package."
+          },
+          "price": "2999",
+          "priceCurrency": "ZAR"
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -468,7 +546,7 @@ export default async function Home() {
                 <div key={member.id} className="bg-card rounded-2xl p-6 border border-border text-center hover:border-primary/40 transition-colors">
                   <div className="w-24 h-24 rounded-full bg-secondary mx-auto mb-4 overflow-hidden">
                     {member.image_url
-                      ? <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
+                      ? <img src={member.image_url} alt={member.name} loading="lazy" className="w-full h-full object-cover" />
                       : <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-primary">{member.name[0]}</div>
                     }
                   </div>
