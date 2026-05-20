@@ -77,14 +77,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [
-      { url: '/icon-light-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-dark-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon.svg', type: 'image/svg+xml' }
-    ],
-    apple: [
-      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }
-    ]
+    icon: '/images/logo.png',
+    apple: '/images/logo.png',
   },
   verification: {
     google: 'C18WppheTUHeXpkc63QkmGcybgoxKiZ2w-W2PcObO5c',
