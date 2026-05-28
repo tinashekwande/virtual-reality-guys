@@ -1,13 +1,8 @@
 import type { Metadata } from 'next'
-import { Geist, Orbitron, Mina } from 'next/font/google'
+import { Orbitron, Mina } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
 import './globals.css'
-
-const geist = Geist({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -108,7 +103,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
-      <body className={`${geist.className} ${orbitron.variable} ${mina.variable} antialiased`}>
+      <body className={`${mina.className} ${orbitron.variable} antialiased`}>
         {children}
         <ChatbotLoader />
         {process.env.NODE_ENV === 'production' && <Analytics />}

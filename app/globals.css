@@ -77,7 +77,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
+  --font-sans: var(--font-mina);
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --font-tech: var(--font-orbitron);
   --font-tech-body: var(--font-mina);
