@@ -107,7 +107,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-smooth bg-background">
+    <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
       <body className={`${geist.className} ${orbitron.variable} ${mina.variable} antialiased`}>
         {children}
         <ChatbotLoader />
