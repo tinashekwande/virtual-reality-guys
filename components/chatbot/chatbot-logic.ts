@@ -1,4 +1,5 @@
 import type { Message, BookingData, BookingStep } from './chatbot-types'
+import { GoogleGenAI } from '@google/genai'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -281,22 +282,65 @@ export function handleQuickReply(
 // AI Integration Placeholder
 // ---------------------------------------------------------------------------
 
-/** Replace the body of this function with an OpenAI / Gemini call in the future. */
-export async function getAIResponse(messages: Message[]): Promise<string> {
-  // Future OpenAI integration:
-  // const res = await openai.chat.completions.create({
-  //   model: 'gpt-4o',
-  //   messages: messages.map(m => ({
-  //     role: m.role === 'bot' ? 'assistant' : 'user',
-  //     content: m.content,
-  //   })),
-  //   system: 'You are a helpful customer support assistant for Virtual Reality Guyz...',
-  // })
-  // return res.choices[0].message.content ?? FALLBACK_RESPONSE
+const SYSTEM_INSTRUCTION = `You are a professional, friendly, and enthusiastic customer support chatbot for Virtual Reality Guyz, a virtual reality experiences and technology company.
 
-  const last = [...messages].reverse().find((m) => m.role === 'user')
-  if (!last) return FALLBACK_RESPONSE
-  return getFAQResponse(last.content) ?? FALLBACK_RESPONSE
+About Virtual Reality Guyz:
+- Website: https://www.virtualrealityguyz.co.za
+- Location: Cape Town, South Africa. We are fully mobile and bring the entire VR setup directly to the client's venue (we serve Cape Town and surrounding areas).
+- Contact details:
+  - Phone: +27 71 780 0323
+  - Email: virtualrealityguyz@gmail.com
+- Services offered:
+  - VR Gaming Experiences
+  - School VR Demonstrations
+  - Educational VR Experiences
+  - Corporate Activations & Events
+  - Team Building Activities
+  - Birthday Parties
+  - VR rentals (equipment and on-site support)
+  - Expo & Brand Activations
+  - Immersive Technology Experiences
+
+Behavioral Guidelines:
+1. Tone: Enthusiastic about VR, friendly, professional, futuristic, and helpful. Keep responses concise and engaging (aim for 2-3 sentences max).
+2. Lead Generation & Bookings: Always guide users toward booking or requesting a quote. Instruct them that they can start a booking at any time by typing "book" or clicking the "Book an Event" or "Request a Quote" quick action buttons in the chat.
+3. Pricing: Always state that pricing depends on the event duration, location, and specific setup requirements, and that we provide customized quotes. Offer to help them request a quote by booking in the chat.
+4. Accuracy: Do not promise services, hardware, or locations we do not offer. Be honest and clear.`
+
+export async function getAIResponse(messages: Message[]): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) {
+    // Graceful fallback to keyword matching when API key is not configured
+    const last = [...messages].reverse().find((m) => m.role === 'user')
+    if (!last) return FALLBACK_RESPONSE
+    return getFAQResponse(last.content) ?? FALLBACK_RESPONSE
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey })
+    
+    // Map chat history to Gemini expected roles: 'user' or 'model'
+    const contents = messages.map((m) => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.content }],
+    }))
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: contents,
+      config: {
+        systemInstruction: SYSTEM_INSTRUCTION,
+      },
+    })
+
+    return response.text ?? FALLBACK_RESPONSE
+  } catch (error) {
+    console.error('Gemini API Error:', error)
+    // Graceful fallback to keyword matching on network or API failures
+    const last = [...messages].reverse().find((m) => m.role === 'user')
+    if (!last) return FALLBACK_RESPONSE
+    return getFAQResponse(last.content) ?? FALLBACK_RESPONSE
+  }
 }
 
 // ---------------------------------------------------------------------------
