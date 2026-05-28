@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
 import './globals.css'
 
 const geist = Geist({
@@ -100,6 +101,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth bg-background">
       <body className={`${geist.className} antialiased`}>
         {children}
+        <ChatbotLoader />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
