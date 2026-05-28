@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Orbitron, Space_Grotesk } from 'next/font/google'
+import { Geist, Orbitron, Mina } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
 import './globals.css'
@@ -15,9 +15,10 @@ const orbitron = Orbitron({
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const mina = Mina({
+  weight: ['400', '700'],
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  variable: "--font-mina",
   display: "swap",
 });
 
@@ -107,7 +108,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth bg-background">
-      <body className={`${geist.className} ${orbitron.variable} ${spaceGrotesk.variable} antialiased`}>
+      <body className={`${geist.className} ${orbitron.variable} ${mina.variable} antialiased`}>
         {children}
         <ChatbotLoader />
         {process.env.NODE_ENV === 'production' && <Analytics />}

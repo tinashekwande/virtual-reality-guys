@@ -80,7 +80,7 @@
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --font-tech: var(--font-orbitron);
-  --font-tech-body: var(--font-space-grotesk);
+  --font-tech-body: var(--font-mina);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
