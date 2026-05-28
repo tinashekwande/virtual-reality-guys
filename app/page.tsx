@@ -137,7 +137,7 @@ export default async function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-transparent text-foreground relative z-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -285,7 +285,7 @@ export default async function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-24 sm:py-32 bg-card">
+      <section id="about" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
@@ -409,7 +409,7 @@ export default async function Home() {
       </section>
 
       {/* Packages Section */}
-      <section id="packages" className="py-24 sm:py-32 bg-card">
+      <section id="packages" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <p className="text-primary font-semibold tracking-wide uppercase mb-4">
@@ -501,7 +501,7 @@ export default async function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 sm:py-32 bg-card">
+      <section className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <p className="text-primary font-semibold tracking-wide uppercase mb-4">
@@ -603,7 +603,7 @@ export default async function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 sm:py-32 bg-card">
+      <section id="contact" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-t border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16">
             <div className="space-y-8">
