@@ -22,27 +22,16 @@ export default function ChatMessage({ message }: { message: Message }) {
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
           isBot
-            ? 'bg-cyan-500/20 text-cyan-400'
+            ? 'overflow-hidden border border-white/10 bg-black/40'
             : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
         }`}
       >
         {isBot ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 18.5a6.5 6.5 0 0 0 6.5-6.5h-13A6.5 6.5 0 0 0 12 18.5Z" />
-            <path d="M5.5 12a6.5 6.5 0 0 1 13 0" />
-            <path d="M2 12h2" />
-            <path d="M20 12h2" />
-          </svg>
+          <img
+            src="/images/logo.png"
+            alt="Virtual Reality Guyz Logo"
+            className="h-full w-full object-cover"
+          />
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"

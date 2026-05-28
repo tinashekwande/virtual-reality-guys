@@ -306,23 +306,12 @@ export default function ChatbotWidget() {
             {/* ── Header ── */}
             <div className="flex items-center justify-between border-b border-white/[0.08] bg-gradient-to-r from-cyan-500/10 to-blue-600/10 px-4 py-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 18.5a6.5 6.5 0 0 0 6.5-6.5h-13A6.5 6.5 0 0 0 12 18.5Z" />
-                    <path d="M5.5 12a6.5 6.5 0 0 1 13 0" />
-                    <path d="M2 12h2" />
-                    <path d="M20 12h2" />
-                  </svg>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden border border-white/20 bg-black/40">
+                  <img
+                    src="/images/logo.png"
+                    alt="Virtual Reality Guyz Logo"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-white">
