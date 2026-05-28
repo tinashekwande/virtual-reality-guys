@@ -302,11 +302,11 @@ export default function ChatbotWidget() {
           />
 
           {/* Panel */}
-          <div className="relative flex h-full w-full flex-col overflow-hidden border border-white/[0.1] bg-black/90 backdrop-blur-xl animate-[chatbot-slide-up_0.3s_ease-out] md:h-[550px] md:w-[400px] md:rounded-2xl md:shadow-2xl md:shadow-cyan-500/10">
+          <div className="relative flex h-full w-full flex-col overflow-hidden border border-cyan-500/20 bg-chatbot-cyber font-tech-body animate-[chatbot-slide-up_0.3s_ease-out] md:h-[550px] md:w-[400px] md:rounded-2xl md:shadow-2xl md:shadow-cyan-500/15">
             {/* ── Header ── */}
-            <div className="flex items-center justify-between border-b border-white/[0.08] bg-gradient-to-r from-cyan-500/10 to-blue-600/10 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-cyan-500/20 bg-black/50 px-4 py-3 z-10">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden border border-white/20 bg-black/40">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full overflow-hidden border border-cyan-500/30 bg-black/40">
                   <img
                     src="/images/logo.png"
                     alt="Virtual Reality Guyz Logo"
@@ -314,12 +314,12 @@ export default function ChatbotWidget() {
                   />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-white">
+                  <h3 className="text-sm font-tech font-bold uppercase tracking-wider text-cyan-400">
                     Virtual Reality Guyz
                   </h3>
                   <div className="flex items-center gap-1.5">
                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[11px] text-gray-400">Online</span>
+                    <span className="text-[11px] font-medium tracking-wide text-cyan-300/60 uppercase">Online</span>
                   </div>
                 </div>
               </div>

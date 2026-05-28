@@ -79,6 +79,8 @@
 @theme inline {
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-tech: var(--font-orbitron);
+  --font-tech-body: var(--font-space-grotesk);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -170,4 +172,25 @@
     box-shadow: 0 0 20px rgba(6, 182, 212, 0.5),
                 0 0 40px rgba(6, 182, 212, 0.2);
   }
+}
+
+/* ── Cybernetic Chatbot UI Custom Styles ───────────────────────────────── */
+
+.bg-chatbot-cyber {
+  background-color: #020617;
+  background-image: 
+    linear-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center;
+  position: relative;
+}
+
+.bg-chatbot-cyber::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(6, 182, 212, 0.12) 0%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
 }

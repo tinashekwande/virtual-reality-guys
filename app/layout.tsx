@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Orbitron, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
 import './globals.css'
@@ -8,8 +8,16 @@ const geist = Geist({
   subsets: ["latin"],
   display: "swap",
 });
-const _geistMono = Geist_Mono({
+
+const orbitron = Orbitron({
   subsets: ["latin"],
+  variable: "--font-orbitron",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
@@ -99,7 +107,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth bg-background">
-      <body className={`${geist.className} antialiased`}>
+      <body className={`${geist.className} ${orbitron.variable} ${spaceGrotesk.variable} antialiased`}>
         {children}
         <ChatbotLoader />
         {process.env.NODE_ENV === 'production' && <Analytics />}
