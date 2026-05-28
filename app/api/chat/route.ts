@@ -81,17 +81,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // --- FAQ / AI response ---
-    const faqResponse = getFAQResponse(clean)
-    if (faqResponse) {
-      return NextResponse.json({
-        reply: createMessage('bot', faqResponse),
-        bookingStep: 'idle',
-        bookingData,
-      })
-    }
-
-    // Fall back to AI (currently pattern-matched, ready for OpenAI swap)
+    // Call Gemini Model as the default choice for all conversational turns
     const aiResponse = await getAIResponse(messages)
     return NextResponse.json({
       reply: createMessage('bot', aiResponse),
