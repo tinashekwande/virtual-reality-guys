@@ -23,7 +23,7 @@ export default function Header() {
                 src="/images/logo.png"
                 alt="Virtual Reality Guys logo"
                 fill
-                className="object-contain"
+                className="object-contain animate-pulse"
                 priority
                 sizes="(max-width: 640px) 64px, 72px"
               />
