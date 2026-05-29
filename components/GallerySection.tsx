@@ -72,6 +72,7 @@ export default function GallerySection({ media, categories, preview = false }: P
                 alt={item.title ?? "VR Event"}
                 width={i === 0 ? 800 : 400}
                 height={i === 0 ? 600 : 300}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className={`object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 ${i === 0 ? "min-h-[300px] lg:min-h-[500px]" : "min-h-[200px]"}`}
               />
             )}

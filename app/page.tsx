@@ -34,7 +34,8 @@ import {
   PartyPopper,
 } from "lucide-react";
 
-import MobileNav from "@/components/MobileNav";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import GallerySection from "@/components/GallerySection";
 import BookingForm from "@/components/BookingForm";
 
@@ -142,73 +143,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex items-center gap-0">
-              <div className="relative h-16 w-16 sm:h-18 sm:w-18">
-                <Image
-                  src="/images/logo.png"
-                  alt="Virtual Reality Guyz logo"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
-              <span className="text-xl font-bold">
-                Virtual Reality <span className="text-primary">Guys</span>
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              <Link
-                href="/#about"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/#experiences"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Experiences
-              </Link>
-              <Link
-                href="/#packages"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Packages
-              </Link>
-              <Link
-                href="/#gallery"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Gallery
-              </Link>
-              <Link
-                href="/#contact"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Contact
-              </Link>
-            </div>
-
-            <div className="hidden md:block">
-              <Button asChild size="lg">
-                <Link href="#contact">
-                  Book Now <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            <MobileNav />
-          </div>
-        </div>
-
-
-      </nav>
+      <Header />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
@@ -656,92 +591,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 border-t border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <Link href="/" className="flex items-center gap-2 mb-4">
-                <Headset className="h-8 w-8 text-primary" />
-                <span className="text-xl font-bold">
-                  Virtual Reality <span className="text-primary">Guys</span>
-                </span>
-              </Link>
-              <p className="text-muted-foreground max-w-md">
-                Bringing unforgettable VR gaming experiences to events across
-                the region. Schools, parties, corporate events, and more.
-              </p>
-              <div className="flex gap-4 mt-6">
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                  aria-label="Facebook"
-                >
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                  aria-label="Twitter"
-                >
-                  <Twitter className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="#about" className="hover:text-foreground">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#experiences" className="hover:text-foreground">
-                    Experiences
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#packages" className="hover:text-foreground">
-                    Packages
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#gallery" className="hover:text-foreground">
-                    Gallery
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#contact" className="hover:text-foreground">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Contact</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>+27 71 780 0323</li>
-                <li>virtualrealityguyz@gmail.com</li>
-                <li>Cape Town CPT</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border mt-12 pt-8 text-center text-muted-foreground">
-            <p>
-              &copy; {new Date().getFullYear()} Virtual Reality Guys. All rights
-              reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

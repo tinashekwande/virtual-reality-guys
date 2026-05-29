@@ -5,7 +5,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft, ChevronLeft, ChevronRight, X, Play, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import MobileNav from "@/components/MobileNav"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
 import type { Media, Category } from "@/types"
 
 interface Props {
@@ -56,71 +57,7 @@ export default function GalleryPageClient({ media, categories }: Props) {
 
   return (
     <div className="min-h-screen bg-transparent text-foreground relative z-10">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex items-center gap-0">
-              <div className="relative h-16 w-16 sm:h-18 sm:w-18">
-                <Image
-                  src="/images/logo.png"
-                  alt="Virtual Reality Guyz logo"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
-              <span className="text-xl font-bold">
-                Virtual Reality <span className="text-primary">Guys</span>
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              <Link
-                href="/#about"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/#experiences"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Experiences
-              </Link>
-              <Link
-                href="/#packages"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Packages
-              </Link>
-              <Link
-                href="/gallery"
-                className="text-primary font-semibold transition-colors"
-              >
-                Gallery
-              </Link>
-              <Link
-                href="/#contact"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Contact
-              </Link>
-            </div>
-
-            <div className="hidden md:block">
-              <Button asChild size="lg">
-                <Link href="/#contact">
-                  Book Now
-                </Link>
-              </Button>
-            </div>
-
-            <MobileNav />
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">
@@ -241,6 +178,7 @@ export default function GalleryPageClient({ media, categories }: Props) {
           </div>
         )}
       </main>
+      <Footer />
 
       {/* Premium Full-Screen Lightbox */}
       {lightboxIndex !== null && filteredMedia[lightboxIndex] && (
