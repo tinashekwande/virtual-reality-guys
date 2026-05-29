@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Headset, Facebook, Instagram, Twitter, Phone, Mail, MapPin } from "lucide-react"
+import Image from "next/image"
+import { Facebook, Instagram, Twitter, Phone, Mail, MapPin } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -10,8 +11,16 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-12">
           {/* Brand block */}
           <div className="md:col-span-2 space-y-6">
-            <Link href="/" className="flex items-center gap-2">
-              <Headset className="h-8 w-8 text-primary" />
+            <Link href="/" className="flex items-center gap-0">
+              <div className="relative h-16 w-16 sm:h-18 sm:w-18">
+                <Image
+                  src="/images/logo.png"
+                  alt="Virtual Reality Guys logo"
+                  fill
+                  className="object-contain animate-pulse"
+                  sizes="(max-width: 640px) 64px, 72px"
+                />
+              </div>
               <span className="text-xl font-bold">
                 Virtual Reality <span className="text-primary">Guys</span>
               </span>
