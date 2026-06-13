@@ -42,7 +42,18 @@ export default function RequestsAdminPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [filterStatus, filterType])
+  useEffect(() => {
+    load()
+
+    const handleRefresh = () => {
+      load()
+    }
+    window.addEventListener("new-requests-received", handleRefresh)
+
+    return () => {
+      window.removeEventListener("new-requests-received", handleRefresh)
+    }
+  }, [filterStatus, filterType])
 
   async function handleStatusChange(id: string, status: RequestStatus) {
     await fetch(`/api/requests/${id}`, {

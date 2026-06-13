@@ -93,6 +93,106 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
     setMounted(true)
   }, [])
 
+  // Real-time new booking notifications
+  useEffect(() => {
+    if (!mounted) return
+
+    // Request notification permission
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission()
+      }
+    }
+
+    let knownIds: string[] = []
+    let isFirstFetch = true
+
+    const playChime = () => {
+      try {
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+        if (!AudioContextClass) return
+        const ctx = new AudioContextClass()
+        
+        // Note 1: E5
+        const osc1 = ctx.createOscillator()
+        const gain1 = ctx.createGain()
+        osc1.connect(gain1)
+        gain1.connect(ctx.destination)
+        osc1.type = 'sine'
+        osc1.frequency.setValueAtTime(659.25, ctx.currentTime) // E5
+        gain1.gain.setValueAtTime(0.08, ctx.currentTime)
+        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35)
+        osc1.start(ctx.currentTime)
+        osc1.stop(ctx.currentTime + 0.35)
+        
+        // Note 2: A5 (starts slightly later)
+        setTimeout(() => {
+          const osc2 = ctx.createOscillator()
+          const gain2 = ctx.createGain()
+          osc2.connect(gain2)
+          gain2.connect(ctx.destination)
+          osc2.type = 'sine'
+          osc2.frequency.setValueAtTime(880.00, ctx.currentTime) // A5
+          gain2.gain.setValueAtTime(0.08, ctx.currentTime)
+          gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45)
+          osc2.start(ctx.currentTime)
+          osc2.stop(ctx.currentTime + 0.45)
+        }, 110)
+      } catch (err) {
+        console.error("Audio chime error:", err)
+      }
+    }
+
+    const checkNewRequests = async () => {
+      try {
+        const res = await fetch("/api/requests?status=new")
+        if (!res.ok) return
+        const data = await res.json()
+        if (!Array.isArray(data)) return
+
+        const currentIds = data.map((r: any) => r.id)
+
+        if (isFirstFetch) {
+          knownIds = currentIds
+          isFirstFetch = false
+          return
+        }
+
+        const newRequests = data.filter((r: any) => !knownIds.includes(r.id))
+
+        if (newRequests.length > 0) {
+          playChime()
+
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            newRequests.forEach((req: any) => {
+              new Notification("New Booking Received! 🎮", {
+                body: `${req.name} requested a booking (${req.form_type || "VR Experience"})\nEmail: ${req.email}`,
+                icon: "/favicon-192x192.png"
+              })
+            })
+          }
+
+          // Trigger custom event so open admin view components can auto-refresh
+          window.dispatchEvent(new CustomEvent("new-requests-received"))
+          
+          knownIds = currentIds
+        } else if (currentIds.length < knownIds.length) {
+          // Sync list if requests were deleted or processed
+          knownIds = currentIds
+        }
+      } catch (err) {
+        console.error("Failed to check new requests:", err)
+      }
+    }
+
+    checkNewRequests()
+    const timer = setInterval(checkNewRequests, 15000)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [mounted])
+
   const currentPage = NAV_ITEMS.find(i =>
     i.exact ? pathname === i.href : (pathname ? pathname.startsWith(i.href) : false)
   )?.label ?? "Admin"

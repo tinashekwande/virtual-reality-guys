@@ -35,6 +35,15 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     loadStats()
+
+    const handleRefresh = () => {
+      loadStats()
+    }
+    window.addEventListener("new-requests-received", handleRefresh)
+
+    return () => {
+      window.removeEventListener("new-requests-received", handleRefresh)
+    }
   }, [])
 
   async function handleDelete() {
