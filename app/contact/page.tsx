@@ -110,19 +110,19 @@ export default function ContactPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-foreground">Starter Package</span>
-                  <span className="text-primary font-bold">R 999</span>
+                  <span className="text-primary font-bold">R 399</span>
                 </div>
                 <p className="text-xs text-muted-foreground">2 headsets, 2 hours, up to 10 players, trained supervisor</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Standard Package</span>
-                  <span className="text-primary font-bold">R 1999</span>
+                  <span className="text-primary font-bold">R 799</span>
                 </div>
                 <p className="text-xs text-muted-foreground">4 headsets, 3 hours, up to 20 players, 2 trained supervisors</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Premium Package</span>
-                  <span className="text-primary font-bold">R 2999</span>
+                  <span className="text-primary font-bold">R 1199</span>
                 </div>
                 <p className="text-xs text-muted-foreground">6 headsets, 4 hours, up to 40 players, 3 supervisors, custom tournament</p>
               </div>

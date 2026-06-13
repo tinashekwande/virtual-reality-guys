@@ -250,7 +250,7 @@ export default function BirthdayActivitiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Packages starting from just R999</span>
+                <span>Packages starting from just R399</span>
               </p>
             </div>
           </div>

@@ -110,7 +110,7 @@ export default async function Home() {
             "name": "Starter Package",
             "description": "2 VR headsets, professional setup, trained supervisor, 30+ game selection. Perfect for small parties."
           },
-          "price": "999",
+          "price": "399",
           "priceCurrency": "ZAR"
         },
         {
@@ -120,7 +120,7 @@ export default async function Home() {
             "name": "Standard Package",
             "description": "4 VR headsets, professional setup, 2 trained supervisors, 60+ game selection, multiplayer tournaments."
           },
-          "price": "1999",
+          "price": "799",
           "priceCurrency": "ZAR"
         },
         {
@@ -130,7 +130,7 @@ export default async function Home() {
             "name": "Premium Package",
             "description": "6 VR headsets, professional setup, 3 trained supervisors, 100+ game selection, custom tournament brackets, photo & video package."
           },
-          "price": "2999",
+          "price": "1199",
           "priceCurrency": "ZAR"
         }
       ]
@@ -362,7 +362,7 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Starter"
-              price="999"
+              price="399"
               duration="2 hours"
               players="Up to 10 players"
               features={[
@@ -375,7 +375,7 @@ export default async function Home() {
             />
             <PricingCard
               title="Standard"
-              price="1999"
+              price="799"
               duration="3 hours"
               players="Up to 20 players"
               featured
@@ -390,7 +390,7 @@ export default async function Home() {
             />
             <PricingCard
               title="Premium"
-              price="2999"
+              price="1199"
               duration="4 hours"
               players="Up to 40 players"
               features={[

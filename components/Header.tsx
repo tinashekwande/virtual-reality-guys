@@ -96,6 +96,12 @@ export default function Header() {
                     <p className="text-xs text-muted-foreground">Setup & rental options</p>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild className="focus:bg-secondary cursor-pointer rounded-lg">
+                  <Link href="/vr-games-catalogue" className="w-full px-3 py-2 block">
+                    <p className="font-semibold text-sm">VR Games Catalogue</p>
+                    <p className="text-xs text-muted-foreground">Browse games & experiences</p>
+                  </Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
