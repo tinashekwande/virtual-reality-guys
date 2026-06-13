@@ -191,7 +191,7 @@ export default async function Home() {
                 size="lg"
                 className="text-lg px-8 py-6"
               >
-                <Link href="#packages">View Packages</Link>
+                <Link href="/vr-games-catalogue">View Catalogue</Link>
               </Button>
             </div>
             <div className="flex flex-wrap justify-center gap-8 pt-8 text-muted-foreground">
