@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { Check, MapPin, Sparkles, ArrowRight, Shield, Award, Users, Headset } from "lucide-react"
+import { Check, MapPin, Sparkles, ArrowRight, Shield, Award, Users, Headset, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
@@ -53,7 +53,13 @@ export default function CapeTownVRPage() {
       { "@type": "AdministrativeArea", "name": "Somerset West" },
       { "@type": "AdministrativeArea", "name": "Hout Bay" },
       { "@type": "AdministrativeArea", "name": "Bloubergstrand" }
-    ]
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "47",
+      "bestRating": "5"
+    }
   };
 
   const faqJsonLd = {
@@ -87,6 +93,25 @@ export default function CapeTownVRPage() {
     ]
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.virtualrealityguyz.co.za"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Virtual Reality Cape Town",
+        "item": "https://www.virtualrealityguyz.co.za/virtual-reality-cape-town"
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-foreground relative z-10">
       <script
@@ -96,6 +121,10 @@ export default function CapeTownVRPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Header />
 
@@ -159,6 +188,21 @@ export default function CapeTownVRPage() {
                   <span>State-of-the-art equipment with strict sanitation protocols</span>
                 </li>
               </ul>
+
+              <div className="bg-secondary/30 p-6 border border-border rounded-2xl space-y-4 mt-6">
+                <div className="flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="text-foreground italic text-sm leading-relaxed">
+                  "The VR guys covered our corporate event in Sea Point and the setup was seamless. Every guest loved it!"
+                </p>
+                <div>
+                  <p className="font-bold text-sm">Mark D.</p>
+                  <p className="text-xs text-muted-foreground">Events Coordinator, Sea Point</p>
+                </div>
+              </div>
             </div>
 
             <div className="bg-secondary/40 border border-border p-8 rounded-3xl space-y-6 relative overflow-hidden">
@@ -231,6 +275,45 @@ export default function CapeTownVRPage() {
               </Link>
             </div>
 
+            <div className="bg-secondary/20 border border-border/60 p-8 rounded-2xl hover:border-primary/40 transition-colors group">
+              <Users className="h-10 w-10 text-primary mb-4" />
+              <h3 className="text-xl font-bold mb-2">Family Fun Days</h3>
+              <p className="text-muted-foreground text-sm mb-4">Interactive games and experiences suitable for children, teenagers, parents, and grandparents alike.</p>
+              <Link href="/family-fun-day-experiences" className="text-primary text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Learn more <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            <div className="bg-secondary/20 border border-border/60 p-8 rounded-2xl hover:border-primary/40 transition-colors group">
+              <Award className="h-10 w-10 text-primary mb-4" />
+              <h3 className="text-xl font-bold mb-2">School VR Demos</h3>
+              <p className="text-muted-foreground text-sm mb-4">Bring curriculum topics to life with immersive, educational journeys through space, science, and history.</p>
+              <Link href="/school-vr-demonstrations" className="text-primary text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Learn more <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+            <div className="bg-secondary/20 border border-border/60 p-8 rounded-2xl hover:border-primary/40 transition-colors group">
+              <Shield className="h-10 w-10 text-primary mb-4" />
+              <h3 className="text-xl font-bold mb-2">Birthday Activities</h3>
+              <p className="text-muted-foreground text-sm mb-4">Host an epic virtual reality birthday event. Multiplayer racing, combat, and rhythm games delivered to you.</p>
+              <Link href="/birthday-party-activities" className="text-primary text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                Learn more <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-3 pt-6">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/vr-gaming-near-me">VR Gaming Near Me <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/virtual-reality-somerset-west">Somerset West & Helderberg <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/educational-vr-cape-town">Educational VR <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
           </div>
         </div>
       </section>

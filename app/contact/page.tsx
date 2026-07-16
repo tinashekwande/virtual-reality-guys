@@ -28,11 +28,69 @@ export default function ContactPage() {
     "description": "Standalone contact and booking request page for the Virtual Reality Guys' mobile VR entertainment services in Cape Town, South Africa."
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.virtualrealityguyz.co.za"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Bookings & Contact",
+        "item": "https://www.virtualrealityguyz.co.za/contact"
+      }
+    ]
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How quickly do you respond to booking inquiries?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We respond to all online booking requests, emails, and WhatsApp messages within 24 hours (usually much faster). We will confirm availability for your date and time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What payment methods do you accept?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We accept EFT (bank transfers) and secure card payments. Bookings require a deposit to secure your date, with the balance due before or on the event day."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How far in advance should we book?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We recommend booking at least 2 to 3 weeks in advance, especially for weekend birthday parties and end-of-year corporate functions, which fill up quickly."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-foreground relative z-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
 
@@ -73,8 +131,16 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Call or WhatsApp</p>
-                  <a href="tel:+27717800323" className="font-bold hover:text-primary transition-colors text-lg">
+                  <a href="tel:+27717800323" className="font-bold hover:text-primary transition-colors text-lg block">
                     +27 71 780 0323
+                  </a>
+                  <a 
+                    href="https://wa.me/27717800323?text=Hi%20Virtual%20Reality%20Guys!%20I%27d%20like%20to%20book%20a%20VR%20experience." 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-xs text-[#25D366] hover:underline font-semibold flex items-center gap-1 mt-1 animate-pulse"
+                  >
+                    <span>Click to Chat on WhatsApp</span>
                   </a>
                 </div>
               </div>
@@ -127,6 +193,43 @@ export default function ContactPage() {
                 <p className="text-xs text-muted-foreground">6 headsets, 4 hours, up to 40 players, 3 supervisors, custom tournament</p>
               </div>
             </div>
+
+            {/* Why Book With Us Section */}
+            <div className="bg-secondary/20 border border-border/40 p-6 rounded-3xl space-y-4">
+              <h3 className="font-bold text-lg flex items-center gap-2 text-foreground">
+                <Sparkles className="h-5 w-5 text-primary" /> Why Book With Us
+              </h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span><strong>100% Mobile:</strong> We deliver, set up, supervise, and clean up at your venue.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span><strong>Safety First:</strong> Active virtual safety walls plus full session sanitation protocols.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span><strong>Expert Team:</strong> Passionate supervisors who keep players engaged and safe.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <span><strong>Great Variety:</strong> Access to a library of over 100+ highly rated VR games.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Quick Links to Services */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Explore Our Services</h4>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/vr-team-building" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Team Building</Link>
+                <Link href="/kids-parties" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Kids Parties</Link>
+                <Link href="/corporate-events" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Corporate Events</Link>
+                <Link href="/mobile-vr-hire" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Mobile VR Hire</Link>
+                <Link href="/vr-games-catalogue" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Games Catalogue</Link>
+              </div>
+            </div>
           </div>
 
           {/* Interactive Form */}
@@ -144,6 +247,33 @@ export default function ContactPage() {
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm">
             We deliver the ultimate VR experience directly to Sea Point, Green Point, Camps Bay, Hout Bay, Constantia, Rondebosch, Claremont, Bellville, Durbanville, Century City, Milnerton, Bloubergstrand, Somerset West, and Stellenbosch.
           </p>
+        </div>
+      </section>
+
+      {/* Booking FAQs */}
+      <section className="py-16 border-t border-border/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <h2 className="text-3xl font-bold text-center">Booking FAQs</h2>
+          <div className="space-y-6">
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How quickly do you respond to booking inquiries?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We respond to all online booking requests, emails, and WhatsApp messages within 24 hours (usually much faster). We will confirm availability for your date and time.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What payment methods do you accept?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We accept EFT (bank transfers) and secure card payments. Bookings require a deposit to secure your date, with the balance due before or on the event day.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How far in advance should we book?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We recommend booking at least 2 to 3 weeks in advance, especially for weekend birthday parties and end-of-year corporate functions, which fill up quickly.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -38,7 +38,44 @@ async function fetchGalleryData() {
 export default async function GalleryPage() {
   const { media, categories } = await fetchGalleryData();
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.virtualrealityguyz.co.za"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Event Gallery",
+        "item": "https://www.virtualrealityguyz.co.za/gallery"
+      }
+    ]
+  };
+
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Virtual Reality Guys Event Gallery",
+    "description": "Photos and videos from mobile VR events, birthday parties, and corporate team building functions in Cape Town.",
+    "url": "https://www.virtualrealityguyz.co.za/gallery"
+  };
+
   return (
-    <GalleryPageClient media={media} categories={categories} />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
+      <GalleryPageClient media={media} categories={categories} />
+    </>
   );
 }

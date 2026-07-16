@@ -77,6 +77,25 @@ export default function CorporateEventsPage() {
     ]
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.virtualrealityguyz.co.za"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Corporate Events",
+        "item": "https://www.virtualrealityguyz.co.za/corporate-events"
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-foreground relative z-10">
       <script
@@ -86,6 +105,10 @@ export default function CorporateEventsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Header />
 
@@ -201,6 +224,15 @@ export default function CorporateEventsPage() {
                 <p className="text-xs text-muted-foreground">Marketing Director, Western Cape Tech Hub</p>
               </div>
             </div>
+          </div>
+          
+          <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/mobile-vr-hire">Mobile VR Hire <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/family-fun-day-experiences">Family Fun Days <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Orbitron, Mina } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
+import WhatsAppButton from '@/components/WhatsAppButton'
 import './globals.css'
 
 const orbitron = Orbitron({
@@ -35,7 +36,13 @@ export const metadata: Metadata = {
     'VR events Cape Town',
     'mobile VR rentals',
     'Cape Town gaming party',
-    'VR team building'
+    'VR team building',
+    'VR birthday party Cape Town',
+    'virtual reality near me',
+    'educational VR Cape Town',
+    'VR Somerset West',
+    'VR gaming near me',
+    'augmented reality Cape Town'
   ],
   authors: [{ name: 'Virtual Reality Guys' }],
   creator: 'Virtual Reality Guys',
@@ -101,11 +108,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Virtual Reality Guys",
+    "url": "https://www.virtualrealityguyz.co.za",
+    "logo": "https://www.virtualrealityguyz.co.za/images/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+27717800323",
+      "contactType": "customer service",
+      "areaServed": "ZA",
+      "availableLanguage": ["English", "Afrikaans"]
+    },
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=61570997009743",
+      "https://www.instagram.com/virtualrealityguyz/"
+    ]
+  };
+
   return (
     <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
       <body className={`${mina.className} ${orbitron.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
         {children}
         <ChatbotLoader />
+        <WhatsAppButton />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

@@ -77,6 +77,25 @@ export default function FamilyFunDayPage() {
     ]
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.virtualrealityguyz.co.za"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Family Fun Day Experiences",
+        "item": "https://www.virtualrealityguyz.co.za/family-fun-day-experiences"
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-foreground relative z-10">
       <script
@@ -86,6 +105,10 @@ export default function FamilyFunDayPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Header />
 
@@ -141,7 +164,7 @@ export default function FamilyFunDayPage() {
 
             <div className="bg-secondary/40 border border-border/50 p-8 rounded-2xl relative overflow-hidden group">
               <Users className="h-10 w-10 text-primary mb-4" />
-              <h3 className="text-xl font-bold mb-2">High High Throughput</h3>
+              <h3 className="text-xl font-bold mb-2">High Throughput</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 For busy community festivals, we run fast, high-impact gaming rounds to maximize throughput, keeping line waits short and players happy.
               </p>
@@ -203,6 +226,15 @@ export default function FamilyFunDayPage() {
               </div>
             </div>
 
+          </div>
+          
+          <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/corporate-events">Corporate Events <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/kids-parties">Kids Parties <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
           </div>
         </div>
       </section>

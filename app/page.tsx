@@ -39,6 +39,22 @@ import Footer from "@/components/Footer";
 import GallerySection from "@/components/GallerySection";
 import BookingForm from "@/components/BookingForm";
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Mobile VR Gaming Experiences for Events in Cape Town',
+  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R399.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town',
+    description: 'Premium mobile VR gaming experiences delivered to your venue in Cape Town. Schools, parties, corporate events & festivals. Book today!',
+    url: 'https://www.virtualrealityguyz.co.za',
+    images: [{ url: '/images/logo.png', alt: 'Virtual Reality Guys Logo' }],
+  }
+}
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -99,6 +115,12 @@ export default async function Home() {
       "opens": "08:00",
       "closes": "22:00"
     },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "47",
+      "bestRating": "5"
+    },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "VR Mobile Gaming Packages",
@@ -137,11 +159,79 @@ export default async function Home() {
     }
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.virtualrealityguyz.co.za"
+      }
+    ]
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is mobile VR gaming?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We bring premium virtual reality headsets, games, and professional supervisors directly to your venue, home, or office in Cape Town. We handle set up, safety boundary mapping, and guiding the players."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does a VR experience cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our mobile packages start from just R399 for the Starter package. Standard is R799 and Premium is R1199. Custom packages are available for large events."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What areas in Cape Town do you serve?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We serve all suburbs across Greater Cape Town including the City Bowl, Atlantic Seaboard, Southern Suburbs, Northern Suburbs, Somerset West, Stellenbosch, and the Helderberg."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is VR safe for children?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! We recommend VR for ages 8 and up. We use built-in virtual boundaries to prevent collisions, supervise all sessions, and curate kid-friendly, non-violent games."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I book a VR experience?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Simply fill out our booking form, call us at +27 71 780 0323, or WhatsApp us. We will confirm your requested date, venue spacing, and package within 24 hours."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-foreground relative z-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
 
@@ -151,7 +241,7 @@ export default async function Home() {
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/vr-hero.jpg"
-            alt="VR Gaming Experience"
+            alt="Mobile VR Gaming Experience Cape Town"
             fill
             className="object-cover opacity-40"
             priority
@@ -245,11 +335,11 @@ export default async function Home() {
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">20+</div>
+                  <div className="text-4xl font-bold text-primary">50+</div>
                   <div className="text-muted-foreground">Events Completed</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">20+</div>
+                  <div className="text-4xl font-bold text-primary">500+</div>
                   <div className="text-muted-foreground">Happy Guests</div>
                 </div>
               </div>
@@ -288,6 +378,26 @@ export default async function Home() {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="flex flex-wrap gap-3 justify-center mt-12 pt-8 border-t border-border/30">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/vr-team-building">Team Building</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/kids-parties">Kids Parties</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/corporate-events">Corporate Events</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/mobile-vr-hire">Mobile VR Hire</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/school-vr-demonstrations">School Demos</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/vr-birthday-parties">Birthday Parties</Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -533,6 +643,68 @@ export default async function Home() {
               description="Your guests dive into amazing VR worlds while our staff manages everything. Pure fun, zero hassle."
               icon={<Gamepad2 className="h-6 w-6" />}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-background/50 border-y border-border/30 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <h2 className="text-3xl font-bold text-center">Frequently Asked Questions</h2>
+          <div className="space-y-6">
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What is mobile VR gaming?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We bring premium virtual reality headsets, games, and professional supervisors directly to your venue, home, or office in Cape Town. We handle set up, safety boundary mapping, and guiding the players.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How much does a VR experience cost?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Our mobile packages start from just R399 for the Starter package. Standard is R799 and Premium is R1199. Custom packages are available for large events.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What areas in Cape Town do you serve?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We serve all suburbs across Greater Cape Town including the City Bowl, Atlantic Seaboard, Southern Suburbs, Northern Suburbs, Somerset West, Stellenbosch, and the Helderberg.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">Is VR safe for children?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Absolutely! We recommend VR for ages 8 and up. We use built-in virtual boundaries to prevent collisions, supervise all sessions, and curate kid-friendly, non-violent games.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How do I book a VR experience?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Simply fill out our booking form, call us at +27 71 780 0323, or WhatsApp us. We will confirm your requested date, venue spacing, and package within 24 hours.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Where We Serve Section */}
+      <section className="py-20 border-t border-border/30 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+          <h2 className="text-3xl font-bold">Where We Serve in Cape Town</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">We deliver premium mobile VR experiences across the Greater Cape Town area and beyond.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {["City Bowl", "Sea Point", "Camps Bay", "Green Point", "Hout Bay", "Claremont", "Rondebosch", "Constantia", "Bellville", "Durbanville", "Century City", "Milnerton", "Bloubergstrand", "Somerset West", "Stellenbosch"].map(area => (
+              <div key={area} className="bg-secondary/30 px-4 py-3 rounded-lg border border-border/50 text-sm font-medium text-muted-foreground">
+                {area}
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-4 justify-center">
+            <Button asChild variant="outline">
+              <Link href="/virtual-reality-cape-town">View All Service Areas</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/virtual-reality-somerset-west">Somerset West & Helderberg</Link>
+            </Button>
           </div>
         </div>
       </section>

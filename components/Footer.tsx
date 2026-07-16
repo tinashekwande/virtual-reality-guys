@@ -105,6 +105,21 @@ export default function Footer() {
                   Mobile VR Setup Hire
                 </Link>
               </li>
+              <li>
+                <Link href="/vr-games-catalogue" className="hover:text-primary transition-colors">
+                  VR Games Catalogue
+                </Link>
+              </li>
+              <li>
+                <Link href="/gallery" className="hover:text-primary transition-colors">
+                  Event Gallery
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-primary transition-colors">
+                  Book an Experience
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -138,8 +153,8 @@ export default function Footer() {
         <div className="border-t border-border/60 mt-16 pt-8 text-center text-muted-foreground text-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>&copy; {new Date().getFullYear()} Virtual Reality Guys. All rights reserved.</p>
           <div className="flex gap-6 text-xs">
-            <Link href="/" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-            <Link href="/" className="hover:text-foreground transition-colors">Terms of Service</Link>
+            <span className="text-muted-foreground/50 cursor-default">Privacy Policy</span>
+            <span className="text-muted-foreground/50 cursor-default">Terms of Service</span>
             <Link href="/sitemap.xml" className="hover:text-foreground transition-colors">Sitemap</Link>
           </div>
         </div>
