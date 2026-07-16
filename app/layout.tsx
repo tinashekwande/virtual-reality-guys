@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Orbitron, Mina } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import './globals.css'
 
 const orbitron = Orbitron({
@@ -136,7 +135,6 @@ export default function RootLayout({
         />
         {children}
         <ChatbotLoader />
-        <WhatsAppButton />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
