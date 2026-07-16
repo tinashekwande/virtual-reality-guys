@@ -515,13 +515,18 @@ export default async function Home() {
             />
           </div>
 
-          <p className="text-center text-muted-foreground mt-12">
-            Need a custom package for your event?{" "}
-            <Link href="#contact" className="text-primary hover:underline">
-              Contact us
-            </Link>{" "}
-            for a personalized quote.
-          </p>
+          <div className="text-center text-muted-foreground mt-12 space-y-4 max-w-2xl mx-auto">
+            <p>
+              Need a custom package for your event?{" "}
+              <Link href="#contact" className="text-primary hover:underline">
+                Contact us
+              </Link>{" "}
+              for a personalized quote.
+            </p>
+            <p className="text-xs text-muted-foreground/80 leading-relaxed border-t border-border/20 pt-4">
+              <strong>*Transport & Delivery Note:</strong> Delivery and travel are 100% free for events in Kraaifontein and surrounding local areas including Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, and Buh-Rein Estate. For all other areas across Greater Cape Town and the Western Cape, a reasonable transport fee will apply.
+            </p>
+          </div>
         </div>
       </section>
 

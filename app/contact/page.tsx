@@ -192,6 +192,9 @@ export default function ContactPage() {
                 </div>
                 <p className="text-xs text-muted-foreground">6 headsets, 4 hours, up to 40 players, 3 supervisors, custom tournament</p>
               </div>
+              <p className="text-xs text-muted-foreground/80 leading-relaxed border-t border-border/20 pt-4">
+                <strong>*Note:</strong> Free delivery/transport to Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, and Buh-Rein Estate. Other areas require transport fees.
+              </p>
             </div>
 
             {/* Why Book With Us Section */}
