@@ -106,6 +106,12 @@ export default function Header() {
             </DropdownMenu>
 
             <Link
+              href="/blog"
+              className="text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              Blog
+            </Link>
+            <Link
               href="/gallery"
               className="text-muted-foreground hover:text-foreground transition-colors font-medium"
             >

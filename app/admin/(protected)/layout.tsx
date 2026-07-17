@@ -5,13 +5,16 @@ import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
-  Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck
+  Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
+  BookOpen
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/ui/sonner"
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/admin/categories", label: "Categories", icon: FolderOpen },
   { href: "/admin/team", label: "Team", icon: Users },
@@ -244,6 +247,7 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
+        <Toaster />
       </div>
     </div>
   )

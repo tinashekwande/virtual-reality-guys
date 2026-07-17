@@ -1,9 +1,11 @@
 import { MetadataRoute } from 'next'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { BLOG_CATEGORIES, slugify } from '@/lib/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.virtualrealityguyz.co.za'
 
-  const routes = [
+  const staticRoutes = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -100,7 +102,45 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
   ]
 
-  return routes
+  // Fetch published blog posts dynamically
+  let blogRoutes: MetadataRoute.Sitemap = []
+  try {
+    const admin = createAdminClient()
+    const nowStr = new Date().toISOString()
+    const { data: posts } = await admin
+      .from('blog_posts')
+      .select('slug, updated_at, published_at')
+      .eq('status', 'published')
+      .lte('published_at', nowStr)
+
+    if (posts && Array.isArray(posts)) {
+      blogRoutes = posts.map(post => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: new Date(post.updated_at || post.published_at),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      }))
+    }
+  } catch (err) {
+    console.error('Error generating dynamic sitemap blog routes:', err)
+  }
+
+  // Generate category archive routes dynamically
+  const categoryRoutes = BLOG_CATEGORIES.map(category => ({
+    url: `${baseUrl}/blog/category/${slugify(category)}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...blogRoutes, ...categoryRoutes]
 }
+
