@@ -140,7 +140,7 @@
     z-index: -1;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-tech), sans-serif;
+    @apply font-tech;
   }
 }
 
@@ -229,7 +229,7 @@
 .blog-prose h2,
 .blog-prose h3,
 .blog-prose h4 {
-  font-family: var(--font-tech);
+  @apply font-tech;
   color: var(--foreground);
   font-weight: 700;
   letter-spacing: -0.02em;
