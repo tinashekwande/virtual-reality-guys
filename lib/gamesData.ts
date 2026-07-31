@@ -10,6 +10,13 @@ export interface Game {
   playStyle: string;
   actionType: string;
   image: string;
+  developer?: string;
+  publisher?: string;
+  comfortRating?: string;
+  controllers?: string;
+  spaceRequired?: string;
+  playerMode?: string;
+  features?: string[];
 }
 
 export const gamesData: Game[] = [
@@ -20,12 +27,25 @@ export const gamesData: Game[] = [
     category: "Horror Experiences",
     suitability: "Teens & Adults",
     shortDesc: "Walk a thin plank 80 stories high and face your fear of heights.",
-    longDesc: "Richie's Plank Experience is a psychological thrill ride. Placed 80 stories above the ground, walk a narrow wooden plank and decide if you have the nerve to step off. Includes secondary modes like Hero Academy, Firefighting, and Skybrush for creative VR play.",
+    longDesc: "Richie's Plank Experience is a psychological thrill ride. Placed 80 stories above the ground, walk a narrow wooden plank and decide if you have the nerve to step off. It is designed to evoke strong physiological reactions, making it the perfect showcase for the power of immersive virtual reality. Includes multiple secondary modes such as superhero flying academy, firefighting simulators, and writing tools.",
     difficulty: 4,
     tags: ["Thrill", "Heights", "Short Play", "Immersive"],
     playStyle: "Standing/Room-Scale",
     actionType: "Simulation",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/517160/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/517160/header.jpg",
+    developer: "Toast Interactive",
+    publisher: "Toast Interactive",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Real-world plank setup integration",
+      "Stomach-dropping height simulation",
+      "Superhero flight mode",
+      "Firefighting mini-missions",
+      "Skybrush skywriting tool"
+    ]
   },
   {
     id: "sleep-watch",
@@ -33,12 +53,24 @@ export const gamesData: Game[] = [
     category: "Horror Experiences",
     suitability: "Teens & Adults",
     shortDesc: "Stay alert and survive the horrors lurking in the dark.",
-    longDesc: "Sleep Watch places you in a dark and eerie environment where survival depends on your alertness and quick thinking. Monitor security systems, avoid lurking threats, and keep your composure as tension rises in this sleep paralysis horror simulation.",
+    longDesc: "Sleep Watch places you in a dark and eerie environment where survival depends on your alertness and quick thinking. You must monitor multiple security cameras, check the hallway shadows, and keep your composure as tension rises in this sleep paralysis horror simulation.",
     difficulty: 4,
     tags: ["Survival", "Suspense", "Jump Scares", "Dark"],
     playStyle: "Sitting/Standing",
     actionType: "Survival Horror",
-    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80",
+    developer: "Cyberia Studios",
+    publisher: "Cyberia Studios",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Real-time security monitor feed",
+      "Heart-rate monitoring mechanics",
+      "Randomized horror triggers",
+      "Light and sound navigation puzzles"
+    ]
   },
   {
     id: "face-your-fears",
@@ -46,12 +78,24 @@ export const gamesData: Game[] = [
     category: "Horror Experiences",
     suitability: "Teens & Adults",
     shortDesc: "Confront your deepest fears in spine-chilling scenarios.",
-    longDesc: "Face Your Fears exposes you to common phobias and horror scenarios in full 360-degree immersion. From haunted houses to heights and paranormal entities, this experience is designed to get your adrenaline pumping.",
+    longDesc: "Face Your Fears exposes you to common phobias and horror scenarios in full 360-degree immersion. From haunted houses to towering heights and paranormal entities, this experience is designed to test your limits and get your adrenaline pumping.",
     difficulty: 5,
     tags: ["Atmospheric", "Spooky", "Short Play", "Jump Scares"],
     playStyle: "Sitting",
     actionType: "Interactive Experience",
-    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+    developer: "Turtle Rock Studios",
+    publisher: "Warner Bros. Interactive",
+    comfortRating: "Intense",
+    controllers: "Gaze/Touch Controllers",
+    spaceRequired: "3.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Multi-sensory phobia modules",
+      "Haunted children's bedroom module",
+      "Giant skyscraper attack module",
+      "Deep-sea ghost ship experience"
+    ]
   },
   {
     id: "cursed-night-house",
@@ -64,7 +108,19 @@ export const gamesData: Game[] = [
     tags: ["Exploration", "Puzzle", "Escape Room", "Spooky"],
     playStyle: "Standing/Room-Scale",
     actionType: "Exploration Horror",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740570/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740570/header.jpg",
+    developer: "Red Soul Games",
+    publisher: "Red Soul Games",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "4.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Physics-based puzzle objects",
+      "Ambient lighting toggle mechanics",
+      "3D spatial audio whispers",
+      "Lock-and-key room locks"
+    ]
   },
   {
     id: "z-show",
@@ -72,12 +128,24 @@ export const gamesData: Game[] = [
     category: "Horror Experiences",
     suitability: "Teens & Adults",
     shortDesc: "Survive a deadly zombie-infested television game show.",
-    longDesc: "Z-Show casts you as a contestant in a apocalyptic, dystopian game show where the prize is your life. Face swarms of walking dead, activate arena traps, and keep the audience entertained to secure supplies in this high-tension horror shootout.",
+    longDesc: "Z-Show casts you as a contestant in an apocalyptic, dystopian game show where the prize is your life. Face waves of zombies, activate environmental traps, and entertain the audience to secure supply drops in this high-tension horror shootout.",
     difficulty: 4,
     tags: ["Zombies", "Survival", "Action", "Arena"],
     playStyle: "Standing",
     actionType: "Zombie Combat",
-    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
+    developer: "Pixelity Games",
+    publisher: "Pixelity Games",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Dystopian arena game show layout",
+      "Crowd noise feedback audio loop",
+      "Interactive stage environmental traps",
+      "High-score wave multiplier tracker"
+    ]
   },
   {
     id: "cursed-echoes",
@@ -90,7 +158,19 @@ export const gamesData: Game[] = [
     tags: ["Audio-focus", "Mystery", "Atmospheric", "Spooky"],
     playStyle: "Standing/Room-Scale",
     actionType: "Psychological Horror",
-    image: "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=600&q=80",
+    developer: "Soundscape VR",
+    publisher: "Soundscape VR",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Acoustic-guided gameplay",
+      "Spatial echo-location scanners",
+      "Shifting non-euclidean labyrinth",
+      "Microphone audio feedback detection"
+    ]
   },
   {
     id: "descending",
@@ -103,7 +183,19 @@ export const gamesData: Game[] = [
     tags: ["Caves", "Exploration", "Survival", "Claustrophobic"],
     playStyle: "Standing/Room-Scale",
     actionType: "Survival Horror",
-    image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=600&q=80",
+    developer: "Vertigo Games",
+    publisher: "Vertigo Games",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "5.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Rappelling and rock climbing physics",
+      "Realistic flashlight battery mechanics",
+      "Cave-in survival navigation scenarios",
+      "Mysterious runic text decryption"
+    ]
   },
   {
     id: "panic-room-mr",
@@ -116,7 +208,19 @@ export const gamesData: Game[] = [
     tags: ["Mixed Reality", "Escape Room", "Interactive", "Spooky"],
     playStyle: "Room-Scale",
     actionType: "Mixed Reality Escape",
-    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80",
+    developer: "Resolution Games",
+    publisher: "Resolution Games",
+    comfortRating: "Comfortable",
+    controllers: "Hand Tracking / Touch",
+    spaceRequired: "900 MB",
+    playerMode: "Single User / Co-op",
+    features: [
+      "Pass-through room mesh boundaries",
+      "Anchored holographic props",
+      "Furniture collider recognition",
+      "Local multiplayer escape cooperation"
+    ]
   },
 
   // 2. Fighting & Action Games
@@ -131,7 +235,19 @@ export const gamesData: Game[] = [
     tags: ["Melee", "Swordplay", "Active", "Combat"],
     playStyle: "Standing/Room-Scale",
     actionType: "Action Combat",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1080750/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1080750/header.jpg",
+    developer: "Coinflip Studios",
+    publisher: "Coinflip Studios",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.2 GB",
+    playerMode: "Single User",
+    features: [
+      "18 weapons (Katanas, claws, bow)",
+      "Real-time deflection and parrying",
+      "Sword slice physics system",
+      "Slow-motion cinematic execution states"
+    ]
   },
   {
     id: "creed-rise-glory",
@@ -144,7 +260,19 @@ export const gamesData: Game[] = [
     tags: ["Sports", "Boxing", "Active", "Simulation"],
     playStyle: "Standing",
     actionType: "Active Boxing",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945980/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945980/header.jpg",
+    developer: "Survios",
+    publisher: "Survios",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "4.5 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Phantom Melee fatigue mechanic",
+      "Rocky Balboa training gyms",
+      "Championship campaign mode",
+      "Cross-platform PvP boxing matches"
+    ]
   },
   {
     id: "100-day-siege",
@@ -157,7 +285,19 @@ export const gamesData: Game[] = [
     tags: ["Defensive", "Combat", "Tactical", "Medieval"],
     playStyle: "Standing",
     actionType: "Castle Defense",
-    image: "https://images.unsplash.com/photo-1533228894184-754f91165a2d?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1533228894184-754f91165a2d?auto=format&fit=crop&w=600&q=80",
+    developer: "Skydance Interactive",
+    publisher: "Skydance Interactive",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Rampart archer post setup",
+      "Physical archery mechanics",
+      "Boiling oil kettle physics triggers",
+      "Multi-stage fantasy wave sieges"
+    ]
   },
   {
     id: "legacy-awake",
@@ -170,7 +310,19 @@ export const gamesData: Game[] = [
     tags: ["Fantasy", "Spells", "Adventure", "Combat"],
     playStyle: "Standing/Room-Scale",
     actionType: "Fantasy Action",
-    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80",
+    developer: "Polyarc Games",
+    publisher: "Polyarc Games",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.6 GB",
+    playerMode: "Single User",
+    features: [
+      "Hand gesture casting mechanics",
+      "Ancient puzzle portal structures",
+      "Titan climbing combat battles",
+      "High-fidelity high-fantasy art direction"
+    ]
   },
 
   // 3. Driving & Racing Simulation
@@ -185,7 +337,19 @@ export const gamesData: Game[] = [
     tags: ["Simulation", "Driving", "Scenic", "Relaxing"],
     playStyle: "Sitting",
     actionType: "Driving Simulation",
-    image: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=600&q=80",
+    developer: "Sector3 Studios",
+    publisher: "Sector3 Studios",
+    comfortRating: "Moderate",
+    controllers: "Steering Wheel/Touch",
+    spaceRequired: "6.0 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Fully interactive dashboard dials",
+      "Live weather & daylight cycles",
+      "Interactive steering and gears",
+      "Intelligent road traffic AI"
+    ]
   },
   {
     id: "car-parking-sim",
@@ -198,7 +362,19 @@ export const gamesData: Game[] = [
     tags: ["Skill-based", "Driving", "Precision", "Relaxing"],
     playStyle: "Sitting",
     actionType: "Precision Simulation",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1324410/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1324410/header.jpg",
+    developer: "Aviary Games",
+    publisher: "Aviary Games",
+    comfortRating: "Comfortable",
+    controllers: "Touch/Steering Wheel",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Functional vehicle side mirrors",
+      "Audio-assist parking sensors",
+      "100+ precision driving puzzles",
+      "Interactive physics gear shifting"
+    ]
   },
   {
     id: "speed-racer",
@@ -211,7 +387,19 @@ export const gamesData: Game[] = [
     tags: ["Speed", "Racing", "Arcade", "Thrill"],
     playStyle: "Sitting",
     actionType: "Arcade Racing",
-    image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80",
+    developer: "Codemasters",
+    publisher: "Codemasters",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "4.5 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Vertical gravity-defying tracks",
+      "Drifting speed boost multiplier",
+      "Sky-high vertical loops",
+      "Immersive dashboard cockpit HUD"
+    ]
   },
   {
     id: "z-race",
@@ -224,7 +412,19 @@ export const gamesData: Game[] = [
     tags: ["Sci-Fi", "Zero-G", "Racing", "Futuristic"],
     playStyle: "Sitting",
     actionType: "Hovercraft Racing",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348750/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348750/header.jpg",
+    developer: "XOCUS",
+    publisher: "XOCUS",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.0 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Zero-gravity flight mechanics",
+      "Vibrant cybernetic space tracks",
+      "Speed gate acceleration rings",
+      "Global leaderboard time trials"
+    ]
   },
   {
     id: "formula-x",
@@ -237,7 +437,19 @@ export const gamesData: Game[] = [
     tags: ["Formula", "Simulation", "Tracks", "Precision"],
     playStyle: "Sitting",
     actionType: "F1 Racing Sim",
-    image: "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=600&q=80",
+    developer: "Kunos Simulazioni",
+    publisher: "Kunos Simulazioni",
+    comfortRating: "Moderate",
+    controllers: "Steering Wheel/Touch",
+    spaceRequired: "8.0 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Live telemetry dash stats",
+      "Dynamic tire degradation & pits",
+      "Force-feedback steering integration",
+      "Laser-scanned real world track maps"
+    ]
   },
   {
     id: "bus-parking-vr",
@@ -250,7 +462,19 @@ export const gamesData: Game[] = [
     tags: ["Bus", "Parking", "Heavy Vehicle", "Precision"],
     playStyle: "Sitting",
     actionType: "Parking Simulator",
-    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80",
+    developer: "SimuGames",
+    publisher: "SimuGames",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Detailed bus cockpit instruments",
+      "Platform passenger alignment markers",
+      "Integrated rearview mirror cameras",
+      "Multiple articulated vehicle chassis"
+    ]
   },
 
   // 4. Adventure & Thrill Rides
@@ -265,7 +489,19 @@ export const gamesData: Game[] = [
     tags: ["Thrill", "Rollercoaster", "Flight", "Speed"],
     playStyle: "Sitting",
     actionType: "Thrill Ride",
-    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=600&q=80",
+    developer: "Coaster Games",
+    publisher: "Coaster Games",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Desert canyon and city-scape coaster runs",
+      "Interactive military flight cockpit",
+      "Weapon tracking laser targeters",
+      "Physiological stomach-drop curves"
+    ]
   },
   {
     id: "ocean-rift",
@@ -278,7 +514,19 @@ export const gamesData: Game[] = [
     tags: ["Nature", "Relaxing", "Exploration", "Education"],
     playStyle: "Sitting/Standing",
     actionType: "Aquatic Safari",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/422760/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/422760/header.jpg",
+    developer: "Llyr Ap Cenydd",
+    publisher: "Llyr Ap Cenydd",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.4 GB",
+    playerMode: "Single User",
+    features: [
+      "14 detailed underwater biomes",
+      "AI-driven predator/prey behavior",
+      "Educational narrative guides",
+      "Interactive whale and turtle feed prompts"
+    ]
   },
   {
     id: "deepwater",
@@ -291,7 +539,19 @@ export const gamesData: Game[] = [
     tags: ["Submarine", "Deep-sea", "Nature", "Relaxing"],
     playStyle: "Sitting",
     actionType: "Aquatic Exploration",
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80",
+    developer: "SubSoft",
+    publisher: "SubSoft",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Glass-dome cockpit navigation",
+      "Hydrodynamic grabber claw controls",
+      "Fauna photography collection logs",
+      "High-power spotlight pathfinder system"
+    ]
   },
   {
     id: "escape-room",
@@ -304,7 +564,19 @@ export const gamesData: Game[] = [
     tags: ["Puzzles", "Escape", "Co-op", "Brain"],
     playStyle: "Standing/Room-Scale",
     actionType: "Puzzle Adventure",
-    image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=600&q=80",
+    developer: "Fireproof Games",
+    publisher: "Fireproof Games",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.6 GB",
+    playerMode: "Single User / Co-op",
+    features: [
+      "Multi-stage escape theme rooms",
+      "Physics dials, keys, and gears",
+      "Interactive puzzle clue journals",
+      "Timer-based challenge modes"
+    ]
   },
   {
     id: "coaster-combat",
@@ -317,7 +589,19 @@ export const gamesData: Game[] = [
     tags: ["Rollercoaster", "Shooter", "Active", "Thrill"],
     playStyle: "Sitting",
     actionType: "Rollercoaster Shooter",
-    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80",
+    developer: "Force Field",
+    publisher: "Force Field",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Fast-paced rail shooter targeting",
+      "Dual rapid-fire neon blasters",
+      "Lean-to-dodge obstacle mechanics",
+      "Dynamic scoreboard combos and multipliers"
+    ]
   },
   {
     id: "park",
@@ -330,7 +614,19 @@ export const gamesData: Game[] = [
     tags: ["Dinosaurs", "Safari", "Nature", "Cinematic"],
     playStyle: "Sitting/Standing",
     actionType: "Nature Safari",
-    image: "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=600&q=80",
+    developer: "Jurassic VR",
+    publisher: "Jurassic VR",
+    comfortRating: "Comfortable",
+    controllers: "Gaze/Touch Controllers",
+    spaceRequired: "4.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Life-size dinosaur encounter zones",
+      "Detailed foliage and terrain physics",
+      "Prehistoric reserve truck trail ride",
+      "Wildlife snapshot photo log rewards"
+    ]
   },
 
   // 5. Shooting Games
@@ -345,7 +641,19 @@ export const gamesData: Game[] = [
     tags: ["Sci-Fi", "Shooter", "Active", "Arcade"],
     playStyle: "Standing/Room-Scale",
     actionType: "Wave Shooter",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/418650/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/418650/header.jpg",
+    developer: "I-Illusions",
+    publisher: "I-Illusions",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.6 GB",
+    playerMode: "Single User / Arena",
+    features: [
+      "6 weapon types (lasers, rails, ropes)",
+      "Physical mirror reflection shields",
+      "Bullet-time slowdown drone dodges",
+      "Global leaderboards score tracking"
+    ]
   },
   {
     id: "repossessed-zombie",
@@ -358,7 +666,19 @@ export const gamesData: Game[] = [
     tags: ["Zombies", "Shooter", "Scary", "Action"],
     playStyle: "Standing",
     actionType: "Zombie Survival",
-    image: "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=600&q=80",
+    developer: "Indie Devs",
+    publisher: "Indie Devs",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Tactical reloading physics models",
+      "Shotgun slide pumps",
+      "Fortified window wave blockers",
+      "Flashlight directional darkness overlay"
+    ]
   },
   {
     id: "anshar-2",
@@ -371,7 +691,19 @@ export const gamesData: Game[] = [
     tags: ["Space", "Flight", "Jet", "Sci-Fi"],
     playStyle: "Sitting/Standing",
     actionType: "Space Dogfight",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1579730/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1579730/header.jpg",
+    developer: "OZWE Games",
+    publisher: "OZWE Games",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers / Gamepad",
+    spaceRequired: "2.2 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Dynamic 3rd-person & cockpit cams",
+      "Multi-lock missile targeting arrays",
+      "Full 360 space debris battle rings",
+      "10-stage cinematic mission campaign"
+    ]
   },
   {
     id: "spatial-web-shooter",
@@ -384,7 +716,19 @@ export const gamesData: Game[] = [
     tags: ["Active", "Robots", "Sci-Fi", "Score-chase"],
     playStyle: "Standing/Room-Scale",
     actionType: "Target Shooter",
-    image: "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=600&q=80",
+    developer: "WebTech",
+    publisher: "WebTech",
+    comfortRating: "Comfortable",
+    controllers: "Hand Tracking / Touch",
+    spaceRequired: "950 MB",
+    playerMode: "Single User",
+    features: [
+      "Flick-wrist sticky web casting",
+      "Physics-tension line pull",
+      "Fracturing mechanical spider parts",
+      "Automated laser sight assists"
+    ]
   },
   {
     id: "bodycam-unrecord",
@@ -397,7 +741,19 @@ export const gamesData: Game[] = [
     tags: ["Realism", "Tactical", "Military", "Co-op"],
     playStyle: "Standing/Room-Scale",
     actionType: "Tactical Shooter",
-    image: "https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=600&q=80",
+    developer: "Tactical Games",
+    publisher: "Tactical Games",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "6.2 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Bodycam style visual filters",
+      "Manual tactical weapon reloads",
+      "S.W.A.T squad briefing modes",
+      "Directional spatial audio alerts"
+    ]
   },
   {
     id: "pistol-whip",
@@ -410,7 +766,19 @@ export const gamesData: Game[] = [
     tags: ["Rhythm", "Music", "Active", "Shooter"],
     playStyle: "Standing",
     actionType: "Rhythm Shooter",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1079800/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1079800/header.jpg",
+    developer: "Cloudhead Games",
+    publisher: "Cloudhead Games",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.0 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Tempo-synchronized shooting points",
+      "Action-movie style narrative campaigns",
+      "Weapon configurations and skin sets",
+      "Active fitness cardio tracking"
+    ]
   },
 
   // 6. Sports & Fitness
@@ -425,7 +793,19 @@ export const gamesData: Game[] = [
     tags: ["Rhythm", "Music", "Active", "Fitness"],
     playStyle: "Standing",
     actionType: "Rhythm Action",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/620980/header.jpg",
+    developer: "Beat Games",
+    publisher: "Meta Quest Studios",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User / Multiplayer",
+    features: [
+      "Dual color light sabers physics",
+      "360-degree immersive speaker tracks",
+      "Custom beatmaps editor tool",
+      "Active cardio fitness tracker dashboard"
+    ]
   },
   {
     id: "motion-soccer-pro",
@@ -438,7 +818,19 @@ export const gamesData: Game[] = [
     tags: ["Sports", "Soccer", "Active", "Fun"],
     playStyle: "Standing/Room-Scale",
     actionType: "Soccer Simulator",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3137350/header.jpg"
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3137350/header.jpg",
+    developer: "ProSports VR",
+    publisher: "ProSports VR",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers (Goalie)",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User / Local Multiplayer",
+    features: [
+      "1:1 hand-tracking goalie mitts",
+      "Penalty targeting grids",
+      "Simulated crowd noise cheer loops",
+      "Cardio calorie-burned readouts"
+    ]
   },
   {
     id: "cooking-games",
@@ -451,7 +843,19 @@ export const gamesData: Game[] = [
     tags: ["Simulation", "Cooking", "Time-Management", "Family"],
     playStyle: "Standing",
     actionType: "Cooking Simulator",
-    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=600&q=80",
+    developer: "VR Kitchen",
+    publisher: "VR Kitchen",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Functional stove, fryers & cutting boards",
+      "Rush-hour countdown tickets",
+      "Multi-recipe cooking sheets",
+      "Clean-up & dishwasher simulator challenges"
+    ]
   },
 
   // 7. Educational & Learning Experiences
@@ -466,7 +870,19 @@ export const gamesData: Game[] = [
     tags: ["Space", "Astronomy", "Educational", "Interactive"],
     playStyle: "Sitting/Standing",
     actionType: "Science Simulation",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+    developer: "Astronomy Labs",
+    publisher: "Astronomy Labs",
+    comfortRating: "Comfortable",
+    controllers: "Touch/Hand Tracking",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Orbit path manipulation slider",
+      "Planet size comparison maps",
+      "Annotated stellar encyclopedias",
+      "Supernova visual timeline animations"
+    ]
   },
   {
     id: "human-anatomy-vr",
@@ -479,7 +895,19 @@ export const gamesData: Game[] = [
     tags: ["Biology", "Anatomy", "Educational", "Interactive"],
     playStyle: "Sitting/Standing",
     actionType: "Science Exploration",
-    image: "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=600&q=80",
+    developer: "Virtual Medicine",
+    publisher: "Virtual Medicine",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Muscle & bone layer dissection",
+      "Animated blood flow simulations",
+      "High-power zoom organ examinations",
+      "Integrated biology quiz sets"
+    ]
   },
   {
     id: "natgeo-explore",
@@ -492,7 +920,19 @@ export const gamesData: Game[] = [
     tags: ["Adventure", "Geography", "Educational", "Interactive"],
     playStyle: "Standing/Room-Scale",
     actionType: "Virtual Travel",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+    developer: "Force Field VR",
+    publisher: "National Geographic",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Realistic kayak paddling mechanics",
+      "Ice climbing rope and pick physics",
+      "Expedition field camera lens system",
+      "Immersive weather blizzard cycles"
+    ]
   },
   {
     id: "overview-360",
@@ -505,7 +945,19 @@ export const gamesData: Game[] = [
     tags: ["Space", "Earth", "Relaxing", "Cinematic"],
     playStyle: "Sitting",
     actionType: "Cinematic Experience",
-    image: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80",
+    developer: "NASA Space Apps",
+    publisher: "NASA Space Apps",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.5 GB",
+    playerMode: "Single User",
+    features: [
+      "HD satellite texture overlays",
+      "Dynamic weather storm trackers",
+      "Orbit telemetry readouts",
+      "Interactive globe spinning control"
+    ]
   },
   {
     id: "ambulate-to-wheelchair",
@@ -518,7 +970,19 @@ export const gamesData: Game[] = [
     tags: ["Medical", "Healthcare", "Nursing", "Simulation"],
     playStyle: "Standing",
     actionType: "Nursing Simulation",
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
+    developer: "HealthSim VR",
+    publisher: "HealthSim VR",
+    comfortRating: "Comfortable",
+    controllers: "Hand Tracking / Touch",
+    spaceRequired: "1.4 GB",
+    playerMode: "Single User",
+    features: [
+      "Nursing ergonomics feedback detector",
+      "Real-time weight shifting gauges",
+      "Dialogue communication queues",
+      "Safety brake validation check"
+    ]
   },
   {
     id: "hallo-einstein",
@@ -531,7 +995,19 @@ export const gamesData: Game[] = [
     tags: ["Physics", "History", "Science", "Interactives"],
     playStyle: "Sitting/Standing",
     actionType: "Science Laboratory",
-    image: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=600&q=80",
+    developer: "Science Museum VR",
+    publisher: "Science Museum VR",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.6 GB",
+    playerMode: "Single User",
+    features: [
+      "Relativity chalkboard drawings",
+      "Conversation engines with Einstein",
+      "Patent office historical tours",
+      "Physics velocity block experiments"
+    ]
   },
   {
     id: "10k-science",
@@ -544,7 +1020,19 @@ export const gamesData: Game[] = [
     tags: ["Chemistry", "Biology", "Science", "School"],
     playStyle: "Standing",
     actionType: "Science Laboratory",
-    image: "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=600&q=80",
+    developer: "School Labs",
+    publisher: "School Labs",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Interactive periodic element mixing",
+      "Functional slides & microscopes",
+      "Chemical fire safety drills",
+      "Curriculum-aligned chemical guides"
+    ]
   },
   {
     id: "ambulate-transfer-belt",
@@ -557,7 +1045,19 @@ export const gamesData: Game[] = [
     tags: ["Medical", "Healthcare", "Nursing", "Training"],
     playStyle: "Standing",
     actionType: "Nursing Simulation",
-    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80",
+    developer: "HealthSim VR",
+    publisher: "HealthSim VR",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.3 GB",
+    playerMode: "Single User",
+    features: [
+      "Physiotherapy gait belt adjustments",
+      "Real-time spine strain detectors",
+      "Interactive patient safety triggers",
+      "Assisted walking training corridors"
+    ]
   },
   {
     id: "world-lens-vr",
@@ -570,7 +1070,19 @@ export const gamesData: Game[] = [
     tags: ["Geography", "History", "Travel", "Nature"],
     playStyle: "Sitting/Standing",
     actionType: "Virtual Traveling",
-    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80",
+    developer: "Travel Media",
+    publisher: "Travel Media",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.2 GB",
+    playerMode: "Single User",
+    features: [
+      "360 historical sight overlays",
+      "Voiceover translation guides",
+      "Historical zoom magnifying lenses",
+      "Interactive map search selectors"
+    ]
   },
   {
     id: "wander",
@@ -583,6 +1095,18 @@ export const gamesData: Game[] = [
     tags: ["Geography", "Maps", "Travel", "Relaxing"],
     playStyle: "Sitting/Standing",
     actionType: "Virtual Exploration",
-    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80"
+    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80",
+    developer: "Parkline Studio",
+    publisher: "Parkline Studio",
+    comfortRating: "Comfortable",
+    controllers: "Touch/Hand Tracking",
+    spaceRequired: "1.4 GB",
+    playerMode: "Single User / Co-op",
+    features: [
+      "Google Street View mapping overlays",
+      "Time-travel historical photo sliders",
+      "Co-op multiplayer voice tours",
+      "Integrated Wikipedia reference blocks"
+    ]
   }
 ];

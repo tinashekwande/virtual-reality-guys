@@ -20,7 +20,10 @@ import {
   Check, 
   ChevronRight, 
   CalendarCheck,
-  Star
+  Star,
+  Gamepad,
+  Info,
+  Shield
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { gamesData, Game } from "@/lib/gamesData"
@@ -278,11 +281,11 @@ export default function VRCatalogueClient() {
           onClick={() => setSelectedGame(null)}
         >
           <div 
-            className="bg-card border border-border/80 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl animate-scale-in"
+            className="bg-card border border-border/80 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl animate-scale-in flex flex-col max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Image banner */}
-            <div className="relative h-64 w-full bg-secondary/10">
+            <div className="relative h-48 sm:h-64 w-full bg-secondary/10 flex-shrink-0">
               <img 
                 src={selectedGame.image} 
                 alt={selectedGame.title} 
@@ -297,9 +300,11 @@ export default function VRCatalogueClient() {
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 sm:p-8 space-y-6">
-              <div className="space-y-2">
+            {/* Modal Content - Scrollable to fit any height */}
+            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
+              
+              {/* Header Info */}
+              <div className="space-y-1">
                 <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                   {getCategoryIcon(selectedGame.category)}
                   {selectedGame.category}
@@ -307,48 +312,95 @@ export default function VRCatalogueClient() {
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
                   {selectedGame.title}
                 </h2>
+                {selectedGame.developer && (
+                  <p className="text-xs text-muted-foreground font-medium">
+                    Developed by <span className="text-primary/95">{selectedGame.developer}</span>
+                    {selectedGame.publisher && ` • Published by ${selectedGame.publisher}`}
+                  </p>
+                )}
               </div>
 
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                {selectedGame.longDesc}
-              </p>
+              {/* Meta Horizon Stats Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-secondary/10 border border-border/40 rounded-2xl p-4">
+                <div className="flex flex-col items-center justify-center text-center p-2">
+                  <Activity className="h-5 w-5 text-primary mb-1" />
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Comfort</span>
+                  <span className="text-xs font-bold text-white mt-0.5">{selectedGame.comfortRating || "Moderate"}</span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-2 border-l border-border/20 max-sm:border-l-0">
+                  <Users className="h-5 w-5 text-primary mb-1" />
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Players</span>
+                  <span className="text-xs font-bold text-white mt-0.5">{selectedGame.playerMode || "Single User"}</span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-2 border-l border-border/20 max-sm:border-l-0">
+                  <Gamepad className="h-5 w-5 text-primary mb-1" />
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Input</span>
+                  <span className="text-xs font-bold text-white mt-0.5 truncate max-w-full" title={selectedGame.controllers}>
+                    {selectedGame.controllers || "Touch"}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-2 border-l border-border/20">
+                  <Shield className="h-5 w-5 text-primary mb-1" />
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Space Req.</span>
+                  <span className="text-xs font-bold text-white mt-0.5">{selectedGame.spaceRequired || "1.5 GB"}</span>
+                </div>
+              </div>
 
-              {/* Specs Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-border/40">
-                <div className="bg-background/40 border border-border/60 rounded-2xl p-3 text-center">
-                  <div className="text-[10px] text-muted-foreground uppercase font-semibold">Play Style</div>
-                  <div className="text-xs sm:text-sm font-bold text-white mt-1 truncate" title={selectedGame.playStyle}>
-                    {selectedGame.playStyle}
-                  </div>
+              {/* Long Description */}
+              <div className="space-y-2">
+                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider flex items-center gap-1">
+                  <Info className="h-3 w-3" /> About This Experience
                 </div>
-                <div className="bg-background/40 border border-border/60 rounded-2xl p-3 text-center">
-                  <div className="text-[10px] text-muted-foreground uppercase font-semibold">Action Style</div>
-                  <div className="text-xs sm:text-sm font-bold text-white mt-1 truncate" title={selectedGame.actionType}>
-                    {selectedGame.actionType}
-                  </div>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  {selectedGame.longDesc}
+                </p>
+              </div>
+
+              {/* Bullet Features (Meta style highlights) */}
+              {selectedGame.features && selectedGame.features.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Key Highlights & Features</div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
+                    {selectedGame.features.map(feat => (
+                      <li key={feat} className="flex items-start gap-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="bg-background/40 border border-border/60 rounded-2xl p-3 text-center">
-                  <div className="text-[10px] text-muted-foreground uppercase font-semibold">Difficulty</div>
-                  <div className="text-xs sm:text-sm font-bold text-white mt-1">
+              )}
+
+              {/* Quick Specs Grid */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3 pt-4 border-t border-border/40 text-xs">
+                <div className="flex justify-between border-b border-border/10 pb-1.5">
+                  <span className="text-muted-foreground">Action Type</span>
+                  <span className="font-semibold text-white">{selectedGame.actionType}</span>
+                </div>
+                <div className="flex justify-between border-b border-border/10 pb-1.5">
+                  <span className="text-muted-foreground">Play Style</span>
+                  <span className="font-semibold text-white">{selectedGame.playStyle}</span>
+                </div>
+                <div className="flex justify-between border-b border-border/10 pb-1.5">
+                  <span className="text-muted-foreground">Difficulty</span>
+                  <span className="font-semibold text-white">
                     {["Easy", "Medium", "Hard", "Very Hard", "Extreme"][selectedGame.difficulty - 1] || "Medium"}
-                  </div>
+                  </span>
                 </div>
-                <div className="bg-background/40 border border-border/60 rounded-2xl p-3 text-center">
-                  <div className="text-[10px] text-muted-foreground uppercase font-semibold">Suitability</div>
-                  <div className="text-xs sm:text-sm font-bold text-white mt-1 truncate" title={selectedGame.suitability}>
-                    {selectedGame.suitability}
-                  </div>
+                <div className="flex justify-between border-b border-border/10 pb-1.5">
+                  <span className="text-muted-foreground">Age Suitability</span>
+                  <span className="font-semibold text-white">{selectedGame.suitability}</span>
                 </div>
               </div>
 
               {/* Tags */}
               <div className="space-y-2">
-                <div className="text-[10px] text-muted-foreground uppercase font-semibold">Gameplay Tags</div>
+                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Tags</div>
                 <div className="flex flex-wrap gap-2">
                   {selectedGame.tags.map(tag => (
                     <span 
                       key={tag}
-                      className="text-xs px-3 py-1 rounded-lg bg-secondary/80 border border-border/60 text-white"
+                      className="text-xs px-2.5 py-0.5 rounded-md bg-secondary/40 border border-border/40 text-white font-medium hover:border-primary/40 transition-colors"
                     >
                       {tag}
                     </span>
@@ -356,22 +408,23 @@ export default function VRCatalogueClient() {
                 </div>
               </div>
 
-              {/* Modal Footer Actions */}
-              <div className="flex flex-wrap justify-between items-center gap-4 pt-6 border-t border-border/40">
-                <span className="text-xs text-muted-foreground">
-                  Rated: <strong className="text-white">{selectedGame.suitability}</strong>
-                </span>
-                
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setSelectedGame(null)} className="rounded-xl border-border/80 hover:bg-secondary">
-                    Close
-                  </Button>
-                  <Button asChild className="rounded-xl font-bold bg-primary text-black hover:shadow-lg hover:shadow-primary/30">
-                    <Link href={`/contact?game=${encodeURIComponent(selectedGame.title)}`}>
-                      <CalendarCheck className="mr-2 h-4.5 w-4.5" /> Book Experience
-                    </Link>
-                  </Button>
-                </div>
+            </div>
+
+            {/* Modal Footer Actions - Sticky bottom */}
+            <div className="flex flex-wrap justify-between items-center gap-4 p-6 border-t border-border/40 bg-card/90 backdrop-blur-md flex-shrink-0">
+              <span className="text-xs text-muted-foreground">
+                Rated: <strong className="text-white">{selectedGame.suitability}</strong>
+              </span>
+              
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setSelectedGame(null)} className="rounded-xl border-border/80 hover:bg-secondary">
+                  Close
+                </Button>
+                <Button asChild className="rounded-xl font-bold bg-primary text-black hover:shadow-lg hover:shadow-primary/30">
+                  <Link href={`/contact?game=${encodeURIComponent(selectedGame.title)}`}>
+                    <CalendarCheck className="mr-2 h-4.5 w-4.5" /> Book Experience
+                  </Link>
+                </Button>
               </div>
             </div>
 
