@@ -55,7 +55,7 @@ export const gamesData: Game[] = [
   },
   {
     id: "cursed-night-house",
-    title: "Cursed Night: The House",
+    title: "Cursed Night – The House",
     category: "Horror Experiences",
     suitability: "Teens & Adults",
     shortDesc: "Explore a haunted house and escape its cursed entities.",
@@ -65,6 +65,58 @@ export const gamesData: Game[] = [
     playStyle: "Standing/Room-Scale",
     actionType: "Exploration Horror",
     image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740570/header.jpg"
+  },
+  {
+    id: "z-show",
+    title: "Z-Show",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Survive a deadly zombie-infested television game show.",
+    longDesc: "Z-Show casts you as a contestant in a apocalyptic, dystopian game show where the prize is your life. Face swarms of walking dead, activate arena traps, and keep the audience entertained to secure supplies in this high-tension horror shootout.",
+    difficulty: 4,
+    tags: ["Zombies", "Survival", "Action", "Arena"],
+    playStyle: "Standing",
+    actionType: "Zombie Combat",
+    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "cursed-echoes",
+    title: "Cursed Echoes",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Investigate whispering ruins and piece together cursed histories.",
+    longDesc: "Cursed Echoes is a psychological thriller that relies on spatial audio. Navigate shifting dark corridors, solve auditory puzzles, and avoid spectral entities that react to every sound you make in the real world.",
+    difficulty: 4,
+    tags: ["Audio-focus", "Mystery", "Atmospheric", "Spooky"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Psychological Horror",
+    image: "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "descending",
+    title: "Descending",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Descend into dark caverns with only a flashlight and your wits.",
+    longDesc: "Descending puts you in the shoes of a deep cave explorer. As your ropes break, you find yourself trapped in an ancient, uncharted cavern system. Explore narrow tunnels, manage your oxygen, and discover what lurks in the absolute dark.",
+    difficulty: 5,
+    tags: ["Caves", "Exploration", "Survival", "Claustrophobic"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Survival Horror",
+    image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "panic-room-mr",
+    title: "Panic Room MR",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Transform your actual room into a haunted mixed reality escape game.",
+    longDesc: "Panic Room MR uses advanced pass-through mixed reality. Watch as ghosts break through your physical walls and haunted objects float in your living room. Solve clues anchored in your physical space to escape the curse.",
+    difficulty: 4,
+    tags: ["Mixed Reality", "Escape Room", "Interactive", "Spooky"],
+    playStyle: "Room-Scale",
+    actionType: "Mixed Reality Escape",
+    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80"
   },
 
   // 2. Fighting & Action Games
@@ -83,16 +135,42 @@ export const gamesData: Game[] = [
   },
   {
     id: "creed-rise-glory",
-    title: "Creed: Rise to Glory",
+    title: "Creed",
     category: "Fighting & Action Games",
     suitability: "Ages 10+",
     shortDesc: "Step into the boxing ring and fight your way to the top.",
-    longDesc: "Creed: Rise to Glory lets you train under Rocky Balboa and fight against legendary boxers. Features responsive boxing physics, stamina-draining physical movement, and multiplayer matches that test your endurance and boxing skills.",
+    longDesc: "Creed (Rise to Glory) lets you train under Rocky Balboa and fight against legendary boxers. Features responsive boxing physics, stamina-draining physical movement, and multiplayer matches that test your endurance and boxing skills.",
     difficulty: 4,
     tags: ["Sports", "Boxing", "Active", "Simulation"],
     playStyle: "Standing",
     actionType: "Active Boxing",
     image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/945980/header.jpg"
+  },
+  {
+    id: "100-day-siege",
+    title: "100 Day Siege",
+    category: "Fighting & Action Games",
+    suitability: "Ages 10+",
+    shortDesc: "Defend your castle gates against waves of fantasy armies.",
+    longDesc: "100 Day Siege is a tactical defensive combat game. Position archers, pour boiling oil, and step onto the ramparts with your broadsword to defend your kingdom's final outpost against giants, orcs, and siege engines.",
+    difficulty: 3,
+    tags: ["Defensive", "Combat", "Tactical", "Medieval"],
+    playStyle: "Standing",
+    actionType: "Castle Defense",
+    image: "https://images.unsplash.com/photo-1533228894184-754f91165a2d?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "legacy-awake",
+    title: "Legacy Awake",
+    category: "Fighting & Action Games",
+    suitability: "Ages 10+",
+    shortDesc: "Embark on an epic fantasy quest to awaken ancient guardians.",
+    longDesc: "Legacy Awake places you in a stunning high-fantasy realm. Solve puzzle gates, learn spells, and fight colossal guardians using magical shields and swords to bring light back to a forgotten kingdom.",
+    difficulty: 3,
+    tags: ["Fantasy", "Spells", "Adventure", "Combat"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Fantasy Action",
+    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80"
   },
 
   // 3. Driving & Racing Simulation
@@ -122,6 +200,58 @@ export const gamesData: Game[] = [
     actionType: "Precision Simulation",
     image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1324410/header.jpg"
   },
+  {
+    id: "speed-racer",
+    title: "Speed Racer",
+    category: "Driving & Racing Simulation",
+    suitability: "All Ages",
+    shortDesc: "Race at breakneck speeds down futuristic, looping tracks.",
+    longDesc: "Speed Racer is a high-speed arcade racing simulator. Grip the steering wheel and speed down gravity-defying vertical loops, boost pads, and drift corners against competitive AI in a neon-drenched skyway.",
+    difficulty: 3,
+    tags: ["Speed", "Racing", "Arcade", "Thrill"],
+    playStyle: "Sitting",
+    actionType: "Arcade Racing",
+    image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "z-race",
+    title: "Z Race",
+    category: "Driving & Racing Simulation",
+    suitability: "All Ages",
+    shortDesc: "Pilot futuristic hovercrafts in zero-gravity racing leagues.",
+    longDesc: "Z Race is a fresh hovercraft racing game. Fly through rings, collect boosts, and maneuver through zero-gravity tunnels. Features high visual fidelity and responsive flight controls tailored for VR cockpits.",
+    difficulty: 4,
+    tags: ["Sci-Fi", "Zero-G", "Racing", "Futuristic"],
+    playStyle: "Sitting",
+    actionType: "Hovercraft Racing",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1348750/header.jpg"
+  },
+  {
+    id: "formula-x",
+    title: "Formula X",
+    category: "Driving & Racing Simulation",
+    suitability: "Teens & Adults",
+    shortDesc: "Experience the speed and G-forces of professional F1 track racing.",
+    longDesc: "Formula X brings F1 simulation to VR. Complete with tire management, pit stops, and realistic steering feedback, race on world-famous circuits and shave milliseconds off your lap time in search of the podium.",
+    difficulty: 4,
+    tags: ["Formula", "Simulation", "Tracks", "Precision"],
+    playStyle: "Sitting",
+    actionType: "F1 Racing Sim",
+    image: "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "bus-parking-vr",
+    title: "Bus Parking VR",
+    category: "Driving & Racing Simulation",
+    suitability: "All Ages",
+    shortDesc: "Steer and park double-decker buses in heavy city traffic.",
+    longDesc: "Bus Parking VR elevates the parking simulator genre. Manage the massive turn radius of city buses, watch your mirrors, avoid pedestrians, and slide into narrow terminal bays in structured parking scenarios.",
+    difficulty: 4,
+    tags: ["Bus", "Parking", "Heavy Vehicle", "Precision"],
+    playStyle: "Sitting",
+    actionType: "Parking Simulator",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80"
+  },
 
   // 4. Adventure & Thrill Rides
   {
@@ -150,6 +280,58 @@ export const gamesData: Game[] = [
     actionType: "Aquatic Safari",
     image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/422760/header.jpg"
   },
+  {
+    id: "deepwater",
+    title: "Deepwater",
+    category: "Adventure & Thrill Rides",
+    suitability: "All Ages",
+    shortDesc: "Pilot a deep-sea submersible and explore shipwrecks and thermal vents.",
+    longDesc: "Deepwater puts you inside a high-tech submarine research vessel. Descend to the Mariana Trench, guide robotic claws to collect deep-sea flora, and illuminate mysterious trenches filled with glowing bioluminescent life.",
+    difficulty: 2,
+    tags: ["Submarine", "Deep-sea", "Nature", "Relaxing"],
+    playStyle: "Sitting",
+    actionType: "Aquatic Exploration",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "escape-room",
+    title: "Escape Room",
+    category: "Adventure & Thrill Rides",
+    suitability: "All Ages",
+    shortDesc: "Solve environmental puzzles to escape locked rooms under pressure.",
+    longDesc: "Escape Room VR presents multiple themed rooms: an ancient Pharaoh's tomb, a high-tech hacker den, and a mad scientist's lab. Work together or race the clock, uncovering hidden keys and deciphering cryptographic codes.",
+    difficulty: 3,
+    tags: ["Puzzles", "Escape", "Co-op", "Brain"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Puzzle Adventure",
+    image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "coaster-combat",
+    title: "Coaster Combat",
+    category: "Adventure & Thrill Rides",
+    suitability: "All Ages",
+    shortDesc: "Shoot targets and dodge obstacles while riding extreme rollercoasters.",
+    longDesc: "Coaster Combat turns the classic rollercoaster into an active shooting gallery. Wield dual laser blasters, shoot glowing targets along the rails, lean physical left and right to dodge obstacles, and beat the high score.",
+    difficulty: 3,
+    tags: ["Rollercoaster", "Shooter", "Active", "Thrill"],
+    playStyle: "Sitting",
+    actionType: "Rollercoaster Shooter",
+    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "park",
+    title: "Park",
+    category: "Adventure & Thrill Rides",
+    suitability: "All Ages",
+    shortDesc: "Walk through prehistoric valleys and interact with dinosaurs.",
+    longDesc: "Park takes you on a safari through a lush prehistoric reserve. Stand face-to-face with a towering Brachiosaurus, feed a baby Triceratops, and escape a Tyrannosaurus Rex in a thrilling, cinematic safari loop.",
+    difficulty: 1,
+    tags: ["Dinosaurs", "Safari", "Nature", "Cinematic"],
+    playStyle: "Sitting/Standing",
+    actionType: "Nature Safari",
+    image: "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=600&q=80"
+  },
 
   // 5. Shooting Games
   {
@@ -167,7 +349,7 @@ export const gamesData: Game[] = [
   },
   {
     id: "repossessed-zombie",
-    title: "Repossessed (Zombie Shooting)",
+    title: "Repossessed",
     category: "Shooting Games",
     suitability: "Ages 12+",
     shortDesc: "Fight for survival against hordes of terrifying zombies.",
@@ -177,6 +359,58 @@ export const gamesData: Game[] = [
     playStyle: "Standing",
     actionType: "Zombie Survival",
     image: "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "anshar-2",
+    title: "Anshar 2",
+    category: "Shooting Games",
+    suitability: "Ages 10+",
+    shortDesc: "Pilot a space fighter jet in fast-paced sci-fi dogfights.",
+    longDesc: "Anshar 2: Hyperdrive puts you inside the cockpit of a fighter starship. Loop, barrel-roll, and lock missiles onto enemy fleets across deep space, asteroid fields, and planetary surfaces in full 3D dogfights.",
+    difficulty: 4,
+    tags: ["Space", "Flight", "Jet", "Sci-Fi"],
+    playStyle: "Sitting/Standing",
+    actionType: "Space Dogfight",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1579730/header.jpg"
+  },
+  {
+    id: "spatial-web-shooter",
+    title: "Spatial Web Shooter",
+    category: "Shooting Games",
+    suitability: "Ages 8+",
+    shortDesc: "Shoot cyber-webs to trap and capture waves of robot spider drones.",
+    longDesc: "Spatial Web Shooter is a high-tech arcade shootout. Launch electrical, sticky cybernetic webs from your wrists to tie up and disable mechanical spiders climbing up your physical space walls.",
+    difficulty: 2,
+    tags: ["Active", "Robots", "Sci-Fi", "Score-chase"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Target Shooter",
+    image: "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "bodycam-unrecord",
+    title: "Bodycam Unrecord",
+    category: "Shooting Games",
+    suitability: "Teens & Adults",
+    shortDesc: "Experience ultra-realistic tactical military combat via a bodycam lens.",
+    longDesc: "Bodycam Unrecord is a tactical shooter focused on realism. Moving through deserted industrial complexes, reload realistic weapons, lean around corners, and communicate with your squad using real bodycam angles.",
+    difficulty: 5,
+    tags: ["Realism", "Tactical", "Military", "Co-op"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Tactical Shooter",
+    image: "https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "pistol-whip",
+    title: "Pistol Whip",
+    category: "Shooting Games",
+    suitability: "Ages 12+",
+    shortDesc: "Shoot and dodge obstacles to the beat in an action rhythm game.",
+    longDesc: "Pistol Whip is an action-movie rhythm shooter. Shoot, dodge, and melee through a colorful cinematic dreamscape, synchronizing your physical movements to the thumping electronic soundtrack to maximize score multiplier.",
+    difficulty: 4,
+    tags: ["Rhythm", "Music", "Active", "Shooter"],
+    playStyle: "Standing",
+    actionType: "Rhythm Shooter",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1079800/header.jpg"
   },
 
   // 6. Sports & Fitness
@@ -208,11 +442,11 @@ export const gamesData: Game[] = [
   },
   {
     id: "cooking-games",
-    title: "The Cooking Games",
+    title: "The Cooking Game VR",
     category: "Sports & Fitness",
     suitability: "All Ages",
     shortDesc: "Chop, cook, and serve delicious dishes in a fast-paced virtual kitchen.",
-    longDesc: "The Cooking Games puts you in charge of a busy, chaotic kitchen. Slice ingredients, fry burgers, assemble orders, and manage your time to keep customers happy. A physical and frantic cooking simulator that tests your hand-eye coordination.",
+    longDesc: "The Cooking Game VR puts you in charge of a busy, chaotic kitchen. Slice ingredients, fry burgers, assemble orders, and manage your time to keep customers happy. A physical and frantic cooking simulator that tests your hand-eye coordination.",
     difficulty: 2,
     tags: ["Simulation", "Cooking", "Time-Management", "Family"],
     playStyle: "Standing",
@@ -223,11 +457,11 @@ export const gamesData: Game[] = [
   // 7. Educational & Learning Experiences
   {
     id: "cosmic-vr",
-    title: "Cosmic VR – Space in Your Room",
+    title: "Cosmic XR",
     category: "Educational & Learning Experiences",
     suitability: "Schools & Educational Events",
     shortDesc: "Walk among the stars and explore our solar system up close.",
-    longDesc: "Cosmic VR transforms your room into an interactive cosmos. Walk around planets, inspect orbits, witness supernovas, and see the scale of the universe in a visually stunning educational exploration of space.",
+    longDesc: "Cosmic XR transforms your room into an interactive cosmos. Walk around planets, inspect orbits, witness supernovas, and see the scale of the universe in a visually stunning educational exploration of space.",
     difficulty: 1,
     tags: ["Space", "Astronomy", "Educational", "Interactive"],
     playStyle: "Sitting/Standing",
@@ -262,15 +496,93 @@ export const gamesData: Game[] = [
   },
   {
     id: "overview-360",
-    title: "Overview 360",
+    title: "Sky Overview 360",
     category: "Educational & Learning Experiences",
     suitability: "Schools & Educational Events",
     shortDesc: "Fly around the globe and view earth's structures in 360-degree glory.",
-    longDesc: "Overview 360 gives you an astronaut's perspective of planet Earth. Fly around orbits, see cities lit up at night, watch weather cycles move across the atmosphere, and learn about satellite telemetry in a relaxed orbital simulation.",
+    longDesc: "Sky Overview 360 gives you an astronaut's perspective of planet Earth. Fly around orbits, see cities lit up at night, watch weather cycles move across the atmosphere, and learn about satellite telemetry in a relaxed orbital simulation.",
     difficulty: 1,
     tags: ["Space", "Earth", "Relaxing", "Cinematic"],
     playStyle: "Sitting",
     actionType: "Cinematic Experience",
     image: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "ambulate-to-wheelchair",
+    title: "Ambulate to Wheelchair",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Healthcare Events",
+    shortDesc: "Train in clinical patient mobilization from a bed to a wheelchair.",
+    longDesc: "Ambulate to Wheelchair is an interactive medical nursing training simulator. Practice body mechanics, safety locking, pivot steps, and communication cues while assisting a virtual patient from their bedside into a wheelchair.",
+    difficulty: 2,
+    tags: ["Medical", "Healthcare", "Nursing", "Simulation"],
+    playStyle: "Standing",
+    actionType: "Nursing Simulation",
+    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "hallo-einstein",
+    title: "Hallo Einstein",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Enter Albert Einstein's study and explore theoretical physics.",
+    longDesc: "Hallo Einstein places you inside the historic patent office. Solve physics puzzles, slide blocks to test special relativity, and converse with an interactive animated Albert Einstein in a charming historical simulator.",
+    difficulty: 1,
+    tags: ["Physics", "History", "Science", "Interactives"],
+    playStyle: "Sitting/Standing",
+    actionType: "Science Laboratory",
+    image: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "10k-science",
+    title: "10K Science",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Perform chemical experiments safely inside a virtual science lab.",
+    longDesc: "10K Science is a comprehensive virtual chemistry and biology laboratory. Mix elements, run centrifuges, observe micro-organisms through virtual microscopes, and complete safe, curriculum-aligned experiments.",
+    difficulty: 2,
+    tags: ["Chemistry", "Biology", "Science", "School"],
+    playStyle: "Standing",
+    actionType: "Science Laboratory",
+    image: "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "ambulate-transfer-belt",
+    title: "Ambulate Transfer Belt",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Healthcare Events",
+    shortDesc: "Learn nursing safety procedures using physical gait transfer belts.",
+    longDesc: "Ambulate Transfer Belt teaches nursing and physical therapy safety guidelines. Practice adjusting, tightening, and holding gait belts while lifting, supporting, and walking patients through rehabilitation paths.",
+    difficulty: 2,
+    tags: ["Medical", "Healthcare", "Nursing", "Training"],
+    playStyle: "Standing",
+    actionType: "Nursing Simulation",
+    image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "world-lens-vr",
+    title: "World Lens VR",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Explore global landmarks and heritage sites in 360-degree tours.",
+    longDesc: "World Lens VR is a travel documentarian simulator. Travel to the Great Wall of China, Eiffel Tower, Colosseum, and more, reading built-in histories, taking 3D photos, and discovering cultural milestones.",
+    difficulty: 1,
+    tags: ["Geography", "History", "Travel", "Nature"],
+    playStyle: "Sitting/Standing",
+    actionType: "Virtual Traveling",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "wander",
+    title: "Wander",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Teleport to any street or landmark on Earth using Google Street View.",
+    longDesc: "Wander lets you explore the entire globe from a street-level perspective. Walk through your childhood neighborhood, visit polar reserves, or scale historic squares with voice search and cooperative multiplayer tours.",
+    difficulty: 1,
+    tags: ["Geography", "Maps", "Travel", "Relaxing"],
+    playStyle: "Sitting/Standing",
+    actionType: "Virtual Exploration",
+    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80"
   }
 ];
