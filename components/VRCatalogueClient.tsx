@@ -371,6 +371,27 @@ export default function VRCatalogueClient() {
                 </div>
               )}
 
+              {/* Game Scenes Gallery */}
+              {selectedGame.galleryImages && selectedGame.galleryImages.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Experience Gallery</div>
+                  <div className="flex gap-3 overflow-x-auto pb-2 snap-x scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+                    {selectedGame.galleryImages.map((img, idx) => (
+                      <div 
+                        key={idx} 
+                        className="relative h-28 w-48 rounded-xl overflow-hidden border border-border/40 hover:border-primary/40 flex-shrink-0 snap-start transition-all duration-300"
+                      >
+                        <img 
+                          src={img} 
+                          alt={`${selectedGame.title} Scene ${idx + 1}`} 
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Quick Specs Grid */}
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 pt-4 border-t border-border/40 text-xs">
                 <div className="flex justify-between border-b border-border/10 pb-1.5">

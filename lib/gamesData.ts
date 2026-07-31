@@ -17,6 +17,7 @@ export interface Game {
   spaceRequired?: string;
   playerMode?: string;
   features?: string[];
+  galleryImages?: string[];
 }
 
 export const gamesData: Game[] = [
@@ -45,6 +46,11 @@ export const gamesData: Game[] = [
       "Superhero flight mode",
       "Firefighting mini-missions",
       "Skybrush skywriting tool"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -70,6 +76,11 @@ export const gamesData: Game[] = [
       "Heart-rate monitoring mechanics",
       "Randomized horror triggers",
       "Light and sound navigation puzzles"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -78,7 +89,7 @@ export const gamesData: Game[] = [
     category: "Horror Experiences",
     suitability: "Teens & Adults",
     shortDesc: "Confront your deepest fears in spine-chilling scenarios.",
-    longDesc: "Face Your Fears exposes you to common phobias and horror scenarios in full 360-degree immersion. From haunted houses to towering heights and paranormal entities, this experience is designed to test your limits and get your adrenaline pumping.",
+    longDesc: "Face Your Fears exposes you to common phobias and horror scenarios in full 360-degree immersion. From haunted houses to heights and paranormal entities, this experience is designed to test your limits and get your adrenaline pumping.",
     difficulty: 5,
     tags: ["Atmospheric", "Spooky", "Short Play", "Jump Scares"],
     playStyle: "Sitting",
@@ -95,6 +106,11 @@ export const gamesData: Game[] = [
       "Haunted children's bedroom module",
       "Giant skyscraper attack module",
       "Deep-sea ghost ship experience"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -120,6 +136,11 @@ export const gamesData: Game[] = [
       "Ambient lighting toggle mechanics",
       "3D spatial audio whispers",
       "Lock-and-key room locks"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -145,6 +166,11 @@ export const gamesData: Game[] = [
       "Crowd noise feedback audio loop",
       "Interactive stage environmental traps",
       "High-score wave multiplier tracker"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -170,6 +196,11 @@ export const gamesData: Game[] = [
       "Spatial echo-location scanners",
       "Shifting non-euclidean labyrinth",
       "Microphone audio feedback detection"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -195,6 +226,11 @@ export const gamesData: Game[] = [
       "Realistic flashlight battery mechanics",
       "Cave-in survival navigation scenarios",
       "Mysterious runic text decryption"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -220,6 +256,11 @@ export const gamesData: Game[] = [
       "Anchored holographic props",
       "Furniture collider recognition",
       "Local multiplayer escape cooperation"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
@@ -247,6 +288,11 @@ export const gamesData: Game[] = [
       "Real-time deflection and parrying",
       "Sword slice physics system",
       "Slow-motion cinematic execution states"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -272,6 +318,11 @@ export const gamesData: Game[] = [
       "Rocky Balboa training gyms",
       "Championship campaign mode",
       "Cross-platform PvP boxing matches"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -297,6 +348,11 @@ export const gamesData: Game[] = [
       "Physical archery mechanics",
       "Boiling oil kettle physics triggers",
       "Multi-stage fantasy wave sieges"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1533228894184-754f91165a2d?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -322,6 +378,11 @@ export const gamesData: Game[] = [
       "Ancient puzzle portal structures",
       "Titan climbing combat battles",
       "High-fidelity high-fantasy art direction"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
@@ -349,6 +410,11 @@ export const gamesData: Game[] = [
       "Live weather & daylight cycles",
       "Interactive steering and gears",
       "Intelligent road traffic AI"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -374,6 +440,11 @@ export const gamesData: Game[] = [
       "Audio-assist parking sensors",
       "100+ precision driving puzzles",
       "Interactive physics gear shifting"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -399,6 +470,11 @@ export const gamesData: Game[] = [
       "Drifting speed boost multiplier",
       "Sky-high vertical loops",
       "Immersive dashboard cockpit HUD"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -424,6 +500,11 @@ export const gamesData: Game[] = [
       "Vibrant cybernetic space tracks",
       "Speed gate acceleration rings",
       "Global leaderboard time trials"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -449,6 +530,11 @@ export const gamesData: Game[] = [
       "Dynamic tire degradation & pits",
       "Force-feedback steering integration",
       "Laser-scanned real world track maps"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1560855814-114afabdfa20?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -474,6 +560,11 @@ export const gamesData: Game[] = [
       "Platform passenger alignment markers",
       "Integrated rearview mirror cameras",
       "Multiple articulated vehicle chassis"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
@@ -501,6 +592,11 @@ export const gamesData: Game[] = [
       "Interactive military flight cockpit",
       "Weapon tracking laser targeters",
       "Physiological stomach-drop curves"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -526,6 +622,11 @@ export const gamesData: Game[] = [
       "AI-driven predator/prey behavior",
       "Educational narrative guides",
       "Interactive whale and turtle feed prompts"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -551,6 +652,11 @@ export const gamesData: Game[] = [
       "Hydrodynamic grabber claw controls",
       "Fauna photography collection logs",
       "High-power spotlight pathfinder system"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -576,6 +682,11 @@ export const gamesData: Game[] = [
       "Physics dials, keys, and gears",
       "Interactive puzzle clue journals",
       "Timer-based challenge modes"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -601,6 +712,11 @@ export const gamesData: Game[] = [
       "Dual rapid-fire neon blasters",
       "Lean-to-dodge obstacle mechanics",
       "Dynamic scoreboard combos and multipliers"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -626,6 +742,11 @@ export const gamesData: Game[] = [
       "Detailed foliage and terrain physics",
       "Prehistoric reserve truck trail ride",
       "Wildlife snapshot photo log rewards"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
@@ -653,6 +774,11 @@ export const gamesData: Game[] = [
       "Physical mirror reflection shields",
       "Bullet-time slowdown drone dodges",
       "Global leaderboards score tracking"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -678,6 +804,11 @@ export const gamesData: Game[] = [
       "Shotgun slide pumps",
       "Fortified window wave blockers",
       "Flashlight directional darkness overlay"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -703,6 +834,11 @@ export const gamesData: Game[] = [
       "Multi-lock missile targeting arrays",
       "Full 360 space debris battle rings",
       "10-stage cinematic mission campaign"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -728,6 +864,11 @@ export const gamesData: Game[] = [
       "Physics-tension line pull",
       "Fracturing mechanical spider parts",
       "Automated laser sight assists"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -753,6 +894,11 @@ export const gamesData: Game[] = [
       "Manual tactical weapon reloads",
       "S.W.A.T squad briefing modes",
       "Directional spatial audio alerts"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -778,6 +924,11 @@ export const gamesData: Game[] = [
       "Action-movie style narrative campaigns",
       "Weapon configurations and skin sets",
       "Active fitness cardio tracking"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
@@ -805,6 +956,11 @@ export const gamesData: Game[] = [
       "360-degree immersive speaker tracks",
       "Custom beatmaps editor tool",
       "Active cardio fitness tracker dashboard"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -830,6 +986,11 @@ export const gamesData: Game[] = [
       "Penalty targeting grids",
       "Simulated crowd noise cheer loops",
       "Cardio calorie-burned readouts"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -855,10 +1016,15 @@ export const gamesData: Game[] = [
       "Rush-hour countdown tickets",
       "Multi-recipe cooking sheets",
       "Clean-up & dishwasher simulator challenges"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
-  // 7. Educational & Learning Experiences
+  // 7. Educational & Learning Experiences (Expanded with 21 new titles)
   {
     id: "cosmic-vr",
     title: "Cosmic XR",
@@ -882,6 +1048,11 @@ export const gamesData: Game[] = [
       "Planet size comparison maps",
       "Annotated stellar encyclopedias",
       "Supernova visual timeline animations"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -907,6 +1078,11 @@ export const gamesData: Game[] = [
       "Animated blood flow simulations",
       "High-power zoom organ examinations",
       "Integrated biology quiz sets"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -932,6 +1108,11 @@ export const gamesData: Game[] = [
       "Ice climbing rope and pick physics",
       "Expedition field camera lens system",
       "Immersive weather blizzard cycles"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -957,6 +1138,11 @@ export const gamesData: Game[] = [
       "Dynamic weather storm trackers",
       "Orbit telemetry readouts",
       "Interactive globe spinning control"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -982,6 +1168,11 @@ export const gamesData: Game[] = [
       "Real-time weight shifting gauges",
       "Dialogue communication queues",
       "Safety brake validation check"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -1007,6 +1198,11 @@ export const gamesData: Game[] = [
       "Conversation engines with Einstein",
       "Patent office historical tours",
       "Physics velocity block experiments"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -1032,6 +1228,11 @@ export const gamesData: Game[] = [
       "Functional slides & microscopes",
       "Chemical fire safety drills",
       "Curriculum-aligned chemical guides"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -1057,6 +1258,11 @@ export const gamesData: Game[] = [
       "Real-time spine strain detectors",
       "Interactive patient safety triggers",
       "Assisted walking training corridors"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -1082,6 +1288,11 @@ export const gamesData: Game[] = [
       "Voiceover translation guides",
       "Historical zoom magnifying lenses",
       "Interactive map search selectors"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
@@ -1107,6 +1318,644 @@ export const gamesData: Game[] = [
       "Time-travel historical photo sliders",
       "Co-op multiplayer voice tours",
       "Integrated Wikipedia reference blocks"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+
+  // ---- START 21 NEW EDUCATIONAL EXPERIENCES ----
+  {
+    id: "anne-frank-vr",
+    title: "Anne Frank House VR",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Step back in time to explore the secret annex where Anne Frank hid.",
+    longDesc: "Anne Frank House VR offers a unique and highly emotional insight into the Secret Annex where Anne Frank and seven others hid from Nazi persecution during World War II. Walk through the realistically reconstructed rooms, decorated as they were during the hiding period, and experience history up close.",
+    difficulty: 1,
+    tags: ["History", "World War II", "Literature", "Empathy"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Historical Tour",
+    image: "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=600&q=80",
+    developer: "Force Field VR",
+    publisher: "Anne Frank House",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.4 GB",
+    playerMode: "Single User",
+    features: [
+      "1:1 historical layout reproduction",
+      "Narrated diary excerpts",
+      "Interactive background objects",
+      "Highly detailed lighting and soundscapes"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "hold-the-world",
+    title: "Hold the World",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Examine rare fossils with Sir David Attenborough in a virtual museum.",
+    longDesc: "Hold the World is an interactive VR experience that teleports you inside London's Natural History Museum. Join a virtual Sir David Attenborough in a private library where you can pick up, rotate, scale, and study rare fossil specimens, prehistoric bones, and delicate insects.",
+    difficulty: 1,
+    tags: ["Paleontology", "Biology", "Museum", "Science"],
+    playStyle: "Sitting",
+    actionType: "Museum Science",
+    image: "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=600&q=80",
+    developer: "Sky VR",
+    publisher: "Factory 42 Studios",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers / Hand Tracking",
+    spaceRequired: "3.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Sir David Attenborough hologram guide",
+      "Photogrammetric 3D scans of rare artifacts",
+      "Dynamic anatomical internal scans",
+      "Interactive magnifying and scaling tools"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1535083783855-76ae62b2914e?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "titans-of-space",
+    title: "Titans of Space PLUS",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Take a deep-space tour of stars, planets, and galaxies at scale.",
+    longDesc: "Titans of Space PLUS is a guided tour through our solar system and beyond. Sitting inside a virtual space capsule, drift past planets and moons shrunk down to 1 millionth of their actual size, compare star volumes, and learn orbital mechanics through interactive lessons.",
+    difficulty: 1,
+    tags: ["Astronomy", "Space", "Cosmology", "Physics"],
+    playStyle: "Sitting",
+    actionType: "Cosmic Tour",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+    developer: "Drash VR",
+    publisher: "Drash VR",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.9 GB",
+    playerMode: "Single User",
+    features: [
+      "Guided audio-narration script",
+      "Giant comparative star grids",
+      "Interactive planet status widgets",
+      "Zero-gravity orbital drift feeling"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "apollo-11-vr",
+    title: "Apollo 11 VR",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Experience the historic 1969 moon landing through the eyes of the astronauts.",
+    longDesc: "Apollo 11 VR is the story of the greatest journey ever taken by humankind. Re-create the historic event from launch to moon landing and return. Take control of the Command Module, land the Lunar Module, and walk on the moon in this documentary simulation.",
+    difficulty: 2,
+    tags: ["History", "Spaceflight", "Apollo", "NASA"],
+    playStyle: "Sitting/Standing",
+    actionType: "Documentary Simulation",
+    image: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80",
+    developer: "Immersive VR Education",
+    publisher: "Immersive VR Education",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Historic audio and transcript logs",
+      "Interactive lunar lander joystick controls",
+      "Low-gravity surface walk navigation",
+      "Detailed Saturn V rocket assembly checks"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "the-blue",
+    title: "The Blue",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Stand on the deck of a sunken ship and face a massive blue whale.",
+    longDesc: "The Blue is an award-winning deep-ocean adventure. Standing on a virtual coral reef or a sunken shipwreck deck, observe marine ecosystems in stunning detail. Watch schools of fish, glowing jellyfish, and a life-sized blue whale swim past.",
+    difficulty: 1,
+    tags: ["Marine Biology", "Ocean", "Relaxing", "Nature"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Aquatic Experience",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80",
+    developer: "Wevr Labs",
+    publisher: "Wevr Labs",
+    comfortRating: "Comfortable",
+    controllers: "Gaze/Touch Controllers",
+    spaceRequired: "2.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Sunken ship close-up encounter",
+      "Bioluminescent jellyfish deep-dive",
+      "Realistic sea water light refraction",
+      "Responsive fish school navigation AI"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "nefertiti-tomb",
+    title: "Nefertiti: Journey to Eternity",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Explore the ancient tomb of Nefertiti in stunning laser-scanned detail.",
+    longDesc: "Nefertiti: Journey to Eternity uses high-resolution LiDAR laser scanning to reconstruct the interior of ancient Egyptian tombs. Walk inside the chamber walls, examine hieroglyphics up close, and learn about mummification and mythology.",
+    difficulty: 1,
+    tags: ["Egyptology", "History", "Archaeology", "Museum"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Virtual Tour",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80",
+    developer: "ScanLAB Projects",
+    publisher: "ScanLAB Projects",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.7 GB",
+    playerMode: "Single User",
+    features: [
+      "LiDAR 1:1 tombs wall mapping",
+      "Interactive magnifying glass reading tool",
+      "Hieroglyphic translator overlays",
+      "Chamber flashlight exploration options"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "google-earth-vr",
+    title: "Google Earth VR",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Fly over cities, scale mountains, and explore any corner of the globe.",
+    longDesc: "Google Earth VR lets you explore the world from entirely new perspectives. Stroll the streets of Tokyo, fly over the Grand Canyon, or stand atop Mount Everest. Explore satellite imagery, terrain data, and street-level views.",
+    difficulty: 1,
+    tags: ["Geography", "Maps", "Tourism", "Nature"],
+    playStyle: "Sitting/Standing",
+    actionType: "Virtual Flight",
+    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80",
+    developer: "Google",
+    publisher: "Google",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "8.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Full global orbital flight controls",
+      "3D volumetric building renders",
+      "Street View teleport hubs",
+      "Daytime light slider adjustments"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "mondly-vr",
+    title: "Mondly VR",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Practice foreign languages with lifelike virtual characters in real scenarios.",
+    longDesc: "Mondly VR is a language learning experience. Practice speaking over 30 languages with virtual characters in lifelike situations (like checking into a hotel, ordering in a restaurant, or taking a taxi). Includes instant voice pronunciation feedback.",
+    difficulty: 2,
+    tags: ["Languages", "Education", "Interactive", "Speech"],
+    playStyle: "Sitting",
+    actionType: "Language Simulator",
+    image: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=600&q=80",
+    developer: "ATi Studios",
+    publisher: "ATi Studios",
+    comfortRating: "Comfortable",
+    controllers: "Touch / Built-in Microphone",
+    spaceRequired: "1.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Voice recognition speech feedback",
+      "Lifelike conversational avatars",
+      "Interactive restaurant & travel scenarios",
+      "Vocabulary building cards games"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "colosseum-vr",
+    title: "Colosseum VR",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Walk the arena floor of the Roman Colosseum at the height of the Empire.",
+    longDesc: "Colosseum VR takes you back to ancient Rome. Walk through the gates, stand on the amphitheater arena floor, explore the underground hypogeum where gladiators and beasts waited, and see the architecture reconstructed as it stood in 80 AD.",
+    difficulty: 1,
+    tags: ["History", "Ancient Rome", "Architecture", "Education"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Historical Tour",
+    image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=600&q=80",
+    developer: "Unimersiv",
+    publisher: "Unimersiv",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.4 GB",
+    playerMode: "Single User",
+    features: [
+      "Roman Colosseum 3D reconstructions",
+      "Interactive hypogeum cage elevator lifts",
+      "Gladiator weapon inspection blocks",
+      "Historical speech recordings guides"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "cellverse",
+    title: "Cellverse",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Shrink down to enter a living human cell and solve molecular puzzles.",
+    longDesc: "Cellverse shrinks you down to a microscopic scale. Step inside a virtual human cell to witness DNA translation, trace organelles like mitochondria, and study cell structures to solve molecular puzzles and cure simulated cellular mutations.",
+    difficulty: 2,
+    tags: ["Biology", "Cells", "Microbiology", "Science"],
+    playStyle: "Sitting/Standing",
+    actionType: "Science Puzzle",
+    image: "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=600&q=80",
+    developer: "Harvard & MIT labs",
+    publisher: "Harvard University",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.6 GB",
+    playerMode: "Single User",
+    features: [
+      "Microscopic cellular maps scale",
+      "Interactive DNA helix repair sliders",
+      "Ribosome particle translator triggers",
+      "Cell mutation diagnostics panels"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "vr-museum-art",
+    title: "VR Museum of Fine Art",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Walk through a virtual museum displaying life-sized master sculptures.",
+    longDesc: "The VR Museum of Fine Art allows you to view world-famous paintings and sculptures in 1:1 scale in a quiet, modern museum gallery. Examine Michelangelo's David, Leonardo's Mona Lisa, and historic murals without crowds.",
+    difficulty: 1,
+    tags: ["Art", "Sculpture", "Museum", "History"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Art Exhibition",
+    image: "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=600&q=80",
+    developer: "Finn Sinclair",
+    publisher: "Finn Sinclair",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Michelangelo's David 1:1 scan render",
+      "Detailed plaques translating artist history",
+      "Dynamic ambient gallery shadows",
+      "Smooth teleporter navigation mechanics"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "everest-vr",
+    title: "Everest VR",
+    category: "Educational & Learning Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Ascend Mount Everest and witness the sheer scale of the Himalayas.",
+    longDesc: "Everest VR is a realistic mountain climbing adventure. Experience the preparations, traverse deep crevasses on ladders, climb the Lhotse Face, camp overnight, and scale the Hillary Step to reach the summit of Mount Everest.",
+    difficulty: 3,
+    tags: ["Climbing", "Adventure", "Geography", "Nature"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Mountain Climbing Simulation",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+    developer: "Sólfar Studios",
+    publisher: "Sólfar Studios",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "4.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Realistic hand pickaxe climbing mechanics",
+      "Traversing crevasses on thin ladders",
+      "Icy wind particle and audio maps",
+      "3D map of the Everest climb route"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "shuttle-commander",
+    title: "Shuttle Commander",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Pilot the Space Shuttle Discovery and deploy the Hubble Space Telescope.",
+    longDesc: "Shuttle Commander lets you experience the Hubble Space Telescope missions. Land the Space Shuttle Discovery at Kennedy Space Center, float in zero-gravity to repair Hubble, and learn cockpit control systems.",
+    difficulty: 4,
+    tags: ["Space", "Flight Sim", "NASA", "Hubble"],
+    playStyle: "Sitting/Standing",
+    actionType: "Aviation Simulator",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+    developer: "Immersive VR Education",
+    publisher: "Immersive VR Education",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "3.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Accurate Space Shuttle landing controls",
+      "Hubble space telescope solar panel repairs",
+      "Cockpit instrument dials telemetry",
+      "Historical NASA space missions records"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "inside-covid19",
+    title: "Inside COVID-19",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Healthcare Events",
+    shortDesc: "Follow a doctor into the lungs and see how viruses attack cells.",
+    longDesc: "Inside COVID-19 is a groundbreaking medical documentary that uses volumetric microscopy. Journey inside the lungs of a virtual patient to observe how the SARS-CoV-2 virus spikes and targets lung cells at a molecular scale.",
+    difficulty: 1,
+    tags: ["Medicine", "Microbiology", "Science", "Viral"],
+    playStyle: "Sitting",
+    actionType: "Medical Documentary",
+    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
+    developer: "Oculus Studios",
+    publisher: "Oculus Studios",
+    comfortRating: "Comfortable",
+    controllers: "Gaze/Touch Controllers",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Volumetric lungs scans viewer",
+      "Virus cell attachment animation locks",
+      "Immune system white cell reactions",
+      "Medical doctors voice annotations"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1530026405186-ed1ea0ac7a63?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "great-pyramid",
+    title: "Great Pyramid VR",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Enter and navigate the narrow chambers of the Great Pyramid of Giza.",
+    longDesc: "Great Pyramid VR is an archaeological exploration experience. Step inside the Great Pyramid of Giza and walk down the Grand Gallery to the King's and Queen's Chambers, exploring passageways reconstructed with historical accuracy.",
+    difficulty: 1,
+    tags: ["Egyptology", "History", "Archaeology", "Pyramids"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Historical Tour",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80",
+    developer: "Unimersiv Labs",
+    publisher: "Unimersiv Labs",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Grand Gallery narrow corridor paths",
+      "Sarcophagus chamber interactive details",
+      "Reconstructed tomb shaft structural maps",
+      "Flashlight illumination options"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "house-of-languages",
+    title: "House of Languages",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Learn English, Spanish, or German vocabulary in a fun cartoon playroom.",
+    longDesc: "House of Languages is a gamified language learning playground for younger students. Search for toys, name elements, and match vocabulary terms in English, Spanish, or German inside a cartoon toy shop and playroom.",
+    difficulty: 1,
+    tags: ["Languages", "Schools", "Gamified", "Children"],
+    playStyle: "Sitting/Standing",
+    actionType: "Language Minigame",
+    image: "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=600&q=80",
+    developer: "VRR Interactive",
+    publisher: "VRR Interactive",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers / Gaze",
+    spaceRequired: "1.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Cartoon character interactive guides",
+      "Search-and-find word matching boards",
+      "Spelled pronunciation guides",
+      "Three-language dictionary card packs"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "mission-iss",
+    title: "Mission: ISS",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Float in zero-gravity and dock cargo ships on the International Space Station.",
+    longDesc: "Mission: ISS is an immersive simulation developed with NASA and the CSA. Float in zero-gravity inside the International Space Station, run space experiments, take spacewalks in an astronaut EVA suit, and guide resupply spacecraft to dock.",
+    difficulty: 3,
+    tags: ["Space", "NASA", "ISS", "Zero-G"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Aero Space Simulation",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+    developer: "Magnopus Studio",
+    publisher: "Oculus Studios",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.6 GB",
+    playerMode: "Single User",
+    features: [
+      "Realistic zero-gravity hand pull movement",
+      "Astronaut spacewalk ropes & clips",
+      "Robotic arm cargo ship docking",
+      "Actual ISS video recordings logs"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "virtual-lab-chem",
+    title: "Virtual Lab Chemistry",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Perform chemical titrations and molecular experiments in a safe virtual lab.",
+    longDesc: "Virtual Lab Chemistry is a sandbox for secondary school science students. Safely handle dangerous chemical elements, mix reagents, perform titrations, heat glass flasks, and examine molecule bonds in 3D without real-world hazards.",
+    difficulty: 2,
+    tags: ["Chemistry", "Science", "School", "Safety"],
+    playStyle: "Standing",
+    actionType: "Chemistry Simulation",
+    image: "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=600&q=80",
+    developer: "Labster Labs",
+    publisher: "Labster Labs",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Interactive chemistry balance weights",
+      "Volumetric titration test pipettes",
+      "Bunsen burner heating cycles",
+      "Safety equipment gear wearing drills"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1532187640605-a33d9107988c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "curious-alice",
+    title: "Curious Alice",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Enter Alice in Wonderland's fantasy landscape to solve surreal logic riddles.",
+    longDesc: "Curious Alice brings Lewis Carroll's logical puzzles to life. Transport yourself to Wonderland to play croquet, resize objects, solve riddles from the Cheshire Cat, and decode mathematical riddles in an immersive fantasy setting.",
+    difficulty: 2,
+    tags: ["Literature", "Puzzles", "Fantasy", "Art"],
+    playStyle: "Sitting/Standing",
+    actionType: "Puzzle Adventure",
+    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80",
+    developer: "V&A Museum Studio",
+    publisher: "Victoria & Albert Museum",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Wonderland surreal paper art structures",
+      "Scale scaling eat-me resize keys",
+      "Interactive riddles speech blocks",
+      "Foliage physics maze paths"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "ecosphere",
+    title: "Ecosphere",
+    category: "Educational & Learning Experiences",
+    suitability: "All Ages",
+    shortDesc: "Travel to Kenya, Borneo, and Raja Ampat to document endangered species.",
+    longDesc: "Ecosphere is a nature documentary series. Travel to savanna grass plains in Kenya, jungle layers in Borneo, and marine reefs in Raja Ampat to study wildlife conversation, follow rangers, and photograph endangered species.",
+    difficulty: 1,
+    tags: ["Ecology", "Wildlife", "Nature", "Tourism"],
+    playStyle: "Sitting/Standing",
+    actionType: "Virtual Travel Documentary",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+    developer: "PHORIA",
+    publisher: "PHORIA",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers / Gaze",
+    spaceRequired: "2.6 GB",
+    playerMode: "Single User",
+    features: [
+      "3D volumetric nature video loops",
+      "Elephant savanna patrol tracking",
+      "Orangutan rescue station tours",
+      "Coral reef growth observation markers"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "ocean-acidification",
+    title: "Ocean Acidification VR",
+    category: "Educational & Learning Experiences",
+    suitability: "Schools & Educational Events",
+    shortDesc: "Inspect how carbon emissions are affecting the ocean's coral reefs.",
+    longDesc: "Ocean Acidification VR is an environmental science lab created by Stanford University. Shrink to the size of a coral polyp to see chemical changes in seawater, collect samples, and witness how acid levels destroy marine ecosystems.",
+    difficulty: 1,
+    tags: ["Ecology", "Oceanography", "Stanford", "Climate"],
+    playStyle: "Sitting/Standing",
+    actionType: "Science Simulation",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80",
+    developer: "Stanford VHIL Lab",
+    publisher: "Stanford University",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Coral polyp microscopic scale look",
+      "Seawater pH chemical mixing widgets",
+      "Reef sample collection grids",
+      "Interactive climate timeline charts"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80"
     ]
   }
+  // ---- END 21 NEW EDUCATIONAL EXPERIENCES ----
 ];
