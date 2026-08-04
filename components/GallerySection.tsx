@@ -5,6 +5,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import type { Media, Category } from "@/types"
+import ScrollReveal from "@/components/motion/ScrollReveal"
+import TiltCard from "@/components/motion/TiltCard"
 
 interface Props {
   media: Media[]
@@ -52,39 +54,42 @@ export default function GallerySection({ media, categories, preview = false }: P
       {/* Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((item, i) => (
-          <div
-            key={item.id}
-            className={`relative group overflow-hidden rounded-2xl ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
-          >
-            {item.type === "video" ? (
-              <video
-                src={item.file_url}
-                className="w-full h-full min-h-[200px] object-cover transition-transform duration-500 group-hover:scale-105"
-                muted
-                loop
-                playsInline
-                onMouseEnter={e => (e.target as HTMLVideoElement).play()}
-                onMouseLeave={e => (e.target as HTMLVideoElement).pause()}
-              />
-            ) : (
-              <Image
-                src={item.file_url}
-                alt={item.title ?? "VR Event"}
-                width={i === 0 ? 800 : 400}
-                height={i === 0 ? 600 : 300}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className={`object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 ${i === 0 ? "min-h-[300px] lg:min-h-[500px]" : "min-h-[200px]"}`}
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 md:p-6">
-              <div>
-                {item.title && <p className={`font-semibold ${i === 0 ? "text-lg" : "text-sm"}`}>{item.title}</p>}
-                {(item as any).categories?.name && (
-                  <p className="text-xs text-primary mt-1">{(item as any).categories.name}</p>
+          <ScrollReveal key={item.id} variant="clip-reveal" delay={i * 80} className={`${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
+            <TiltCard maxTilt={5} scale={1.02} className="h-full">
+              <div
+                className="relative group overflow-hidden rounded-2xl h-full border border-border/40 hover:border-primary/50 transition-colors"
+              >
+                {item.type === "video" ? (
+                  <video
+                    src={item.file_url}
+                    className="w-full h-full min-h-[200px] object-cover transition-transform duration-500 group-hover:scale-108"
+                    muted
+                    loop
+                    playsInline
+                    onMouseEnter={e => (e.target as HTMLVideoElement).play()}
+                    onMouseLeave={e => (e.target as HTMLVideoElement).pause()}
+                  />
+                ) : (
+                  <Image
+                    src={item.file_url}
+                    alt={item.title ?? "VR Event"}
+                    width={i === 0 ? 800 : 400}
+                    height={i === 0 ? 600 : 300}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className={`object-cover w-full h-full transition-transform duration-500 group-hover:scale-108 ${i === 0 ? "min-h-[300px] lg:min-h-[500px]" : "min-h-[200px]"}`}
+                  />
                 )}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 md:p-6">
+                  <div>
+                    {item.title && <p className={`font-semibold ${i === 0 ? "text-lg" : "text-sm"}`}>{item.title}</p>}
+                    {(item as any).categories?.name && (
+                      <p className="text-xs text-primary mt-1">{(item as any).categories.name}</p>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </TiltCard>
+          </ScrollReveal>
         ))}
       </div>
 

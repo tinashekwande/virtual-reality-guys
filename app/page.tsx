@@ -38,6 +38,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GallerySection from "@/components/GallerySection";
 import BookingForm from "@/components/BookingForm";
+import HeroParallax from "@/components/motion/HeroParallax";
+import ScrollReveal from "@/components/motion/ScrollReveal";
+import MotionButton from "@/components/motion/MotionButton";
+import TiltCard from "@/components/motion/TiltCard";
 
 import type { Metadata } from 'next';
 
@@ -237,72 +241,86 @@ export default async function Home() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/vr-hero.jpg"
-            alt="Mobile VR Gaming Experience Cape Town"
-            fill
-            className="object-cover opacity-40"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/70 to-background" />
-        </div>
+        <HeroParallax
+          className="w-full min-h-screen flex items-center justify-center"
+          backgroundChildren={
+            <>
+              {/* Background Image */}
+              <div className="absolute inset-0 z-0">
+                <Image
+                  src="/images/vr-hero.jpg"
+                  alt="Mobile VR Gaming Experience Cape Town"
+                  fill
+                  className="object-cover opacity-40 scale-105"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/70 to-background" />
+              </div>
 
-        {/* Animated Lines */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute top-1/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-pulse" />
-          <div className="absolute top-2/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent animate-pulse delay-300" />
-          <div className="absolute top-3/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-pulse delay-700" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="space-y-8">
-            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold tracking-tight text-balance">
-              Bring the{" "}
-              <span className="text-primary">Future of Gaming</span>
-              <br />
-              to Your Event
-            </h1>
-            <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto text-balance">
-              Immersive virtual reality experiences delivered directly to your
-              school, party, corporate event, or festival. We bring the
-              adventure to you.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="text-lg px-8 py-6">
-                <Link href="#contact">
-                  Book Your Experience <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="text-lg px-8 py-6"
-              >
-                <Link href="/vr-games-catalogue">View Catalogue</Link>
-              </Button>
+              {/* Animated Lines */}
+              <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute top-1/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-pulse" />
+                <div className="absolute top-2/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent animate-pulse delay-300" />
+                <div className="absolute top-3/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-pulse delay-700" />
+              </div>
+            </>
+          }
+          contentChildren={
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
+              <ScrollReveal variant="zoom-in" duration={900}>
+                <div className="space-y-8">
+                  <h1 className="text-5xl sm:text-6xl lg:text-8xl font-bold tracking-tight text-balance">
+                    Bring the{" "}
+                    <span className="text-primary">Future of Gaming</span>
+                    <br />
+                    to Your Event
+                  </h1>
+                  <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto text-balance">
+                    Immersive virtual reality experiences delivered directly to your
+                    school, party, corporate event, or festival. We bring the
+                    adventure to you.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <MotionButton>
+                      <Button asChild size="lg" className="text-lg px-8 py-6">
+                        <Link href="#contact">
+                          Book Your Experience <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                      </Button>
+                    </MotionButton>
+                    <MotionButton>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="text-lg px-8 py-6"
+                      >
+                        <Link href="/vr-games-catalogue">View Catalogue</Link>
+                      </Button>
+                    </MotionButton>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-8 pt-8 text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary" />
+                      <span>Professional Setup</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary" />
+                      <span>All Ages Welcome</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-primary" />
+                      <span>We Come to You</span>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
             </div>
-            <div className="flex flex-wrap justify-center gap-8 pt-8 text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-primary" />
-                <span>Professional Setup</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-primary" />
-                <span>All Ages Welcome</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-5 w-5 text-primary" />
-                <span>We Come to You</span>
-              </div>
-            </div>
-          </div>
-        </div>
+          }
+        />
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-20">
           <div className="w-6 h-10 rounded-full border-2 border-muted-foreground flex items-start justify-center p-2">
             <div className="w-1.5 h-2.5 bg-primary rounded-full animate-pulse" />
           </div>
@@ -313,71 +331,84 @@ export default async function Home() {
       <section id="about" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <p className="text-primary font-semibold tracking-wide uppercase">
-                  About Us
+            <ScrollReveal variant="fade-right">
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <p className="text-primary font-semibold tracking-wide uppercase">
+                    About Us
+                  </p>
+                  <h2 className="text-4xl sm:text-5xl font-bold text-balance">
+                    Mobile VR Gaming That Comes to You
+                  </h2>
+                </div>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Virtual Reality Guys is your premier mobile VR entertainment
+                  service. We bring cutting-edge virtual reality experiences
+                  directly to your location, transforming any event into an
+                  unforgettable adventure.
                 </p>
-                <h2 className="text-4xl sm:text-5xl font-bold text-balance">
-                  Mobile VR Gaming That Comes to You
-                </h2>
-              </div>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Virtual Reality Guys is your premier mobile VR entertainment
-                service. We bring cutting-edge virtual reality experiences
-                directly to your location, transforming any event into an
-                unforgettable adventure.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Whether it&apos;s a birthday party, school event, corporate
-                team-building, or community festival, we handle everything from
-                setup to supervision so you can focus on having fun.
-              </p>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">50+</div>
-                  <div className="text-muted-foreground">Events Completed</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-4xl font-bold text-primary">500+</div>
-                  <div className="text-muted-foreground">Happy Guests</div>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Whether it&apos;s a birthday party, school event, corporate
+                  team-building, or community festival, we handle everything from
+                  setup to supervision so you can focus on having fun.
+                </p>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <div className="text-4xl font-bold text-primary">50+</div>
+                    <div className="text-muted-foreground">Events Completed</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-4xl font-bold text-primary">500+</div>
+                    <div className="text-muted-foreground">Happy Guests</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <div className="bg-secondary rounded-2xl p-6 border border-border">
-                  <Headset className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Schools</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Educational and fun VR experiences for students of all ages
-                  </p>
+            </ScrollReveal>
+
+            <ScrollReveal variant="fade-left" delay={200}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <TiltCard maxTilt={6} scale={1.02}>
+                    <div className="bg-secondary rounded-2xl p-6 border border-border hover:border-primary/40 transition-colors">
+                      <Headset className="h-10 w-10 text-primary mb-4" />
+                      <h3 className="font-semibold text-lg mb-2">Schools</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Educational and fun VR experiences for students of all ages
+                      </p>
+                    </div>
+                  </TiltCard>
+                  <TiltCard maxTilt={6} scale={1.02}>
+                    <div className="bg-secondary rounded-2xl p-6 border border-border hover:border-primary/40 transition-colors">
+                      <PartyPopper className="h-10 w-10 text-primary mb-4" />
+                      <h3 className="font-semibold text-lg mb-2">Birthday Parties</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Make their special day absolutely unforgettable
+                      </p>
+                    </div>
+                  </TiltCard>
                 </div>
-                <div className="bg-secondary rounded-2xl p-6 border border-border">
-                  <PartyPopper className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Birthday Parties</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Make their special day absolutely unforgettable
-                  </p>
+                <div className="space-y-4 mt-8">
+                  <TiltCard maxTilt={6} scale={1.02}>
+                    <div className="bg-secondary rounded-2xl p-6 border border-border hover:border-primary/40 transition-colors">
+                      <Users className="h-10 w-10 text-primary mb-4" />
+                      <h3 className="font-semibold text-lg mb-2">Corporate Events</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Team building and entertainment for the workplace
+                      </p>
+                    </div>
+                  </TiltCard>
+                  <TiltCard maxTilt={6} scale={1.02}>
+                    <div className="bg-secondary rounded-2xl p-6 border border-border hover:border-primary/40 transition-colors">
+                      <Sparkles className="h-10 w-10 text-primary mb-4" />
+                      <h3 className="font-semibold text-lg mb-2">Festivals</h3>
+                      <p className="text-sm text-muted-foreground">
+                        High-traffic entertainment for large gatherings
+                      </p>
+                    </div>
+                  </TiltCard>
                 </div>
               </div>
-              <div className="space-y-4 mt-8">
-                <div className="bg-secondary rounded-2xl p-6 border border-border">
-                  <Users className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Corporate Events</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Team building and entertainment for the workplace
-                  </p>
-                </div>
-                <div className="bg-secondary rounded-2xl p-6 border border-border">
-                  <Sparkles className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-semibold text-lg mb-2">Festivals</h3>
-                  <p className="text-sm text-muted-foreground">
-                    High-traffic entertainment for large gatherings
-                  </p>
-                </div>
-              </div>
-            </div>
+            </ScrollReveal>
           </div>
           <div className="flex flex-wrap gap-3 justify-center mt-12 pt-8 border-t border-border/30">
             <Button asChild variant="outline" size="sm">
@@ -405,18 +436,20 @@ export default async function Home() {
       {/* Features Section */}
       <section id="experiences" className="py-24 sm:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="text-primary font-semibold tracking-wide uppercase mb-4">
-              Our Experiences
-            </p>
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
-              What Makes Our VR Experience Special
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              We provide premium equipment, professional supervision, and a
-              wide variety of games suitable for all ages and skill levels.
-            </p>
-          </div>
+          <ScrollReveal variant="fade-up">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <p className="text-primary font-semibold tracking-wide uppercase mb-4">
+                Our Experiences
+              </p>
+              <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
+                What Makes Our VR Experience Special
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                We provide premium equipment, professional supervision, and a
+                wide variety of games suitable for all ages and skill levels.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <FeatureCard
@@ -583,7 +616,7 @@ export default async function Home() {
       </section>
 
       {/* Team Section — dynamic from DB */}
-      {team.length > 0 && (
+      {/* {team.length > 0 && (
         <section id="team" className="py-24 sm:py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -608,7 +641,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* How It Works Section */}
       <section className="py-24 sm:py-32">
@@ -783,13 +816,15 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-colors group">
-      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-        {icon}
+    <TiltCard maxTilt={6} scale={1.02} className="h-full">
+      <div className="bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-colors group h-full">
+        <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 group-hover:scale-110">
+          {icon}
+        </div>
+        <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">{title}</h3>
+        <p className="text-muted-foreground">{description}</p>
       </div>
-      <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
+    </TiltCard>
   );
 }
 
@@ -809,54 +844,60 @@ function PricingCard({
   featured?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-2xl p-8 border ${
-        featured
-          ? "bg-primary text-primary-foreground border-primary scale-105"
-          : "bg-secondary border-border"
-      } relative`}
-    >
-      {featured && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-1 rounded-full">
-          Most Popular
-        </div>
-      )}
-      <h3 className="text-2xl font-bold mb-2">{title}</h3>
-      <div className="mb-6">
-        <span className="text-4xl font-bold">R {price}</span>
-        <span className={featured ? "text-primary-foreground/70" : "text-muted-foreground"}>
-          /event
-        </span>
-      </div>
-      <div className={`flex items-center gap-2 mb-2 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-        <Clock className="h-4 w-4" />
-        <span>{duration}</span>
-      </div>
-      <div className={`flex items-center gap-2 mb-6 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-        <Users className="h-4 w-4" />
-        <span>{players}</span>
-      </div>
-      <ul className="space-y-3 mb-8">
-        {features.map((feature, index) => (
-          <li key={index} className="flex items-center gap-2">
-            <Check
-              className={`h-5 w-5 ${
-                featured ? "text-primary-foreground" : "text-primary"
-              }`}
-            />
-            <span>{feature}</span>
-          </li>
-        ))}
-      </ul>
-      <Button
-        asChild
-        variant={featured ? "secondary" : "default"}
-        className="w-full"
-        size="lg"
+    <TiltCard maxTilt={featured ? 8 : 6} scale={featured ? 1.03 : 1.02} className="h-full">
+      <div
+        className={`rounded-2xl p-8 border ${
+          featured
+            ? "bg-primary text-primary-foreground border-primary shadow-xl shadow-primary/20"
+            : "bg-secondary border-border"
+        } relative h-full flex flex-col justify-between`}
       >
-        <Link href="#contact">Get Started</Link>
-      </Button>
-    </div>
+        <div>
+          {featured && (
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-1 rounded-full animate-pulse">
+              Most Popular
+            </div>
+          )}
+          <h3 className="text-2xl font-bold mb-2">{title}</h3>
+          <div className="mb-6">
+            <span className="text-4xl font-bold">R {price}</span>
+            <span className={featured ? "text-primary-foreground/70" : "text-muted-foreground"}>
+              /event
+            </span>
+          </div>
+          <div className={`flex items-center gap-2 mb-2 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+            <Clock className="h-4 w-4" />
+            <span>{duration}</span>
+          </div>
+          <div className={`flex items-center gap-2 mb-6 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+            <Users className="h-4 w-4" />
+            <span>{players}</span>
+          </div>
+          <ul className="space-y-3 mb-8">
+            {features.map((feature, index) => (
+              <li key={index} className="flex items-center gap-2">
+                <Check
+                  className={`h-5 w-5 ${
+                    featured ? "text-primary-foreground" : "text-primary"
+                  }`}
+                />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <MotionButton className="w-full">
+          <Button
+            asChild
+            variant={featured ? "secondary" : "default"}
+            className="w-full"
+            size="lg"
+          >
+            <Link href="#contact">Get Started</Link>
+          </Button>
+        </MotionButton>
+      </div>
+    </TiltCard>
   );
 }
 
@@ -870,18 +911,22 @@ function TestimonialCard({
   role: string;
 }) {
   return (
-    <div className="bg-secondary rounded-2xl p-8 border border-border">
-      <div className="flex gap-1 mb-4">
-        {[...Array(5)].map((_, i) => (
-          <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-        ))}
+    <TiltCard maxTilt={5} scale={1.015} className="h-full">
+      <div className="bg-secondary rounded-2xl p-8 border border-border hover:border-primary/40 transition-colors h-full flex flex-col justify-between">
+        <div>
+          <div className="flex gap-1 mb-4">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+            ))}
+          </div>
+          <p className="text-foreground mb-6 leading-relaxed">&ldquo;{quote}&rdquo;</p>
+        </div>
+        <div>
+          <p className="font-semibold">{author}</p>
+          <p className="text-sm text-muted-foreground">{role}</p>
+        </div>
       </div>
-      <p className="text-foreground mb-6 leading-relaxed">&ldquo;{quote}&rdquo;</p>
-      <div>
-        <p className="font-semibold">{author}</p>
-        <p className="text-sm text-muted-foreground">{role}</p>
-      </div>
-    </div>
+    </TiltCard>
   );
 }
 
@@ -897,15 +942,17 @@ function StepCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="text-center">
-      <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-6 text-2xl font-bold relative">
-        {number}
-        <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-secondary border border-border flex items-center justify-center text-primary">
-          {icon}
+    <TiltCard maxTilt={6} scale={1.02} glow={false}>
+      <div className="text-center p-6 bg-card/20 rounded-2xl border border-border/40 hover:border-primary/40 transition-all group">
+        <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-6 text-2xl font-bold relative group-hover:scale-110 transition-transform">
+          {number}
+          <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-secondary border border-border flex items-center justify-center text-primary">
+            {icon}
+          </div>
         </div>
+        <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">{title}</h3>
+        <p className="text-muted-foreground">{description}</p>
       </div>
-      <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
+    </TiltCard>
   );
 }

@@ -27,6 +27,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { gamesData, Game } from "@/lib/gamesData"
+import TiltCard from "@/components/motion/TiltCard"
 
 // Category Icons Mapper
 const getCategoryIcon = (category: string) => {
@@ -196,59 +197,60 @@ export default function VRCatalogueClient() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredGames.map(game => (
-                <article
-                  key={game.id}
-                  onClick={() => setSelectedGame(game)}
-                  className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5 cursor-pointer flex flex-col h-full group print:border-slate-300 print:shadow-none print:break-inside-avoid print:bg-white"
-                >
-                  {/* Card Image */}
-                  <div className="relative h-48 w-full bg-secondary/20 overflow-hidden">
-                    <img
-                      src={game.image}
-                      alt={game.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 print:grayscale"
-                      loading="lazy"
-                    />
-                    {/* Badge Overlay */}
-                    <div className="absolute top-4 left-4 right-4 flex justify-between items-center print:hidden">
-                      <span className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 text-primary">
-                        {getCategoryIcon(game.category)}
-                        {getShortCategory(game.category)}
-                      </span>
-                      <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 text-white">
-                        {game.suitability.split(" ")[0]}
-                      </span>
+                <TiltCard key={game.id} maxTilt={8} scale={1.025} className="h-full">
+                  <article
+                    onClick={() => setSelectedGame(game)}
+                    className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 cursor-pointer flex flex-col h-full group print:border-slate-300 print:shadow-none print:break-inside-avoid print:bg-white"
+                  >
+                    {/* Card Image */}
+                    <div className="relative h-48 w-full bg-secondary/20 overflow-hidden">
+                      <img
+                        src={game.image}
+                        alt={game.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108 print:grayscale"
+                        loading="lazy"
+                      />
+                      {/* Badge Overlay */}
+                      <div className="absolute top-4 left-4 right-4 flex justify-between items-center print:hidden">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 text-primary">
+                          {getCategoryIcon(game.category)}
+                          {getShortCategory(game.category)}
+                        </span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 text-white">
+                          {game.suitability.split(" ")[0]}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Card Body */}
-                  <div className="p-5 flex flex-col flex-grow">
-                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors print:text-black">
-                      {game.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed flex-grow mb-4 line-clamp-3 print:text-slate-800 print:line-clamp-none">
-                      {game.shortDesc}
-                    </p>
-                    
-                    {/* Specs Bottom */}
-                    <div className="flex justify-between items-center pt-4 border-t border-border/40 text-[11px] text-muted-foreground print:text-slate-600 print:border-slate-200">
-                      <span className="flex items-center gap-1">
-                        <Activity className="h-3 w-3" /> {game.playStyle.split("/")[0]}
-                      </span>
+                    {/* Card Body */}
+                    <div className="p-5 flex flex-col flex-grow">
+                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors print:text-black">
+                        {game.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed flex-grow mb-4 line-clamp-3 print:text-slate-800 print:line-clamp-none">
+                        {game.shortDesc}
+                      </p>
                       
-                      {/* Difficulty stars */}
-                      <span className="flex gap-0.5 items-center">
-                        <span className="mr-1">Diff:</span>
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`h-2.5 w-2.5 ${i < game.difficulty ? 'text-primary fill-primary print:text-slate-800 print:fill-slate-800' : 'text-muted/40'}`} 
-                          />
-                        ))}
-                      </span>
+                      {/* Specs Bottom */}
+                      <div className="flex justify-between items-center pt-4 border-t border-border/40 text-[11px] text-muted-foreground print:text-slate-600 print:border-slate-200">
+                        <span className="flex items-center gap-1">
+                          <Activity className="h-3 w-3" /> {game.playStyle.split("/")[0]}
+                        </span>
+                        
+                        {/* Difficulty stars */}
+                        <span className="flex gap-0.5 items-center">
+                          <span className="mr-1">Diff:</span>
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`h-2.5 w-2.5 ${i < game.difficulty ? 'text-primary fill-primary print:text-slate-800 print:fill-slate-800' : 'text-muted/40'}`} 
+                            />
+                          ))}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                </TiltCard>
               ))}
             </div>
           )}

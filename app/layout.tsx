@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Orbitron, Mina } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
+import AtmosphericBackground from '@/components/motion/AtmosphericBackground'
+import PageTransition from '@/components/motion/PageTransition'
 import './globals.css'
 
 const orbitron = Orbitron({
@@ -128,12 +130,13 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
-      <body className={`${mina.className} ${orbitron.variable} antialiased`}>
+      <body className={`${mina.className} ${orbitron.variable} antialiased relative overflow-x-hidden`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
-        {children}
+        <AtmosphericBackground />
+        <PageTransition>{children}</PageTransition>
         <ChatbotLoader />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
