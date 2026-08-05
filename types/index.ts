@@ -50,3 +50,37 @@ export interface DashboardStats {
   recentMedia: Media[]
   recentRequests: FormRequest[]
 }
+
+export interface InvoiceItem {
+  id: string
+  description: string
+  quantity: number
+  unit_price: number
+  total: number
+}
+
+export type InvoiceType = 'quote' | 'invoice'
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'cancelled'
+
+export interface Invoice {
+  id: string
+  type: InvoiceType
+  doc_number: string
+  client_name: string
+  client_email?: string
+  client_phone?: string
+  client_address?: string
+  event_date?: string
+  issue_date: string
+  due_date?: string
+  status: InvoiceStatus
+  items: InvoiceItem[]
+  subtotal: number
+  discount: number
+  transport_fee: number
+  total: number
+  notes?: string
+  created_at: string
+  updated_at?: string
+}
+
