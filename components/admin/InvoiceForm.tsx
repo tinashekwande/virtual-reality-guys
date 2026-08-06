@@ -428,40 +428,40 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
 
               <div className="space-y-3">
                 {items.map((item, index) => (
-                  <div key={item.id} className="grid grid-cols-12 gap-3 items-center p-3 bg-secondary/40 rounded-xl border border-border/60">
-                    <div className="col-span-6 sm:col-span-6">
+                  <div key={item.id} className="grid grid-cols-12 gap-2 sm:gap-3 items-center p-3 bg-secondary/40 rounded-xl border border-border/60">
+                    <div className="col-span-12 sm:col-span-6">
                       <Input
                         value={item.description}
                         onChange={(e) => handleItemChange(item.id, "description", e.target.value)}
                         placeholder="Item / VR Package Description"
-                        className="rounded-lg border-border bg-background text-xs"
+                        className="rounded-lg border-border bg-background text-sm sm:text-xs"
                       />
                     </div>
-                    <div className="col-span-2 sm:col-span-2">
+                    <div className="col-span-4 sm:col-span-2">
                       <Input
                         type="number"
                         min="1"
                         value={item.quantity}
                         onChange={(e) => handleItemChange(item.id, "quantity", e.target.value)}
                         placeholder="Qty"
-                        className="rounded-lg border-border bg-background text-xs text-center"
+                        className="rounded-lg border-border bg-background text-sm sm:text-xs text-center"
                       />
                     </div>
-                    <div className="col-span-3 sm:col-span-3">
+                    <div className="col-span-6 sm:col-span-3">
                       <Input
                         type="number"
                         min="0"
                         value={item.unit_price}
                         onChange={(e) => handleItemChange(item.id, "unit_price", e.target.value)}
                         placeholder="Price (R)"
-                        className="rounded-lg border-border bg-background text-xs text-right font-mono"
+                        className="rounded-lg border-border bg-background text-sm sm:text-xs text-right font-mono"
                       />
                     </div>
-                    <div className="col-span-1 sm:col-span-1 text-right">
+                    <div className="col-span-2 sm:col-span-1 text-right">
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(item.id)}
-                        className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                        className="text-muted-foreground hover:text-destructive transition-colors p-2"
                         title="Remove item"
                       >
                         <Trash2 className="h-4 w-4" />

@@ -74,11 +74,12 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
       </div>
 
       {/* Printable Luxury Document Container */}
-      <div
-        id={previewRefId}
-        className="w-full bg-[#040817] text-slate-100 p-8 sm:p-12 rounded-3xl border border-cyan-900/40 shadow-2xl space-y-10 relative overflow-hidden font-sans print:p-0 print:border-none print:shadow-none print:bg-white print:text-black"
-        style={{ minHeight: "297mm", backgroundColor: "#040817", color: "#f8fafc" }}
-      >
+      <div className="w-full overflow-x-auto pb-4">
+        <div
+          id={previewRefId}
+          className="w-full min-w-[320px] bg-[#040817] text-slate-100 p-6 sm:p-12 rounded-3xl border border-cyan-900/40 shadow-2xl space-y-8 sm:space-y-10 relative overflow-hidden font-sans print:p-0 print:border-none print:shadow-none print:bg-white print:text-black"
+          style={{ minHeight: "297mm", backgroundColor: "#040817", color: "#f8fafc" }}
+        >
         {/* Subtle Cyber Backdrop Accent */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full filter blur-3xl pointer-events-none print:hidden" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/5 rounded-full filter blur-3xl pointer-events-none print:hidden" />
@@ -337,5 +338,6 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
         </div>
       </div>
     </div>
+  </div>
   );
 }

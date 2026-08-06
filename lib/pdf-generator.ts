@@ -18,16 +18,27 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
   }
 
   try {
-    // Clone & sanitize DOM to ensure html2canvas doesn't fail on oklch or filter blurs
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    // Clone & sanitize DOM, forcing a fixed 850px desktop document width so mobile captures match desktop PDF perfectly!
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       logging: false,
       backgroundColor: "#040817",
-      windowWidth: 1200,
+      windowWidth: 1024,
       imageTimeout: 15000,
       onclone: (clonedDoc, clonedEl) => {
+        // Force desktop width on clone for mobile devices
+        clonedEl.style.width = "850px";
+        clonedEl.style.maxWidth = "850px";
+        clonedEl.style.minWidth = "850px";
+        clonedEl.style.margin = "0 auto";
+        clonedEl.style.padding = "32px";
+        clonedEl.style.boxSizing = "border-box";
+        clonedEl.style.transform = "none";
+
         // Strip filter blurs and backdrop filters from cloned elements
         const allNodes = clonedEl.querySelectorAll("*");
         allNodes.forEach((node) => {
@@ -67,7 +78,29 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
     }
 
     const safeName = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
-    pdf.save(safeName);
+
+    // Mobile specific PDF download strategy for iOS Safari & Android Chrome
+    if (isMobile) {
+      const blob = pdf.output("blob");
+      const blobUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = safeName;
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+
+      // Fallback for iOS Safari webviews
+      setTimeout(() => {
+        document.body.removeChild(a);
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+          window.open(blobUrl, "_blank");
+        }
+      }, 500);
+    } else {
+      pdf.save(safeName);
+    }
   } catch (err) {
     console.error("html2canvas error, falling back to print dialog:", err);
     window.print();
@@ -77,6 +110,13 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
 export function printPDFDocument(elementId: string): void {
   const element = document.getElementById(elementId);
   if (!element) {
+    window.print();
+    return;
+  }
+
+  // Mobile print fallback
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
     window.print();
     return;
   }
