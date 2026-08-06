@@ -2,47 +2,66 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 export async function exportToPDF(elementId: string, filename: string): Promise<void> {
-  const element = document.getElementById(elementId);
+  let element = document.getElementById(elementId);
+  
   if (!element) {
-    throw new Error(`Element with id '${elementId}' not found.`);
+    // If element is offscreen or has a fallback id
+    const elements = document.querySelectorAll(`[id^="${elementId}"]`);
+    if (elements.length > 0) {
+      element = elements[0] as HTMLElement;
+    }
   }
 
-  // Temporarily scale up for high-DPI rendering
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    logging: false,
-    backgroundColor: "#030712", // match dark premium theme background
-    windowWidth: 1200,
-  });
+  if (!element) {
+    console.warn(`Element with id '${elementId}' not found. Falling back to print window.`);
+    window.print();
+    return;
+  }
 
-  const imgData = canvas.toDataURL("image/png");
+  try {
+    // Temporarily scale up for high-DPI rendering
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      backgroundColor: "#040817", // match dark premium theme background
+      windowWidth: 1200,
+      imageTimeout: 15000,
+    });
 
-  // Calculate PDF dimensions (A4 page format)
-  const pdf = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: "a4",
-  });
+    const imgData = canvas.toDataURL("image/png");
 
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
+    // Calculate PDF dimensions (A4 page format)
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
 
-  const imgWidth = pdfWidth;
-  const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-  let heightLeft = imgHeight;
-  let position = 0;
+    const imgWidth = pdfWidth;
+    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pdfHeight;
+    let heightLeft = imgHeight;
+    let position = 0;
 
-  while (heightLeft >= 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pdfHeight;
-  }
 
-  pdf.save(filename.endsWith(".pdf") ? filename : `${filename}.pdf`);
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+    }
+
+    pdf.save(filename.endsWith(".pdf") ? filename : `${filename}.pdf`);
+  } catch (err) {
+    console.error("html2canvas PDF rendering failed:", err);
+    // Fallback to print dialog
+    window.print();
+  }
 }

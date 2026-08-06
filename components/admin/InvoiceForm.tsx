@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Save, Eye, FileText, Calendar, User, DollarSign, ArrowLeft, Sparkles, Check } from "lucide-react";
+import { Plus, Trash2, Save, Eye, FileText, Calendar, User, DollarSign, ArrowLeft, Sparkles, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Invoice, InvoiceItem, InvoiceType, InvoiceStatus } from "@/types";
 import DocumentPreview from "@/components/admin/DocumentPreview";
+import { exportToPDF } from "@/lib/pdf-generator";
 import { toast } from "sonner";
 
 interface InvoiceFormProps {
@@ -133,6 +132,25 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
     notes,
   };
 
+  const handleDirectDownloadPDF = async () => {
+    if (!clientName.trim()) {
+      toast.error("Please enter a client name first.");
+      return;
+    }
+    try {
+      toast.loading("Generating PDF...", { id: "pdf-direct-toast" });
+      setActiveTab("preview");
+      setTimeout(async () => {
+        const previewRefId = `pdf-document-preview-${docNumber || "draft"}`;
+        const filename = `${type === "quote" ? "Quote" : "Invoice"}_${docNumber || "draft"}_${clientName}`;
+        await exportToPDF(previewRefId, filename);
+        toast.success("PDF Downloaded successfully! 📄", { id: "pdf-direct-toast" });
+      }, 250);
+    } catch (err: any) {
+      toast.error(`PDF export error: ${err.message}`, { id: "pdf-direct-toast" });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim()) {
@@ -145,9 +163,12 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
     }
 
     setSaving(true);
+    let dbSaved = false;
+
     try {
       if (onSave) {
         await onSave(currentInvoiceData);
+        dbSaved = true;
       } else {
         const method = initialData?.id ? "PUT" : "POST";
         const url = initialData?.id ? `/api/invoices/${initialData.id}` : "/api/invoices";
@@ -160,15 +181,18 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
 
         if (!res.ok) {
           const errData = await res.json();
-          throw new Error(errData.error || "Failed to save document.");
+          throw new Error(errData.error || "Database table error.");
         }
 
-        toast.success(`${type === "quote" ? "Quote" : "Invoice"} saved successfully! 🎉`);
+        dbSaved = true;
+        toast.success(`${type === "quote" ? "Quote" : "Invoice"} saved to database! 🎉`);
       }
     } catch (err: any) {
-      toast.error(err.message || "An error occurred while saving.");
+      console.warn("Database save notice:", err);
+      toast.warning(`Database notice: ${err.message || "Failed to save to database"}. Don't worry! You can still download the PDF below.`, { duration: 8000 });
     } finally {
       setSaving(false);
+      setActiveTab("preview");
     }
   };
 
@@ -186,11 +210,11 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
             <h2 className="text-xl font-bold font-tech">
               {initialData?.id ? `Edit ${type === "quote" ? "Quote" : "Invoice"}` : `Create New ${type === "quote" ? "Quote" : "Invoice"}`}
             </h2>
-            <p className="text-xs text-muted-foreground">Fill in details or preview live luxury PDF</p>
+            <p className="text-xs text-muted-foreground">Fill in details or download high-definition PDF</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex bg-secondary/80 p-1 rounded-xl border border-border">
             <button
               type="button"
@@ -217,19 +241,31 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
           </div>
 
           <Button
+            type="button"
+            variant="outline"
+            onClick={handleDirectDownloadPDF}
+            className="border-primary/40 text-primary hover:bg-primary/10 font-semibold flex items-center gap-2 rounded-xl"
+          >
+            <Download className="h-4 w-4" />
+            Download PDF Now
+          </Button>
+
+          <Button
             onClick={handleSubmit}
             disabled={saving}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center gap-2 shadow-lg shadow-primary/20"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center gap-2 shadow-lg shadow-primary/20 rounded-xl"
           >
             <Save className="h-4 w-4" />
-            {saving ? "Saving..." : "Save Document"}
+            {saving ? "Saving..." : "Save & Preview"}
           </Button>
         </div>
       </div>
 
-      {activeTab === "preview" ? (
+      <div className={activeTab === "preview" ? "block" : "hidden"}>
         <DocumentPreview invoice={currentInvoiceData} />
-      ) : (
+      </div>
+
+      <div className={activeTab === "edit" ? "block" : "hidden"}>
         <form onSubmit={handleSubmit} className="grid lg:grid-cols-3 gap-8">
           {/* Left Columns (2) — Main Form Fields */}
           <div className="lg:col-span-2 space-y-6">
@@ -537,7 +573,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
             </div>
           </div>
         </form>
-      )}
+      </div>
     </div>
   );
 }

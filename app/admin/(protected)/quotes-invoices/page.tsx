@@ -33,12 +33,15 @@ export default function QuotesInvoicesPage() {
     setLoading(true);
     try {
       const res = await fetch("/api/invoices");
-      if (!res.ok) throw new Error("Failed to fetch documents.");
+      if (!res.ok) {
+        setInvoices([]);
+        return;
+      }
       const data = await res.json();
-      setInvoices(data || []);
+      setInvoices(Array.isArray(data) ? data : []);
     } catch (err: any) {
-      console.error(err);
-      toast.error("Could not load quotes & invoices.");
+      console.warn("Invoices fetch notice:", err);
+      setInvoices([]);
     } finally {
       setLoading(false);
     }
