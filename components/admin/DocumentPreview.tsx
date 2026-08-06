@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Download, Printer, Shield, Building2, CreditCard, Hash, MapPin, User, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Invoice } from "@/types";
-import { exportToPDF } from "@/lib/pdf-generator";
+import { exportToPDF, printPDFDocument } from "@/lib/pdf-generator";
 import { toast } from "sonner";
 
 interface DocumentPreviewProps {
@@ -29,7 +29,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
   };
 
   const handlePrint = () => {
-    window.print();
+    printPDFDocument(previewRefId);
   };
 
   return (
@@ -59,7 +59,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
             className="border-border hover:bg-secondary flex items-center gap-2"
           >
             <Printer className="h-4 w-4" />
-            Print
+            Print / Save Window
           </Button>
 
           <Button
@@ -68,7 +68,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
             className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 font-semibold shadow-lg shadow-primary/20"
           >
             <Download className="h-4 w-4" />
-            Download PDF
+            Download PDF File
           </Button>
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
       <div
         id={previewRefId}
         className="w-full bg-[#040817] text-slate-100 p-8 sm:p-12 rounded-3xl border border-cyan-900/40 shadow-2xl space-y-10 relative overflow-hidden font-sans print:p-0 print:border-none print:shadow-none print:bg-white print:text-black"
-        style={{ minHeight: "297mm" }}
+        style={{ minHeight: "297mm", backgroundColor: "#040817", color: "#f8fafc" }}
       >
         {/* Subtle Cyber Backdrop Accent */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full filter blur-3xl pointer-events-none print:hidden" />

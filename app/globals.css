@@ -430,3 +430,27 @@ button, .button, a[class*="button"] {
   height: 100%;
 }
 
+/* ── Print / PDF Styles ────────────────────────────────────────────────── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  [id^="pdf-document-preview"], [id^="pdf-document-preview"] * {
+    visibility: visible !important;
+  }
+  [id^="pdf-document-preview"] {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 24px !important;
+    margin: 0 !important;
+    background-color: #040817 !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+

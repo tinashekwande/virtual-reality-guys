@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, Save, Eye, FileText, Calendar, User, DollarSign, ArrowLeft, Sparkles, Check, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
