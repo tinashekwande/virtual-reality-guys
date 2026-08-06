@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Headset, ShieldCheck, AlertTriangle } from "lucide-react"
+import Image from "next/image"
+import { ShieldCheck, AlertTriangle } from "lucide-react"
 
 export default function AdminSetupPage() {
   const router = useRouter()
@@ -55,7 +56,15 @@ export default function AdminSetupPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Headset className="h-10 w-10 text-primary mx-auto mb-4" />
+          <div className="relative h-16 w-16 mx-auto mb-4">
+            <Image
+              src="/images/logo.png"
+              alt="Virtual Reality Guys logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
           <h1 className="text-2xl font-bold">First-Time Setup</h1>
           <p className="text-muted-foreground mt-1">Virtual Reality Guys — Admin Portal</p>
         </div>

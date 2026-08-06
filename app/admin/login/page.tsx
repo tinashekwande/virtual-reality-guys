@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Headset, Lock } from "lucide-react"
+import Image from "next/image"
+import { Lock } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminLoginPage() {
@@ -42,7 +43,15 @@ export default function AdminLoginPage() {
         {/* Brand */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Headset className="h-10 w-10 text-primary" />
+            <div className="relative h-16 w-16">
+              <Image
+                src="/images/logo.png"
+                alt="Virtual Reality Guys logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
           <h1 className="text-2xl font-bold">Admin Portal</h1>
           <p className="text-muted-foreground mt-1">Virtual Reality Guys</p>

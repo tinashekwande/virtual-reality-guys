@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import NextImage from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import {
@@ -38,7 +39,9 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
     <div className="flex flex-col h-full bg-sidebar border-r border-sidebar-border">
       {/* Brand */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-sidebar-border">
-        <Headset className="h-7 w-7 text-primary flex-shrink-0" />
+        <div className="relative h-8 w-8 flex-shrink-0">
+          <NextImage src="/images/logo.png" alt="Virtual Reality Guys logo" fill className="object-contain" priority />
+        </div>
         <div className="min-w-0">
           <p className="font-bold text-sm leading-tight">VR Guys</p>
           <p className="text-xs text-muted-foreground">Admin Portal</p>
@@ -211,7 +214,9 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
         ) : (
           <div className="flex flex-col h-full w-full bg-sidebar border-r border-sidebar-border">
             <div className="flex items-center gap-3 px-6 py-5 border-b border-sidebar-border h-[69px]">
-              <Headset className="h-7 w-7 text-primary flex-shrink-0 opacity-50" />
+              <div className="relative h-8 w-8 flex-shrink-0 opacity-50">
+                <NextImage src="/images/logo.png" alt="Virtual Reality Guys logo" fill className="object-contain" priority />
+              </div>
               <div className="min-w-0">
                 <p className="font-bold text-sm leading-tight text-muted-foreground">VR Guys</p>
               </div>
