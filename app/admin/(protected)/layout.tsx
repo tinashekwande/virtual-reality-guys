@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
   Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
-  BookOpen, Receipt
+  BookOpen, Receipt, Calendar
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -14,6 +14,7 @@ import { Toaster } from "@/components/ui/sonner"
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/planner", label: "Booking Planner", icon: Calendar },
   { href: "/admin/quotes-invoices", label: "Quotes & Invoices", icon: Receipt },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
