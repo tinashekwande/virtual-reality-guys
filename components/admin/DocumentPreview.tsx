@@ -318,15 +318,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
           </div>
         </div>
 
-        {/* 5. Terms & Notes */}
-        {invoice.notes && (
-          <div className="bg-slate-900/40 p-4 rounded-xl border border-cyan-900/30 text-xs text-slate-300 space-y-1 print:bg-slate-50 print:border-slate-200 print:text-slate-800">
-            <p className="font-bold text-cyan-400 uppercase tracking-wider text-[10px] print:text-slate-700">
-              Terms & Additional Notes:
-            </p>
-            <p className="whitespace-pre-line leading-relaxed">{invoice.notes}</p>
-          </div>
-        )}
+ 
 
         {/* 6. Footer Signature */}
         <div className="pt-6 border-t border-cyan-900/30 flex flex-col sm:flex-row justify-between items-center text-center sm:text-left text-xs text-slate-400 gap-4 print:border-slate-300 print:text-slate-600">
