@@ -16,6 +16,69 @@ import NewBookingModal from "@/components/admin/NewBookingModal";
 import { Invoice, FormRequest } from "@/types";
 import { toast } from "sonner";
 
+function extractDateFromMessage(message: string | undefined, fallbackDate: string): string {
+  if (!message) return fallbackDate;
+
+  // 1. ISO format (2026-08-22 or 2026/08/22)
+  const isoMatch = message.match(/\b(20\d{2})[-/](0[1-9]|1[0-2])[-/](0[1-9]|[12]\d|3[01])\b/);
+  if (isoMatch) {
+    return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+  }
+
+  // 2. SA / UK format (22/08/2026 or 22-08-2026)
+  const dmyMatch = message.match(/\b(0[1-9]|[12]\d|3[01])[-/](0[1-9]|1[0-2])[-/](20\d{2})\b/);
+  if (dmyMatch) {
+    return `${dmyMatch[3]}-${dmyMatch[2]}-${dmyMatch[1]}`;
+  }
+
+  // 3. Text format e.g. "22 August 2026", "22nd August 2026", "August 22, 2026"
+  const MONTHS: Record<string, string> = {
+    jan: "01", january: "01",
+    feb: "02", february: "02",
+    mar: "03", march: "03",
+    apr: "04", april: "04",
+    may: "05",
+    jun: "06", june: "06",
+    jul: "07", july: "07",
+    aug: "08", august: "08",
+    sep: "09", september: "09",
+    oct: "10", october: "10",
+    nov: "11", november: "11",
+    dec: "12", december: "12",
+  };
+
+  // e.g. "22nd August 2026"
+  const dayMonthYearMatch = message.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\s+(20\d{2})\b/i);
+  if (dayMonthYearMatch) {
+    const day = dayMonthYearMatch[1].padStart(2, "0");
+    const mStr = dayMonthYearMatch[2].toLowerCase();
+    const year = dayMonthYearMatch[3];
+    const month = MONTHS[mStr] || MONTHS[mStr.substring(0, 3)];
+    if (month) return `${year}-${month}-${day}`;
+  }
+
+  // e.g. "August 22, 2026"
+  const monthDayYearMatch = message.match(/\b([A-Za-z]+)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(20\d{2})\b/i);
+  if (monthDayYearMatch) {
+    const mStr = monthDayYearMatch[1].toLowerCase();
+    const day = monthDayYearMatch[2].padStart(2, "0");
+    const year = monthDayYearMatch[3];
+    const month = MONTHS[mStr] || MONTHS[mStr.substring(0, 3)];
+    if (month) return `${year}-${month}-${day}`;
+  }
+
+  // 4. Line match e.g. "Date: 22/08/2026" or "Event date: 2026-08-22"
+  const lineMatch = message.match(/(?:date|event date|booking date|requested date)[\s:=]+([^\n,\.]+)/i);
+  if (lineMatch) {
+    const parsed = new Date(lineMatch[1]);
+    if (!isNaN(parsed.getTime())) {
+      return parsed.toISOString().split("T")[0];
+    }
+  }
+
+  return fallbackDate;
+}
+
 export default function BookingPlannerPage() {
   const [events, setEvents] = useState<PlannerEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,12 +131,13 @@ export default function BookingPlannerPage() {
         });
       }
 
-      // 2. Map Form Requests
+      // 2. Map Form Requests & Chatbot Agent Bookings
       if (Array.isArray(requestsRes)) {
         requestsRes.forEach((req: FormRequest) => {
-          // Parse event date if specified in message
-          const dateMatch = req.message?.match(/\b20\d{2}-\d{2}-\d{2}\b/);
-          const date = dateMatch ? dateMatch[0] : req.created_at.split("T")[0];
+          // Parse event date intelligently from customer/agent booking message or fallback to created_at
+          const fallbackDate = req.created_at.split("T")[0];
+          const date = extractDateFromMessage(req.message, fallbackDate);
+
           dateCounts[date] = (dateCounts[date] || 0) + 1;
 
           formattedEvents.push({
