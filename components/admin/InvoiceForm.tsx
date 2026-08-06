@@ -153,8 +153,8 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!clientName.trim()) {
       toast.error("Please enter a client name.");
       return;
@@ -165,33 +165,34 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
     }
 
     setSaving(true);
-    let dbSaved = false;
 
     try {
+      const method = initialData?.id ? "PUT" : "POST";
+      const url = initialData?.id ? `/api/invoices/${initialData.id}` : "/api/invoices";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentInvoiceData),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "Failed to save document.");
+      }
+
+      const savedData = await res.json();
+      toast.success(`${type === "quote" ? "Quote" : "Invoice"} saved to database! 🎉`);
+
       if (onSave) {
-        await onSave(currentInvoiceData);
-        dbSaved = true;
-      } else {
-        const method = initialData?.id ? "PUT" : "POST";
-        const url = initialData?.id ? `/api/invoices/${initialData.id}` : "/api/invoices";
-
-        const res = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(currentInvoiceData),
-        });
-
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Database table error.");
-        }
-
-        dbSaved = true;
-        toast.success(`${type === "quote" ? "Quote" : "Invoice"} saved to database! 🎉`);
+        onSave(savedData || currentInvoiceData);
       }
     } catch (err: any) {
       console.warn("Database save notice:", err);
       toast.warning(`Database notice: ${err.message || "Failed to save to database"}. Don't worry! You can still download the PDF below.`, { duration: 8000 });
+      if (onSave) {
+        onSave(currentInvoiceData);
+      }
     } finally {
       setSaving(false);
       setActiveTab("preview");

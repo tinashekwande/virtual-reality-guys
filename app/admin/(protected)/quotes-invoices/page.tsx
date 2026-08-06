@@ -110,7 +110,11 @@ export default function QuotesInvoicesPage() {
     }
   };
 
-  const handleFormSave = () => {
+  const handleFormSave = (savedDoc?: Partial<Invoice>) => {
+    fetchInvoices();
+  };
+
+  const handleCloseForm = () => {
     setViewMode("list");
     setSelectedInvoice(null);
     fetchInvoices();
@@ -139,10 +143,7 @@ export default function QuotesInvoicesPage() {
       <InvoiceForm
         initialData={selectedInvoice || undefined}
         onSave={handleFormSave}
-        onCancel={() => {
-          setViewMode("list");
-          setSelectedInvoice(null);
-        }}
+        onCancel={handleCloseForm}
       />
     );
   }
