@@ -20,7 +20,7 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
   try {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    // Clone & sanitize DOM, forcing a fixed 850px desktop document width so mobile captures match desktop PDF perfectly!
+    // Clone & sanitize DOM, forcing a fixed 800px desktop document width and removing blur nodes
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
@@ -30,16 +30,22 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       windowWidth: 1024,
       imageTimeout: 15000,
       onclone: (clonedDoc, clonedEl) => {
-        // Force desktop width on clone for mobile devices
-        clonedEl.style.width = "850px";
-        clonedEl.style.maxWidth = "850px";
-        clonedEl.style.minWidth = "850px";
+        // Remove decorative elements & print:hidden nodes from the PDF canvas clone
+        const hideNodes = clonedEl.querySelectorAll(".print\\:hidden, [class*='blur']");
+        hideNodes.forEach((node) => node.remove());
+
+        // Set clean desktop dimensions on clone for 100% consistent canvas rendering
+        clonedEl.style.width = "800px";
+        clonedEl.style.maxWidth = "800px";
+        clonedEl.style.minWidth = "800px";
+        clonedEl.style.minHeight = "auto";
+        clonedEl.style.height = "auto";
         clonedEl.style.margin = "0 auto";
         clonedEl.style.padding = "32px";
         clonedEl.style.boxSizing = "border-box";
         clonedEl.style.transform = "none";
 
-        // Strip filter blurs and backdrop filters from cloned elements
+        // Strip filter blurs and backdrop filters from all remaining elements
         const allNodes = clonedEl.querySelectorAll("*");
         allNodes.forEach((node) => {
           const el = node as HTMLElement;
@@ -64,17 +70,27 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
     const imgWidth = pdfWidth;
     const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    let heightLeft = imgHeight;
-    let position = 0;
+    // Fill base A4 background color (#040817) so no black or white margins appear
+    pdf.setFillColor(4, 8, 23);
+    pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
 
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
+    if (imgHeight <= pdfHeight) {
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    } else {
+      let heightLeft = imgHeight;
+      let position = 0;
 
-    while (heightLeft >= 10) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
+
+      while (heightLeft >= 10) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.setFillColor(4, 8, 23);
+        pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
     }
 
     const safeName = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
