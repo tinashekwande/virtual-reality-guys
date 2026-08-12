@@ -1,13 +1,23 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Trash2, Eye } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Trash2, Eye, Receipt, FileText } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import type { FormRequest, RequestStatus } from "@/types"
+
+function extractEventDate(message: string): string {
+  if (!message) return ""
+  const explicitMatch = message.match(/\[Event Date:\s*([^\]]+)\]/i)
+  if (explicitMatch) return explicitMatch[1].trim()
+  const isoMatch = message.match(/\b(20\d{2}[-/](?:0[1-9]|1[0-2])[-/](?:0[1-9]|[12]\d|3[01]))\b/)
+  if (isoMatch) return isoMatch[1].replace(/\//g, "-")
+  return ""
+}
 
 const STATUS_OPTIONS: { value: RequestStatus; label: string }[] = [
   { value: "new", label: "New" },
@@ -24,12 +34,27 @@ const STATUS_BADGE: Record<RequestStatus, string> = {
 }
 
 export default function RequestsAdminPage() {
+  const router = useRouter()
   const [requests, setRequests] = useState<FormRequest[]>([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterType, setFilterType] = useState("all")
   const [selected, setSelected] = useState<FormRequest | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const handleCreateInvoice = (r: FormRequest, type: "invoice" | "quote" = "invoice") => {
+    const date = extractEventDate(r.message)
+    const params = new URLSearchParams({
+      create: type,
+      name: r.name,
+      email: r.email,
+      phone: r.phone || "",
+      date: date || "",
+      package: r.form_type || "",
+      notes: r.message || "",
+    })
+    router.push(`/admin/quotes-invoices?${params.toString()}`)
+  }
 
   const load = async () => {
     setLoading(true)
@@ -147,11 +172,19 @@ export default function RequestsAdminPage() {
                       {new Date(r.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-5 py-4" onClick={e => e.stopPropagation()}>
-                      <div className="flex items-center gap-1 justify-end">
-                        <button onClick={() => setSelected(r)} className="p-1.5 hover:bg-secondary rounded text-muted-foreground hover:text-foreground">
+                      <div className="flex items-center gap-1.5 justify-end">
+                        <button
+                          onClick={() => handleCreateInvoice(r, "invoice")}
+                          title="Create Quote / Invoice from Request"
+                          className="p-1.5 hover:bg-primary/10 rounded-lg text-primary hover:text-primary transition-colors flex items-center gap-1 text-xs font-semibold px-2 py-1 bg-primary/5 border border-primary/20"
+                        >
+                          <Receipt className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">Create Invoice</span>
+                        </button>
+                        <button onClick={() => setSelected(r)} title="View Request Details" className="p-1.5 hover:bg-secondary rounded text-muted-foreground hover:text-foreground">
                           <Eye className="h-3.5 w-3.5" />
                         </button>
-                        <button onClick={() => setDeleteId(r.id)} className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive">
+                        <button onClick={() => setDeleteId(r.id)} title="Delete Request" className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive">
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -196,6 +229,27 @@ export default function RequestsAdminPage() {
                     <p className="mt-1 text-sm leading-relaxed whitespace-pre-wrap bg-secondary/50 rounded-lg p-3">{selected.message}</p>
                   </div>
                 </div>
+
+                {/* Create Invoice / Quote Action Buttons */}
+                <div className="space-y-2 pt-3 border-t border-border">
+                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">Create Document</p>
+                  <Button
+                    onClick={() => handleCreateInvoice(selected, "invoice")}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center justify-center gap-2 text-xs rounded-xl"
+                  >
+                    <Receipt className="h-4 w-4" />
+                    Create Tax Invoice from Request
+                  </Button>
+                  <Button
+                    onClick={() => handleCreateInvoice(selected, "quote")}
+                    variant="outline"
+                    className="w-full border-border hover:bg-secondary flex items-center justify-center gap-2 text-xs rounded-xl"
+                  >
+                    <FileText className="h-4 w-4" />
+                    Create Quote from Request
+                  </Button>
+                </div>
+
                 <div>
                   <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">Update Status</p>
                   <div className="flex flex-wrap gap-2">

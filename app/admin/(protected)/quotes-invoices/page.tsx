@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   FileText, Plus, Search, Filter, Download, Trash2, Edit3, Eye, DollarSign,
   Receipt, ArrowUpRight, Copy, CheckCircle2, Clock, XCircle, RefreshCw
@@ -14,12 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Invoice, InvoiceType, InvoiceStatus } from "@/types";
+import { Invoice, InvoiceType, InvoiceStatus, InvoiceItem } from "@/types";
 import InvoiceForm from "@/components/admin/InvoiceForm";
 import DocumentPreview from "@/components/admin/DocumentPreview";
 import { toast } from "sonner";
 
-export default function QuotesInvoicesPage() {
+function QuotesInvoicesContent() {
+  const searchParams = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,6 +52,69 @@ export default function QuotesInvoicesPage() {
   useEffect(() => {
     fetchInvoices();
   }, []);
+
+  // Detect query params for creating invoice/quote directly from a customer request
+  useEffect(() => {
+    const createParam = searchParams.get("create");
+    if (createParam === "invoice" || createParam === "quote") {
+      const name = searchParams.get("name") || "";
+      const email = searchParams.get("email") || "";
+      const phone = searchParams.get("phone") || "";
+      const date = searchParams.get("date") || "";
+      const address = searchParams.get("address") || "";
+      const notes = searchParams.get("notes") || "";
+      const packageType = searchParams.get("package") || "";
+
+      let initialItems: InvoiceItem[] = [
+        {
+          id: "1",
+          description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)",
+          quantity: 1,
+          unit_price: 799,
+          total: 799,
+        },
+      ];
+
+      if (packageType.toLowerCase().includes("birthday")) {
+        initialItems = [
+          { id: "1", description: "Birthday VR Party Package (4 Headsets, 2 Hours)", quantity: 1, unit_price: 699, total: 699 }
+        ];
+      } else if (packageType.toLowerCase().includes("corporate")) {
+        initialItems = [
+          { id: "1", description: "Corporate Event VR Package (6 Headsets, 4 Hours)", quantity: 1, unit_price: 1499, total: 1499 }
+        ];
+      } else if (packageType.toLowerCase().includes("school")) {
+        initialItems = [
+          { id: "1", description: "School / Educational VR Experience", quantity: 1, unit_price: 899, total: 899 }
+        ];
+      } else if (packageType.toLowerCase().includes("festival")) {
+        initialItems = [
+          { id: "1", description: "Festival / Community VR Activation", quantity: 1, unit_price: 1299, total: 1299 }
+        ];
+      }
+
+      setSelectedInvoice({
+        type: createParam as InvoiceType,
+        status: "draft",
+        doc_number: `VR-${createParam === "invoice" ? "INV" : "Q"}-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+        client_name: name,
+        client_email: email,
+        client_phone: phone,
+        client_address: address,
+        event_date: date,
+        issue_date: new Date().toISOString().split("T")[0],
+        due_date: date || new Date().toISOString().split("T")[0],
+        notes: notes ? `Client Request Notes:\n${notes}` : "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time.",
+        items: initialItems,
+        subtotal: initialItems[0].total,
+        total: initialItems[0].total,
+        discount: 0,
+        transport_fee: 0,
+      });
+
+      setViewMode("create");
+    }
+  }, [searchParams]);
 
   const handleCreateNew = (type: InvoiceType) => {
     setSelectedInvoice({
@@ -422,5 +487,13 @@ export default function QuotesInvoicesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function QuotesInvoicesPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Loading invoices & quotes...</div>}>
+      <QuotesInvoicesContent />
+    </Suspense>
   );
 }
