@@ -28,7 +28,7 @@ export interface TeamMember {
   created_at: string
 }
 
-export type RequestStatus = 'new' | 'in_progress' | 'completed' | 'archived'
+export type RequestStatus = 'new' | 'in_progress' | 'completed' | 'archived' | 'pending_confirmation' | 'booking_confirmed' | 'event_completed'
 
 export interface FormRequest {
   id: string

@@ -309,16 +309,17 @@ export default function BookingPlannerPage() {
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-36 rounded-xl border-border bg-secondary text-xs">
+            <SelectTrigger className="w-44 rounded-xl border-border bg-secondary text-xs">
               <SelectValue placeholder="Status Filter" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="sent">Sent</SelectItem>
-              <SelectItem value="paid">Paid / Confirmed</SelectItem>
               <SelectItem value="new">New Request</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="in_progress">Pending Confirmation</SelectItem>
+              <SelectItem value="archived">Booking Confirmed</SelectItem>
+              <SelectItem value="completed">Event Completed</SelectItem>
+              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
 

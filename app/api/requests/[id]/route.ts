@@ -8,7 +8,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
   const { id } = await params
   const { status } = await request.json()
-  const validStatuses = ['new', 'in_progress', 'completed', 'archived']
+  const validStatuses = [
+    'new',
+    'new_request',
+    'in_progress',
+    'pending_confirmation',
+    'archived',
+    'booking_confirmed',
+    'confirmed',
+    'completed',
+    'event_completed',
+  ]
   if (!validStatuses.includes(status)) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
   }

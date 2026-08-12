@@ -20,17 +20,42 @@ function extractEventDate(message: string): string {
 }
 
 const STATUS_OPTIONS: { value: RequestStatus; label: string }[] = [
-  { value: "new", label: "New" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-  { value: "archived", label: "Archived" },
+  { value: "new", label: "New Request" },
+  { value: "in_progress", label: "Pending Confirmation" },
+  { value: "archived", label: "Booking Confirmed" },
+  { value: "completed", label: "Event Completed" },
 ]
 
-const STATUS_BADGE: Record<RequestStatus, string> = {
-  new: "bg-primary/10 text-primary border-primary/20",
-  in_progress: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  completed: "bg-green-500/10 text-green-400 border-green-500/20",
-  archived: "bg-muted text-muted-foreground border-border",
+const STATUS_BADGE: Record<string, string> = {
+  new: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
+  new_request: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
+  in_progress: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  pending_confirmation: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  archived: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
+  booking_confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
+  confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
+  completed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+  event_completed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+}
+
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case "new":
+    case "new_request":
+      return "New Request"
+    case "in_progress":
+    case "pending_confirmation":
+      return "Pending Confirmation"
+    case "archived":
+    case "booking_confirmed":
+    case "confirmed":
+      return "Booking Confirmed"
+    case "completed":
+    case "event_completed":
+      return "Event Completed"
+    default:
+      return status.replace(/_/g, " ")
+  }
 }
 
 export default function RequestsAdminPage() {
@@ -160,8 +185,8 @@ export default function RequestsAdminPage() {
                     </td>
                     <td className="px-5 py-4" onClick={e => e.stopPropagation()}>
                       <Select value={r.status} onValueChange={(v) => handleStatusChange(r.id, v as RequestStatus)}>
-                        <SelectTrigger className={`h-7 text-xs w-32 border ${STATUS_BADGE[r.status]}`}>
-                          <SelectValue />
+                        <SelectTrigger className={`h-7 text-xs w-40 border ${STATUS_BADGE[r.status] || STATUS_BADGE.new}`}>
+                          <SelectValue>{getStatusLabel(r.status)}</SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
@@ -207,8 +232,8 @@ export default function RequestsAdminPage() {
               </SheetHeader>
               <div className="mt-6 space-y-5">
                 <div className="flex items-center justify-between">
-                  <span className={`text-xs px-3 py-1 rounded-full border font-medium ${STATUS_BADGE[selected.status]}`}>
-                    {selected.status.replace("_", " ")}
+                  <span className={`text-xs px-3 py-1 rounded-full border font-medium ${STATUS_BADGE[selected.status] || STATUS_BADGE.new}`}>
+                    {getStatusLabel(selected.status)}
                   </span>
                   <span className="text-xs text-muted-foreground">{new Date(selected.created_at).toLocaleString()}</span>
                 </div>

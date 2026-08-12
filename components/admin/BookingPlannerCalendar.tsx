@@ -18,6 +18,33 @@ export type ViewMode = "month" | "week" | "day" | "agenda";
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+function getPlannerStatusLabel(status: string): string {
+  switch (status) {
+    case "new":
+    case "new_request":
+      return "New Request";
+    case "in_progress":
+    case "pending_confirmation":
+    case "pending":
+    case "sent":
+      return "Pending Confirmation";
+    case "archived":
+    case "confirmed":
+    case "booking_confirmed":
+    case "paid":
+      return "Booking Confirmed";
+    case "completed":
+    case "event_completed":
+      return "Event Completed";
+    case "draft":
+      return "Draft";
+    case "cancelled":
+      return "Cancelled";
+    default:
+      return status.replace(/_/g, " ");
+  }
+}
+
 export default function BookingPlannerCalendar({
   events,
   onSelectEvent,
@@ -275,12 +302,14 @@ export default function BookingPlannerCalendar({
                           <h4 className="font-bold text-foreground text-sm">{evt.client_name || evt.title}</h4>
                           <span
                             className={`px-2 py-0.5 text-[9px] uppercase font-bold rounded-full border ${
-                              evt.status === "paid" || evt.status === "completed"
+                              evt.status === "paid" || evt.status === "completed" || evt.status === "booking_confirmed" || evt.status === "archived"
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                : evt.status === "in_progress" || evt.status === "pending" || evt.status === "sent" || evt.status === "pending_confirmation"
+                                ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
                                 : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
                             }`}
                           >
-                            {evt.status}
+                            {getPlannerStatusLabel(evt.status)}
                           </span>
                         </div>
 
@@ -334,8 +363,14 @@ export default function BookingPlannerCalendar({
                 >
                   <div className="flex justify-between items-start">
                     <span className="text-xs font-bold font-tech text-cyan-400">📅 {evt.date}</span>
-                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                      {evt.status}
+                    <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${
+                      evt.status === "paid" || evt.status === "completed" || evt.status === "booking_confirmed" || evt.status === "archived"
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                        : evt.status === "in_progress" || evt.status === "pending" || evt.status === "sent" || evt.status === "pending_confirmation"
+                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
+                    }`}>
+                      {getPlannerStatusLabel(evt.status)}
                     </span>
                   </div>
 
