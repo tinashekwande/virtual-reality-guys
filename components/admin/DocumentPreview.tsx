@@ -78,7 +78,6 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
         <div
           id={previewRefId}
           className="w-full min-w-[320px] bg-[#040817] text-slate-100 p-6 sm:p-12 rounded-3xl border border-cyan-900/40 shadow-2xl space-y-8 sm:space-y-10 relative overflow-hidden font-sans print:p-0 print:border-none print:shadow-none print:bg-white print:text-black"
-          style={{ minHeight: "297mm", backgroundColor: "#040817", color: "#f8fafc" }}
         >
  
 
@@ -316,7 +315,15 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
           </div>
         </div>
 
- 
+        {/* 5. Terms & Additional Notes */}
+        {invoice.notes && (
+          <div className="bg-slate-900/40 p-5 rounded-2xl border border-cyan-900/30 text-xs text-slate-300 space-y-2 print:bg-slate-50 print:border-slate-200 print:text-slate-800">
+            <h4 className="font-bold text-cyan-400 uppercase tracking-wider text-[11px] font-tech print:text-slate-700">
+              Terms & Additional Notes
+            </h4>
+            <p className="whitespace-pre-line leading-relaxed text-slate-300 print:text-slate-700">{invoice.notes}</p>
+          </div>
+        )}
 
         {/* 6. Footer Signature */}
         <div className="pt-6 border-t border-cyan-900/30 flex flex-col sm:flex-row justify-between items-center text-center sm:text-left text-xs text-slate-400 gap-4 print:border-slate-300 print:text-slate-600">

@@ -4,7 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
   const body = await request.json()
-  const { name, email, phone, message, form_type = 'contact' } = body
+  const { name, email, phone, message, event_date, form_type = 'contact' } = body
 
   if (!name || !email || !message) {
     return NextResponse.json({ error: 'Name, email and message are required' }, { status: 400 })
@@ -15,10 +15,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
   }
 
+  // Prepend event date to message so it is preserved, visible in requests, and synced to planner calendar
+  const formattedMessage = event_date
+    ? `[Event Date: ${event_date}]\n\n${message}`
+    : message
+
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('form_requests')
-    .insert({ name, email, phone: phone || null, message, form_type, status: 'new' })
+    .insert({ name, email, phone: phone || null, message: formattedMessage, form_type, status: 'new' })
     .select()
     .single()
 

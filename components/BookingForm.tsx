@@ -21,6 +21,7 @@ export default function BookingForm() {
       name: fd.get("name"),
       email: fd.get("email"),
       phone: fd.get("phone"),
+      event_date: fd.get("event_date"),
       message: fd.get("message"),
       form_type: formType,
     }
@@ -65,7 +66,7 @@ export default function BookingForm() {
             <Input id="email" name="email" type="email" placeholder="your@email.com" className="bg-background" required />
           </div>
         </div>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-3 gap-4">
           <div className="space-y-2">
             <label htmlFor="phone" className="text-sm font-medium">Phone</label>
             <Input id="phone" name="phone" type="tel" placeholder="+27 71 000 0000" className="bg-background" />
@@ -85,10 +86,20 @@ export default function BookingForm() {
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-2">
+            <label htmlFor="event_date" className="text-sm font-medium">Event Date</label>
+            <Input
+              id="event_date"
+              name="event_date"
+              type="date"
+              min={new Date().toISOString().split("T")[0]}
+              className="bg-background text-sm"
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <label htmlFor="message" className="text-sm font-medium">Tell us about your event</label>
-          <Textarea id="message" name="message" placeholder="Event date, number of guests, any special requirements..." rows={4} className="bg-background" required />
+          <Textarea id="message" name="message" placeholder="Number of guests, venue location, special requirements..." rows={4} className="bg-background" required />
         </div>
         {status === "error" && (
           <p className="text-sm text-destructive">{errorMsg}</p>

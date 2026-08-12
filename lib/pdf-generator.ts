@@ -20,13 +20,13 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
   try {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    // Clone & sanitize DOM, forcing a fixed 800px desktop document width and removing blur nodes
+    // Clone & sanitize DOM, formatting as a clean, high-definition white invoice PDF
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
       logging: false,
-      backgroundColor: "#040817",
+      backgroundColor: "#ffffff",
       windowWidth: 1024,
       imageTimeout: 15000,
       onclone: (clonedDoc, clonedEl) => {
@@ -44,6 +44,57 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
         clonedEl.style.padding = "32px";
         clonedEl.style.boxSizing = "border-box";
         clonedEl.style.transform = "none";
+        clonedEl.style.backgroundColor = "#ffffff";
+        clonedEl.style.color = "#0f172a";
+        clonedEl.style.borderRadius = "0px";
+        clonedEl.style.border = "none";
+        clonedEl.style.boxShadow = "none";
+
+        // Style cards with clean light backgrounds
+        const bgDarkCards = clonedEl.querySelectorAll(
+          ".bg-slate-900\\/60, .bg-slate-900\\/80, .bg-slate-900\\/40, .bg-slate-950\\/90, .bg-cyan-950\\/80"
+        );
+        bgDarkCards.forEach((node) => {
+          const el = node as HTMLElement;
+          el.style.backgroundColor = "#f8fafc";
+          el.style.borderColor = "#e2e8f0";
+          el.style.color = "#0f172a";
+        });
+
+        // Banking card gold / amber styling
+        const bankingCards = clonedEl.querySelectorAll(".border-amber-500\\/30");
+        bankingCards.forEach((node) => {
+          const el = node as HTMLElement;
+          el.style.backgroundColor = "#fffbeb";
+          el.style.borderColor = "#fcd34d";
+        });
+
+        // Text color overrides for high-contrast legible PDF
+        const whiteTexts = clonedEl.querySelectorAll(".text-white, .text-slate-100, .text-slate-200");
+        whiteTexts.forEach((node) => {
+          const el = node as HTMLElement;
+          el.style.color = "#0f172a";
+        });
+
+        const mutedTexts = clonedEl.querySelectorAll(".text-slate-300, .text-slate-400, .text-slate-500");
+        mutedTexts.forEach((node) => {
+          const el = node as HTMLElement;
+          el.style.color = "#475569";
+        });
+
+        const cyanAccents = clonedEl.querySelectorAll(".text-cyan-400, .text-cyan-300");
+        cyanAccents.forEach((node) => {
+          const el = node as HTMLElement;
+          el.style.color = "#0284c7";
+        });
+
+        const borders = clonedEl.querySelectorAll(
+          ".border-cyan-900\\/40, .border-cyan-900\\/30, .border-cyan-800\\/50, .border-cyan-800\\/60, .divide-cyan-900\\/30"
+        );
+        borders.forEach((node) => {
+          const el = node as HTMLElement;
+          el.style.borderColor = "#e2e8f0";
+        });
 
         // Strip filter blurs and backdrop filters from all remaining elements
         const allNodes = clonedEl.querySelectorAll("*");
@@ -70,8 +121,8 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
     const imgWidth = pdfWidth;
     const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    // Fill base A4 background color (#040817) so no black or white margins appear
-    pdf.setFillColor(4, 8, 23);
+    // Fill base A4 background color with pure white (#ffffff)
+    pdf.setFillColor(255, 255, 255);
     pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
 
     if (imgHeight <= pdfHeight) {
@@ -86,7 +137,7 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       while (heightLeft >= 10) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.setFillColor(4, 8, 23);
+        pdf.setFillColor(255, 255, 255);
         pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pdfHeight;
@@ -152,14 +203,14 @@ export function printPDFDocument(elementId: string): void {
         <link rel="stylesheet" href="/_next/static/css/app/layout.css" />
         <style>
           body {
-            background-color: #040817 !important;
-            color: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
             font-family: system-ui, -apple-system, sans-serif;
             margin: 0;
             padding: 20px;
           }
           @media print {
-            body { padding: 0; }
+            body { padding: 0; background-color: #ffffff !important; }
           }
         </style>
       </head>
