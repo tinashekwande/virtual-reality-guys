@@ -206,7 +206,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
             </div>
 
             <div>
-              <label className="text-slate-400 font-semibold mb-1 block">Price (R)</label>
+              <label className="text-slate-400 font-semibold mb-1 block">Price (R, Incl. 15% VAT)</label>
               <Input
                 type="number"
                 min="0"

@@ -176,8 +176,8 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
                 <tr className="border-b border-cyan-800/50 text-cyan-300 text-xs uppercase font-tech tracking-wider print:border-slate-300 print:text-slate-800">
                   <th className="py-3 px-4">Item Description</th>
                   <th className="py-3 px-4 text-center">Qty</th>
-                  <th className="py-3 px-4 text-right">Unit Price</th>
-                  <th className="py-3 px-4 text-right">Amount</th>
+                  <th className="py-3 px-4 text-right">Unit Price (Incl. VAT)</th>
+                  <th className="py-3 px-4 text-right">Amount (Incl. VAT)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cyan-900/30 text-sm print:divide-slate-200">
@@ -209,11 +209,18 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
             </table>
           </div>
 
-          {/* Totals Summary Card */}
-          <div className="flex flex-col sm:flex-row justify-end pt-4">
-            <div className="w-full sm:w-80 bg-slate-900/80 p-5 rounded-2xl border border-cyan-900/50 space-y-3 print:bg-slate-100 print:border-slate-300">
+          {/* Totals Summary Card with 15% VAT Breakdown */}
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pt-4">
+            <div className="text-xs text-slate-400 print:text-slate-600 space-y-1 self-end">
+              <p className="font-semibold text-cyan-400 print:text-cyan-800">
+                ✓ All pricing includes 15% Value Added Tax (VAT)
+              </p>
+              <p>Standard South African VAT Rate: 15%</p>
+            </div>
+
+            <div className="w-full sm:w-84 bg-slate-900/80 p-5 rounded-2xl border border-cyan-900/50 space-y-2.5 print:bg-slate-100 print:border-slate-300">
               <div className="flex justify-between text-xs text-slate-300 print:text-slate-800">
-                <span>Subtotal:</span>
+                <span>Subtotal (Incl. VAT):</span>
                 <span className="font-semibold text-white print:text-black">
                   R {Number(invoice.subtotal || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                 </span>
@@ -237,9 +244,24 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
                 </div>
               )}
 
+              <div className="border-t border-cyan-900/40 pt-2 space-y-1.5 text-xs print:border-slate-300">
+                <div className="flex justify-between text-slate-400 print:text-slate-600">
+                  <span>Net Amount (Excl. VAT):</span>
+                  <span className="font-mono">
+                    R {(Number(invoice.total || 0) - (Number(invoice.total || 0) * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between text-cyan-300 print:text-cyan-800 font-medium">
+                  <span>VAT (15% Included):</span>
+                  <span className="font-mono">
+                    R {((Number(invoice.total || 0) * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+
               <div className="border-t border-cyan-800/60 pt-3 flex justify-between items-center print:border-slate-300">
                 <span className="font-bold text-sm text-white print:text-black uppercase tracking-wider font-tech">
-                  Total Due:
+                  Total Due (Incl. VAT):
                 </span>
                 <span className="text-xl font-bold font-tech text-cyan-400 print:text-cyan-900">
                   R {Number(invoice.total || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}

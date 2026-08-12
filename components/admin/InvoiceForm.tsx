@@ -427,6 +427,14 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                 </Select>
               </div>
 
+              {/* Line Items Headers */}
+              <div className="hidden sm:grid grid-cols-12 gap-3 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-tech">
+                <div className="col-span-6">Item Description</div>
+                <div className="col-span-2 text-center">Qty</div>
+                <div className="col-span-3 text-right">Price (Incl. 15% VAT)</div>
+                <div className="col-span-1"></div>
+              </div>
+
               <div className="space-y-3">
                 {items.map((item, index) => (
                   <div key={item.id} className="grid grid-cols-12 gap-2 sm:gap-3 items-center p-3 bg-secondary/40 rounded-xl border border-border/60">
@@ -507,7 +515,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
 
               <div className="space-y-4 text-xs">
                 <div className="flex justify-between items-center text-muted-foreground">
-                  <span>Subtotal:</span>
+                  <span>Subtotal (Incl. VAT):</span>
                   <span className="font-semibold text-foreground text-sm font-mono">
                     R {subtotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                   </span>
@@ -535,8 +543,23 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                   />
                 </div>
 
+                <div className="border-t border-border/60 pt-3 space-y-2 text-xs">
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Net (Excl. 15% VAT):</span>
+                    <span className="font-mono">
+                      R {(grandTotal - (grandTotal * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-cyan-400 font-medium">
+                    <span>VAT (15% Included):</span>
+                    <span className="font-mono">
+                      R {((grandTotal * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="border-t border-border pt-4 flex justify-between items-center">
-                  <span className="font-bold text-sm font-tech">Grand Total:</span>
+                  <span className="font-bold text-sm font-tech">Total (Incl. VAT):</span>
                   <span className="text-xl font-bold font-tech text-primary">
                     R {grandTotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                   </span>
