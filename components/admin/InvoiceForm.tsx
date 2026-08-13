@@ -603,7 +603,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                 </div>
 
                 <div className="border-t border-border pt-4 flex justify-between items-center">
-                  <span className="font-bold text-sm font-tech">Total (Incl. VAT):</span>
+                  <span className="font-bold text-sm font-tech">Total Amount:</span>
                   <span className="text-xl font-bold font-tech text-primary">
                     R {grandTotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                   </span>

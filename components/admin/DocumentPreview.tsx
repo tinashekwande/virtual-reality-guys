@@ -261,7 +261,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
 
               <div className="border-t border-cyan-800/60 pt-3 flex justify-between items-center print:border-slate-300">
                 <span className="font-bold text-sm text-white print:text-black uppercase tracking-wider font-tech">
-                  Total Amount (Incl. VAT):
+                  Total Amount:
                 </span>
                 <span className="text-xl font-bold font-tech text-cyan-400 print:text-cyan-900">
                   R {Number(invoice.total || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
