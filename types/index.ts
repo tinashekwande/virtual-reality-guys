@@ -79,6 +79,7 @@ export interface Invoice {
   discount: number
   transport_fee: number
   total: number
+  deposit_percentage?: number
   notes?: string
   created_at: string
   updated_at?: string

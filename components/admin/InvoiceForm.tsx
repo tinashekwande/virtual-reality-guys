@@ -65,6 +65,9 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
 
   const [discount, setDiscount] = useState<number>(initialData?.discount || 0);
   const [transportFee, setTransportFee] = useState<number>(initialData?.transport_fee || 0);
+  const [depositPercentage, setDepositPercentage] = useState<number>(
+    initialData?.deposit_percentage !== undefined ? Number(initialData.deposit_percentage) : 50
+  );
   const [notes, setNotes] = useState<string>(
     initialData?.notes ||
       "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time."
@@ -81,6 +84,8 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
   // Recalculate totals
   const subtotal = items.reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
   const grandTotal = Math.max(0, subtotal + Number(transportFee) - Number(discount));
+  const depositAmount = depositPercentage > 0 ? (grandTotal * depositPercentage) / 100 : 0;
+  const balanceDue = Math.max(0, grandTotal - depositAmount);
 
   const handleAddItem = (preset?: { description: string; price: number }) => {
     const newItem: InvoiceItem = {
@@ -131,6 +136,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
     discount: Number(discount),
     transport_fee: Number(transportFee),
     total: grandTotal,
+    deposit_percentage: Number(depositPercentage),
     notes,
   };
 
@@ -601,6 +607,67 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                   <span className="text-xl font-bold font-tech text-primary">
                     R {grandTotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                   </span>
+                </div>
+
+                {/* Deposit Requirement Card */}
+                <div className="bg-secondary/70 p-4 rounded-xl border border-cyan-900/40 space-y-3 mt-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400">
+                      Deposit Requirement
+                    </label>
+                    <span className="text-xs font-mono text-cyan-300 font-bold">
+                      {depositPercentage}%
+                    </span>
+                  </div>
+
+                  {/* Preset quick chips */}
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {[0, 25, 50, 70].map((pct) => (
+                      <button
+                        key={pct}
+                        type="button"
+                        onClick={() => setDepositPercentage(pct)}
+                        className={`py-1.5 text-xs rounded-lg font-semibold transition-all ${
+                          depositPercentage === pct
+                            ? "bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/20"
+                            : "bg-card text-muted-foreground hover:text-foreground border border-border"
+                        }`}
+                      >
+                        {pct === 0 ? "0% (Full)" : `${pct}%`}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Custom percentage input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="text-[11px] text-muted-foreground">Custom %:</span>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={depositPercentage}
+                      onChange={(e) => setDepositPercentage(Math.min(100, Math.max(0, Number(e.target.value))))}
+                      className="h-7 text-xs text-right font-mono bg-background rounded-lg border-border"
+                    />
+                    <span className="text-xs text-muted-foreground">%</span>
+                  </div>
+
+                  {depositPercentage > 0 && (
+                    <div className="border-t border-cyan-900/40 pt-2.5 space-y-1.5 text-xs">
+                      <div className="flex justify-between items-center text-amber-400 font-semibold">
+                        <span>Required Deposit ({depositPercentage}%):</span>
+                        <span className="font-mono text-sm">
+                          R {depositAmount.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-slate-400">
+                        <span>Balance Due on Event Day:</span>
+                        <span className="font-mono">
+                          R {balanceDue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

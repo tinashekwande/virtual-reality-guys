@@ -33,30 +33,46 @@ export async function PUT(request: Request, { params }: Props) {
   const body = await request.json()
   const admin = createAdminClient()
 
-  const { data, error } = await admin
+  const updatePayload: any = {
+    type: body.type,
+    doc_number: body.doc_number,
+    client_name: body.client_name,
+    client_email: body.client_email,
+    client_phone: body.client_phone,
+    client_address: body.client_address,
+    event_date: body.event_date,
+    issue_date: body.issue_date,
+    due_date: body.due_date,
+    status: body.status,
+    items: body.items,
+    subtotal: body.subtotal,
+    discount: body.discount,
+    transport_fee: body.transport_fee,
+    total: body.total,
+    deposit_percentage: body.deposit_percentage !== undefined ? Number(body.deposit_percentage) : 0,
+    notes: body.notes,
+    updated_at: new Date().toISOString(),
+  }
+
+  let { data, error } = await admin
     .from('invoices')
-    .update({
-      type: body.type,
-      doc_number: body.doc_number,
-      client_name: body.client_name,
-      client_email: body.client_email,
-      client_phone: body.client_phone,
-      client_address: body.client_address,
-      event_date: body.event_date,
-      issue_date: body.issue_date,
-      due_date: body.due_date,
-      status: body.status,
-      items: body.items,
-      subtotal: body.subtotal,
-      discount: body.discount,
-      transport_fee: body.transport_fee,
-      total: body.total,
-      notes: body.notes,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updatePayload)
     .eq('id', id)
     .select()
     .single()
+
+  // Fallback if deposit_percentage column has not been added to DB yet
+  if (error && error.message?.includes('deposit_percentage')) {
+    delete updatePayload.deposit_percentage
+    const retry = await admin
+      .from('invoices')
+      .update(updatePayload)
+      .eq('id', id)
+      .select()
+      .single()
+    data = retry.data
+    error = retry.error
+  }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)

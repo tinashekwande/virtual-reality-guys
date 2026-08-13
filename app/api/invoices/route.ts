@@ -37,30 +37,43 @@ export async function POST(request: Request) {
     const body = await request.json()
     const admin = createAdminClient()
 
-    const { data, error } = await admin
+    const insertPayload: any = {
+      type: body.type || 'quote',
+      doc_number: body.doc_number,
+      client_name: body.client_name,
+      client_email: body.client_email || '',
+      client_phone: body.client_phone || '',
+      client_address: body.client_address || '',
+      event_date: body.event_date || '',
+      issue_date: body.issue_date || new Date().toISOString().split('T')[0],
+      due_date: body.due_date || '',
+      status: body.status || 'draft',
+      items: body.items || [],
+      subtotal: body.subtotal || 0,
+      discount: body.discount || 0,
+      transport_fee: body.transport_fee || 0,
+      total: body.total || 0,
+      deposit_percentage: body.deposit_percentage !== undefined ? Number(body.deposit_percentage) : 0,
+      notes: body.notes || '',
+    }
+
+    let { data, error } = await admin
       .from('invoices')
-      .insert([
-        {
-          type: body.type || 'quote',
-          doc_number: body.doc_number,
-          client_name: body.client_name,
-          client_email: body.client_email || '',
-          client_phone: body.client_phone || '',
-          client_address: body.client_address || '',
-          event_date: body.event_date || '',
-          issue_date: body.issue_date || new Date().toISOString().split('T')[0],
-          due_date: body.due_date || '',
-          status: body.status || 'draft',
-          items: body.items || [],
-          subtotal: body.subtotal || 0,
-          discount: body.discount || 0,
-          transport_fee: body.transport_fee || 0,
-          total: body.total || 0,
-          notes: body.notes || '',
-        },
-      ])
+      .insert([insertPayload])
       .select()
       .single()
+
+    // Fallback if deposit_percentage column has not been added to DB yet
+    if (error && error.message?.includes('deposit_percentage')) {
+      delete insertPayload.deposit_percentage
+      const retry = await admin
+        .from('invoices')
+        .insert([insertPayload])
+        .select()
+        .single()
+      data = retry.data
+      error = retry.error
+    }
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })

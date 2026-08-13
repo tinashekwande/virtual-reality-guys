@@ -20,10 +20,14 @@ create table if not exists invoices (
   discount       numeric(12, 2) not null default 0,
   transport_fee  numeric(12, 2) not null default 0,
   total          numeric(12, 2) not null default 0,
+  deposit_percentage numeric(5, 2) not null default 0,
   notes          text,
   created_at     timestamptz default now(),
   updated_at     timestamptz default now()
 );
+
+-- In case table already exists:
+alter table invoices add column if not exists deposit_percentage numeric(5, 2) default 0;
 
 -- Enable RLS
 alter table invoices enable row level security;

@@ -261,12 +261,30 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
 
               <div className="border-t border-cyan-800/60 pt-3 flex justify-between items-center print:border-slate-300">
                 <span className="font-bold text-sm text-white print:text-black uppercase tracking-wider font-tech">
-                  Total Due (Incl. VAT):
+                  Total Amount (Incl. VAT):
                 </span>
                 <span className="text-xl font-bold font-tech text-cyan-400 print:text-cyan-900">
                   R {Number(invoice.total || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                 </span>
               </div>
+
+              {/* Deposit Required Section if deposit_percentage > 0 */}
+              {(invoice.deposit_percentage !== undefined && Number(invoice.deposit_percentage) > 0) && (
+                <div className="border-t border-amber-500/40 pt-2.5 space-y-1.5 print:border-amber-400">
+                  <div className="flex justify-between items-center text-xs font-bold text-amber-400 print:text-amber-800">
+                    <span>Deposit Due ({invoice.deposit_percentage}%):</span>
+                    <span className="font-mono text-sm">
+                      R {((Number(invoice.total || 0) * Number(invoice.deposit_percentage)) / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px] text-slate-300 print:text-slate-700">
+                    <span>Remaining Balance Due:</span>
+                    <span className="font-mono">
+                      R {(Number(invoice.total || 0) - (Number(invoice.total || 0) * Number(invoice.deposit_percentage)) / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -335,6 +353,16 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
               </p>
             </div>
           </div>
+
+          {/* Deposit policy highlight if deposit_percentage > 0 */}
+          {invoice.deposit_percentage !== undefined && Number(invoice.deposit_percentage) > 0 ? (
+            <div className="mt-2 bg-amber-500/10 p-3.5 rounded-xl border border-amber-500/30 text-xs text-amber-300 print:bg-amber-50 print:border-amber-200 print:text-amber-900 flex items-start gap-2.5">
+              <Shield className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span>
+                <strong>Deposit Policy:</strong> A <strong>{invoice.deposit_percentage}% deposit (R {((Number(invoice.total || 0) * Number(invoice.deposit_percentage)) / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2 })})</strong> is required upon booking confirmation to secure the date and reserve all VR equipment. The balance of <strong>R {(Number(invoice.total || 0) - (Number(invoice.total || 0) * Number(invoice.deposit_percentage)) / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</strong> is payable on or before the event date.
+              </span>
+            </div>
+          ) : null}
         </div>
 
         {/* 5. Terms & Additional Notes */}
