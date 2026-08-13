@@ -572,7 +572,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                   <Check className="h-3.5 w-3.5" /> FNB Banking Included
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  Your PDF export will automatically include your exact FNB bank account details (Panashe Majinga, Acc: 631244445502).
+                  Your PDF export will automatically include your exact FNB bank account details (Panashe Majinga, Acc: 63124445502).
                 </p>
               </div>
 

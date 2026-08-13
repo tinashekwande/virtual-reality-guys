@@ -313,7 +313,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
                 Account Number
               </p>
               <p className="font-bold font-mono text-amber-400 text-base tracking-widest print:text-amber-800">
-                631244445502
+                63124445502
               </p>
             </div>
 
