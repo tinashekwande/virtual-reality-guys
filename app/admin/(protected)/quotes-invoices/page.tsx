@@ -185,6 +185,27 @@ function QuotesInvoicesContent() {
     fetchInvoices();
   };
 
+  const handleStatusChange = async (id: string, newStatus: InvoiceStatus) => {
+    try {
+      const res = await fetch(`/api/invoices/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update status.");
+      toast.success(
+        newStatus === "paid"
+          ? "Invoice marked as PAID (Added to verified revenue! 💰)"
+          : "Invoice marked as PENDING (Unpaid pipeline)"
+      );
+      setInvoices((prev) =>
+        prev.map((inv) => (inv.id === id ? { ...inv, status: newStatus } : inv))
+      );
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update status.");
+    }
+  };
+
   // Filtered invoices
   const filteredInvoices = invoices.filter((inv) => {
     const matchesSearch =
@@ -192,7 +213,12 @@ function QuotesInvoicesContent() {
       inv.client_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       inv.client_email?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === "all" || inv.type === typeFilter;
-    const matchesStatus = statusFilter === "all" || inv.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all"
+        ? true
+        : statusFilter === "pending"
+        ? inv.status === "pending" || inv.status === "sent"
+        : inv.status === statusFilter;
     return matchesSearch && matchesType && matchesStatus;
   });
 
@@ -201,6 +227,9 @@ function QuotesInvoicesContent() {
   const totalInvoicesCount = invoices.filter((i) => i.type === "invoice").length;
   const totalPaidRevenue = invoices
     .filter((i) => i.type === "invoice" && i.status === "paid")
+    .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+  const totalPendingAmount = invoices
+    .filter((i) => i.type === "invoice" && i.status !== "paid" && i.status !== "cancelled")
     .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
 
   if (viewMode === "create" || viewMode === "edit") {
@@ -264,7 +293,7 @@ function QuotesInvoicesContent() {
       </div>
 
       {/* Metrics Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-card/70 backdrop-blur-md rounded-2xl p-6 border border-border flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
             <FileText className="h-6 w-6" />
@@ -286,11 +315,23 @@ function QuotesInvoicesContent() {
         </div>
 
         <div className="bg-card/70 backdrop-blur-md rounded-2xl p-6 border border-border flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-yellow-500/10 text-yellow-400 flex items-center justify-center">
+            <Clock className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground font-medium">Pending Unpaid</p>
+            <p className="text-2xl font-bold font-tech text-yellow-400">
+              R {totalPendingAmount.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-card/70 backdrop-blur-md rounded-2xl p-6 border border-border flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
             <DollarSign className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Total Revenue (Paid)</p>
+            <p className="text-xs text-muted-foreground font-medium">Paid Revenue 💰</p>
             <p className="text-2xl font-bold font-tech text-emerald-400">
               R {totalPaidRevenue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
             </p>
@@ -323,14 +364,14 @@ function QuotesInvoicesContent() {
           </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-36 rounded-xl border-border bg-secondary text-xs">
+            <SelectTrigger className="w-44 rounded-xl border-border bg-secondary text-xs">
               <SelectValue placeholder="Filter Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="pending">Pending Payment</SelectItem>
+              <SelectItem value="paid">Paid / Confirmed</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="sent">Sent</SelectItem>
-              <SelectItem value="paid">Paid / Accepted</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
@@ -412,23 +453,39 @@ function QuotesInvoicesContent() {
                       <td className="py-4 px-6 text-xs text-muted-foreground">
                         {inv.issue_date}
                       </td>
-                      <td className="py-4 px-6">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-full border ${
-                            inv.status === "paid"
-                              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                              : inv.status === "sent"
-                              ? "bg-blue-500/10 text-blue-400 border-blue-500/30"
-                              : inv.status === "cancelled"
-                              ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
-                              : "bg-slate-500/10 text-slate-400 border-slate-500/30"
-                          }`}
+                      <td className="py-4 px-6" onClick={(e) => e.stopPropagation()}>
+                        <Select
+                          value={inv.status}
+                          onValueChange={(val: InvoiceStatus) => handleStatusChange(inv.id, val)}
                         >
-                          {inv.status === "paid" && <CheckCircle2 className="h-3 w-3" />}
-                          {inv.status === "sent" && <Clock className="h-3 w-3" />}
-                          {inv.status === "cancelled" && <XCircle className="h-3 w-3" />}
-                          {inv.status}
-                        </span>
+                          <SelectTrigger
+                            className={`h-7 text-xs w-40 border font-semibold rounded-lg ${
+                              inv.status === "paid"
+                                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                : inv.status === "pending" || inv.status === "sent"
+                                ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                : inv.status === "cancelled"
+                                ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+                                : "bg-slate-500/10 text-slate-400 border-slate-500/30"
+                            }`}
+                          >
+                            <SelectValue>
+                              {inv.status === "paid"
+                                ? "Paid / Confirmed"
+                                : inv.status === "pending" || inv.status === "sent"
+                                ? "Pending Payment"
+                                : inv.status === "cancelled"
+                                ? "Cancelled"
+                                : "Draft"}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-950 border-cyan-900/60 text-slate-200">
+                            <SelectItem value="pending">Pending Payment</SelectItem>
+                            <SelectItem value="paid">Paid (Add to Revenue 💰)</SelectItem>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </td>
                       <td className="py-4 px-6 text-right font-tech font-bold text-primary">
                         R {Number(inv.total || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
@@ -449,8 +506,12 @@ function QuotesInvoicesContent() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleEdit(inv)}
-                            title="Edit document"
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg"
+                            title={inv.status === "paid" ? "Edit Invoice (Paid - revenue counted)" : "Edit Invoice (Unpaid - full editing)"}
+                            className={`h-8 w-8 rounded-lg ${
+                              inv.status === "paid"
+                                ? "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                            }`}
                           >
                             <Edit3 className="h-4 w-4" />
                           </Button>

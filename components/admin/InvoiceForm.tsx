@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Save, Eye, FileText, Calendar, User, DollarSign, ArrowLeft, Sparkles, Check, Download } from "lucide-react";
+import { Plus, Trash2, Save, Eye, FileText, Calendar, User, DollarSign, ArrowLeft, Sparkles, Check, Download, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -269,6 +269,44 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
       </div>
 
       <div className={activeTab === "edit" ? "block" : "hidden"}>
+        {/* Status Alert Banner */}
+        {status === "paid" ? (
+          <div className="mb-6 bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-emerald-300 text-xs">
+            <div className="flex items-center gap-2 font-semibold">
+              <CheckCircle2 className="h-5 w-5 text-emerald-400 flex-shrink-0" />
+              <span>
+                This invoice is marked as <strong>PAID</strong>. Total of <strong>R {grandTotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</strong> is verified and counted in your revenue.
+              </span>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setStatus("pending")}
+              className="border-emerald-500/40 hover:bg-emerald-500/20 text-emerald-300 text-xs rounded-xl"
+            >
+              Mark as Pending to Edit
+            </Button>
+          </div>
+        ) : (
+          <div className="mb-6 bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-300 text-xs">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-amber-400 flex-shrink-0" />
+              <span>
+                Status: <strong>{status === "draft" ? "Draft" : "Pending Payment"}</strong>. Unpaid invoice — all line items, client info, and prices are fully editable.
+              </span>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setStatus("paid")}
+              className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20"
+            >
+              Mark as Paid 💰
+            </Button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="grid lg:grid-cols-3 gap-8">
           {/* Left Columns (2) — Main Form Fields */}
           <div className="lg:col-span-2 space-y-6">
@@ -304,15 +342,15 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">Status</label>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">Payment Status</label>
                   <Select value={status} onValueChange={(val: InvoiceStatus) => setStatus(val)}>
                     <SelectTrigger className="rounded-xl border-border bg-secondary/50">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="pending">Pending Payment</SelectItem>
+                      <SelectItem value="paid">Paid (Add to Revenue 💰)</SelectItem>
                       <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="sent">Sent to Client</SelectItem>
-                      <SelectItem value="paid">Accepted / Paid</SelectItem>
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
                   </Select>
