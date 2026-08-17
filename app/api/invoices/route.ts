@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
 
+function normalizeInvoice(inv: any) {
+  if (!inv) return inv
+  if (typeof inv.notes === 'string' && inv.notes.includes('[STATUS:')) {
+    const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
+    if (match && match[1]) {
+      inv.status = match[1]
+      inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
+    }
+  }
+  return inv
+}
+
 // GET — list invoices & quotes (admin only)
 export async function GET(request: Request) {
   const { error: authError } = await requireAdmin()
@@ -22,7 +34,8 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
-    return NextResponse.json(data || [])
+    const normalized = Array.isArray(data) ? data.map(normalizeInvoice) : []
+    return NextResponse.json(normalized)
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Failed to fetch invoices' }, { status: 500 })
   }
@@ -63,9 +76,25 @@ export async function POST(request: Request) {
       .select()
       .single()
 
-    // Fallback if deposit_percentage column has not been added to DB yet
+    // Fallback 1: if deposit_percentage column has not been added to DB yet
     if (error && error.message?.includes('deposit_percentage')) {
       delete insertPayload.deposit_percentage
+      const retry = await admin
+        .from('invoices')
+        .insert([insertPayload])
+        .select()
+        .single()
+      data = retry.data
+      error = retry.error
+    }
+
+    // Fallback 2: if status constraint in Supabase table rejects new status (deposit_paid / pending)
+    if (error && (error.message?.includes('invoices_status_check') || error.message?.includes('check constraint'))) {
+      const originalStatus = insertPayload.status
+      insertPayload.status = originalStatus === 'draft' ? 'draft' : 'sent'
+      const cleanNotes = (insertPayload.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim()
+      insertPayload.notes = `${cleanNotes} [STATUS:${originalStatus}]`.trim()
+
       const retry = await admin
         .from('invoices')
         .insert([insertPayload])
@@ -79,7 +108,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json(data, { status: 201 })
+    return NextResponse.json(normalizeInvoice(data), { status: 201 })
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Failed to create document' }, { status: 500 })
   }
