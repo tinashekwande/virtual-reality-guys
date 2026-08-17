@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Calendar as CalendarIcon, Clock, DollarSign, UserCheck, AlertTriangle,
   Plus, Search, Filter, RefreshCw, FileText, CheckCircle2, ListFilter
@@ -95,7 +95,7 @@ export default function BookingPlannerPage() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
-  const fetchPlannerData = async () => {
+  const fetchPlannerData = useCallback(async () => {
     setLoading(true);
     try {
       const [invoicesRes, requestsRes] = await Promise.all([
@@ -175,6 +175,16 @@ export default function BookingPlannerPage() {
   useEffect(() => {
     fetchPlannerData();
   }, [fetchPlannerData]);
+
+  const handleOpenNewModal = (dateStr?: string) => {
+    setSelectedDate(dateStr || new Date().toISOString().split("T")[0]);
+    setIsNewModalOpen(true);
+  };
+
+  const handleOpenDetails = (event: PlannerEvent) => {
+    setSelectedEvent(event);
+    setIsDetailsOpen(true);
+  };
 
   // Filter events based on active filters
   const filteredEvents = events.filter((evt) => {

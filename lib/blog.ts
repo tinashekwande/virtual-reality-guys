@@ -159,7 +159,7 @@ export async function getPublishedPosts({
     let originalTag = ""
     if (postsTags) {
       const allTags = new Set<string>()
-      postsTags.forEach(p => p.tags?.forEach(t => allTags.add(t.trim())))
+      postsTags.forEach((p: any) => p.tags?.forEach((t: string) => allTags.add(t.trim())))
       for (const t of allTags) {
         if (slugify(t) === tagSlug) {
           originalTag = t

@@ -92,8 +92,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   // Setup Custom Renderer for Marked to inject IDs in headings
-  const renderer = new marked.Renderer()
-  renderer.heading = function (arg1, arg2, arg3) {
+  const renderer = new marked.Renderer();
+  (renderer as any).heading = function (arg1: any, arg2?: any, arg3?: any) {
     let text = ""
     let depth = 2
     if (typeof arg1 === "object") {

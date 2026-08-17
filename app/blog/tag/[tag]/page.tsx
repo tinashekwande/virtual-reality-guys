@@ -30,7 +30,7 @@ async function resolveTagName(tagSlug: string): Promise<string | null> {
   if (!data) return null
 
   const allTags = new Set<string>()
-  data.forEach(p => p.tags?.forEach(t => allTags.add(t.trim())))
+  data.forEach((p: any) => p.tags?.forEach((t: string) => allTags.add(t.trim())))
   for (const t of allTags) {
     if (slugify(t) === tagSlug) {
       return t

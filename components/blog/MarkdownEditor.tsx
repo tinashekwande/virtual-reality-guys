@@ -30,8 +30,8 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
   // Configure marked renderer for preview
   useEffect(() => {
     if (activeTab === "preview") {
-      const renderer = new marked.Renderer()
-      renderer.heading = function (arg1, arg2, arg3) {
+      const renderer = new marked.Renderer();
+      (renderer as any).heading = function (arg1: any, arg2?: any, arg3?: any) {
         let text = ""
         let depth = 2
         if (typeof arg1 === "object") {
