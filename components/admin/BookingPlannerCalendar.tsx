@@ -28,6 +28,8 @@ function getPlannerStatusLabel(status: string): string {
     case "pending":
     case "sent":
       return "Pending Confirmation";
+    case "deposit_paid":
+      return "Deposit Paid";
     case "archived":
     case "confirmed":
     case "booking_confirmed":
@@ -304,6 +306,8 @@ export default function BookingPlannerCalendar({
                             className={`px-2 py-0.5 text-[9px] uppercase font-bold rounded-full border ${
                               evt.status === "paid" || evt.status === "completed" || evt.status === "booking_confirmed" || evt.status === "archived"
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                : evt.status === "deposit_paid"
+                                ? "bg-teal-500/10 text-teal-300 border-teal-500/30"
                                 : evt.status === "in_progress" || evt.status === "pending" || evt.status === "sent" || evt.status === "pending_confirmation"
                                 ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
                                 : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"
@@ -366,6 +370,8 @@ export default function BookingPlannerCalendar({
                     <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${
                       evt.status === "paid" || evt.status === "completed" || evt.status === "booking_confirmed" || evt.status === "archived"
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                        : evt.status === "deposit_paid"
+                        ? "bg-teal-500/10 text-teal-300 border-teal-500/30"
                         : evt.status === "in_progress" || evt.status === "pending" || evt.status === "sent" || evt.status === "pending_confirmation"
                         ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
                         : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30"

@@ -109,8 +109,24 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
           </div>
 
           <div className="text-right sm:text-right w-full sm:w-auto space-y-2">
-            <div className="inline-block px-4 py-1.5 rounded-xl bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 font-tech uppercase tracking-widest text-lg font-bold print:bg-slate-100 print:text-slate-900 print:border-slate-300">
-              {isQuote ? "QUOTE" : "INVOICE"}
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl font-tech uppercase tracking-widest text-lg font-bold ${
+              invoice.status === "paid"
+                ? "bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 print:bg-emerald-50 print:text-emerald-900 print:border-emerald-300"
+                : invoice.status === "deposit_paid"
+                ? "bg-teal-950/80 border border-teal-500/30 text-teal-300 print:bg-teal-50 print:text-teal-900 print:border-teal-300"
+                : "bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 print:bg-slate-100 print:text-slate-900 print:border-slate-300"
+            }`}>
+              <span>{isQuote ? "QUOTE" : "TAX INVOICE"}</span>
+              {invoice.status === "paid" && (
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  PAID
+                </span>
+              )}
+              {invoice.status === "deposit_paid" && (
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                  DEPOSIT PAID
+                </span>
+              )}
             </div>
             <div className="space-y-1 text-xs text-slate-300 print:text-slate-800">
               <p>
@@ -272,14 +288,23 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
               {(invoice.deposit_percentage !== undefined && Number(invoice.deposit_percentage) > 0) && (
                 <div className="border-t border-amber-500/40 pt-2.5 space-y-1.5 print:border-amber-400">
                   <div className="flex justify-between items-center text-xs font-bold text-amber-400 print:text-amber-800">
-                    <span>Deposit Due ({invoice.deposit_percentage}%):</span>
+                    <span className="flex items-center gap-1.5">
+                      <span>Deposit ({invoice.deposit_percentage}%):</span>
+                      {invoice.status === "deposit_paid" && (
+                        <span className="text-[9px] px-1.5 py-0.2 rounded font-mono font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                          ✓ Received
+                        </span>
+                      )}
+                    </span>
                     <span className="font-mono text-sm">
                       R {((Number(invoice.total || 0) * Number(invoice.deposit_percentage)) / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-[11px] text-slate-300 print:text-slate-700">
-                    <span>Remaining Balance Due:</span>
-                    <span className="font-mono">
+                    <span>
+                      {invoice.status === "deposit_paid" ? "Outstanding Balance (Due on Event Day):" : "Remaining Balance Due:"}
+                    </span>
+                    <span className={`font-mono ${invoice.status === "deposit_paid" ? "font-bold text-amber-300 print:text-amber-900" : ""}`}>
                       R {(Number(invoice.total || 0) - (Number(invoice.total || 0) * Number(invoice.deposit_percentage)) / 100).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                     </span>
                   </div>

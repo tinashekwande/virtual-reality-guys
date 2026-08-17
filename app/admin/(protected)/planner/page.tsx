@@ -124,6 +124,7 @@ export default function BookingPlannerPage() {
             event_type: inv.type,
             status: inv.status,
             total_amount: Number(inv.total) || 0,
+            deposit_percentage: inv.deposit_percentage,
             notes_or_message: inv.notes,
             items: inv.items,
             raw_data: inv,
@@ -158,43 +159,48 @@ export default function BookingPlannerPage() {
 
       // Flag conflicts where multiple events share the exact same date
       formattedEvents.forEach((evt) => {
-        if (dateCounts[evt.date] > 1) {
+        if ((dateCounts[evt.date] || 0) > 1) {
           evt.has_conflict = true;
         }
       });
 
       setEvents(formattedEvents);
     } catch (err: any) {
-      console.warn("Failed to load planner data:", err);
-      toast.error("Could not refresh calendar data.");
+      toast.error("Failed to load planner calendar events.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPlannerData();
-  }, []);
+  }, [fetchPlannerData]);
 
-  const handleOpenNewModal = (dateStr: string) => {
-    setSelectedDate(dateStr || new Date().toISOString().split("T")[0]);
-    setIsNewModalOpen(true);
-  };
-
-  const handleOpenDetails = (event: PlannerEvent) => {
-    setSelectedEvent(event);
-    setIsDetailsOpen(true);
-  };
-
-  // Filtered Events
+  // Filter events based on active filters
   const filteredEvents = events.filter((evt) => {
     const matchesSearch =
-      evt.client_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      evt.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      evt.client_email?.toLowerCase().includes(searchQuery.toLowerCase());
+      (evt.title?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+      (evt.client_name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+      (evt.client_address && evt.client_address.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesStatus = statusFilter === "all" || evt.status === statusFilter;
-    const matchesType = typeFilter === "all" || evt.event_type.toLowerCase() === typeFilter.toLowerCase();
+    const matchesStatus =
+      statusFilter === "all"
+        ? true
+        : statusFilter === "new"
+        ? evt.status === "new" || evt.status === "new_request"
+        : statusFilter === "in_progress"
+        ? evt.status === "in_progress" || evt.status === "pending_confirmation" || evt.status === "pending" || evt.status === "sent"
+        : statusFilter === "archived"
+        ? evt.status === "archived" || evt.status === "booking_confirmed" || evt.status === "confirmed" || evt.status === "paid"
+        : statusFilter === "completed"
+        ? evt.status === "completed" || evt.status === "event_completed"
+        : evt.status === statusFilter;
+
+    const matchesType =
+      typeFilter === "all"
+        ? true
+        : evt.event_type.toLowerCase().includes(typeFilter.toLowerCase()) ||
+          (evt.title?.toLowerCase() || "").includes(typeFilter.toLowerCase());
 
     return matchesSearch && matchesStatus && matchesType;
   });
@@ -207,8 +213,17 @@ export default function BookingPlannerPage() {
 
   const currentMonthPrefix = todayStr.substring(0, 7);
   const monthlyRevenue = events
-    .filter((e) => e.date.startsWith(currentMonthPrefix) && (e.status === "paid" || e.status === "completed"))
-    .reduce((acc, curr) => acc + (curr.total_amount || 0), 0);
+    .filter((e) => e.date.startsWith(currentMonthPrefix) && (e.status === "paid" || e.status === "completed" || e.status === "deposit_paid"))
+    .reduce((acc, curr) => {
+      if (curr.status === "paid" || curr.status === "completed") {
+        return acc + (curr.total_amount || 0);
+      }
+      if (curr.status === "deposit_paid") {
+        const pct = curr.deposit_percentage !== undefined && Number(curr.deposit_percentage) > 0 ? Number(curr.deposit_percentage) : 50;
+        return acc + (((curr.total_amount || 0) * pct) / 100);
+      }
+      return acc;
+    }, 0);
 
   return (
     <div className="space-y-8">
@@ -228,15 +243,16 @@ export default function BookingPlannerPage() {
             title="Refresh calendar"
             className="border-border rounded-xl"
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+            Refresh
           </Button>
 
           <Button
-            onClick={() => handleOpenNewModal(todayStr)}
+            onClick={() => setIsNewModalOpen(true)}
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/20"
           >
             <Plus className="h-4 w-4 mr-1.5" />
-            + New Booking
+            New Booking
           </Button>
         </div>
       </div>
@@ -287,7 +303,7 @@ export default function BookingPlannerPage() {
             <DollarSign className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">This Month Paid</p>
+            <p className="text-xs text-muted-foreground font-medium">This Month Revenue</p>
             <p className="text-2xl font-bold font-tech text-emerald-400">
               R {monthlyRevenue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
             </p>
@@ -309,14 +325,15 @@ export default function BookingPlannerPage() {
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-44 rounded-xl border-border bg-secondary text-xs">
+            <SelectTrigger className="w-48 rounded-xl border-border bg-secondary text-xs">
               <SelectValue placeholder="Status Filter" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="new">New Request</SelectItem>
               <SelectItem value="in_progress">Pending Confirmation</SelectItem>
-              <SelectItem value="archived">Booking Confirmed</SelectItem>
+              <SelectItem value="deposit_paid">Deposit Paid</SelectItem>
+              <SelectItem value="archived">Booking Confirmed / Paid</SelectItem>
               <SelectItem value="completed">Event Completed</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>

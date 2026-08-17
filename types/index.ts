@@ -60,7 +60,7 @@ export interface InvoiceItem {
 }
 
 export type InvoiceType = 'quote' | 'invoice'
-export type InvoiceStatus = 'draft' | 'pending' | 'sent' | 'paid' | 'cancelled'
+export type InvoiceStatus = 'draft' | 'pending' | 'deposit_paid' | 'sent' | 'paid' | 'cancelled'
 
 export interface Invoice {
   id: string

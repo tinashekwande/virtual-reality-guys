@@ -28,13 +28,14 @@ export interface PlannerEvent {
   event_type: string;
   status: string;
   total_amount?: number;
+  deposit_percentage?: number;
   notes_or_message?: string;
   items?: any[];
   raw_data: any;
   has_conflict?: boolean;
 }
 
-function getStatusLabel(status: string): string {
+export function getStatusLabel(status: string): string {
   switch (status) {
     case "new":
     case "new_request":
@@ -44,6 +45,8 @@ function getStatusLabel(status: string): string {
     case "pending":
     case "sent":
       return "Pending Confirmation";
+    case "deposit_paid":
+      return "Deposit Paid";
     case "archived":
     case "confirmed":
     case "booking_confirmed":
@@ -61,13 +64,14 @@ function getStatusLabel(status: string): string {
   }
 }
 
-const STATUS_BADGE: Record<string, string> = {
+export const STATUS_BADGE: Record<string, string> = {
   new: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
   new_request: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
   in_progress: "bg-amber-500/10 text-amber-400 border-amber-500/30",
   pending_confirmation: "bg-amber-500/10 text-amber-400 border-amber-500/30",
   pending: "bg-amber-500/10 text-amber-400 border-amber-500/30",
   sent: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  deposit_paid: "bg-teal-500/10 text-teal-300 border-teal-500/30",
   archived: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
   booking_confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
   confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
@@ -324,9 +328,10 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
               <SelectContent className="bg-slate-950 border-cyan-900/60 text-slate-200">
                 {isInvoice ? (
                   <>
+                    <SelectItem value="pending">Pending Payment</SelectItem>
+                    <SelectItem value="deposit_paid">Deposit Paid</SelectItem>
+                    <SelectItem value="paid">Fully Paid / Confirmed</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="sent">Pending Confirmation</SelectItem>
-                    <SelectItem value="paid">Booking Confirmed</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>
                   </>
                 ) : (

@@ -195,7 +195,9 @@ function QuotesInvoicesContent() {
       if (!res.ok) throw new Error("Failed to update status.");
       toast.success(
         newStatus === "paid"
-          ? "Invoice marked as PAID (Added to verified revenue! 💰)"
+          ? "Invoice marked as FULLY PAID (100% added to verified revenue! 💰)"
+          : newStatus === "deposit_paid"
+          ? "Invoice marked as DEPOSIT PAID (Deposit portion added to verified revenue! 💵)"
           : "Invoice marked as PENDING (Unpaid pipeline)"
       );
       setInvoices((prev) =>
@@ -222,15 +224,33 @@ function QuotesInvoicesContent() {
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  // Calculate metrics
+  // Calculate metrics with exact deposit accounting
   const totalQuotesCount = invoices.filter((i) => i.type === "quote").length;
   const totalInvoicesCount = invoices.filter((i) => i.type === "invoice").length;
+  
   const totalPaidRevenue = invoices
-    .filter((i) => i.type === "invoice" && i.status === "paid")
-    .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+    .filter((i) => i.type === "invoice")
+    .reduce((acc, curr) => {
+      if (curr.status === "paid") {
+        return acc + (Number(curr.total) || 0);
+      }
+      if (curr.status === "deposit_paid") {
+        const pct = curr.deposit_percentage !== undefined && Number(curr.deposit_percentage) > 0 ? Number(curr.deposit_percentage) : 50;
+        return acc + ((Number(curr.total || 0) * pct) / 100);
+      }
+      return acc;
+    }, 0);
+
   const totalPendingAmount = invoices
     .filter((i) => i.type === "invoice" && i.status !== "paid" && i.status !== "cancelled")
-    .reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+    .reduce((acc, curr) => {
+      if (curr.status === "deposit_paid") {
+        const pct = curr.deposit_percentage !== undefined && Number(curr.deposit_percentage) > 0 ? Number(curr.deposit_percentage) : 50;
+        const depAmount = ((Number(curr.total || 0) * pct) / 100);
+        return acc + Math.max(0, (Number(curr.total || 0) - depAmount));
+      }
+      return acc + (Number(curr.total) || 0);
+    }, 0);
 
   if (viewMode === "create" || viewMode === "edit") {
     return (
@@ -364,13 +384,14 @@ function QuotesInvoicesContent() {
           </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-44 rounded-xl border-border bg-secondary text-xs">
+            <SelectTrigger className="w-48 rounded-xl border-border bg-secondary text-xs">
               <SelectValue placeholder="Filter Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="pending">Pending Payment</SelectItem>
-              <SelectItem value="paid">Paid / Confirmed</SelectItem>
+              <SelectItem value="deposit_paid">Deposit Paid</SelectItem>
+              <SelectItem value="paid">Fully Paid / Confirmed</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
@@ -428,6 +449,7 @@ function QuotesInvoicesContent() {
               <tbody className="divide-y divide-border text-sm">
                 {filteredInvoices.map((inv) => {
                   const isQuote = inv.type === "quote";
+                  const depPct = inv.deposit_percentage !== undefined && Number(inv.deposit_percentage) > 0 ? inv.deposit_percentage : 50;
                   return (
                     <tr key={inv.id} className="hover:bg-secondary/20 transition-colors group">
                       <td className="py-4 px-6 font-mono font-bold text-white">
@@ -459,9 +481,11 @@ function QuotesInvoicesContent() {
                           onValueChange={(val: InvoiceStatus) => handleStatusChange(inv.id, val)}
                         >
                           <SelectTrigger
-                            className={`h-7 text-xs w-40 border font-semibold rounded-lg ${
+                            className={`h-7 text-xs w-48 border font-semibold rounded-lg ${
                               inv.status === "paid"
                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                                : inv.status === "deposit_paid"
+                                ? "bg-teal-500/10 text-teal-300 border-teal-500/30"
                                 : inv.status === "pending" || inv.status === "sent"
                                 ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
                                 : inv.status === "cancelled"
@@ -471,7 +495,9 @@ function QuotesInvoicesContent() {
                           >
                             <SelectValue>
                               {inv.status === "paid"
-                                ? "Paid / Confirmed"
+                                ? "Fully Paid"
+                                : inv.status === "deposit_paid"
+                                ? `Deposit Paid (${depPct}%)`
                                 : inv.status === "pending" || inv.status === "sent"
                                 ? "Pending Payment"
                                 : inv.status === "cancelled"
@@ -481,7 +507,10 @@ function QuotesInvoicesContent() {
                           </SelectTrigger>
                           <SelectContent className="bg-slate-950 border-cyan-900/60 text-slate-200">
                             <SelectItem value="pending">Pending Payment</SelectItem>
-                            <SelectItem value="paid">Paid (Add to Revenue 💰)</SelectItem>
+                            <SelectItem value="deposit_paid">
+                              Deposit Paid ({depPct}%) 💵
+                            </SelectItem>
+                            <SelectItem value="paid">Fully Paid (100% 💰)</SelectItem>
                             <SelectItem value="draft">Draft</SelectItem>
                             <SelectItem value="cancelled">Cancelled</SelectItem>
                           </SelectContent>

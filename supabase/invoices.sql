@@ -14,7 +14,7 @@ create table if not exists invoices (
   event_date     text,
   issue_date     text not null,
   due_date       text,
-  status         text not null default 'draft' check (status in ('draft', 'sent', 'paid', 'cancelled')),
+  status         text not null default 'draft' check (status in ('draft', 'pending', 'deposit_paid', 'sent', 'paid', 'cancelled')),
   items          jsonb not null default '[]'::jsonb,
   subtotal       numeric(12, 2) not null default 0,
   discount       numeric(12, 2) not null default 0,
@@ -28,6 +28,8 @@ create table if not exists invoices (
 
 -- In case table already exists:
 alter table invoices add column if not exists deposit_percentage numeric(5, 2) default 0;
+alter table invoices drop constraint if exists invoices_status_check;
+alter table invoices add constraint invoices_status_check check (status in ('draft', 'pending', 'deposit_paid', 'sent', 'paid', 'cancelled'));
 
 -- Enable RLS
 alter table invoices enable row level security;

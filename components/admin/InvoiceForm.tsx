@@ -281,18 +281,57 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
             <div className="flex items-center gap-2 font-semibold">
               <CheckCircle2 className="h-5 w-5 text-emerald-400 flex-shrink-0" />
               <span>
-                This invoice is marked as <strong>PAID</strong>. Total of <strong>R {grandTotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</strong> is verified and counted in your revenue.
+                This invoice is marked as <strong>FULLY PAID</strong>. Total of <strong>R {grandTotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</strong> is verified and counted in your revenue.
               </span>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setStatus("pending")}
-              className="border-emerald-500/40 hover:bg-emerald-500/20 text-emerald-300 text-xs rounded-xl"
-            >
-              Mark as Pending to Edit
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setStatus("deposit_paid")}
+                className="border-teal-500/40 hover:bg-teal-500/20 text-teal-300 text-xs rounded-xl"
+              >
+                Mark as Deposit Paid ({depositPercentage}%)
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setStatus("pending")}
+                className="border-emerald-500/40 hover:bg-emerald-500/20 text-emerald-300 text-xs rounded-xl"
+              >
+                Mark as Pending
+              </Button>
+            </div>
+          </div>
+        ) : status === "deposit_paid" ? (
+          <div className="mb-6 bg-teal-500/10 border border-teal-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-teal-300 text-xs">
+            <div className="flex items-center gap-2 font-semibold">
+              <CheckCircle2 className="h-5 w-5 text-teal-400 flex-shrink-0" />
+              <span>
+                Status: <strong>DEPOSIT PAID ({depositPercentage}%)</strong>. Deposit amount of <strong>R {depositAmount.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</strong> is added to your verified revenue! Remaining balance of <strong>R {balanceDue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</strong> is pending.
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setStatus("paid")}
+                className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20"
+              >
+                Mark Fully Paid (100%) 💰
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setStatus("pending")}
+                className="border-teal-500/40 hover:bg-teal-500/20 text-teal-300 text-xs rounded-xl"
+              >
+                Mark as Pending
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="mb-6 bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-300 text-xs">
@@ -302,14 +341,24 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                 Status: <strong>{status === "draft" ? "Draft" : "Pending Payment"}</strong>. Unpaid invoice — all line items, client info, and prices are fully editable.
               </span>
             </div>
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => setStatus("paid")}
-              className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20"
-            >
-              Mark as Paid 💰
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setStatus("deposit_paid")}
+                className="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-teal-500/20"
+              >
+                Deposit Paid ({depositPercentage}%) 💵
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setStatus("paid")}
+                className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs rounded-xl shadow-md shadow-emerald-500/20"
+              >
+                Fully Paid 💰
+              </Button>
+            </div>
           </div>
         )}
 
@@ -355,7 +404,10 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="pending">Pending Payment</SelectItem>
-                      <SelectItem value="paid">Paid (Add to Revenue 💰)</SelectItem>
+                      <SelectItem value="deposit_paid">
+                        Deposit Paid ({depositPercentage}%) 💵
+                      </SelectItem>
+                      <SelectItem value="paid">Fully Paid (100% 💰)</SelectItem>
                       <SelectItem value="draft">Draft</SelectItem>
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                     </SelectContent>
