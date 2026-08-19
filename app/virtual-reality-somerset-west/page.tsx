@@ -30,17 +30,21 @@ export default function VirtualRealitySomersetWestPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": "Service",
     "name": "Virtual Reality Guys",
     "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
-    "telephone": "+27717800323",
-    "email": "virtualrealityguyz@gmail.com",
-    "priceRange": "$$",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Somerset West",
-      "addressRegion": "Western Cape",
-      "addressCountry": "ZA"
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Virtual Reality Guys",
+      "telephone": "+27717800323",
+      "email": "virtualrealityguyz@gmail.com",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cape Town",
+        "addressRegion": "Western Cape",
+        "addressCountry": "ZA"
+      }
     },
     "areaServed": localAreas.map(area => ({
       "@type": "Place",
@@ -224,20 +228,7 @@ export default function VirtualRealitySomersetWestPage() {
               </div>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "We booked the Premium package for my son's birthday party at our home in Somerset West. Having the virtual safety walls mapped out gave us absolute peace of mind, and the supervisors kept all the kids entertained and safe the entire afternoon. Outstanding local service with zero travel hassle!"
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Linda V.</p>
-                <p className="text-xs text-muted-foreground">Parent, Somerset West</p>
-              </div>
-            </div>
+
 
           </div>
 

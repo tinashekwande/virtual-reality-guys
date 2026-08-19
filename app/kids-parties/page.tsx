@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
-  description: 'Throw the ultimate kids gaming party in Cape Town! Fully supervised, safe, and exciting virtual reality birthday entertainment delivered to your venue.',
+  title: 'Kids Gaming Parties Cape Town | VR Entertainment for Children | Virtual Reality Guys',
+  description: 'Looking for kids entertainment in Cape Town? We deliver multiplayer VR gaming parties for play dates, after-school activities, and school holidays.',
   alternates: {
     canonical: '/kids-parties',
   },
   openGraph: {
-    title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
-    description: 'Looking for unique kids party ideas in Cape Town? We deliver multiplayer VR setups, fun rhythm games, and expert supervisors directly to your home.',
+    title: 'Kids Gaming Parties Cape Town | VR Entertainment for Children | Virtual Reality Guys',
+    description: 'Looking for kids entertainment in Cape Town? We deliver multiplayer VR gaming parties for play dates, after-school activities, and school holidays.',
     url: 'https://www.virtualrealityguyz.co.za/kids-parties',
     images: [{ url: '/images/vr-party.jpg', alt: 'Kids VR Gaming Party Cape Town' }],
   }
@@ -130,7 +130,7 @@ export default function KidsPartiesPage() {
             Cape Town's Coolest Kids Gaming Parties
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-balance">
-            Kids <span className="text-primary">Parties</span>
+            Kids Gaming <span className="text-primary">Parties</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Give them an absolutely unforgettable birthday experience! We bring premium mobile VR gaming, amazing kids' games, and expert supervisors directly to your home venue in Cape Town.
@@ -189,7 +189,7 @@ export default function KidsPartiesPage() {
                 Throw an Epic Gaming Party in Cape Town
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Looking for unique kids party ideas or exciting indoor activities for kids in Cape Town? Virtual Reality Guys delivers a premium gaming festival directly to your garage, garden, or local venue. Watch the kids jump, laugh, and compete as they slice blocks in Beat Saber or challenge each other to high-score multiplayer face-offs.
+                Looking for unique kids party ideas, play dates, after-school entertainment, or exciting indoor activities for kids during the school holidays in Cape Town? Virtual Reality Guys delivers a premium gaming festival directly to your garage, garden, or local venue. Watch the kids jump, laugh, and compete as they slice blocks in Beat Saber or challenge each other to high-score multiplayer face-offs. Perfect for any gathering where you need high-energy kids entertainment!
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">
@@ -208,24 +208,16 @@ export default function KidsPartiesPage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "Virtual Reality Guys were brilliant for my son's 11th birthday! The kids were completely obsessed with Beat Saber and the multiplayer setup. The staff were incredibly patient and handled everything perfectly. I didn't have to worry about a thing!"
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Sarah M.</p>
-                <p className="text-xs text-muted-foreground">Parent, Southern Suburbs CPT</p>
-              </div>
-            </div>
+
 
           </div>
           
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <div className="w-full mb-4">
+              <Link href="/vr-birthday-parties" className="text-primary font-semibold hover:underline">
+                Planning a birthday? See our VR Birthday Party packages &rarr;
+              </Link>
+            </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/vr-birthday-parties">VR Birthday Parties <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>

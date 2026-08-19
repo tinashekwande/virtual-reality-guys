@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'Educational VR School Demonstrations Cape Town | Mobile Setup',
-  description: 'Bring science and history to life! Interactive, educational, and safe Virtual Reality school demonstrations and carnivals in Cape Town.',
+  title: 'Book a VR School Demo Cape Town | Interactive Science & History | Virtual Reality Guys',
+  description: 'Book interactive school VR activities and demonstrations in Cape Town. We bring mobile VR science and history setups to school classrooms and carnivals.',
   alternates: {
     canonical: '/school-vr-demonstrations',
   },
   openGraph: {
-    title: 'Educational VR School Demonstrations Cape Town | Mobile Setup',
-    description: 'Looking for engaging school demonstrations in Cape Town? We deliver fully supervised educational VR setups directly to your classroom or school hall.',
+    title: 'Book a VR School Demo Cape Town | Interactive Science & History | Virtual Reality Guys',
+    description: 'Book interactive school VR activities and demonstrations in Cape Town. We bring mobile VR science and history setups to school classrooms and carnivals.',
     url: 'https://www.virtualrealityguyz.co.za/school-vr-demonstrations',
     images: [{ url: '/images/vr-school.jpg', alt: 'VR School Demonstration Cape Town' }],
   }
@@ -189,7 +189,7 @@ export default function SchoolVRPage() {
                 Safe, Supervised, and Sanitized Educational Experiences
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Looking for unique educational ideas or school demonstrations in Cape Town? Virtual Reality Guys provides fully supervised mobile stations. We map physical boundaries inside school halls or classrooms, handle hardware setup, deliver age-appropriate non-violent educational walkthroughs, and keep everything sanitized with medical wipes between users.
+                Booking school VR activities in Cape Town is simple with Virtual Reality Guys. We provide fully supervised mobile stations tailored for practical school setups. What teachers need to know: we handle all hardware setup, requiring only a clear indoor space (like a school hall or double classroom) and power outlets. We manage session scheduling, easily rotating groups of 10-15 students every 15-20 minutes, ensuring high throughput for entire grades. Our team delivers age-appropriate, non-violent educational walkthroughs, and keeps everything sanitized with medical wipes between users.
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">
@@ -208,24 +208,16 @@ export default function SchoolVRPage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "We hired Virtual Reality Guys for our annual science day and the kids were completely blown away! Exploring the human circulatory system in 3D and walking on the Moon made a massive impact. The supervisors were patient, clear, and highly professional."
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Mrs. Jennifer L.</p>
-                <p className="text-xs text-muted-foreground">School Vice-Principal, Cape Town</p>
-              </div>
-            </div>
+
 
           </div>
           
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <div className="w-full mb-4">
+              <Link href="/educational-vr-cape-town" className="text-primary font-semibold hover:underline">
+                Learn more about our Curriculum-Aligned Educational VR &rarr;
+              </Link>
+            </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/educational-vr-cape-town">Educational VR <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
@@ -260,6 +252,20 @@ export default function SchoolVRPage() {
               <h3 className="font-bold text-lg text-foreground">Do you offer school carnival or sports day entertainment?</h3>
               <p className="text-muted-foreground text-sm mt-2">
                 Yes, we regularly set up at school fundraisers, fun fairs, carnivals, and cultural days. We establish multiple high-throughput gaming booths where students can play quick, fun games (like Beat Saber or sports challenges) with all proceeds or tickets supporting the school.
+              </p>
+            </div>
+
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What VR activities are available for schools?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Our school VR activities range from detailed, curriculum-aligned deep dives (like exploring the human body or the solar system for science classes) to high-energy, fun interactive sessions suitable for school carnivals and end-of-term celebrations. We tailor the activities to match your specific school event.
+              </p>
+            </div>
+
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How do I book a VR demo for my school?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Booking a demo is easy! Simply fill out our contact form with your school's location, the number of students, and your preferred dates. Our team will get back to you to discuss space requirements, session scheduling, and a customized plan for your school VR activities.
               </p>
             </div>
 

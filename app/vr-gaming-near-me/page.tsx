@@ -112,6 +112,30 @@ export default function VrGamingNearMePage() {
           "@type": "Answer",
           "text": "Simply fill out our booking form with your venue address, preferred package, and event date. Our coordination team will check local availability and confirm details with you within 24 hours."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does VR gaming cost in Cape Town?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Packages start from R399 for a Starter session with 2 headsets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What VR games can I play?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer a wide variety of genres including action, horror, sports, educational, multiplayer, and rhythm games like Beat Saber."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I play VR games at home?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we bring the equipment to your home or venue."
+        }
       }
     ]
   };
@@ -150,7 +174,7 @@ export default function VrGamingNearMePage() {
             We Bring VR Gaming Directly to You
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-balance">
-            VR Gaming <span className="text-primary">Near Me</span>
+            VR Gaming <span className="text-primary">in Cape Town</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Forget traveling to a shopping center arcade. Virtual Reality Guys is Cape Town's premier mobile VR service, delivering high-end virtual reality gear and supervisors directly to your venue.
@@ -226,20 +250,7 @@ export default function VrGamingNearMePage() {
               </div>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "Finding a unique entertainment idea near us was tough until we came across Virtual Reality Guys. They brought the entire setup to our office in Century City. No logistics on our side, the team loved the competitive multiplayer games, and the hygiene was impeccable. Outstanding local service!"
-              </p>
-              <div>
-                <p className="font-bold text-foreground">James R.</p>
-                <p className="text-xs text-muted-foreground">Event Planner, Century City</p>
-              </div>
-            </div>
+
 
           </div>
 
@@ -249,6 +260,35 @@ export default function VrGamingNearMePage() {
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/virtual-reality-somerset-west">Somerset West & Helderberg <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular VR Games */}
+      <section className="py-20 bg-secondary/10 border-y border-border/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <h2 className="text-3xl font-bold text-center">Popular VR Games</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {["Beat Saber", "Superhot VR", "Job Simulator", "Richie's Plank Experience", "Space Pirate Trainer", "Creed: Rise to Glory", "Keep Talking and Nobody Explodes", "Walkabout Mini Golf"].map((game, i) => (
+              <div key={i} className="bg-background border border-border/50 p-6 rounded-xl hover:border-primary/50 transition-colors group">
+                <h3 className="font-bold mb-2">{game}</h3>
+                <p className="text-muted-foreground text-sm mb-4">A top-rated VR experience offering immersive gameplay suitable for parties and events.</p>
+                <Link href="/vr-games-catalogue" className="text-primary text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                  View Game <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 pt-6">
+            <Button asChild size="sm">
+              <Link href="/vr-games-catalogue">Browse All Games <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/vr-experience-cape-town">VR Experiences</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/vr-birthday-parties">Gaming Parties</Link>
             </Button>
           </div>
         </div>
@@ -292,6 +332,27 @@ export default function VrGamingNearMePage() {
               <h3 className="font-bold text-lg text-foreground">How do I book a mobile VR experience near me?</h3>
               <p className="text-muted-foreground text-sm mt-2">
                 Simply fill out our booking form with your venue address, preferred package, and event date. Our coordination team will check local availability and confirm details with you within 24 hours.
+              </p>
+            </div>
+
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How much does VR gaming cost in Cape Town?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Packages start from R399 for a Starter session with 2 headsets.
+              </p>
+            </div>
+
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What VR games can I play?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We offer a wide variety of genres including action, horror, sports, educational, multiplayer, and rhythm games like Beat Saber.
+              </p>
+            </div>
+
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">Can I play VR games at home?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Yes, we bring the equipment to your home or venue.
               </p>
             </div>
 

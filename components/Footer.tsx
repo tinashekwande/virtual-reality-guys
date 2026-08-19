@@ -71,6 +71,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/vr-experience-cape-town" className="hover:text-primary transition-colors">
+                  VR Experiences
+                </Link>
+              </li>
+              <li>
                 <Link href="/vr-team-building" className="hover:text-primary transition-colors">
                   VR Team Building
                 </Link>
@@ -153,8 +158,8 @@ export default function Footer() {
         <div className="border-t border-border/60 mt-16 pt-8 text-center text-muted-foreground text-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>&copy; {new Date().getFullYear()} Virtual Reality Guys. All rights reserved.</p>
           <div className="flex gap-6 text-xs">
-            <span className="text-muted-foreground/50 cursor-default">Privacy Policy</span>
-            <span className="text-muted-foreground/50 cursor-default">Terms of Service</span>
+            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</Link>
             <Link href="/sitemap.xml" className="hover:text-foreground transition-colors">Sitemap</Link>
           </div>
         </div>

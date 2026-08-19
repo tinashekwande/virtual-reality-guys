@@ -239,24 +239,16 @@ export default function EducationalVrCapeTownPage() {
               </div>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "We brought the VR guys out for our Grade 6 science module on space and ecosystems. The engagement level was absolutely off the charts. Students who usually struggle with reading were answering complex orbital questions after their virtual tour. An incredible tool that we'll be booking annually."
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Mrs. Patricia N.</p>
-                <p className="text-xs text-muted-foreground">Grade 6 Teacher, Rondebosch Primary</p>
-              </div>
-            </div>
+
 
           </div>
 
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <div className="w-full mb-4">
+              <Link href="/school-vr-demonstrations" className="text-primary font-semibold hover:underline">
+                Ready to bring this to your school? Book a School VR Demonstration &rarr;
+              </Link>
+            </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/school-vr-demonstrations">School VR Demonstrations <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>

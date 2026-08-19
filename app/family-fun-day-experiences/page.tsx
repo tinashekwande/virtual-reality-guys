@@ -211,20 +211,7 @@ export default function FamilyFunDayPage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "Our neighborhood country club held a family fun day and hired Virtual Reality Guys. It was the absolute highlight of the day! There was a queue of children and parents all day. The team managed the crowd beautifully and safely. Excellent choice!"
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Robert K.</p>
-                <p className="text-xs text-muted-foreground">Chairman, Durbanville Country Club</p>
-              </div>
-            </div>
+
 
           </div>
           

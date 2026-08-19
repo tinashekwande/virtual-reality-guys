@@ -209,20 +209,7 @@ export default function MobileVRHirePage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "Hired their 4-headset standard package for our neighborhood bazaar and the team was incredible! Very neat technical setup, extremely polite crowd monitors, and absolute hygiene. Best event hire company we have dealt with in Cape Town."
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Denzil M.</p>
-                <p className="text-xs text-muted-foreground">Organizer, City Bowl Market</p>
-              </div>
-            </div>
+
 
           </div>
           

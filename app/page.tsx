@@ -119,12 +119,6 @@ export default async function Home() {
       "opens": "08:00",
       "closes": "22:00"
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": "47",
-      "bestRating": "5"
-    },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "VR Mobile Gaming Packages",
@@ -354,12 +348,12 @@ export default async function Home() {
                 </p>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <div className="text-4xl font-bold text-primary">50+</div>
-                    <div className="text-muted-foreground">Events Completed</div>
+                    <div className="text-4xl font-bold text-primary">Premium</div>
+                    <div className="text-muted-foreground">Equipment</div>
                   </div>
                   <div className="space-y-2">
-                    <div className="text-4xl font-bold text-primary">500+</div>
-                    <div className="text-muted-foreground">Happy Guests</div>
+                    <div className="text-4xl font-bold text-primary">Professional</div>
+                    <div className="text-muted-foreground">Service</div>
                   </div>
                 </div>
               </div>
@@ -595,22 +589,15 @@ export default async function Home() {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <TestimonialCard
-              quote="The kids absolutely loved it! The setup was professional and the staff made sure everyone had a great time. Best birthday party entertainment ever!"
-              author="Sarah M."
-              role="Parent"
-            />
-            <TestimonialCard
-              quote="We hired Virtual Reality Guys for our company retreat and it was a huge hit. Great team building activity that got everyone laughing and competing."
-              author="Michael T."
-              role="HR Director"
-            />
-            <TestimonialCard
-              quote="Our school carnival was taken to the next level with the VR experience. Students were lined up all day and couldn&apos;t stop talking about it!"
-              author="Jennifer L."
-              role="School Administrator"
-            />
+          <div className="flex flex-col items-center justify-center space-y-6">
+            <p className="text-xl text-muted-foreground text-center max-w-2xl">
+              See what our amazing customers have to say about our mobile VR gaming experiences.
+            </p>
+            <Button asChild size="lg" className="text-lg">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                See our reviews on Google
+              </a>
+            </Button>
           </div>
         </div>
       </section>
@@ -901,34 +888,6 @@ function PricingCard({
   );
 }
 
-function TestimonialCard({
-  quote,
-  author,
-  role,
-}: {
-  quote: string;
-  author: string;
-  role: string;
-}) {
-  return (
-    <TiltCard maxTilt={5} scale={1.015} className="h-full">
-      <div className="bg-secondary rounded-2xl p-8 border border-border hover:border-primary/40 transition-colors h-full flex flex-col justify-between">
-        <div>
-          <div className="flex gap-1 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-            ))}
-          </div>
-          <p className="text-foreground mb-6 leading-relaxed">&ldquo;{quote}&rdquo;</p>
-        </div>
-        <div>
-          <p className="font-semibold">{author}</p>
-          <p className="text-sm text-muted-foreground">{role}</p>
-        </div>
-      </div>
-    </TiltCard>
-  );
-}
 
 function StepCard({
   number,

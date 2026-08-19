@@ -53,13 +53,7 @@ export default function CapeTownVRPage() {
       { "@type": "AdministrativeArea", "name": "Somerset West" },
       { "@type": "AdministrativeArea", "name": "Hout Bay" },
       { "@type": "AdministrativeArea", "name": "Bloubergstrand" }
-    ],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": "47",
-      "bestRating": "5"
-    }
+    ]
   };
 
   const faqJsonLd = {
@@ -88,6 +82,30 @@ export default function CapeTownVRPage() {
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "We need a minimum clear space of 2.5m x 2.5m per VR headset setup. An indoor area or a fully covered outdoor space is required to prevent direct sunlight from damaging the headset's optical lenses."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes Virtual Reality Guys different from a VR arcade?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer a mobile service, so we come to you, allowing for private events at your own venue."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many people can play VR at once?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depending on the package, 2-6 headsets can be used simultaneously. Everyone takes turns, and spectators can watch on TV screens."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What VR headsets do you use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We use Meta Quest - the latest generation standalone headsets, which require no wires or PC."
         }
       }
     ]
@@ -189,20 +207,7 @@ export default function CapeTownVRPage() {
                 </li>
               </ul>
 
-              <div className="bg-secondary/30 p-6 border border-border rounded-2xl space-y-4 mt-6">
-                <div className="flex gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-foreground italic text-sm leading-relaxed">
-                  "The VR guys covered our corporate event in Sea Point and the setup was seamless. Every guest loved it!"
-                </p>
-                <div>
-                  <p className="font-bold text-sm">Mark D.</p>
-                  <p className="text-xs text-muted-foreground">Events Coordinator, Sea Point</p>
-                </div>
-              </div>
+
             </div>
 
             <div className="bg-secondary/40 border border-border p-8 rounded-3xl space-y-6 relative overflow-hidden">
@@ -238,6 +243,18 @@ export default function CapeTownVRPage() {
                 Don't see your neighborhood? <Link href="#booking" className="text-primary hover:underline font-semibold">Contact us</Link> to check if our mobile unit travels to your area in the Western Cape.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Mobile VR Over a VR Arcade? */}
+      <section className="py-20 bg-secondary/10 border-t border-border/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-6 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold">Why Choose Mobile VR Over a VR Arcade?</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              Experience the ultimate convenience and personalization with our mobile VR service. There's no travel needed—you can play right at home. It's perfect for larger groups in a private setting, allowing you to enjoy a customized game selection without the crowds and waiting times of a typical arcade.
+            </p>
           </div>
         </div>
       </section>
@@ -314,6 +331,9 @@ export default function CapeTownVRPage() {
             <Button asChild variant="outline" size="sm">
               <Link href="/educational-vr-cape-town">Educational VR <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/vr-experience-cape-town">VR Experiences <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -339,6 +359,24 @@ export default function CapeTownVRPage() {
               <h3 className="font-bold text-lg text-foreground">How much space is needed for a mobile VR setup?</h3>
               <p className="text-muted-foreground text-sm mt-2">
                 We need a minimum clear space of 2.5m x 2.5m per VR headset setup. An indoor area or a fully covered outdoor space is required to prevent direct sunlight from damaging the headset's optical lenses.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What makes Virtual Reality Guys different from a VR arcade?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We offer a mobile service, so we come to you, allowing for private events at your own venue.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">How many people can play VR at once?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                Depending on the package, 2-6 headsets can be used simultaneously. Everyone takes turns, and spectators can watch on TV screens.
+              </p>
+            </div>
+            <div className="bg-secondary/30 p-6 rounded-xl border border-border">
+              <h3 className="font-bold text-lg text-foreground">What VR headsets do you use?</h3>
+              <p className="text-muted-foreground text-sm mt-2">
+                We use Meta Quest - the latest generation standalone headsets, which require no wires or PC.
               </p>
             </div>
           </div>

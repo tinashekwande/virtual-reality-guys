@@ -208,25 +208,16 @@ export default function TeamBuildingPage() {
               </ul>
             </div>
 
-            {/* Testimonials block */}
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "We hired Virtual Reality Guys for our quarterly team-building day and it exceeded all expectations! The multiplayer competition got everyone shouting and cheering. Absolute hit and incredibly professional staff."
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Bianca S.</p>
-                <p className="text-xs text-muted-foreground">HR Manager, Cape Town FinTech</p>
-              </div>
-            </div>
+
 
           </div>
           
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <div className="w-full mb-4">
+              <Link href="/corporate-events" className="text-primary font-semibold hover:underline">
+                Looking for broader corporate entertainment? See our Corporate Events packages &rarr;
+              </Link>
+            </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/kids-parties">Kids Parties <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>

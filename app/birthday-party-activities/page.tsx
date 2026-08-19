@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'VR Birthday Party Activities Cape Town | Gaming Event Entertainment',
-  description: 'Host an epic virtual reality birthday party in Cape Town. Unforgettable VR gaming activities for kids, teens, and adults delivered directly to your venue.',
+  title: 'Birthday Party Activities & Ideas Cape Town | VR Gaming Entertainment | Virtual Reality Guys',
+  description: 'Plan an epic birthday with our VR gaming entertainment ideas in Cape Town. We bring multiplayer VR activities directly to your party venue.',
   alternates: {
     canonical: '/birthday-party-activities',
   },
   openGraph: {
-    title: 'VR Birthday Party Activities Cape Town | Gaming Event Entertainment',
-    description: 'Throw the ultimate VR birthday party! We set up premium multiplayer VR gear, screens, and custom challenges for birthdays of all ages in Cape Town.',
+    title: 'Birthday Party Activities & Ideas Cape Town | VR Gaming Entertainment | Virtual Reality Guys',
+    description: 'Plan an epic birthday with our VR gaming entertainment ideas in Cape Town. We bring multiplayer VR activities directly to your party venue.',
     url: 'https://www.virtualrealityguyz.co.za/birthday-party-activities',
     images: [{ url: '/images/vr-party.jpg', alt: 'VR Birthday Party Activities Cape Town' }],
   }
@@ -189,7 +189,7 @@ export default function BirthdayActivitiesPage() {
                 Next-Gen Private Parties Delivered to Your Door
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Are you looking for unique birthday party activities in Cape Town that stand out from the ordinary? Bring a high-tech gaming arcade to your home! Virtual Reality Guys handles all the work. Our professional, friendly supervisors set up dynamic safety perimeters, guide users of all technical backgrounds, and ensure everyone remains safe and highly entertained.
+                Looking for unique birthday party activities and planning ideas in Cape Town? A successful birthday is all about keeping guests engaged. We bring a high-tech gaming arcade to your home, giving you the ultimate party activity. Our professional, friendly supervisors set up dynamic safety perimeters, guide users through activities, and ensure everyone remains safe and highly entertained while you focus on the rest of the party planning.
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">
@@ -208,24 +208,16 @@ export default function BirthdayActivitiesPage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "We booked Virtual Reality Guys for my daughter's 16th birthday party and it was fantastic! The kids spent hours in multiplayer mode and the team handled the setup and guidance seamlessly. Highly recommend for any parents looking for unique birthday activities."
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Tracey L.</p>
-                <p className="text-xs text-muted-foreground">Parent, Claremont Cape Town</p>
-              </div>
-            </div>
+
 
           </div>
           
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <div className="w-full mb-4">
+              <Link href="/vr-birthday-parties" className="text-primary font-semibold hover:underline">
+                Ready to book? View our VR Birthday Party packages &rarr;
+              </Link>
+            </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/vr-birthday-parties">VR Birthday Parties <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>

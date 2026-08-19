@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Immersive virtual reality gaming experiences delivered directly to your school, party, corporate event, or festival in Cape Town.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#0a0a0a',
-    theme_color: '#7c3aed',
+    background_color: '#040817',
+    theme_color: '#00d2ff',
     icons: [
       {
         src: '/favicon-48x48.png',

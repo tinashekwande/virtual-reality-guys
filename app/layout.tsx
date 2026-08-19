@@ -128,12 +128,31 @@ export default function RootLayout({
     ]
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Virtual Reality Guys",
+    "url": "https://www.virtualrealityguyz.co.za",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.virtualrealityguyz.co.za/vr-games-catalogue?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
       <body className={`${mina.className} ${orbitron.variable} antialiased relative overflow-x-hidden`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <AtmosphericBackground />
         <PageTransition>{children}</PageTransition>

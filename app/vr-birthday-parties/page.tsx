@@ -227,20 +227,6 @@ export default function VrBirthdayPartiesPage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "We booked the Standard package for our daughter's 10th birthday party in Camps Bay, and it was a massive success! The kids were completely captivated, and the supervisors did an incredible job teaching everyone how to play and keeping the space safe. Best birthday choice we've ever made!"
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Amanda K.</p>
-                <p className="text-xs text-muted-foreground">Parent, Camps Bay</p>
-              </div>
-            </div>
 
           </div>
 

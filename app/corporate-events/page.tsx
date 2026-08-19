@@ -191,7 +191,7 @@ export default function CorporateEventsPage() {
                 High Capacity, Maximum Safety, Strict Cleanliness
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                We know how important smooth logistics and event safety are to corporate hosts. Our team sets up professional safety zoning with velvet-style barrier markers, handles crowd management with precision, and enforces a strict single-use headset cleaning protocol using premium medical-grade sanitizing wipes.
+                We know how important smooth logistics and event safety are to corporate hosts. Whether you're organizing a grand year-end function, a high-profile product launch, an industry conference, or a busy trade show, we ensure your entertainment stands out. Our team sets up professional safety zoning with velvet-style barrier markers, handles crowd management with precision for large events, and enforces a strict single-use headset cleaning protocol using premium medical-grade sanitizing wipes.
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">
@@ -210,23 +210,15 @@ export default function CorporateEventsPage() {
               </ul>
             </div>
 
-            <div className="bg-secondary/30 p-8 border border-border rounded-3xl space-y-6">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                ))}
-              </div>
-              <p className="text-foreground italic leading-relaxed">
-                "Our product launch was an absolute success, and a large part of that was the buzz around the Virtual Reality Guys' setups. Guests were queuing up to play and watch, and it gave our brand the modern, high-tech image we wanted. Highly recommended!"
-              </p>
-              <div>
-                <p className="font-bold text-foreground">Gavin D.</p>
-                <p className="text-xs text-muted-foreground">Marketing Director, Western Cape Tech Hub</p>
-              </div>
-            </div>
+
           </div>
           
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
+            <div className="w-full mb-4">
+              <Link href="/vr-team-building" className="text-primary font-semibold hover:underline">
+                Looking for team building? See our VR Team Building packages &rarr;
+              </Link>
+            </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/mobile-vr-hire">Mobile VR Hire <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
