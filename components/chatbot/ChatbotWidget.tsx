@@ -203,32 +203,54 @@ export default function ChatbotWidget() {
 
   // ── Send user message ─────────────────────────────────────────────────────
   const sendMessage = useCallback(
-    (text: string) => {
+    async (text: string) => {
       const clean = sanitizeInput(text)
       if (!clean) return
 
-      setMessages((prev) => [...prev, createMessage('user', clean)])
+      const userMsg = createMessage('user', clean)
+      const updatedMessages = [...messages, userMsg]
+
+      setMessages(updatedMessages)
       setShowQuickReplies(false)
+      setIsTyping(true)
 
-      // In booking flow — treat as booking answer
-      if (bookingStep !== 'idle' && bookingStep !== 'complete') {
-        handleBookingAnswer(clean)
-        return
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: updatedMessages,
+            bookingStep,
+            bookingData,
+            userInput: clean,
+          }),
+        })
+
+        if (!res.ok) throw new Error(`API responded with ${res.status}`)
+
+        const data = await res.json()
+        setIsTyping(false)
+
+        if (data.reply) {
+          setMessages((prev) => [...prev, data.reply])
+          playNotification()
+        }
+
+        if (data.bookingStep !== undefined) {
+          setBookingStep(data.bookingStep)
+        }
+        if (data.bookingData !== undefined) {
+          setBookingData(data.bookingData)
+        }
+      } catch (error) {
+        console.error('[ChatbotWidget] API error:', error)
+        setIsTyping(false)
+        const faqAnswer = getFAQResponse(clean) || FALLBACK_RESPONSE
+        setMessages((prev) => [...prev, createMessage('bot', faqAnswer)])
+        playNotification()
       }
-
-      // Check for booking intent
-      if (isBookingIntent(clean)) {
-        const step: BookingStep = 'ask_name'
-        setBookingStep(step)
-        addBotMessage(getBookingQuestion(step, {}))
-        return
-      }
-
-      // FAQ matching
-      const faqAnswer = getFAQResponse(clean)
-      addBotMessage(faqAnswer ?? FALLBACK_RESPONSE)
     },
-    [bookingStep, handleBookingAnswer, addBotMessage],
+    [messages, bookingStep, bookingData, playNotification],
   )
 
   // ── Handle quick reply ────────────────────────────────────────────────────

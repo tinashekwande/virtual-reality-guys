@@ -38,9 +38,25 @@ export async function POST(req: NextRequest) {
 
     const clean = sanitizeInput(userInput)
 
-    // --- Booking flow ---
+    // --- Active Booking Flow ---
     if (bookingStep !== 'idle' && bookingStep !== 'complete') {
+      // Check if user is asking a general question during booking (e.g. ends with ? or question words)
+      const isQuestion = /[?]$/.test(clean) || /^(what|how|why|can|where|is|do|does|who|are)\b/i.test(clean)
       const validationError = validateBookingInput(bookingStep, clean)
+
+      if (isQuestion || (validationError && clean.split(' ').length > 3)) {
+        // User asked a question mid-booking — use Gemini to answer thoughtfully, then prompt for booking step
+        const aiAnswer = await getAIResponse(messages)
+        const currentQuestion = getBookingQuestion(bookingStep, bookingData)
+        const combinedReply = `${aiAnswer}\n\n📍 *To continue your booking request:* ${currentQuestion}`
+
+        return NextResponse.json({
+          reply: createMessage('bot', combinedReply),
+          bookingStep,
+          bookingData,
+        })
+      }
+
       if (validationError) {
         return NextResponse.json({
           reply: createMessage('bot', validationError),
@@ -69,7 +85,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // --- Detect booking intent ---
+    // --- Detect explicit booking intent ---
     if (isBookingIntent(clean)) {
       const nextStep: BookingStep = 'ask_name'
       const question = getBookingQuestion(nextStep, {})
@@ -81,7 +97,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Call Gemini Model as the default choice for all conversational turns
+    // --- Conversational Turn: Call Gemini AI Model ---
     const aiResponse = await getAIResponse(messages)
     return NextResponse.json({
       reply: createMessage('bot', aiResponse),

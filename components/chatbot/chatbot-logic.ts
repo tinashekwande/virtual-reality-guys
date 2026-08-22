@@ -1,5 +1,6 @@
 import type { Message, BookingData, BookingStep } from './chatbot-types'
 import { GoogleGenAI } from '@google/genai'
+import { AI_SYSTEM_INSTRUCTION } from './knowledge-base'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -124,10 +125,28 @@ export function getFAQResponse(text: string): string | null {
 // ---------------------------------------------------------------------------
 
 export function isBookingIntent(text: string): boolean {
+  const clean = text.toLowerCase().trim()
+
+  // 1. Explicit trigger commands or buttons
+  if (['book', 'book now', 'start booking', 'request a quote', 'book an event', 'make a booking'].includes(clean)) {
+    return true
+  }
+
+  // 2. If it's a general question (starts with question words), do NOT hijack — let Gemini answer!
+  if (/^(how|what|can|where|why|is|does|do|which|who|are)\b/i.test(clean)) {
+    return false
+  }
+
+  // 3. Otherwise check for strong booking intent phrases
   return [
-    /\bbook/i, /\breserv/i, /\bschedul/i, /\barrang/i,
-    /\bquote/i, /\brequest.*quote/i,
-  ].some((p) => p.test(text))
+    /\bstart booking\b/i,
+    /\bbook now\b/i,
+    /\bwant to book\b/i,
+    /\blike to book\b/i,
+    /\bready to book\b/i,
+    /\bconfirm booking\b/i,
+    /\bbook an event\b/i,
+  ].some((p) => p.test(clean))
 }
 
 // ---------------------------------------------------------------------------
@@ -278,42 +297,13 @@ export function handleQuickReply(
   }
 }
 
-// ---------------------------------------------------------------------------
-// AI Integration Placeholder
-// ---------------------------------------------------------------------------
-
-const SYSTEM_INSTRUCTION = `You are a professional, friendly, and enthusiastic customer support chatbot for Virtual Reality Guyz, a virtual reality experiences and technology company.
-
-About Virtual Reality Guyz:
-- Website: https://www.virtualrealityguyz.co.za
-- Location: Cape Town, South Africa. We are fully mobile and bring the entire VR setup directly to the client's venue (we serve Cape Town and surrounding areas).
-- Contact details:
-  - Phone: +27 71 780 0323
-  - Email: virtualrealityguyz@gmail.com
-- Services offered:
-  - VR Gaming Experiences
-  - School VR Demonstrations
-  - Educational VR Experiences
-  - Corporate Activations & Events
-  - Team Building Activities
-  - Birthday Parties
-  - VR rentals (equipment and on-site support)
-  - Expo & Brand Activations
-  - Immersive Technology Experiences
-
-Behavioral Guidelines:
-1. Tone: Enthusiastic about VR, friendly, professional, futuristic, and helpful. Keep responses concise and engaging (aim for 2-3 sentences max).
-2. Lead Generation & Bookings: Always guide users toward booking or requesting a quote. Instruct them that they can start a booking at any time by typing "book" or clicking the "Book an Event" or "Request a Quote" quick action buttons in the chat.
-3. Pricing: Always state that pricing depends on the event duration, location, and specific setup requirements, and that we provide customized quotes. Offer to help them request a quote by booking in the chat.
-4. Accuracy: Do not promise services, hardware, or locations we do not offer. Be honest and clear.`
-
 export async function getAIResponse(messages: Message[]): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content || ''
+
   if (!apiKey) {
-    // Graceful fallback to keyword matching when API key is not configured
-    const last = [...messages].reverse().find((m) => m.role === 'user')
-    if (!last) return FALLBACK_RESPONSE
-    return getFAQResponse(last.content) ?? FALLBACK_RESPONSE
+    // Fallback to keyword matching when API key is missing
+    return getFAQResponse(lastUserMessage) ?? FALLBACK_RESPONSE
   }
 
   try {
@@ -325,21 +315,32 @@ export async function getAIResponse(messages: Message[]): Promise<string> {
       parts: [{ text: m.content }],
     }))
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: contents,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-      },
-    })
+    // Try primary production Gemini model, fallback gracefully if model alias varies
+    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
+    let responseText: string | null = null
 
-    return response.text ?? FALLBACK_RESPONSE
+    for (const modelName of modelsToTry) {
+      try {
+        const response = await ai.models.generateContent({
+          model: modelName,
+          contents: contents,
+          config: {
+            systemInstruction: AI_SYSTEM_INSTRUCTION,
+          },
+        })
+        if (response.text) {
+          responseText = response.text
+          break
+        }
+      } catch (err: any) {
+        console.warn(`[Gemini] Model ${modelName} error:`, err?.message || err)
+      }
+    }
+
+    return responseText ?? (getFAQResponse(lastUserMessage) || FALLBACK_RESPONSE)
   } catch (error) {
-    console.error('Gemini API Error:', error)
-    // Graceful fallback to keyword matching on network or API failures
-    const last = [...messages].reverse().find((m) => m.role === 'user')
-    if (!last) return FALLBACK_RESPONSE
-    return getFAQResponse(last.content) ?? FALLBACK_RESPONSE
+    console.error('Gemini API Exception:', error)
+    return getFAQResponse(lastUserMessage) ?? FALLBACK_RESPONSE
   }
 }
 
