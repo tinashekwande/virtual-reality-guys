@@ -298,7 +298,11 @@ export function handleQuickReply(
 }
 
 export async function getAIResponse(messages: Message[]): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
+    process.env.GOOGLE_AI_KEY ||
+    process.env.GOOGLE_API_KEY
   const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content || ''
 
   if (!apiKey) {
