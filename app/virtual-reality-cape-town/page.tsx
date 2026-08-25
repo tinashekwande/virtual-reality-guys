@@ -331,9 +331,6 @@ export default function CapeTownVRPage() {
             <Button asChild variant="outline" size="sm">
               <Link href="/educational-vr-cape-town">Educational VR <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/vr-experience-cape-town">VR Experiences <ArrowRight className="ml-1 h-4 w-4" /></Link>
-            </Button>
           </div>
         </div>
       </section>

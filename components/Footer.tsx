@@ -71,11 +71,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/vr-experience-cape-town" className="hover:text-primary transition-colors">
-                  VR Experiences
-                </Link>
-              </li>
-              <li>
                 <Link href="/vr-team-building" className="hover:text-primary transition-colors">
                   VR Team Building
                 </Link>

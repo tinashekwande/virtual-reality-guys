@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'Birthday Party Activities & Ideas Cape Town | VR Gaming Entertainment | Virtual Reality Guys',
-  description: 'Plan an epic birthday with our VR gaming entertainment ideas in Cape Town. We bring multiplayer VR activities directly to your party venue.',
+  title: 'VR Birthday Party Activities Cape Town | Gaming Event Entertainment',
+  description: 'Host an epic virtual reality birthday party in Cape Town. Unforgettable VR gaming activities for kids, teens, and adults delivered directly to your venue.',
   alternates: {
     canonical: '/birthday-party-activities',
   },
   openGraph: {
-    title: 'Birthday Party Activities & Ideas Cape Town | VR Gaming Entertainment | Virtual Reality Guys',
-    description: 'Plan an epic birthday with our VR gaming entertainment ideas in Cape Town. We bring multiplayer VR activities directly to your party venue.',
+    title: 'VR Birthday Party Activities Cape Town | Gaming Event Entertainment',
+    description: 'Throw the ultimate VR birthday party! We set up premium multiplayer VR gear, screens, and custom challenges for birthdays of all ages in Cape Town.',
     url: 'https://www.virtualrealityguyz.co.za/birthday-party-activities',
     images: [{ url: '/images/vr-party.jpg', alt: 'VR Birthday Party Activities Cape Town' }],
   }
@@ -189,7 +189,7 @@ export default function BirthdayActivitiesPage() {
                 Next-Gen Private Parties Delivered to Your Door
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Looking for unique birthday party activities and planning ideas in Cape Town? A successful birthday is all about keeping guests engaged. We bring a high-tech gaming arcade to your home, giving you the ultimate party activity. Our professional, friendly supervisors set up dynamic safety perimeters, guide users through activities, and ensure everyone remains safe and highly entertained while you focus on the rest of the party planning.
+                Are you looking for unique birthday party activities in Cape Town that stand out from the ordinary? Bring a high-tech gaming arcade to your home! Virtual Reality Guys handles all the work. Our professional, friendly supervisors set up dynamic safety perimeters, guide users of all technical backgrounds, and ensure everyone remains safe and highly entertained.
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">

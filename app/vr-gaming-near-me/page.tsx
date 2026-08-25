@@ -174,7 +174,7 @@ export default function VrGamingNearMePage() {
             We Bring VR Gaming Directly to You
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-balance">
-            VR Gaming <span className="text-primary">in Cape Town</span>
+            VR Gaming <span className="text-primary">Near Me</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Forget traveling to a shopping center arcade. Virtual Reality Guys is Cape Town's premier mobile VR service, delivering high-end virtual reality gear and supervisors directly to your venue.
@@ -283,9 +283,6 @@ export default function VrGamingNearMePage() {
           <div className="flex flex-wrap justify-center gap-3 pt-6">
             <Button asChild size="sm">
               <Link href="/vr-games-catalogue">Browse All Games <ArrowRight className="ml-1 h-4 w-4" /></Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/vr-experience-cape-town">VR Experiences</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/vr-birthday-parties">Gaming Parties</Link>

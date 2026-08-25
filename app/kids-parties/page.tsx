@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'Kids Gaming Parties Cape Town | VR Entertainment for Children | Virtual Reality Guys',
-  description: 'Looking for kids entertainment in Cape Town? We deliver multiplayer VR gaming parties for play dates, after-school activities, and school holidays.',
+  title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
+  description: 'Throw the ultimate kids gaming party in Cape Town! Fully supervised, safe, and exciting virtual reality birthday entertainment delivered to your venue.',
   alternates: {
     canonical: '/kids-parties',
   },
   openGraph: {
-    title: 'Kids Gaming Parties Cape Town | VR Entertainment for Children | Virtual Reality Guys',
-    description: 'Looking for kids entertainment in Cape Town? We deliver multiplayer VR gaming parties for play dates, after-school activities, and school holidays.',
+    title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
+    description: 'Looking for unique kids party ideas in Cape Town? We deliver multiplayer VR setups, fun rhythm games, and expert supervisors directly to your home.',
     url: 'https://www.virtualrealityguyz.co.za/kids-parties',
     images: [{ url: '/images/vr-party.jpg', alt: 'Kids VR Gaming Party Cape Town' }],
   }
@@ -130,7 +130,7 @@ export default function KidsPartiesPage() {
             Cape Town's Coolest Kids Gaming Parties
           </span>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-balance">
-            Kids Gaming <span className="text-primary">Parties</span>
+            Kids <span className="text-primary">Parties</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Give them an absolutely unforgettable birthday experience! We bring premium mobile VR gaming, amazing kids' games, and expert supervisors directly to your home venue in Cape Town.
@@ -189,7 +189,7 @@ export default function KidsPartiesPage() {
                 Throw an Epic Gaming Party in Cape Town
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Looking for unique kids party ideas, play dates, after-school entertainment, or exciting indoor activities for kids during the school holidays in Cape Town? Virtual Reality Guys delivers a premium gaming festival directly to your garage, garden, or local venue. Watch the kids jump, laugh, and compete as they slice blocks in Beat Saber or challenge each other to high-score multiplayer face-offs. Perfect for any gathering where you need high-energy kids entertainment!
+                Looking for unique kids party ideas or exciting indoor activities for kids in Cape Town? Virtual Reality Guys delivers a premium gaming festival directly to your garage, garden, or local venue. Watch the kids jump, laugh, and compete as they slice blocks in Beat Saber or challenge each other to high-score multiplayer face-offs.
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">

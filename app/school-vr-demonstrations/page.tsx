@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'Book a VR School Demo Cape Town | Interactive Science & History | Virtual Reality Guys',
-  description: 'Book interactive school VR activities and demonstrations in Cape Town. We bring mobile VR science and history setups to school classrooms and carnivals.',
+  title: 'Educational VR School Demonstrations Cape Town | Mobile Setup',
+  description: 'Bring science and history to life! Interactive, educational, and safe Virtual Reality school demonstrations and carnivals in Cape Town.',
   alternates: {
     canonical: '/school-vr-demonstrations',
   },
   openGraph: {
-    title: 'Book a VR School Demo Cape Town | Interactive Science & History | Virtual Reality Guys',
-    description: 'Book interactive school VR activities and demonstrations in Cape Town. We bring mobile VR science and history setups to school classrooms and carnivals.',
+    title: 'Educational VR School Demonstrations Cape Town | Mobile Setup',
+    description: 'Looking for engaging school demonstrations in Cape Town? We deliver fully supervised educational VR setups directly to your classroom or school hall.',
     url: 'https://www.virtualrealityguyz.co.za/school-vr-demonstrations',
     images: [{ url: '/images/vr-school.jpg', alt: 'VR School Demonstration Cape Town' }],
   }
@@ -189,7 +189,7 @@ export default function SchoolVRPage() {
                 Safe, Supervised, and Sanitized Educational Experiences
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Booking school VR activities in Cape Town is simple with Virtual Reality Guys. We provide fully supervised mobile stations tailored for practical school setups. What teachers need to know: we handle all hardware setup, requiring only a clear indoor space (like a school hall or double classroom) and power outlets. We manage session scheduling, easily rotating groups of 10-15 students every 15-20 minutes, ensuring high throughput for entire grades. Our team delivers age-appropriate, non-violent educational walkthroughs, and keeps everything sanitized with medical wipes between users.
+                Looking for unique educational ideas or school demonstrations in Cape Town? Virtual Reality Guys provides fully supervised mobile stations. We map physical boundaries inside school halls or classrooms, handle hardware setup, deliver age-appropriate non-violent educational walkthroughs, and keep everything sanitized with medical wipes between users.
               </p>
               
               <ul className="space-y-3 font-semibold text-sm">

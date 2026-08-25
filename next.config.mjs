@@ -12,7 +12,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/vr-experience-cape-town',
+        destination: '/virtual-reality-cape-town',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default nextConfig
-
