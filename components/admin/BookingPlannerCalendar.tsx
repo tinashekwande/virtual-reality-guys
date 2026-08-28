@@ -241,14 +241,19 @@ export default function BookingPlannerCalendar({
                           onSelectEvent(evt);
                         }}
                         className={`p-1.5 rounded-lg text-[11px] font-medium border transition-all truncate hover:scale-[1.02] shadow-sm flex items-center justify-between gap-1 ${
-                          evt.source === "invoice"
-                            ? evt.status === "paid"
-                              ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                              : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
-                            : "bg-amber-500/10 text-amber-300 border-amber-500/30"
+                          evt.source === "event"
+                            ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
+                            : evt.source === "invoice"
+                              ? evt.status === "paid"
+                                ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
+                                : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
+                              : "bg-amber-500/10 text-amber-300 border-amber-500/30"
                         }`}
                       >
-                        <span className="truncate">{evt.client_name || evt.title}</span>
+                        <span className="truncate flex items-center gap-1">
+                          {evt.source === "event" && <Sparkles className="h-3 w-3 text-purple-400 flex-shrink-0" />}
+                          {evt.client_name || evt.title}
+                        </span>
                         <span className="text-[9px] font-mono opacity-80 uppercase">{evt.event_type}</span>
                       </div>
                     ))}

@@ -17,7 +17,7 @@ import Link from "next/link";
 
 export interface PlannerEvent {
   id: string;
-  source: "invoice" | "request";
+  source: "invoice" | "request" | "event";
   title: string;
   client_name: string;
   client_email?: string;
@@ -28,6 +28,7 @@ export interface PlannerEvent {
   event_type: string;
   status: string;
   total_amount?: number;
+  total_expenses?: number;
   deposit_percentage?: number;
   notes_or_message?: string;
   items?: any[];
@@ -47,6 +48,8 @@ export function getStatusLabel(status: string): string {
       return "Pending Confirmation";
     case "deposit_paid":
       return "Deposit Paid";
+    case "scheduled":
+      return "Scheduled Event";
     case "archived":
     case "confirmed":
     case "booking_confirmed":
@@ -72,6 +75,7 @@ export const STATUS_BADGE: Record<string, string> = {
   pending: "bg-amber-500/10 text-amber-400 border-amber-500/30",
   sent: "bg-amber-500/10 text-amber-400 border-amber-500/30",
   deposit_paid: "bg-teal-500/10 text-teal-300 border-teal-500/30",
+  scheduled: "bg-purple-500/10 text-purple-300 border-purple-500/30",
   archived: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
   booking_confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
   confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
@@ -116,11 +120,18 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
   const handleStatusChange = async (newStatus: string) => {
     setUpdating(true);
     try {
-      if (isInvoice) {
+      if (event.source === "invoice") {
         const res = await fetch(`/api/invoices/${event.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...event.raw_data, status: newStatus }),
+        });
+        if (!res.ok) throw new Error("Failed to update status.");
+      } else if (event.source === "event") {
+        const res = await fetch(`/api/events/${event.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
         });
         if (!res.ok) throw new Error("Failed to update status.");
       } else {
@@ -132,7 +143,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         if (!res.ok) throw new Error("Failed to update status.");
       }
 
-      toast.success(`Booking status updated to ${newStatus}! 🎉`);
+      toast.success(`Status updated to ${newStatus}! 🎉`);
       onUpdate();
     } catch (err: any) {
       toast.error(err.message || "Failed to update status.");
@@ -246,72 +257,117 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
           </div>
         </div>
 
-        {/* Customer Info Card */}
-        <div className="bg-slate-900/60 p-5 rounded-2xl border border-cyan-900/40 space-y-3">
-          <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-            <User className="h-4 w-4" /> Customer Contact Information
-          </h4>
+        {/* Event Financial Card for Standalone Events */}
+        {event.source === "event" && (
+          <div className="bg-purple-950/20 p-5 rounded-2xl border border-purple-500/30 space-y-3">
+            <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-purple-300 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-purple-400" /> Event Financial Breakdown
+              </span>
+              <Link href="/admin/accounting" className="text-[11px] font-sans text-cyan-400 hover:underline">
+                View Ledger →
+              </Link>
+            </h4>
 
-          <div className="space-y-2 text-xs text-slate-300">
-            <p className="text-sm font-bold text-white">{event.client_name}</p>
-            {event.client_email && (
-              <p className="flex items-center gap-2">
-                <Mail className="h-3.5 w-3.5 text-slate-400" />
-                <a href={`mailto:${event.client_email}`} className="hover:underline text-cyan-300">
-                  {event.client_email}
-                </a>
-              </p>
-            )}
-            {event.client_phone && (
-              <p className="flex items-center gap-2">
-                <Phone className="h-3.5 w-3.5 text-slate-400" />
-                <a href={`tel:${event.client_phone}`} className="hover:underline text-cyan-300">
-                  {event.client_phone}
-                </a>
-              </p>
-            )}
-            {event.client_address && (
-              <p className="flex items-start gap-2 pt-1">
-                <MapPin className="h-3.5 w-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
-                <span>{event.client_address}</span>
-              </p>
-            )}
+            <div className="grid grid-cols-3 gap-2 text-center pt-1">
+              <div className="bg-slate-950/80 p-2.5 rounded-xl border border-emerald-900/40">
+                <p className="text-[10px] text-slate-400 font-semibold uppercase">Revenue</p>
+                <p className="text-xs font-bold font-mono text-emerald-400 pt-0.5">
+                  R {(Number(event.total_amount) || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+
+              <div className="bg-slate-950/80 p-2.5 rounded-xl border border-rose-900/40">
+                <p className="text-[10px] text-slate-400 font-semibold uppercase">Expenses</p>
+                <p className="text-xs font-bold font-mono text-rose-400 pt-0.5">
+                  R {(Number(event.total_expenses) || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+
+              <div className="bg-slate-950/80 p-2.5 rounded-xl border border-purple-900/40">
+                <p className="text-[10px] text-slate-400 font-semibold uppercase">Net Profit</p>
+                <p className={`text-xs font-bold font-mono pt-0.5 ${
+                  ((Number(event.total_amount) || 0) - (Number(event.total_expenses) || 0)) >= 0
+                    ? "text-emerald-400"
+                    : "text-rose-400"
+                }`}>
+                  R {((Number(event.total_amount) || 0) - (Number(event.total_expenses) || 0)).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Customer Info Card for Requests & Invoices */}
+        {event.source !== "event" && (
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-cyan-900/40 space-y-3">
+            <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+              <User className="h-4 w-4" /> Customer Contact Information
+            </h4>
+
+            <div className="space-y-2 text-xs text-slate-300">
+              <p className="text-sm font-bold text-white">{event.client_name}</p>
+              {event.client_email && (
+                <p className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-slate-400" />
+                  <a href={`mailto:${event.client_email}`} className="hover:underline text-cyan-300">
+                    {event.client_email}
+                  </a>
+                </p>
+              )}
+              {event.client_phone && (
+                <p className="flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-slate-400" />
+                  <a href={`tel:${event.client_phone}`} className="hover:underline text-cyan-300">
+                    {event.client_phone}
+                  </a>
+                </p>
+              )}
+              {event.client_address && (
+                <p className="flex items-start gap-2 pt-1">
+                  <MapPin className="h-3.5 w-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
+                  <span>{event.client_address}</span>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Create Invoice / Quote from Booking Section */}
-        <div className="bg-slate-900/60 p-5 rounded-2xl border border-cyan-900/40 space-y-3">
-          <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400 flex items-center gap-2">
-            <Receipt className="h-4 w-4" /> Create Invoice / Quote
-          </h4>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Instantly create an invoice or quote with this client's information, target date, and requirements pre-populated.
-          </p>
+        {event.source !== "event" && (
+          <div className="bg-slate-900/60 p-5 rounded-2xl border border-cyan-900/40 space-y-3">
+            <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+              <Receipt className="h-4 w-4" /> Create Invoice / Quote
+            </h4>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Instantly create an invoice or quote with this client's information, target date, and requirements pre-populated.
+            </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-            <Button
-              onClick={() => handleCreateInvoice("invoice")}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl py-4 flex items-center justify-center gap-2"
-            >
-              <Receipt className="h-3.5 w-3.5" />
-              Create Tax Invoice
-            </Button>
-            <Button
-              onClick={() => handleCreateInvoice("quote")}
-              variant="outline"
-              className="border-cyan-900/50 hover:bg-cyan-950 text-cyan-300 text-xs rounded-xl py-4 flex items-center justify-center gap-2"
-            >
-              <FileText className="h-3.5 w-3.5" />
-              Create Quote
-            </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <Button
+                onClick={() => handleCreateInvoice("invoice")}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl py-4 flex items-center justify-center gap-2"
+              >
+                <Receipt className="h-3.5 w-3.5" />
+                Create Tax Invoice
+              </Button>
+              <Button
+                onClick={() => handleCreateInvoice("quote")}
+                variant="outline"
+                className="border-cyan-900/50 hover:bg-cyan-950 text-cyan-300 text-xs rounded-xl py-4 flex items-center justify-center gap-2"
+              >
+                <FileText className="h-3.5 w-3.5" />
+                Create Quote
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Status Switcher Card */}
+        {/* Status Selector */}
         <div className="bg-slate-900/60 p-5 rounded-2xl border border-cyan-900/40 space-y-3">
           <div className="flex justify-between items-center">
             <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400">
-              Booking Status
+              Status Management
             </h4>
             <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border ${STATUS_BADGE[event.status] || STATUS_BADGE.new}`}>
               {getStatusLabel(event.status)}
@@ -326,7 +382,14 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-slate-950 border-cyan-900/60 text-slate-200">
-                {isInvoice ? (
+                {event.source === "event" ? (
+                  <>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </>
+                ) : isInvoice ? (
                   <>
                     <SelectItem value="pending">Pending Payment</SelectItem>
                     <SelectItem value="deposit_paid">Deposit Paid</SelectItem>

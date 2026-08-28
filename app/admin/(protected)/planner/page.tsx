@@ -98,9 +98,10 @@ export default function BookingPlannerPage() {
   const fetchPlannerData = useCallback(async () => {
     setLoading(true);
     try {
-      const [invoicesRes, requestsRes] = await Promise.all([
+      const [invoicesRes, requestsRes, eventsRes] = await Promise.all([
         fetch("/api/invoices").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/requests").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch("/api/events").then((r) => (r.ok ? r.json() : [])).catch(() => []),
       ]);
 
       const formattedEvents: PlannerEvent[] = [];
@@ -153,6 +154,29 @@ export default function BookingPlannerPage() {
             status: req.status,
             notes_or_message: req.message,
             raw_data: req,
+          });
+        });
+      }
+
+      // 3. Map Standalone Events
+      if (Array.isArray(eventsRes)) {
+        eventsRes.forEach((evt: any) => {
+          const date = evt.event_date || evt.created_at?.split("T")[0] || "";
+          dateCounts[date] = (dateCounts[date] || 0) + 1;
+
+          formattedEvents.push({
+            id: evt.id,
+            source: "event",
+            title: evt.title || "Standalone Event",
+            client_name: evt.title || "Standalone Event",
+            client_address: evt.location,
+            date,
+            event_type: evt.event_type || "Corporate Activation",
+            status: evt.status || "scheduled",
+            total_amount: Number(evt.total_revenue) || 0,
+            total_expenses: Number(evt.total_expenses) || 0,
+            notes_or_message: evt.description,
+            raw_data: evt,
           });
         });
       }

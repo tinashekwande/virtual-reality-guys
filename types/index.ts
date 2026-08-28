@@ -85,3 +85,39 @@ export interface Invoice {
   updated_at?: string
 }
 
+export interface EventItem {
+  id: string
+  title: string
+  event_date: string
+  event_type: string
+  location?: string
+  description?: string
+  total_revenue: number
+  total_expenses: number
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled'
+  created_at: string
+  updated_at?: string
+}
+
+export type ExpenseCategory =
+  | 'Staff Wages'
+  | 'Transport / Fuel'
+  | 'Venue Fee'
+  | 'Equipment / Maintenance'
+  | 'Marketing / Ads'
+  | 'Food & Refreshments'
+  | 'Other'
+
+export interface ExpenseItem {
+  id: string
+  event_id?: string
+  invoice_id?: string
+  title: string
+  category: ExpenseCategory
+  amount: number
+  date: string
+  notes?: string
+  created_at: string
+  updated_at?: string
+}
+

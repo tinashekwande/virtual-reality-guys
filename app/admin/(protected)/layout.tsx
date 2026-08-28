@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
   Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
-  BookOpen, Receipt, Calendar
+  BookOpen, Receipt, Calendar, DollarSign
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/planner", label: "Booking Planner", icon: Calendar },
   { href: "/admin/quotes-invoices", label: "Quotes & Invoices", icon: Receipt },
+  { href: "/admin/accounting", label: "Accounts & Financials", icon: DollarSign },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/admin/categories", label: "Categories", icon: FolderOpen },
