@@ -31,8 +31,14 @@ export default function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     const el = ref.current;
     if (!el) return;
 
@@ -59,10 +65,18 @@ export default function ScrollReveal({
     return () => {
       if (el) observer.unobserve(el);
     };
-  }, [threshold, once]);
+  }, [threshold, once, hydrated]);
 
   // Variant transform styles
   const getInitialStyle = (): React.CSSProperties => {
+    // Before hydration (SSR / Googlebot), show content at full opacity
+    if (!hydrated) {
+      return {
+        opacity: 1,
+        transform: "none",
+      };
+    }
+
     if (isVisible) {
       return {
         opacity: 1,
