@@ -274,7 +274,7 @@ export default function KidsPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Affordable packages starting from just R399</span>
+                <span>Affordable packages starting from just R499</span>
               </p>
             </div>
           </div>

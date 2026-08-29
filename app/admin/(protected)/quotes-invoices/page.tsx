@@ -70,8 +70,8 @@ function QuotesInvoicesContent() {
           id: "1",
           description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)",
           quantity: 1,
-          unit_price: 799,
-          total: 799,
+          unit_price: 899,
+          total: 899,
         },
       ];
 

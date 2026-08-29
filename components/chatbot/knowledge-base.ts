@@ -24,13 +24,13 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
      - Helderberg & Winelands (Somerset West, Stellenbosch, Paarl, Strand, Gordon's Bay)
 
 3. PACKAGES & PRICING (ALL PRICES ARE INCLUSIVE OF 15% VAT):
-   - Starter Package: R399.00 (Incl. VAT)
+   - Starter Package: R499.00 (Incl. VAT)
      - Includes: 2 VR Headsets, 1 Trained VR Supervisor, 30+ Games Selection.
      - Best For: Small birthday parties, intimate gatherings, quick VR sessions.
-   - Standard Package: R799.00 (Incl. VAT)
+   - Standard Package: R899.00 (Incl. VAT)
      - Includes: 4 VR Headsets, 2 Trained VR Supervisors, 60+ Games Selection, Multiplayer Tournaments.
      - Best For: Birthday parties, school demos, family fun days, medium events.
-   - Premium Package: R1,199.00 (Incl. VAT)
+   - Premium Package: R1,299.00 (Incl. VAT)
      - Includes: 6 VR Headsets, 3 Trained VR Supervisors, 100+ Games Selection, Custom Tournament Brackets, Photo & Video Package.
      - Best For: Large birthday celebrations, corporate activations, festivals, expos.
    - Custom & Corporate Packages: Available for large expos, multi-day activations, or full-day team building events. Contact us for custom quotes.
@@ -87,7 +87,7 @@ YOUR MANDATE:
 
 3. KNOWLEDGE ACCURACY:
    - Always refer to the provided Knowledge Base.
-   - Prices: Starter R399, Standard R799, Premium R1,199 (all inclusive of 15% VAT).
+   - Prices: Starter R499, Standard R899, Premium R1,299 (all inclusive of 15% VAT).
    - Deposit: 50% deposit required to confirm. FNB Account 63124445502.
    - Location: Cape Town & surrounds (mobile — we come to your venue).
    - Phone: +27 71 780 0323 | Email: virtualrealityguyz@gmail.com

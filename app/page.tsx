@@ -47,7 +47,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Mobile VR Gaming Experiences for Events in Cape Town',
-  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R399.',
+  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R499.',
   alternates: {
     canonical: '/',
   },
@@ -129,7 +129,7 @@ export default async function Home() {
             "name": "Starter Package",
             "description": "2 VR headsets, professional setup, trained supervisor, 30+ game selection. Perfect for small parties."
           },
-          "price": "399",
+          "price": "499",
           "priceCurrency": "ZAR"
         },
         {
@@ -139,7 +139,7 @@ export default async function Home() {
             "name": "Standard Package",
             "description": "4 VR headsets, professional setup, 2 trained supervisors, 60+ game selection, multiplayer tournaments."
           },
-          "price": "799",
+          "price": "899",
           "priceCurrency": "ZAR"
         },
         {
@@ -149,7 +149,7 @@ export default async function Home() {
             "name": "Premium Package",
             "description": "6 VR headsets, professional setup, 3 trained supervisors, 100+ game selection, custom tournament brackets, photo & video package."
           },
-          "price": "1199",
+          "price": "1299",
           "priceCurrency": "ZAR"
         }
       ]
@@ -186,7 +186,7 @@ export default async function Home() {
         "name": "How much does a VR experience cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile packages start from just R399 for the Starter package. Standard is R799 and Premium is R1199. Custom packages are available for large events."
+          "text": "Our mobile packages start from just R499 for the Starter package. Standard is R899 and Premium is R1299. Custom packages are available for large events."
         }
       },
       {
@@ -498,7 +498,7 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Starter"
-              price="399"
+              price="499"
               duration="2 hours"
               players="Up to 10 players"
               features={[
@@ -511,7 +511,7 @@ export default async function Home() {
             />
             <PricingCard
               title="Standard"
-              price="799"
+              price="899"
               duration="3 hours"
               players="Up to 20 players"
               featured
@@ -526,7 +526,7 @@ export default async function Home() {
             />
             <PricingCard
               title="Premium"
-              price="1199"
+              price="1299"
               duration="4 hours"
               players="Up to 40 players"
               features={[
@@ -685,7 +685,7 @@ export default async function Home() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does a VR experience cost?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile packages start from just R399 for the Starter package. Standard is R799 and Premium is R1199. Custom packages are available for large events.
+                Our mobile packages start from just R499 for the Starter package. Standard is R899 and Premium is R1299. Custom packages are available for large events.
               </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">

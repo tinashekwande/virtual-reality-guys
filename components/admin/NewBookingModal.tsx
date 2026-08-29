@@ -19,9 +19,9 @@ interface NewBookingModalProps {
 }
 
 const PRESET_PACKAGES = [
-  { description: "Starter VR Package (2 Headsets, 2 Hours)", price: 399 },
-  { description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)", price: 799 },
-  { description: "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)", price: 1199 },
+  { description: "Starter VR Package (2 Headsets, 2 Hours)", price: 499 },
+  { description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)", price: 899 },
+  { description: "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)", price: 1299 },
   { description: "Corporate Event VR Package", price: 1499 },
   { description: "School / Educational VR Experience", price: 899 },
 ];
@@ -48,7 +48,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
   const [clientAddress, setClientAddress] = useState("");
   const [eventDate, setEventDate] = useState(selectedDate || new Date().toISOString().split("T")[0]);
   const [packagePreset, setPackagePreset] = useState("Standard VR Package (4 Headsets, 3 Hours, 2 Staff)");
-  const [price, setPrice] = useState(799);
+  const [price, setPrice] = useState(899);
   const [notes, setNotes] = useState("");
 
   // Standalone Event states

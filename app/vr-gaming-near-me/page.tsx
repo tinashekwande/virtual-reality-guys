@@ -118,7 +118,7 @@ export default function VrGamingNearMePage() {
         "name": "How much does VR gaming cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Packages start from R399 for a Starter session with 2 headsets."
+          "text": "Packages start from R499 for a Starter session with 2 headsets."
         }
       },
       {
@@ -335,7 +335,7 @@ export default function VrGamingNearMePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does VR gaming cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Packages start from R399 for a Starter session with 2 headsets.
+                Packages start from R499 for a Starter session with 2 headsets.
               </p>
             </div>
 

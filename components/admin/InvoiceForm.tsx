@@ -24,9 +24,9 @@ interface InvoiceFormProps {
 }
 
 const PRESET_PACKAGES = [
-  { description: "Starter VR Package (2 Headsets, 2 Hours)", price: 399 },
-  { description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)", price: 799 },
-  { description: "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)", price: 1199 },
+  { description: "Starter VR Package (2 Headsets, 2 Hours)", price: 499 },
+  { description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)", price: 899 },
+  { description: "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)", price: 1299 },
   { description: "Additional VR Headset (Per Hour)", price: 150 },
   { description: "Additional Event Hour", price: 250 },
   { description: "Travel / Transport Fee (Outside Kraaifontein area)", price: 200 },
@@ -57,8 +57,8 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
             id: "1",
             description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)",
             quantity: 1,
-            unit_price: 799,
-            total: 799,
+            unit_price: 899,
+            total: 899,
           },
         ]
   );

@@ -52,9 +52,9 @@ export default function VrExperienceCapeTownPage() {
     "description": "Discover immersive VR experiences in Cape Town. We bring premium virtual reality using Meta Quest equipment directly to your venue for an unforgettable event.",
     "offers": {
       "@type": "Offer",
-      "price": "399",
+      "price": "499",
       "priceCurrency": "ZAR",
-      "description": "Packages starting from R399"
+      "description": "Packages starting from R499"
     }
   };
 
@@ -252,7 +252,7 @@ export default function VrExperienceCapeTownPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground pt-4 border-t border-border/40">
-                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Packages starting from R399.
+                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Packages starting from R499.
               </p>
             </div>
           </div>
