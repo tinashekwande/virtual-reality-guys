@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { StatCard } from "@/components/admin/stat-card"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
+import { AiCommandCenter } from "@/components/admin/ai/AiCommandCenter"
+import { AiRevenueForecast } from "@/components/admin/ai/AiRevenueForecast"
 import type { DashboardStats } from "@/types"
 
 const STATUS_COLORS: Record<string, string> = {
@@ -66,6 +68,12 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 max-w-6xl">
+      {/* 🤖 VR Guys AI Command Center */}
+      <AiCommandCenter />
+
+      {/* 📈 Revenue Forecasting & Financial Intelligence */}
+      <AiRevenueForecast />
+
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Media Files" value={stats?.totalMedia ?? 0} icon={ImageIcon} />
@@ -94,10 +102,10 @@ export default function AdminDashboardPage() {
             <Link href="/admin/team"><UserPlus className="h-4 w-4 mr-2" />Add Team Member</Link>
           </Button>
           <Button asChild variant="outline" size="sm">
-            <Link href="/admin/requests"><Inbox className="h-4 w-4 mr-2" />View Requests</Link>
+            <Link href="/admin/equipment"><ShieldCheck className="h-4 w-4 mr-2" />Manage Equipment</Link>
           </Button>
           <Button asChild variant="outline" size="sm">
-            <Link href="/admin/admins"><ShieldCheck className="h-4 w-4 mr-2" />Manage Admins</Link>
+            <Link href="/admin/requests"><Inbox className="h-4 w-4 mr-2" />View Requests</Link>
           </Button>
         </div>
       </div>
@@ -176,3 +184,4 @@ export default function AdminDashboardPage() {
     </div>
   )
 }
+

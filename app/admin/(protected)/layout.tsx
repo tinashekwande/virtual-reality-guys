@@ -7,22 +7,27 @@ import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
   Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
-  BookOpen, Receipt, Calendar, DollarSign
+  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
+import { PersistentAiAssistant } from "@/components/admin/ai/PersistentAiAssistant"
+import { UniversalAiSearch } from "@/components/admin/ai/UniversalAiSearch"
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/planner", label: "Booking Planner", icon: Calendar },
   { href: "/admin/quotes-invoices", label: "Quotes & Invoices", icon: Receipt },
   { href: "/admin/accounting", label: "Accounts & Financials", icon: DollarSign },
+  { href: "/admin/equipment", label: "Equipment & Fleet", icon: Glasses },
+  { href: "/admin/requests", label: "Requests", icon: ClipboardList },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/admin/categories", label: "Categories", icon: FolderOpen },
   { href: "/admin/team", label: "Team", icon: Users },
-  { href: "/admin/requests", label: "Requests", icon: ClipboardList },
+  { href: "/admin/ai-audit", label: "AI Audit Log", icon: ShieldCheck },
+  { href: "/admin/ai-settings", label: "AI Settings", icon: Bot },
   { href: "/admin/admins", label: "Admins", icon: ShieldCheck },
 ]
 
@@ -45,7 +50,7 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
         </div>
         <div className="min-w-0">
           <p className="font-bold text-sm leading-tight">VR Guys</p>
-          <p className="text-xs text-muted-foreground">Admin Portal</p>
+          <p className="text-xs text-muted-foreground">Business OS</p>
         </div>
         {onClose && (
           <button onClick={onClose} className="ml-auto text-muted-foreground hover:text-foreground">
@@ -55,7 +60,7 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map(item => {
           const active = pathname
             ? (item.exact ? pathname === item.href : pathname.startsWith(item.href))
@@ -66,9 +71,9 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
                 active
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground font-semibold"
                   : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               )}
             >
@@ -80,10 +85,10 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-sidebar-border">
+      <div className="px-3 py-3 border-t border-sidebar-border">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
         >
           <LogOut className="h-4 w-4" />
           Sign Out
@@ -244,19 +249,27 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="flex items-center gap-4 px-6 py-4 border-b border-border bg-card/50 backdrop-blur flex-shrink-0">
-          <button className="md:hidden" onClick={() => setSidebarOpen(true)}>
-            <Menu className="h-5 w-5" />
-          </button>
-          <h1 className="font-semibold">{currentPage}</h1>
+        <header className="flex items-center justify-between gap-4 px-6 py-3.5 border-b border-border bg-card/50 backdrop-blur flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <button className="md:hidden" onClick={() => setSidebarOpen(true)}>
+              <Menu className="h-5 w-5" />
+            </button>
+            <h1 className="font-semibold text-sm sm:text-base">{currentPage}</h1>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <UniversalAiSearch />
+          </div>
         </header>
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
+        <PersistentAiAssistant />
         <Toaster />
       </div>
     </div>
   )
 }
+

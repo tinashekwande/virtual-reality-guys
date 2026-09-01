@@ -54,6 +54,23 @@ export default function BookingPlannerCalendar({
 }: BookingPlannerCalendarProps) {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("month");
+  const [conflicts, setConflicts] = useState<any[]>([]);
+
+  // Fetch live AI calendar conflicts
+  React.useEffect(() => {
+    const fetchConflicts = async () => {
+      try {
+        const res = await fetch("/api/ai/conflicts");
+        if (res.ok) {
+          const data = await res.json();
+          setConflicts(data.conflicts || []);
+        }
+      } catch (err) {
+        console.error("[BookingPlannerCalendar] Conflict fetch error:", err);
+      }
+    };
+    fetchConflicts();
+  }, []);
 
   // Navigation handlers
   const handlePrev = () => {
@@ -106,6 +123,29 @@ export default function BookingPlannerCalendar({
 
   return (
     <div className="space-y-6">
+      {/* AI Calendar Conflict Banners */}
+      {conflicts.length > 0 && (
+        <div className="space-y-2">
+          {conflicts.map((c) => (
+            <div
+              key={c.id}
+              className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-start justify-between gap-3 text-xs shadow-lg"
+            >
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-amber-400 text-sm">{c.title}</p>
+                  <p className="text-amber-200/90 mt-0.5 leading-relaxed">{c.description}</p>
+                  <p className="text-[11px] text-amber-300/75 mt-1 font-semibold">
+                    💡 AI Recommendation: {c.recommendation}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Calendar Header Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/80 backdrop-blur-md p-4 rounded-2xl border border-border">
         {/* Date Navigation */}

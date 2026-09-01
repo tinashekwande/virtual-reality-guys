@@ -14,6 +14,8 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import Link from "next/link";
+import { AiEventPlannerModal } from "@/components/admin/ai/AiEventPlannerModal";
+import { AiMessageGeneratorModal } from "@/components/admin/ai/AiMessageGeneratorModal";
 
 export interface PlannerEvent {
   id: string;
@@ -98,6 +100,8 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [isPlannerOpen, setIsPlannerOpen] = useState(false);
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
   if (!event) return null;
 
@@ -460,6 +464,36 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
           </div>
         )}
 
+        {/* AI Operations Hub */}
+        <div className="bg-primary/5 p-4 rounded-2xl border border-primary/25 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-primary flex items-center gap-1.5 uppercase tracking-wider">
+              ✨ VR Guys AI Operations
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+              Live Readiness
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              size="sm"
+              onClick={() => setIsPlannerOpen(true)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs rounded-xl gap-1.5 shadow-md shadow-primary/20"
+            >
+              🤖 AI Plan Event
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsMessageModalOpen(true)}
+              className="border-primary/30 hover:bg-primary/10 text-primary text-xs rounded-xl gap-1.5"
+            >
+              💬 AI Message / WhatsApp
+            </Button>
+          </div>
+        </div>
+
         {/* Action Controls */}
         <div className="pt-4 border-t border-cyan-900/40 flex flex-wrap items-center justify-between gap-3">
           {isInvoice ? (
@@ -489,6 +523,28 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
             Delete Record
           </Button>
         </div>
+
+        {/* AI Modals */}
+        <AiEventPlannerModal
+          isOpen={isPlannerOpen}
+          recordId={event.id}
+          recordType={event.source === "event" ? "event" : "invoice"}
+          onClose={() => setIsPlannerOpen(false)}
+        />
+
+        <AiMessageGeneratorModal
+          isOpen={isMessageModalOpen}
+          recipient={{
+            name: event.client_name,
+            email: event.client_email,
+            phone: event.client_phone,
+            event_date: event.date,
+            package_name: event.event_type,
+            amount_zar: event.total_amount,
+            doc_number: isInvoice ? event.raw_data?.doc_number : undefined,
+          }}
+          onClose={() => setIsMessageModalOpen(false)}
+        />
       </SheetContent>
     </Sheet>
   );
