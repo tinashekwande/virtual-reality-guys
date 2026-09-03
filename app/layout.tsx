@@ -20,7 +20,7 @@ const mina = Mina({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.virtualrealityguyz.co.za'),
+  metadataBase: new URL('https://virtualrealityguyz.co.za'),
   title: {
     default: 'Virtual Reality Guys | Mobile VR Gaming Experiences for Events',
     template: '%s | Virtual Reality Guys',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtual Reality Guys | Mobile VR Gaming Experiences for Events',
     description: 'Bring the future of gaming to your event! Virtual Reality Guys provides immersive VR experiences for schools, parties, corporate events, and festivals in Cape Town.',
-    url: 'https://www.virtualrealityguyz.co.za',
+    url: 'https://virtualrealityguyz.co.za',
     siteName: 'Virtual Reality Guys',
     images: [
       {
@@ -113,8 +113,8 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Virtual Reality Guys",
-    "url": "https://www.virtualrealityguyz.co.za",
-    "logo": "https://www.virtualrealityguyz.co.za/images/logo.png",
+    "url": "https://virtualrealityguyz.co.za",
+    "logo": "https://virtualrealityguyz.co.za/images/logo.png",
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+27717800323",
@@ -132,12 +132,12 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Virtual Reality Guys",
-    "url": "https://www.virtualrealityguyz.co.za",
+    "url": "https://virtualrealityguyz.co.za",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://www.virtualrealityguyz.co.za/vr-games-catalogue?q={search_term_string}"
+        "urlTemplate": "https://virtualrealityguyz.co.za/vr-games-catalogue?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }

@@ -20,13 +20,13 @@ export default function PrivacyPolicyPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Privacy Policy",
-        "item": "https://www.virtualrealityguyz.co.za/privacy-policy"
+        "item": "https://virtualrealityguyz.co.za/privacy-policy"
       }
     ]
   };

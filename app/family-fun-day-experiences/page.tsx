@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Family Fun Day Activities Cape Town | VR Event Entertainment',
     description: 'Looking for ultimate family fun activities in Cape Town? We deliver fully supervised mobile VR setups perfect for community days and multi-generational events.',
-    url: 'https://www.virtualrealityguyz.co.za/family-fun-day-experiences',
+    url: 'https://virtualrealityguyz.co.za/family-fun-day-experiences',
     images: [{ url: '/images/vr-hero.jpg', alt: 'Family Fun Day Activities Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function FamilyFunDayPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function FamilyFunDayPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Family Fun Day Experiences",
-        "item": "https://www.virtualrealityguyz.co.za/family-fun-day-experiences"
+        "item": "https://virtualrealityguyz.co.za/family-fun-day-experiences"
       }
     ]
   };

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'VR Gaming Near Me Cape Town | Mobile Virtual Reality Delivered',
     description: 'Looking for premium virtual reality entertainment in Cape Town? We deliver interactive VR headsets, displays, and supervisors directly to your venue.',
-    url: 'https://www.virtualrealityguyz.co.za/vr-gaming-near-me',
+    url: 'https://virtualrealityguyz.co.za/vr-gaming-near-me',
     images: [{ url: '/images/vr-hero.jpg', alt: 'VR Gaming Near Me Cape Town' }],
   }
 }
@@ -33,7 +33,7 @@ export default function VrGamingNearMePage() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Virtual Reality Guys",
-    "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+    "image": "https://virtualrealityguyz.co.za/images/logo.png",
     "telephone": "+27717800323",
     "email": "virtualrealityguyz@gmail.com",
     "priceRange": "$$",
@@ -58,13 +58,13 @@ export default function VrGamingNearMePage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "VR Gaming Near Me",
-        "item": "https://www.virtualrealityguyz.co.za/vr-gaming-near-me"
+        "item": "https://virtualrealityguyz.co.za/vr-gaming-near-me"
       }
     ]
   };

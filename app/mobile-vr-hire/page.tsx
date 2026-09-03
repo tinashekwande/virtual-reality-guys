@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Mobile VR Hire Cape Town | Rent Virtual Reality Gear',
     description: 'Looking to hire mobile VR setups in Cape Town? We deliver, set up, and supervise premium VR experiences for corporate functions, birthdays, and festivals.',
-    url: 'https://www.virtualrealityguyz.co.za/mobile-vr-hire',
+    url: 'https://virtualrealityguyz.co.za/mobile-vr-hire',
     images: [{ url: '/images/vr-hero.jpg', alt: 'Mobile VR Hire Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function MobileVRHirePage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function MobileVRHirePage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Mobile VR Hire",
-        "item": "https://www.virtualrealityguyz.co.za/mobile-vr-hire"
+        "item": "https://virtualrealityguyz.co.za/mobile-vr-hire"
       }
     ]
   };

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'VR Team Building Activities Cape Town | Corporate Event Ideas',
     description: 'Looking for unique corporate team building ideas in Cape Town? We deliver multiplayer VR setups, leaderboards, and expert team coordination directly to your office.',
-    url: 'https://www.virtualrealityguyz.co.za/vr-team-building',
+    url: 'https://virtualrealityguyz.co.za/vr-team-building',
     images: [{ url: '/images/vr-corporate.jpg', alt: 'VR Team Building Activities Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function TeamBuildingPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function TeamBuildingPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "VR Team Building Activities",
-        "item": "https://www.virtualrealityguyz.co.za/vr-team-building"
+        "item": "https://virtualrealityguyz.co.za/vr-team-building"
       }
     ]
   };

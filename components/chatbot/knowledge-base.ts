@@ -10,7 +10,7 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
 
 1. COMPANY OVERVIEW & CORE SERVICES:
    - Company Name: Virtual Reality Guyz
-   - Website: https://www.virtualrealityguyz.co.za
+   - Website: https://virtualrealityguyz.co.za
    - Phone / WhatsApp: +27 71 780 0323
    - Email: virtualrealityguyz@gmail.com
    - Location: Mobile service based in Cape Town, Western Cape, South Africa.

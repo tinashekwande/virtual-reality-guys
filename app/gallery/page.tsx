@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Event Gallery | Virtual Reality Guys',
     description: 'Browse actual event photos and video captures from our virtual reality mobile entertainment events in Cape Town.',
-    url: 'https://www.virtualrealityguyz.co.za/gallery',
+    url: 'https://virtualrealityguyz.co.za/gallery',
   }
 }
 
@@ -46,13 +46,13 @@ export default async function GalleryPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Event Gallery",
-        "item": "https://www.virtualrealityguyz.co.za/gallery"
+        "item": "https://virtualrealityguyz.co.za/gallery"
       }
     ]
   };
@@ -62,7 +62,7 @@ export default async function GalleryPage() {
     "@type": "CollectionPage",
     "name": "Virtual Reality Guys Event Gallery",
     "description": "Photos and videos from mobile VR events, birthday parties, and corporate team building functions in Cape Town.",
-    "url": "https://www.virtualrealityguyz.co.za/gallery"
+    "url": "https://virtualrealityguyz.co.za/gallery"
   };
 
   return (

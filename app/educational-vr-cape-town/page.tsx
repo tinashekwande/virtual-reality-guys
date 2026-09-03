@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Educational VR Experiences Cape Town | Schools & Learning Programmes',
     description: 'Bring science, biology, and history to life with immersive virtual reality experiences for schools and educational programs in Cape Town.',
-    url: 'https://www.virtualrealityguyz.co.za/educational-vr-cape-town',
+    url: 'https://virtualrealityguyz.co.za/educational-vr-cape-town',
     images: [{ url: '/images/vr-school.jpg', alt: 'Educational VR Experience Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function EducationalVrCapeTownPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -54,13 +54,13 @@ export default function EducationalVrCapeTownPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Educational VR Cape Town",
-        "item": "https://www.virtualrealityguyz.co.za/educational-vr-cape-town"
+        "item": "https://virtualrealityguyz.co.za/educational-vr-cape-town"
       }
     ]
   };

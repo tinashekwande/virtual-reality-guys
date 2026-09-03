@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Book VR Experience Cape Town | Virtual Reality Guys Contact',
     description: 'Ready to book a premium VR gaming party or team building event? View package options and send an online booking request directly to our event team.',
-    url: 'https://www.virtualrealityguyz.co.za/contact',
+    url: 'https://virtualrealityguyz.co.za/contact',
     images: [{ url: '/images/vr-hero.jpg', alt: 'Book Virtual Reality Cape Town' }],
   }
 }
@@ -24,7 +24,7 @@ export default function ContactPage() {
     "@context": "https://schema.org",
     "@type": "ContactPage",
     "name": "Book Virtual Reality Guys CPT",
-    "url": "https://www.virtualrealityguyz.co.za/contact",
+    "url": "https://virtualrealityguyz.co.za/contact",
     "description": "Standalone contact and booking request page for the Virtual Reality Guys' mobile VR entertainment services in Cape Town, South Africa."
   };
 
@@ -36,13 +36,13 @@ export default function ContactPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Bookings & Contact",
-        "item": "https://www.virtualrealityguyz.co.za/contact"
+        "item": "https://virtualrealityguyz.co.za/contact"
       }
     ]
   };

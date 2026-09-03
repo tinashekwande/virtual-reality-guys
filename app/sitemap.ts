@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { BLOG_CATEGORIES, slugify } from '@/lib/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.virtualrealityguyz.co.za'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://virtualrealityguyz.co.za'
 
   const staticRoutes = [
     {

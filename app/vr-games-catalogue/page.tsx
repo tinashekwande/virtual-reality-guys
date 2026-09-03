@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'VR Games & Experiences Catalogue | Virtual Reality Guys',
     description: 'Browse the ultimate virtual reality entertainment library perfect for birthday parties, schools, corporate events, and festivals in Cape Town.',
-    url: 'https://www.virtualrealityguyz.co.za/vr-games-catalogue',
+    url: 'https://virtualrealityguyz.co.za/vr-games-catalogue',
     images: [{ url: '/images/vr-hero.jpg', alt: 'VR Games Catalogue Hub' }],
   }
 }
@@ -26,13 +26,13 @@ export default function VRCataloguePage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "VR Games Catalogue",
-        "item": "https://www.virtualrealityguyz.co.za/vr-games-catalogue"
+        "item": "https://virtualrealityguyz.co.za/vr-games-catalogue"
       }
     ]
   };

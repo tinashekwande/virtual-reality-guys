@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = post.seo_title || `${post.title} | Virtual Reality Guys`
   const description = post.seo_description || post.excerpt
-  const url = `https://www.virtualrealityguyz.co.za/blog/${post.slug}`
+  const url = `https://virtualrealityguyz.co.za/blog/${post.slug}`
 
   return {
     title,
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       authors: [post.author],
       images: [
         {
-          url: post.featured_image || "https://www.virtualrealityguyz.co.za/images/logo.png",
+          url: post.featured_image || "https://virtualrealityguyz.co.za/images/logo.png",
           alt: post.title,
         },
       ],
@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title,
       description,
-      images: [post.featured_image || "https://www.virtualrealityguyz.co.za/images/logo.png"],
+      images: [post.featured_image || "https://virtualrealityguyz.co.za/images/logo.png"],
     },
   }
 }
@@ -142,24 +142,24 @@ export default async function BlogPostPage({ params }: PageProps) {
     "@type": "BlogPosting",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://www.virtualrealityguyz.co.za/blog/${post.slug}`,
+      "@id": `https://virtualrealityguyz.co.za/blog/${post.slug}`,
     },
     "headline": post.title,
     "description": post.excerpt,
-    "image": post.featured_image || "https://www.virtualrealityguyz.co.za/images/logo.png",
+    "image": post.featured_image || "https://virtualrealityguyz.co.za/images/logo.png",
     "datePublished": post.published_at,
     "dateModified": post.updated_at,
     "author": {
       "@type": "Organization",
       "name": "Virtual Reality Guys",
-      "url": "https://www.virtualrealityguyz.co.za",
+      "url": "https://virtualrealityguyz.co.za",
     },
     "publisher": {
       "@type": "Organization",
       "name": "Virtual Reality Guys",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.virtualrealityguyz.co.za/images/logo.png",
+        "url": "https://virtualrealityguyz.co.za/images/logo.png",
       },
     },
   }
@@ -172,19 +172,19 @@ export default async function BlogPostPage({ params }: PageProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za",
+        "item": "https://virtualrealityguyz.co.za",
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": "https://www.virtualrealityguyz.co.za/blog",
+        "item": "https://virtualrealityguyz.co.za/blog",
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": post.title,
-        "item": `https://www.virtualrealityguyz.co.za/blog/${post.slug}`,
+        "item": `https://virtualrealityguyz.co.za/blog/${post.slug}`,
       },
     ],
   }

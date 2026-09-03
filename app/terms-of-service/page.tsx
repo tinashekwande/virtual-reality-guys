@@ -20,13 +20,13 @@ export default function TermsOfServicePage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Terms of Service",
-        "item": "https://www.virtualrealityguyz.co.za/terms-of-service"
+        "item": "https://virtualrealityguyz.co.za/terms-of-service"
       }
     ]
   };

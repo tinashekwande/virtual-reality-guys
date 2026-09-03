@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
     description: 'Looking for unique kids party ideas in Cape Town? We deliver multiplayer VR setups, fun rhythm games, and expert supervisors directly to your home.',
-    url: 'https://www.virtualrealityguyz.co.za/kids-parties',
+    url: 'https://virtualrealityguyz.co.za/kids-parties',
     images: [{ url: '/images/vr-party.jpg', alt: 'Kids VR Gaming Party Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function KidsPartiesPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function KidsPartiesPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Kids Parties",
-        "item": "https://www.virtualrealityguyz.co.za/kids-parties"
+        "item": "https://virtualrealityguyz.co.za/kids-parties"
       }
     ]
   };

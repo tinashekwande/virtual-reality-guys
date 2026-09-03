@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'VR Birthday Party Activities Cape Town | Gaming Event Entertainment',
     description: 'Throw the ultimate VR birthday party! We set up premium multiplayer VR gear, screens, and custom challenges for birthdays of all ages in Cape Town.',
-    url: 'https://www.virtualrealityguyz.co.za/birthday-party-activities',
+    url: 'https://virtualrealityguyz.co.za/birthday-party-activities',
     images: [{ url: '/images/vr-party.jpg', alt: 'VR Birthday Party Activities Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function BirthdayActivitiesPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function BirthdayActivitiesPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Birthday Party Activities",
-        "item": "https://www.virtualrealityguyz.co.za/birthday-party-activities"
+        "item": "https://virtualrealityguyz.co.za/birthday-party-activities"
       }
     ]
   };

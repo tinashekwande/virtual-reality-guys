@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Educational VR School Demonstrations Cape Town | Mobile Setup',
     description: 'Looking for engaging school demonstrations in Cape Town? We deliver fully supervised educational VR setups directly to your classroom or school hall.',
-    url: 'https://www.virtualrealityguyz.co.za/school-vr-demonstrations',
+    url: 'https://virtualrealityguyz.co.za/school-vr-demonstrations',
     images: [{ url: '/images/vr-school.jpg', alt: 'VR School Demonstration Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function SchoolVRPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function SchoolVRPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "School VR Demonstrations",
-        "item": "https://www.virtualrealityguyz.co.za/school-vr-demonstrations"
+        "item": "https://virtualrealityguyz.co.za/school-vr-demonstrations"
       }
     ]
   };

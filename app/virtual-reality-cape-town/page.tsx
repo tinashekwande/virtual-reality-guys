@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtual Reality Cape Town | Premium VR Experiences Near Me',
     description: 'Looking for virtual reality in Cape Town? We bring the future of gaming directly to your home, office, or school venue with expert supervisors.',
-    url: 'https://www.virtualrealityguyz.co.za/virtual-reality-cape-town',
+    url: 'https://virtualrealityguyz.co.za/virtual-reality-cape-town',
     images: [{ url: '/images/vr-hero.jpg', alt: 'Virtual Reality Cape Town Hub' }],
   }
 }
@@ -26,9 +26,9 @@ export default function CapeTownVRPage() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Virtual Reality Guys",
-    "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
-    "@id": "https://www.virtualrealityguyz.co.za/virtual-reality-cape-town#organization",
-    "url": "https://www.virtualrealityguyz.co.za/virtual-reality-cape-town",
+    "image": "https://virtualrealityguyz.co.za/images/logo.png",
+    "@id": "https://virtualrealityguyz.co.za/virtual-reality-cape-town#organization",
+    "url": "https://virtualrealityguyz.co.za/virtual-reality-cape-town",
     "telephone": "+27717800323",
     "email": "virtualrealityguyz@gmail.com",
     "priceRange": "$$",
@@ -119,13 +119,13 @@ export default function CapeTownVRPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Virtual Reality Cape Town",
-        "item": "https://www.virtualrealityguyz.co.za/virtual-reality-cape-town"
+        "item": "https://virtualrealityguyz.co.za/virtual-reality-cape-town"
       }
     ]
   };

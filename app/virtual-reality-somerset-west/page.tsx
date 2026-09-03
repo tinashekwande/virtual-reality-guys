@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtual Reality Somerset West | Mobile VR Gaming Helderberg',
     description: 'Immersive mobile virtual reality setups delivered directly to your venue in Somerset West, Strand, and the wider Helderberg region.',
-    url: 'https://www.virtualrealityguyz.co.za/virtual-reality-somerset-west',
+    url: 'https://virtualrealityguyz.co.za/virtual-reality-somerset-west',
     images: [{ url: '/images/vr-hero.jpg', alt: 'Virtual Reality Somerset West' }],
   }
 }
@@ -32,7 +32,7 @@ export default function VirtualRealitySomersetWestPage() {
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "Virtual Reality Guys",
-    "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+    "image": "https://virtualrealityguyz.co.za/images/logo.png",
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
@@ -61,13 +61,13 @@ export default function VirtualRealitySomersetWestPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Virtual Reality Somerset West",
-        "item": "https://www.virtualrealityguyz.co.za/virtual-reality-somerset-west"
+        "item": "https://virtualrealityguyz.co.za/virtual-reality-somerset-west"
       }
     ]
   };

@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town',
     description: 'Premium mobile VR gaming experiences delivered to your venue in Cape Town. Schools, parties, corporate events & festivals. Book today!',
-    url: 'https://www.virtualrealityguyz.co.za',
+    url: 'https://virtualrealityguyz.co.za',
     images: [{ url: '/images/logo.png', alt: 'Virtual Reality Guys Logo' }],
   }
 }
@@ -86,9 +86,9 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Virtual Reality Guys",
-    "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
-    "@id": "https://www.virtualrealityguyz.co.za/#organization",
-    "url": "https://www.virtualrealityguyz.co.za",
+    "image": "https://virtualrealityguyz.co.za/images/logo.png",
+    "@id": "https://virtualrealityguyz.co.za/#organization",
+    "url": "https://virtualrealityguyz.co.za",
     "telephone": "+27717800323",
     "email": "virtualrealityguyz@gmail.com",
     "priceRange": "$$",
@@ -164,7 +164,7 @@ export default async function Home() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       }
     ]
   };

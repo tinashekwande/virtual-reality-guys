@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Corporate Event Entertainment Cape Town | Premium VR Hire',
     description: 'Provide futuristic, premium event entertainment for your Cape Town corporate function. Multiplayer gaming setups and large spectator screens delivered.',
-    url: 'https://www.virtualrealityguyz.co.za/corporate-events',
+    url: 'https://virtualrealityguyz.co.za/corporate-events',
     images: [{ url: '/images/vr-corporate.jpg', alt: 'Corporate Event Entertainment Cape Town' }],
   }
 }
@@ -30,7 +30,7 @@ export default function CorporateEventsPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "address": {
         "@type": "PostalAddress",
@@ -85,13 +85,13 @@ export default function CorporateEventsPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Corporate Events",
-        "item": "https://www.virtualrealityguyz.co.za/corporate-events"
+        "item": "https://virtualrealityguyz.co.za/corporate-events"
       }
     ]
   };

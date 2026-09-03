@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'VR Experiences Cape Town | Immersive Virtual Reality | Virtual Reality Guys',
     description: 'Discover immersive VR experiences in Cape Town. From action-packed gaming to educational adventures, we bring premium virtual reality directly to your venue. Book today!',
-    url: 'https://www.virtualrealityguyz.co.za/vr-experience-cape-town',
+    url: 'https://virtualrealityguyz.co.za/vr-experience-cape-town',
     images: [{ url: '/images/vr-hero.jpg', alt: 'VR Experiences Cape Town' }],
   }
 }
@@ -35,7 +35,7 @@ export default function VrExperienceCapeTownPage() {
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://www.virtualrealityguyz.co.za/images/logo.png",
+      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
       "email": "virtualrealityguyz@gmail.com",
       "address": {
@@ -66,13 +66,13 @@ export default function VrExperienceCapeTownPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://www.virtualrealityguyz.co.za"
+        "item": "https://virtualrealityguyz.co.za"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "VR Experiences Cape Town",
-        "item": "https://www.virtualrealityguyz.co.za/vr-experience-cape-town"
+        "item": "https://virtualrealityguyz.co.za/vr-experience-cape-town"
       }
     ]
   };
