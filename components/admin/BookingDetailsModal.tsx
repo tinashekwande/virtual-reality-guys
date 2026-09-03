@@ -103,6 +103,13 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
   const [isPlannerOpen, setIsPlannerOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
+  React.useEffect(() => {
+    if (!isOpen) {
+      setIsPlannerOpen(false);
+      setIsMessageModalOpen(false);
+    }
+  }, [isOpen]);
+
   if (!event) return null;
 
   const isInvoice = event.source === "invoice";

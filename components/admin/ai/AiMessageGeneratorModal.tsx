@@ -1,9 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createPortal } from "react-dom"
 import { Sparkles, MessageSquare, Mail, Copy, Check, ExternalLink, Loader2, RotateCw, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 import { toast } from "sonner"
 import type { GeneratedMessage, CustomerMessageRecipient } from "@/lib/ai/followups"
 
@@ -30,16 +36,11 @@ export function AiMessageGeneratorModal({
   recipient,
   onClose,
 }: AiMessageGeneratorModalProps) {
-  const [mounted, setMounted] = useState(false)
   const [template, setTemplate] = useState(initialTemplate)
   const [message, setMessage] = useState<GeneratedMessage | null>(null)
   const [editedBody, setEditedBody] = useState<string>("")
   const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   useEffect(() => {
     if (isOpen) {
@@ -83,47 +84,34 @@ export function AiMessageGeneratorModal({
     liveWhatsAppUrl = `https://wa.me/${saPhone}?text=${encodeURIComponent(editedBody || message?.body_text || "")}`
   }
 
-  if (!isOpen || !mounted) return null
-
-  const modalContent = (
-    <div
-      className="fixed inset-0 z-[9999] pointer-events-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
-    >
-      <div
-        className="bg-card border border-primary/40 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[92vh] flex flex-col animate-in fade-in zoom-in-95 relative"
-        onClick={(e) => e.stopPropagation()}
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        className="max-w-2xl max-h-[92vh] flex flex-col p-6 overflow-hidden z-[70] border border-primary/40 bg-card shadow-2xl"
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border pb-3 flex-shrink-0">
+        <DialogHeader className="border-b border-border pb-3 flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-primary/15 text-primary">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base text-foreground">AI Tailored Customer Reply</h3>
+                <DialogTitle className="text-base font-bold text-foreground">
+                  AI Tailored Customer Reply
+                </DialogTitle>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">
                   Gemini Smart Context
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
                 Client: <span className="font-semibold text-foreground">{recipient.name}</span>
                 {recipient.phone ? ` • ${recipient.phone}` : ""}
                 {recipient.package_name ? ` • ${recipient.package_name}` : ""}
-              </p>
+              </DialogDescription>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer transition-colors"
-            title="Close modal"
-          >
-            ✕
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Lead Context Pill */}
         {recipient.customer_message && (
@@ -240,9 +228,7 @@ export function AiMessageGeneratorModal({
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
-
-  return createPortal(modalContent, document.body)
 }

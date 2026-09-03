@@ -145,6 +145,18 @@ export default function RequestsAdminPage() {
     }
   }
 
+  const handleOpenRequest = (r: FormRequest) => {
+    setIsMessageModalOpen(false)
+    setSelected(r)
+    setExtractedData(null)
+  }
+
+  const handleCloseSheet = () => {
+    setSelected(null)
+    setIsMessageModalOpen(false)
+    setExtractedData(null)
+  }
+
   const load = async () => {
     setLoading(true)
     const params = new URLSearchParams()
@@ -256,7 +268,7 @@ export default function RequestsAdminPage() {
                 {requests.map(r => {
                   const leadScore = calculateLeadScore(r)
                   return (
-                    <tr key={r.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => { setSelected(r); setExtractedData(null); }}>
+                    <tr key={r.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => handleOpenRequest(r)}>
                       <td className="px-5 py-4 font-semibold text-foreground">{r.name}</td>
                       <td className="px-5 py-4 text-muted-foreground hidden sm:table-cell">{r.email}</td>
                       <td className="px-5 py-4">
@@ -295,7 +307,7 @@ export default function RequestsAdminPage() {
                             <FileText className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Draft Quote</span>
                           </button>
-                          <button onClick={() => { setSelected(r); setExtractedData(null); }} title="View Request Details" className="p-1.5 hover:bg-secondary rounded text-muted-foreground hover:text-foreground">
+                          <button onClick={() => handleOpenRequest(r)} title="View Request Details" className="p-1.5 hover:bg-secondary rounded text-muted-foreground hover:text-foreground">
                             <Eye className="h-3.5 w-3.5" />
                           </button>
                           <button onClick={() => setDeleteId(r.id)} title="Delete Request" className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive">
@@ -313,7 +325,7 @@ export default function RequestsAdminPage() {
       </div>
 
       {/* Detail Sheet */}
-      <Sheet open={!!selected} onOpenChange={v => !v && setSelected(null)}>
+      <Sheet open={!!selected} onOpenChange={v => !v && handleCloseSheet()}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto bg-card border-border">
           {selected && (
             <>
