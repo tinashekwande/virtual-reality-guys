@@ -73,15 +73,49 @@ export default function RequestsAdminPage() {
   const [extractedData, setExtractedData] = useState<any>(null)
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
 
-  const handleCreateInvoice = (r: FormRequest, type: "invoice" | "quote" = "invoice", customPackage?: string) => {
+  const handleCreateInvoice = (
+    r: FormRequest,
+    type: "invoice" | "quote" = "invoice",
+    customPackage?: string,
+    customPrice?: number
+  ) => {
     const date = extractEventDate(r.message)
+
+    // Intelligently infer package and price based on enquiry message and player count
+    let pkg = customPackage
+    let price = customPrice
+
+    if (!pkg || !price) {
+      const msg = (r.message || "").toLowerCase()
+      const numMatch = msg.match(/\b(\d{1,3})\s*(kids|children|players|people|guests|adults|participants|students)\b/i)
+      const count = numMatch ? parseInt(numMatch[1], 10) : 12
+
+      if (msg.includes("corporate") || msg.includes("team") || msg.includes("company") || (r.form_type || "").toLowerCase().includes("corporate")) {
+        pkg = "Corporate Event VR Package (6-8 Headsets, 4 Hours)"
+        price = 1499
+      } else if (msg.includes("school") || (r.form_type || "").toLowerCase().includes("school")) {
+        pkg = "School / Educational VR Experience (4 Headsets, 3 Hours)"
+        price = 899
+      } else if (count <= 10) {
+        pkg = "Starter VR Package (2 Headsets, 2 Hours, 1 Staff)"
+        price = 499
+      } else if (count > 20) {
+        pkg = "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)"
+        price = 1299
+      } else {
+        pkg = "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)"
+        price = 899
+      }
+    }
+
     const params = new URLSearchParams({
       create: type,
       name: r.name,
       email: r.email,
       phone: r.phone || "",
       date: date || "",
-      package: customPackage || r.form_type || "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)",
+      package: pkg,
+      price: String(price),
       notes: r.message || "",
     })
     router.push(`/admin/quotes-invoices?${params.toString()}`)
@@ -386,7 +420,14 @@ export default function RequestsAdminPage() {
                 {/* Action Buttons */}
                 <div className="space-y-2 pt-3 border-t border-border">
                   <Button
-                    onClick={() => handleCreateInvoice(selected, "quote", extractedData?.recommended_package?.name)}
+                    onClick={() =>
+                      handleCreateInvoice(
+                        selected,
+                        "quote",
+                        extractedData?.recommended_package?.name,
+                        extractedData?.recommended_package?.price_zar
+                      )
+                    }
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center justify-center gap-2 text-xs rounded-xl"
                   >
                     <FileText className="h-4 w-4" />
@@ -422,8 +463,15 @@ export default function RequestsAdminPage() {
             name: selected.name,
             email: selected.email,
             phone: selected.phone,
-            package_name: extractedData?.recommended_package?.name || selected.form_type,
-            amount_zar: extractedData?.recommended_package?.price_zar || 899,
+            package_name:
+              extractedData?.recommended_package?.name ||
+              (selected.form_type ? `${selected.form_type} Package` : "Standard VR Package"),
+            amount_zar: extractedData?.recommended_package?.price_zar,
+            customer_message: selected.message,
+            event_type: extractedData?.event_type || selected.form_type,
+            missing_fields: extractedData?.missing_fields,
+            player_count: extractedData?.player_count,
+            location: extractedData?.location,
           }}
           onClose={() => setIsMessageModalOpen(false)}
         />

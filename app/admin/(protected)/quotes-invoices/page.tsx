@@ -64,33 +64,45 @@ function QuotesInvoicesContent() {
       const address = searchParams.get("address") || "";
       const notes = searchParams.get("notes") || "";
       const packageType = searchParams.get("package") || "";
+      const customPriceParam = searchParams.get("price");
+      const customPrice = customPriceParam ? Number(customPriceParam) : null;
 
-      let initialItems: InvoiceItem[] = [
-        {
-          id: "1",
-          description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)",
-          quantity: 1,
-          unit_price: 899,
-          total: 899,
-        },
-      ];
+      let initialItems: InvoiceItem[] = [];
 
-      if (packageType.toLowerCase().includes("birthday")) {
+      if (customPrice && !isNaN(customPrice) && customPrice > 0) {
         initialItems = [
-          { id: "1", description: "Birthday VR Party Package (4 Headsets, 2 Hours)", quantity: 1, unit_price: 699, total: 699 }
+          {
+            id: "1",
+            description: packageType || "Customized VR Package Experience",
+            quantity: 1,
+            unit_price: customPrice,
+            total: customPrice,
+          },
         ];
-      } else if (packageType.toLowerCase().includes("corporate")) {
-        initialItems = [
-          { id: "1", description: "Corporate Event VR Package (6 Headsets, 4 Hours)", quantity: 1, unit_price: 1499, total: 1499 }
-        ];
-      } else if (packageType.toLowerCase().includes("school")) {
-        initialItems = [
-          { id: "1", description: "School / Educational VR Experience", quantity: 1, unit_price: 899, total: 899 }
-        ];
-      } else if (packageType.toLowerCase().includes("festival")) {
-        initialItems = [
-          { id: "1", description: "Festival / Community VR Activation", quantity: 1, unit_price: 1299, total: 1299 }
-        ];
+      } else {
+        const pkgLower = packageType.toLowerCase();
+        if (pkgLower.includes("starter") || pkgLower.includes("499")) {
+          initialItems = [
+            { id: "1", description: "Starter VR Package (2 Headsets, 2 Hours, 1 Staff)", quantity: 1, unit_price: 499, total: 499 }
+          ];
+        } else if (pkgLower.includes("premium") || pkgLower.includes("1299") || pkgLower.includes("1,299")) {
+          initialItems = [
+            { id: "1", description: "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)", quantity: 1, unit_price: 1299, total: 1299 }
+          ];
+        } else if (pkgLower.includes("corporate") || pkgLower.includes("1499") || pkgLower.includes("1,499")) {
+          initialItems = [
+            { id: "1", description: "Corporate Event VR Package (6-8 Headsets, 4 Hours, 3 Staff)", quantity: 1, unit_price: 1499, total: 1499 }
+          ];
+        } else if (pkgLower.includes("school")) {
+          initialItems = [
+            { id: "1", description: "School / Educational VR Experience (4 Headsets, 3 Hours)", quantity: 1, unit_price: 899, total: 899 }
+          ];
+        } else {
+          // Standard Package is our baseline default
+          initialItems = [
+            { id: "1", description: "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)", quantity: 1, unit_price: 899, total: 899 }
+          ];
+        }
       }
 
       setSelectedInvoice({

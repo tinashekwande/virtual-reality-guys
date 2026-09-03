@@ -542,6 +542,9 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
             package_name: event.event_type,
             amount_zar: event.total_amount,
             doc_number: isInvoice ? event.raw_data?.doc_number : undefined,
+            customer_message: event.notes_or_message,
+            event_type: event.event_type,
+            location: event.client_address,
           }}
           onClose={() => setIsMessageModalOpen(false)}
         />
