@@ -188,12 +188,15 @@ export default function RequestsAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       })
-      if (!res.ok) throw new Error("Failed to update status")
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || "Failed to update status")
+      }
       setRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r))
       if (selected?.id === id) setSelected(prev => prev ? { ...prev, status: newStatus } : null)
-      toast.success("Status updated")
-    } catch (err) {
-      toast.error("Failed to update status")
+      toast.success(`Status updated to ${getStatusLabel(newStatus)}!`)
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update status")
     }
   }
 
@@ -333,11 +336,19 @@ export default function RequestsAdminPage() {
                 <SheetTitle className="text-base font-bold text-foreground">Enquiry & AI Intelligence</SheetTitle>
               </SheetHeader>
               <div className="mt-5 space-y-4 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className={`px-2.5 py-0.5 rounded-full border font-semibold ${STATUS_BADGE[selected.status] || STATUS_BADGE.new}`}>
-                    {getStatusLabel(selected.status)}
-                  </span>
-                  <span className="text-muted-foreground">{new Date(selected.created_at).toLocaleString()}</span>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground font-semibold">Status:</span>
+                    <Select value={selected.status} onValueChange={(v) => handleStatusChange(selected.id, v as RequestStatus)}>
+                      <SelectTrigger className={`h-7 text-xs w-44 border ${STATUS_BADGE[selected.status] || STATUS_BADGE.new}`}>
+                        <SelectValue>{getStatusLabel(selected.status)}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <span className="text-muted-foreground font-mono">{new Date(selected.created_at).toLocaleDateString()}</span>
                 </div>
 
                 {/* Lead Score & Conversion Prob */}
