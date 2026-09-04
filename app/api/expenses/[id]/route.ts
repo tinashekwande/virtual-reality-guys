@@ -15,6 +15,13 @@ export async function PUT(request: Request, { params }: Props) {
   const body = await request.json()
   const admin = createAdminClient()
 
+  // Get prior record to detect if linked event changed
+  const { data: existing } = await admin
+    .from('expenses')
+    .select('event_id')
+    .eq('id', id)
+    .single()
+
   const updatePayload: Record<string, any> = {
     updated_at: new Date().toISOString(),
   }
@@ -24,8 +31,8 @@ export async function PUT(request: Request, { params }: Props) {
   if (body.amount !== undefined) updatePayload.amount = Number(body.amount)
   if (body.date !== undefined) updatePayload.date = body.date
   if (body.notes !== undefined) updatePayload.notes = body.notes
-  if (body.event_id !== undefined) updatePayload.event_id = body.event_id
-  if (body.invoice_id !== undefined) updatePayload.invoice_id = body.invoice_id
+  if (body.event_id !== undefined) updatePayload.event_id = body.event_id ? body.event_id : null
+  if (body.invoice_id !== undefined) updatePayload.invoice_id = body.invoice_id ? body.invoice_id : null
 
   const { data, error } = await admin
     .from('expenses')
@@ -36,7 +43,7 @@ export async function PUT(request: Request, { params }: Props) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Recalculate event expenses if linked to an event
+  // Recalculate event expenses for newly linked/updated event
   if (data?.event_id) {
     const { data: allEventExp } = await admin
       .from('expenses')
@@ -48,6 +55,20 @@ export async function PUT(request: Request, { params }: Props) {
       .from('events')
       .update({ total_expenses: updatedSum, updated_at: new Date().toISOString() })
       .eq('id', data.event_id)
+  }
+
+  // If the event link was removed or switched, recalculate the old event too
+  if (existing?.event_id && existing.event_id !== data?.event_id) {
+    const { data: oldEventExp } = await admin
+      .from('expenses')
+      .select('amount')
+      .eq('event_id', existing.event_id)
+    
+    const oldSum = (oldEventExp || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0)
+    await admin
+      .from('events')
+      .update({ total_expenses: oldSum, updated_at: new Date().toISOString() })
+      .eq('id', existing.event_id)
   }
 
   return NextResponse.json(data)
