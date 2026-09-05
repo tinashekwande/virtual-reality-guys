@@ -149,7 +149,7 @@ export default function VrBirthdayPartiesPage() {
             VR Birthday <span className="text-primary">Parties</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Bring the ultimate gaming festival to your next birthday celebration! We deliver, set up, and manage a complete mobile virtual reality arcade at your home or chosen venue in Cape Town.
+            Looking for an unforgettable mobile VR party near you? We deliver, set up, and manage a complete virtual reality arcade at your home or chosen venue anywhere in Cape Town.
           </p>
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg">
@@ -205,7 +205,7 @@ export default function VrBirthdayPartiesPage() {
                 Plan an Absolutely Unforgettable Birthday Party
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Throwing a birthday party can be stressful, but it doesn't have to be. With Virtual Reality Guys, we turn your home into a futuristic gaming center. While the birthday boy or girl is dodging laser fire in space, their friends are cheering them on, watching the live gameplay on our spectator screens.
+                Searching for the best VR party near me in Cape Town? Throwing an epic celebration is effortless with Virtual Reality Guys. We turn your home or venue into a futuristic gaming center. While the birthday star is dodging laser fire in space, friends and family cheer them on watching live gameplay on our spectator displays.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 Whether you want to coordinate a friendly Beat Saber tournament, host a multiplayer racing challenge, or let guests explore high-definition solo adventures, we tailor the game roster to match the age group and energy of your event.

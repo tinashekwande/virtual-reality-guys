@@ -149,7 +149,7 @@ export default function EducationalVrCapeTownPage() {
             Educational <span className="text-primary">VR</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Take your students beyond the classroom walls! We deliver complete mobile VR stations to Cape Town schools, offering fully supervised, curriculum-aligned educational experiences.
+            Pioneering immersive VR education in South Africa! We deliver complete mobile VR stations to schools across Cape Town and the Western Cape, offering fully supervised, curriculum-aligned educational experiences.
           </p>
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg">
@@ -205,7 +205,7 @@ export default function EducationalVrCapeTownPage() {
                 Engage Students Like Never Before with STEM VR
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Traditional textbooks are excellent, but nothing matches the retention rate of active experience. Educational virtual reality places students directly inside their subject matter. Instead of just reading about the Solar System, they stand next to the rings of Saturn and watch planets orbit in real scale.
+                As VR education continues to expand across South Africa, Virtual Reality Guys is leading the way with hands-on, immersive STEM learning. Educational virtual reality places students directly inside their subject matter. Instead of just reading about the Solar System, they stand next to the rings of Saturn and watch planets orbit in real scale.
               </p>
               <p className="text-muted-foreground leading-relaxed">
                 We work alongside local educators in Cape Town to design scheduled class rotations, science fair exhibits, and high-throughput school carnival stages. We support critical learning areas including:
