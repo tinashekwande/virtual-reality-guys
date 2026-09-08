@@ -60,6 +60,17 @@ export async function extractRequestDetails(
     targetDate = dateMatch[0]
   }
 
+  // Extract suburb / location mention if present
+  const suburbHeaderMatch = rawMessage.match(/\[Suburb:\s*([^\]]+)\]/i)
+  if (suburbHeaderMatch) {
+    location = suburbHeaderMatch[1].trim()
+  } else {
+    const locMatch = rawMessage.match(/(?:suburb|location|area|venue)\s*[:\-]?\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i)
+    if (locMatch && locMatch[1].trim().length > 2) {
+      location = locMatch[1].trim()
+    }
+  }
+
   // Extract player count if specified
   const numMatch = rawMessage.match(/\b(\d{1,3})\s*(kids|children|players|people|guests|adults|participants|students)\b/i)
   if (numMatch) {
@@ -115,8 +126,8 @@ export async function extractRequestDetails(
   if (!targetDate && !rawMessage.match(/\b(today|tomorrow|saturday|sunday|weekend|next week|\d{1,2}(st|nd|rd|th)?)\b/i)) {
     missingFields.push('Preferred Event Date & Start Time')
   }
-  if (!rawMessage.match(/\b(in|at|venue|location|suburb|durbanville|bellville|brackenfell|cape town|stellenbosch|somerset|camps bay|constantia)\b/i)) {
-    missingFields.push('Exact Venue Address in Cape Town')
+  if (!suburbHeaderMatch && !rawMessage.match(/\b(in|at|venue|location|suburb|durbanville|bellville|brackenfell|cape town|stellenbosch|somerset|camps bay|constantia)\b/i)) {
+    missingFields.push('Exact Venue Suburb / Address in Cape Town')
   }
   if (!numMatch) {
     missingFields.push('Estimated Number of Players / Age Group')
@@ -126,7 +137,7 @@ export async function extractRequestDetails(
   try {
     const sysInstruction = await getMasterSystemInstruction()
     const prompt = `You are the chief booking specialist for Virtual Reality Guys in Cape Town.
-Analyze this customer enquiry and return a strict JSON object.
+Analyze this customer enquiry and return a strict JSON object. We need to know the customer's suburb/area to quote them accordingly (including applicable travel logistics).
 
 OUR OFFICIAL PACKAGES ON THE WEBSITE (BASELINE PRICING INCL. 15% VAT):
 1. Starter Package: R499 (2 VR Headsets, 2 Hours, up to 10 players, 1 Supervisor) - for small birthdays / intimate groups.
@@ -146,14 +157,15 @@ RETURN A STRICT JSON OBJECT WITH THESE EXACT KEYS:
     "price_zar": number (e.g. 499, 899, 1299, 1499),
     "headset_count": number (2, 4, 6, or 8),
     "duration_hours": number (2, 3, or 4),
-    "reason": "string (specific explanation referencing their player count, venue, and event type)"
+    "reason": "string (specific explanation referencing their player count, venue/suburb, and event type)"
   },
   "intent_level": "High" | "Medium" | "Low",
   "missing_fields": ["array of specific missing details required to finalize the quote/booking"],
-  "suggested_reply": "string (a warm, highly intelligent, personalized response that acknowledges their specific request, recommends the package with price, and politely asks for the missing information)"
+  "suggested_reply": "string (a warm, highly intelligent, personalized response that acknowledges their specific request and suburb, recommends the package with price, and politely asks for any missing information)"
 }
 
 Customer Message: "${rawMessage}"
+Customer Suburb / Location: "${location !== 'Cape Town' ? location : ''}"
 Sender Name: "${senderName || ''}"
 Sender Email: "${senderEmail || ''}"
 Sender Phone: "${senderPhone || ''}"`

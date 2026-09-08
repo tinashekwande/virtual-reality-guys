@@ -21,6 +21,7 @@ export default function BookingForm() {
       name: fd.get("name"),
       email: fd.get("email"),
       phone: fd.get("phone"),
+      suburb: fd.get("suburb"),
       event_date: fd.get("event_date"),
       message: fd.get("message"),
       form_type: formType,
@@ -66,11 +67,17 @@ export default function BookingForm() {
             <Input id="email" name="email" type="email" placeholder="your@email.com" className="bg-background" required />
           </div>
         </div>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="phone" className="text-sm font-medium">Phone</label>
             <Input id="phone" name="phone" type="tel" placeholder="+27 71 000 0000" className="bg-background" />
           </div>
+          <div className="space-y-2">
+            <label htmlFor="suburb" className="text-sm font-medium">Suburb / Area</label>
+            <Input id="suburb" name="suburb" placeholder="e.g. Camps Bay, Durbanville, Somerset West..." className="bg-background" required />
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="event-type" className="text-sm font-medium">Event Type</label>
             <Select value={formType} onValueChange={setFormType}>

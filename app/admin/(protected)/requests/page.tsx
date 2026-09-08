@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame } from "lucide-react"
+import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
@@ -19,6 +19,16 @@ function extractEventDate(message: string): string {
   if (explicitMatch) return explicitMatch[1].trim()
   const isoMatch = message.match(/\b(20\d{2}[-/](?:0[1-9]|1[0-2])[-/](?:0[1-9]|[12]\d|3[01]))\b/)
   if (isoMatch) return isoMatch[1].replace(/\//g, "-")
+  return ""
+}
+
+function extractRequestSuburb(r: FormRequest): string {
+  if (r.suburb && r.suburb.trim()) return r.suburb.trim()
+  if (!r.message) return ""
+  const explicitMatch = r.message.match(/\[Suburb:\s*([^\]]+)\]/i)
+  if (explicitMatch) return explicitMatch[1].trim()
+  const locMatch = r.message.match(/(?:suburb|location|area|venue)\s*[:\-]\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i)
+  if (locMatch && locMatch[1].trim().length > 2) return locMatch[1].trim()
   return ""
 }
 
@@ -108,11 +118,13 @@ export default function RequestsAdminPage() {
       }
     }
 
+    const suburb = extractRequestSuburb(r)
     const params = new URLSearchParams({
       create: type,
       name: r.name,
       email: r.email,
       phone: r.phone || "",
+      address: suburb || "",
       date: date || "",
       package: pkg,
       price: String(price),
@@ -259,9 +271,9 @@ export default function RequestsAdminPage() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border bg-secondary/30">
-                  <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
-                  <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">Email</th>
-                  <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider">AI Lead Score</th>
+                  <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Customer</th>
+                  <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Suburb / Area</th>
+                  <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell">AI Lead Score</th>
                   <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
                   <th className="text-left px-5 py-3 font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Date</th>
                   <th className="px-5 py-3" />
@@ -270,11 +282,24 @@ export default function RequestsAdminPage() {
               <tbody className="divide-y divide-border">
                 {requests.map(r => {
                   const leadScore = calculateLeadScore(r)
+                  const sub = extractRequestSuburb(r)
                   return (
                     <tr key={r.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => handleOpenRequest(r)}>
-                      <td className="px-5 py-4 font-semibold text-foreground">{r.name}</td>
-                      <td className="px-5 py-4 text-muted-foreground hidden sm:table-cell">{r.email}</td>
                       <td className="px-5 py-4">
+                        <div className="font-semibold text-foreground">{r.name}</div>
+                        <div className="text-[11px] text-muted-foreground truncate max-w-[180px]">{r.email}</div>
+                      </td>
+                      <td className="px-5 py-4">
+                        {sub ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                            <MapPin className="h-3 w-3 text-cyan-400 flex-shrink-0" />
+                            <span className="truncate max-w-[130px]">{sub}</span>
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground text-[11px] italic">Not specified</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4 hidden sm:table-cell">
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
                             leadScore.priority.includes("HIGH")
@@ -383,15 +408,22 @@ export default function RequestsAdminPage() {
                   </div>
                   <div>
                     <p className="text-muted-foreground text-[10px] font-semibold uppercase">Email Address</p>
-                    <p className="font-semibold text-foreground mt-0.5">{selected.email}</p>
+                    <p className="font-semibold text-foreground mt-0.5 truncate">{selected.email}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-[10px] font-semibold uppercase">Phone Number</p>
                     <p className="font-semibold text-foreground mt-0.5">{selected.phone || "—"}</p>
                   </div>
                   <div>
+                    <p className="text-muted-foreground text-[10px] font-semibold uppercase">Suburb / Area</p>
+                    <p className="font-bold text-cyan-400 mt-0.5 flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
+                      <span>{extractRequestSuburb(selected) || "Not specified"}</span>
+                    </p>
+                  </div>
+                  <div className="col-span-2">
                     <p className="text-muted-foreground text-[10px] font-semibold uppercase">Form Category</p>
-                    <p className="font-semibold text-foreground mt-0.5">{selected.form_type}</p>
+                    <p className="font-semibold text-foreground mt-0.5 capitalize">{selected.form_type}</p>
                   </div>
                 </div>
 
@@ -494,7 +526,7 @@ export default function RequestsAdminPage() {
             event_type: extractedData?.event_type || selected.form_type,
             missing_fields: extractedData?.missing_fields,
             player_count: extractedData?.player_count,
-            location: extractedData?.location,
+            location: extractRequestSuburb(selected) || extractedData?.location,
           }}
           onClose={() => setIsMessageModalOpen(false)}
         />

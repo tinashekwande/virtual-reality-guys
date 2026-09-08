@@ -158,6 +158,7 @@ export default function ChatbotWidget() {
           name: data.name,
           email: data.email,
           phone: data.phone,
+          suburb: data.location,
           event_date: data.eventDate,
           message: `[Chatbot Booking]\nEvent Type: ${data.eventType}\nDate: ${data.eventDate}\nLocation: ${data.location}\nAttendees: ${data.attendees}`,
           form_type: 'chatbot_booking',

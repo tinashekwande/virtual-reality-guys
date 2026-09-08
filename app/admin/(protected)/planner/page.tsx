@@ -139,6 +139,7 @@ export default function BookingPlannerPage() {
           // Parse event date intelligently from customer/agent booking message or fallback to created_at
           const fallbackDate = req.created_at.split("T")[0];
           const date = extractDateFromMessage(req.message, fallbackDate);
+          const suburb = req.suburb || (req.message.match(/\[Suburb:\s*([^\]]+)\]/i) || req.message.match(/(?:suburb|location|area|venue)\s*[:\-]\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i))?.[1]?.trim();
 
           dateCounts[date] = (dateCounts[date] || 0) + 1;
 
@@ -149,6 +150,7 @@ export default function BookingPlannerPage() {
             client_name: req.name,
             client_email: req.email,
             client_phone: req.phone,
+            client_address: suburb || undefined,
             date,
             event_type: req.form_type || "VR Experience",
             status: req.status,

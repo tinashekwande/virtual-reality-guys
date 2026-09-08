@@ -35,6 +35,7 @@ export interface FormRequest {
   name: string
   email: string
   phone?: string
+  suburb?: string
   message: string
   form_type: string
   status: RequestStatus
