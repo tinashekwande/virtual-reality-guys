@@ -24,9 +24,9 @@ export interface ExtractedRequestData {
 /**
  * Parses unstructured natural-language enquiries into structured business parameters
  * using website package baselines:
- * - Starter: R499 (2 headsets, 2 hours, <= 10 players)
- * - Standard: R899 (4 headsets, 3 hours, 11-20 players)
- * - Premium: R1,299 (6 headsets, 4 hours, 21-40 players)
+ * - Starter: R499 (2 headsets, 2 hours, <= 5 players)
+ * - Standard: R899 (4 headsets, 3 hours, 6-10 players)
+ * - Premium: R1,299 (6 headsets, 4 hours, 11-15+ players)
  * - Corporate: R1,499 (6-8 headsets, 4 hours)
  * - School: R899 (demo) or custom
  */
@@ -38,7 +38,7 @@ export async function extractRequestDetails(
 ): Promise<ExtractedRequestData> {
   // Deterministic baseline heuristics
   let eventType = 'Birthday Party'
-  let playerCount = 12
+  let playerCount = 8
   let location = 'Cape Town'
   let targetDate = ''
 
@@ -83,7 +83,7 @@ export async function extractRequestDetails(
     price_zar: 899,
     headset_count: 4,
     duration_hours: 3,
-    reason: 'Ideal for 11–20 players with 4 VR headsets, 3 hours of play, and 2 dedicated supervisors.',
+    reason: 'Ideal for 6–10 players with 4 VR headsets, 3 hours of play, and 2 dedicated supervisors.',
   }
 
   if (eventType.includes('School')) {
@@ -102,21 +102,21 @@ export async function extractRequestDetails(
       duration_hours: 4,
       reason: 'High-energy corporate activation with spectator displays and multiplayer leaderboards.',
     }
-  } else if (playerCount <= 10) {
+  } else if (playerCount <= 5) {
     recPackage = {
       name: 'Starter Package',
       price_zar: 499,
       headset_count: 2,
       duration_hours: 2,
-      reason: 'Perfect for intimate gatherings up to 10 players with 2 headsets and 1 supervisor.',
+      reason: 'Perfect for intimate gatherings up to 5 players with 2 headsets and 1 supervisor.',
     }
-  } else if (playerCount > 20) {
+  } else if (playerCount > 10) {
     recPackage = {
       name: 'Premium Package',
       price_zar: 1299,
       headset_count: 6,
       duration_hours: 4,
-      reason: 'Maximum throughput for 20–40 players with 6 headsets, 4 hours, and 3 supervisors.',
+      reason: 'Maximum throughput for 11–15+ players with 6 headsets, 4 hours, and 3 supervisors.',
     }
   }
 
@@ -140,9 +140,9 @@ export async function extractRequestDetails(
 Analyze this customer enquiry and return a strict JSON object. We need to know the customer's suburb/area to quote them accordingly (including applicable travel logistics).
 
 OUR OFFICIAL PACKAGES ON THE WEBSITE (BASELINE PRICING INCL. 15% VAT):
-1. Starter Package: R499 (2 VR Headsets, 2 Hours, up to 10 players, 1 Supervisor) - for small birthdays / intimate groups.
-2. Standard Package: R899 (4 VR Headsets, 3 Hours, up to 20 players, 2 Supervisors) - our most popular package for birthdays & demos.
-3. Premium Package: R1,299 (6 VR Headsets, 4 Hours, up to 40 players, 3 Supervisors) - for large parties & tournaments.
+1. Starter Package: R499 (2 VR Headsets, 2 Hours, up to 5 players, 1 Supervisor) - for small birthdays / intimate groups.
+2. Standard Package: R899 (4 VR Headsets, 3 Hours, up to 10 players, 2 Supervisors) - our most popular package for birthdays & demos.
+3. Premium Package: R1,299 (6 VR Headsets, 4 Hours, up to 15 players, 3 Supervisors) - for large parties & tournaments.
 4. Corporate Event VR Package: R1,499 (6-8 VR Headsets, 4 Hours, tournament bracket & display mirrors).
 5. School / Educational VR Experience: R899 (baseline for up to 30 students) or R1,499 (larger groups).
 

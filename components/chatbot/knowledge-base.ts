@@ -25,14 +25,14 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
 
 3. PACKAGES & PRICING (ALL PRICES ARE INCLUSIVE OF 15% VAT):
    - Starter Package: R499.00 (Incl. VAT)
-     - Includes: 2 VR Headsets, 1 Trained VR Supervisor, 30+ Games Selection.
-     - Best For: Small birthday parties, intimate gatherings, quick VR sessions.
+     - Includes: 2 VR Headsets, 2 Hours, up to 5 players, 1 Trained VR Supervisor, 30+ Games Selection.
+     - Best For: Small birthday parties, intimate gatherings (up to 5 players), quick VR sessions.
    - Standard Package: R899.00 (Incl. VAT)
-     - Includes: 4 VR Headsets, 2 Trained VR Supervisors, 60+ Games Selection, Multiplayer Tournaments.
-     - Best For: Birthday parties, school demos, family fun days, medium events.
+     - Includes: 4 VR Headsets, 3 Hours, up to 10 players, 2 Trained VR Supervisors, 60+ Games Selection, Multiplayer Tournaments.
+     - Best For: Birthday parties, school demos, family fun days, medium events (up to 10 players).
    - Premium Package: R1,299.00 (Incl. VAT)
-     - Includes: 6 VR Headsets, 3 Trained VR Supervisors, 100+ Games Selection, Custom Tournament Brackets, Photo & Video Package.
-     - Best For: Large birthday celebrations, corporate activations, festivals, expos.
+     - Includes: 6 VR Headsets, 4 Hours, up to 15 players, 3 Trained VR Supervisors, 100+ Games Selection, Custom Tournament Brackets, Photo & Video Package.
+     - Best For: Large birthday celebrations, corporate activations, festivals, expos (up to 15 players).
    - Custom & Corporate Packages: Available for large expos, multi-day activations, or full-day team building events. Contact us for custom quotes.
 
 4. PAYMENT TERMS & BANKING DETAILS:

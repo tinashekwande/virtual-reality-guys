@@ -500,7 +500,7 @@ export default async function Home() {
               title="Starter"
               price="499"
               duration="2 hours"
-              players="Up to 10 players"
+              players="Up to 5 players"
               features={[
                 "2 VR headsets",
                 "Professional setup",
@@ -513,7 +513,7 @@ export default async function Home() {
               title="Standard"
               price="899"
               duration="3 hours"
-              players="Up to 20 players"
+              players="Up to 10 players"
               featured
               features={[
                 "4 VR headsets",
@@ -528,7 +528,7 @@ export default async function Home() {
               title="Premium"
               price="1299"
               duration="4 hours"
-              players="Up to 40 players"
+              players="Up to 15 players"
               features={[
                 "6 VR headsets",
                 "Professional setup",

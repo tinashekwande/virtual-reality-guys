@@ -24,7 +24,7 @@ export const DEFAULT_BUSINESS_CONTEXT: AiBusinessSettings['business_context'] = 
       headsets: 2,
       hours: 2,
       staff: 1,
-      players: 10,
+      players: 5,
     },
     {
       name: 'Standard Package',
@@ -32,7 +32,7 @@ export const DEFAULT_BUSINESS_CONTEXT: AiBusinessSettings['business_context'] = 
       headsets: 4,
       hours: 3,
       staff: 2,
-      players: 20,
+      players: 10,
     },
     {
       name: 'Premium Package',
@@ -40,7 +40,7 @@ export const DEFAULT_BUSINESS_CONTEXT: AiBusinessSettings['business_context'] = 
       headsets: 6,
       hours: 4,
       staff: 3,
-      players: 40,
+      players: 15,
     },
   ],
 }

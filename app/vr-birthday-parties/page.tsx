@@ -74,7 +74,7 @@ export default function VrBirthdayPartiesPage() {
         "name": "How many kids or guests can play at a VR party?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our setups accommodate different group sizes. Our Starter package (2 headsets) is great for up to 10 players, Standard (4 headsets) serves up to 20, and Premium (6 headsets) handles up to 40 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained."
+          "text": "Our setups accommodate different group sizes. Our Starter package (2 headsets) is great for up to 5 players, Standard (4 headsets) serves up to 10, and Premium (6 headsets) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained."
         }
       },
       {
@@ -98,7 +98,7 @@ export default function VrBirthdayPartiesPage() {
         "name": "How long does a VR party last?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 10 players) and 3 to 4 hours for larger parties."
+          "text": "Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 5 players) and 3 to 4 hours for larger parties."
         }
       },
       {
@@ -250,7 +250,7 @@ export default function VrBirthdayPartiesPage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How many kids or guests can play at a VR party?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our setups accommodate different group sizes. Our Starter package (2 headsets) is great for up to 10 players, Standard (4 headsets) serves up to 20, and Premium (6 headsets) handles up to 40 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained.
+                Our setups accommodate different group sizes. Our Starter package (2 headsets) is great for up to 5 players, Standard (4 headsets) serves up to 10, and Premium (6 headsets) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained.
               </p>
             </div>
 
@@ -271,7 +271,7 @@ export default function VrBirthdayPartiesPage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How long does a VR party last?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 10 players) and 3 to 4 hours for larger parties.
+                Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 5 players) and 3 to 4 hours for larger parties.
               </p>
             </div>
 

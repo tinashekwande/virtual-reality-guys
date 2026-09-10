@@ -178,19 +178,19 @@ export default function ContactPage() {
                   <span className="font-semibold text-foreground">Starter Package</span>
                   <span className="text-primary font-bold">R 499</span>
                 </div>
-                <p className="text-xs text-muted-foreground">2 headsets, 2 hours, up to 10 players, trained supervisor</p>
+                <p className="text-xs text-muted-foreground">2 headsets, 2 hours, up to 5 players, trained supervisor</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Standard Package</span>
                   <span className="text-primary font-bold">R 899</span>
                 </div>
-                <p className="text-xs text-muted-foreground">4 headsets, 3 hours, up to 20 players, 2 trained supervisors</p>
+                <p className="text-xs text-muted-foreground">4 headsets, 3 hours, up to 10 players, 2 trained supervisors</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Premium Package</span>
                   <span className="text-primary font-bold">R 1299</span>
                 </div>
-                <p className="text-xs text-muted-foreground">6 headsets, 4 hours, up to 40 players, 3 supervisors, custom tournament</p>
+                <p className="text-xs text-muted-foreground">6 headsets, 4 hours, up to 15 players, 3 supervisors, custom tournament</p>
               </div>
               <p className="text-xs text-muted-foreground/80 leading-relaxed border-t border-border/20 pt-4">
                 <strong>*Note:</strong> Free delivery/transport to Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, and Buh-Rein Estate. Other areas require transport fees.
