@@ -326,15 +326,6 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs">
             <div className="space-y-1">
               <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider print:text-slate-600">
-                Account Holder
-              </p>
-              <p className="font-bold text-white text-sm print:text-black">
-                Panashe Majinga
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider print:text-slate-600">
                 Financial Institution
               </p>
               <p className="font-bold text-white text-sm print:text-black">
