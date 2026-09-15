@@ -7,7 +7,11 @@ function normalizeInvoice(inv: any) {
   if (typeof inv.notes === 'string' && inv.notes.includes('[STATUS:')) {
     const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
     if (match && match[1]) {
-      inv.status = match[1]
+      // Only let [STATUS:...] override if the database status is 'sent' (used as a fallback placeholder for pending/deposit_paid)
+      // If the database status is explicitly 'paid', 'cancelled', or 'draft', trust the real database status!
+      if (inv.status === 'sent') {
+        inv.status = match[1]
+      }
       inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
     }
   }
@@ -67,7 +71,7 @@ export async function POST(request: Request) {
       transport_fee: body.transport_fee || 0,
       total: body.total || 0,
       deposit_percentage: body.deposit_percentage !== undefined ? Number(body.deposit_percentage) : 0,
-      notes: body.notes || '',
+      notes: (body.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim(),
     }
 
     let { data, error } = await admin

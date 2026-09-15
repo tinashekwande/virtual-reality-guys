@@ -205,6 +205,7 @@ function QuotesInvoicesContent() {
         body: JSON.stringify({ status: newStatus }),
       });
       if (!res.ok) throw new Error("Failed to update status.");
+      const updated = await res.json().catch(() => null);
       toast.success(
         newStatus === "paid"
           ? "Invoice marked as FULLY PAID (100% added to verified revenue! 💰)"
@@ -213,7 +214,7 @@ function QuotesInvoicesContent() {
           : "Invoice marked as PENDING (Unpaid pipeline)"
       );
       setInvoices((prev) =>
-        prev.map((inv) => (inv.id === id ? { ...inv, status: newStatus } : inv))
+        prev.map((inv) => (inv.id === id ? (updated && updated.id ? { ...inv, ...updated } : { ...inv, status: newStatus }) : inv))
       );
     } catch (err: any) {
       toast.error(err.message || "Failed to update status.");

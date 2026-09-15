@@ -135,7 +135,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         const res = await fetch(`/api/invoices/${event.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...event.raw_data, status: newStatus }),
+          body: JSON.stringify({ status: newStatus }),
         });
         if (!res.ok) throw new Error("Failed to update status.");
       } else if (event.source === "event") {

@@ -11,7 +11,11 @@ function normalizeInvoice(inv: any) {
   if (typeof inv.notes === 'string' && inv.notes.includes('[STATUS:')) {
     const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
     if (match && match[1]) {
-      inv.status = match[1]
+      // Only let [STATUS:...] override if the database status is 'sent' (used as a fallback placeholder for pending/deposit_paid)
+      // If the database status is explicitly 'paid', 'cancelled', or 'draft', trust the real database status!
+      if (inv.status === 'sent') {
+        inv.status = match[1]
+      }
       inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
     }
   }
@@ -66,7 +70,19 @@ export async function PUT(request: Request, { params }: Props) {
   if (body.transport_fee !== undefined) updatePayload.transport_fee = body.transport_fee
   if (body.total !== undefined) updatePayload.total = body.total
   if (body.deposit_percentage !== undefined) updatePayload.deposit_percentage = Number(body.deposit_percentage)
-  if (body.notes !== undefined) updatePayload.notes = body.notes
+
+  // Clean stale [STATUS:...] tag from notes when status or notes is updated
+  let currentNotes = body.notes
+  if (currentNotes === undefined && body.status !== undefined) {
+    const { data: currentInv } = await admin.from('invoices').select('notes').eq('id', id).single()
+    if (currentInv?.notes && currentInv.notes.includes('[STATUS:')) {
+      currentNotes = currentInv.notes
+    }
+  }
+
+  if (currentNotes !== undefined) {
+    updatePayload.notes = (currentNotes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim()
+  }
 
   let { data, error } = await admin
     .from('invoices')
@@ -93,14 +109,8 @@ export async function PUT(request: Request, { params }: Props) {
     const originalStatus = updatePayload.status
     updatePayload.status = originalStatus === 'draft' ? 'draft' : 'sent'
 
-    if (updatePayload.notes !== undefined) {
-      const cleanNotes = (updatePayload.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim()
-      updatePayload.notes = `${cleanNotes} [STATUS:${originalStatus}]`.trim()
-    } else {
-      const { data: currentInv } = await admin.from('invoices').select('notes').eq('id', id).single()
-      const existingNotes = (currentInv?.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim()
-      updatePayload.notes = `${existingNotes} [STATUS:${originalStatus}]`.trim()
-    }
+    const cleanNotes = (updatePayload.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim()
+    updatePayload.notes = `${cleanNotes} [STATUS:${originalStatus}]`.trim()
 
     const retry = await admin
       .from('invoices')
