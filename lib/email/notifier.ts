@@ -51,7 +51,7 @@ export async function sendNewLeadNotification(params: NewLeadNotificationParams)
   if (resendApiKey) {
     try {
       const resend = new Resend(resendApiKey)
-      const fromEmail = process.env.RESEND_FROM_EMAIL || 'Virtual Reality Guys <onboarding@resend.dev>'
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'Virtual Reality Guys <bookings@virtualrealityguyz.co.za>'
 
       // Attempt batch delivery first
       const { data, error } = await resend.emails.send({
