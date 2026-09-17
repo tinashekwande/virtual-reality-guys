@@ -10,11 +10,11 @@ import {
   validateBookingInput,
   getBookingField,
   sendWhatsAppNotification,
-  sendEmailNotification,
   trackAnalytics,
   FALLBACK_RESPONSE,
 } from '@/components/chatbot/chatbot-logic'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { sendNewLeadNotification } from '@/lib/email/notifier'
 import type {
   Message,
   BookingData,
@@ -134,8 +134,18 @@ async function persistBooking(data: BookingData) {
     if (error) console.error('[chat] Supabase insert error:', error)
 
     // Fire-and-forget notifications
+    sendNewLeadNotification({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      suburb: data.location,
+      eventDate: data.eventDate,
+      formType: data.eventType || 'chatbot_booking',
+      message: `[Chatbot Booking]\nEvent Type: ${data.eventType}\nDate: ${data.eventDate}\nLocation: ${data.location}\nAttendees: ${data.attendees}`,
+      source: 'AI Chatbot',
+    }).catch((err) => console.error('[chat] Email notification error:', err))
+
     sendWhatsAppNotification(data).catch(() => {})
-    sendEmailNotification(data).catch(() => {})
   } catch (err) {
     console.error('[chat] persistBooking error:', err)
   }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { sendNewLeadNotification } from '@/lib/email/notifier'
 
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
@@ -58,5 +59,21 @@ export async function POST(request: Request) {
   }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Trigger automated email notification to business owners
+  sendNewLeadNotification({
+    name,
+    email,
+    phone: phone || null,
+    suburb: suburb || null,
+    eventDate: event_date || null,
+    formType: form_type,
+    message,
+    source: form_type === 'chatbot_booking' ? 'AI Chatbot' : 'Website Form',
+    requestId: data?.id || null,
+  }).catch((err) => {
+    console.error('[forms/submit] Email notification error:', err)
+  })
+
   return NextResponse.json({ success: true, id: data.id }, { status: 201 })
 }
