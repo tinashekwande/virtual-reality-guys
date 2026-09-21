@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Sparkles, Trophy, Cake } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -135,13 +136,13 @@ export default function BirthdayActivitiesPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Host the most talked-about birthday party of the year! From multiplayer team challenges to high-energy rhythm face-offs, we bring next-generation gaming entertainment straight to you.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Book Your Party</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/kids-parties">Explore Kids Parties</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Book Your Party
+            </CyberButton>
+            <CyberButton href="/kids-parties" size="lg" variant="secondary">
+              Explore Kids Parties
+            </CyberButton>
           </div>
         </div>
       </section>
@@ -274,7 +275,7 @@ export default function BirthdayActivitiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Packages starting from just R499</span>
+                <span>Packages starting from just R999</span>
               </p>
             </div>
           </div>

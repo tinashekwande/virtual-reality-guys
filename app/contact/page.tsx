@@ -176,21 +176,21 @@ export default function ContactPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-foreground">Starter Package</span>
-                  <span className="text-primary font-bold">R 499</span>
+                  <span className="text-primary font-bold">R 999</span>
                 </div>
-                <p className="text-xs text-muted-foreground">2 headsets, 2 hours, up to 5 players, trained supervisor</p>
+                <p className="text-xs text-muted-foreground">2 hours of VR gaming, 4 VR headsets, up to 5 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Standard Package</span>
-                  <span className="text-primary font-bold">R 899</span>
+                  <span className="text-primary font-bold">R 1,399</span>
                 </div>
-                <p className="text-xs text-muted-foreground">4 headsets, 3 hours, up to 10 players, 2 trained supervisors</p>
+                <p className="text-xs text-muted-foreground">3 hours of VR gaming, 5 VR headsets, up to 10 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Premium Package</span>
-                  <span className="text-primary font-bold">R 1299</span>
+                  <span className="text-primary font-bold">R 1,599</span>
                 </div>
-                <p className="text-xs text-muted-foreground">6 headsets, 4 hours, up to 15 players, 3 supervisors, custom tournament</p>
+                <p className="text-xs text-muted-foreground">4 hours of VR gaming, 6 VR headsets, up to 15 players</p>
               </div>
               <p className="text-xs text-muted-foreground/80 leading-relaxed border-t border-border/20 pt-4">
                 <strong>*Note:</strong> Free delivery/transport to Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, and Buh-Rein Estate. Other areas require transport fees.

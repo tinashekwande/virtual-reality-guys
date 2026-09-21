@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Users, Headset, BookOpen, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -151,13 +152,13 @@ export default function EducationalVrCapeTownPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Pioneering immersive VR education in South Africa! We deliver complete mobile VR stations to schools across Cape Town and the Western Cape, offering fully supervised, curriculum-aligned educational experiences.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Book a School Demo</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/school-vr-demonstrations">View VR Demos</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Book a School Demo
+            </CyberButton>
+            <CyberButton href="/school-vr-demonstrations" size="lg" variant="secondary">
+              View VR Demos
+            </CyberButton>
           </div>
         </div>
       </section>

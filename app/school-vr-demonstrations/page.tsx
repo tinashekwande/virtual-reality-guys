@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Sparkles, BookOpen, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -135,13 +136,13 @@ export default function SchoolVRPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Take learning beyond the textbook! We deliver highly engaging, educational, and safe Virtual Reality demonstrations and fun carnivals directly to Cape Town schools.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Inquire for School</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/kids-parties">Explore Kids Parties</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Inquire for School
+            </CyberButton>
+            <CyberButton href="/kids-parties" size="lg" variant="secondary">
+              Explore Kids Parties
+            </CyberButton>
           </div>
         </div>
       </section>

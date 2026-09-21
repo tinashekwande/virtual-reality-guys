@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Sparkles, Smile, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -135,13 +136,13 @@ export default function FamilyFunDayPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Bring the generations together with next-level entertainment! We set up fully-supervised mobile VR gaming stations that guarantee laughter and excitement for kids, teens, parents, and grandparents alike.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Book Your Event</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/mobile-vr-hire">View Hire Details</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Book Your Event
+            </CyberButton>
+            <CyberButton href="/mobile-vr-hire" size="lg" variant="secondary">
+              View Hire Details
+            </CyberButton>
           </div>
         </div>
       </section>

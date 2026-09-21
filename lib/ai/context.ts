@@ -20,23 +20,23 @@ export const DEFAULT_BUSINESS_CONTEXT: AiBusinessSettings['business_context'] = 
   packages: [
     {
       name: 'Starter Package',
-      price: 499,
-      headsets: 2,
+      price: 999,
+      headsets: 4,
       hours: 2,
       staff: 1,
       players: 5,
     },
     {
       name: 'Standard Package',
-      price: 899,
-      headsets: 4,
+      price: 1399,
+      headsets: 5,
       hours: 3,
       staff: 2,
       players: 10,
     },
     {
       name: 'Premium Package',
-      price: 1299,
+      price: 1599,
       headsets: 6,
       hours: 4,
       staff: 3,

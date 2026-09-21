@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Users, Headset, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -135,13 +136,13 @@ export default function KidsPartiesPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Give them an absolutely unforgettable birthday experience! We bring premium mobile VR gaming, amazing kids' games, and expert supervisors directly to your home venue in Cape Town.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Book Birthday Party</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/birthday-party-activities">View Party Activities</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Book Birthday Party
+            </CyberButton>
+            <CyberButton href="/birthday-party-activities" size="lg" variant="secondary">
+              View Party Activities
+            </CyberButton>
           </div>
         </div>
       </section>
@@ -274,7 +275,7 @@ export default function KidsPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Affordable packages starting from just R499</span>
+                <span>Affordable packages starting from just R999</span>
               </p>
             </div>
           </div>

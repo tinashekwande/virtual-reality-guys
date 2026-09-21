@@ -3,6 +3,7 @@ import type { Media, Category, TeamMember } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { CyberButton } from "@/components/ui/cyber-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -47,7 +48,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Mobile VR Gaming Experiences for Events in Cape Town',
-  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R499.',
+  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R999.',
   alternates: {
     canonical: '/',
   },
@@ -127,9 +128,9 @@ export default async function Home() {
           "itemOffered": {
             "@type": "Service",
             "name": "Starter Package",
-            "description": "2 VR headsets, professional setup, trained supervisor, 30+ game selection. Perfect for small parties."
+            "description": "4 VR headsets, 2 hours of VR gaming, professional setup & supervision, 30+ game selection. Suitable for up to 5 players."
           },
-          "price": "499",
+          "price": "999",
           "priceCurrency": "ZAR"
         },
         {
@@ -137,9 +138,9 @@ export default async function Home() {
           "itemOffered": {
             "@type": "Service",
             "name": "Standard Package",
-            "description": "4 VR headsets, professional setup, 2 trained supervisors, 60+ game selection, multiplayer tournaments."
+            "description": "5 VR headsets, 3 hours of VR gaming, professional setup & supervision, 60+ game selection, multiplayer tournaments. Suitable for up to 10 players."
           },
-          "price": "899",
+          "price": "1399",
           "priceCurrency": "ZAR"
         },
         {
@@ -147,9 +148,9 @@ export default async function Home() {
           "itemOffered": {
             "@type": "Service",
             "name": "Premium Package",
-            "description": "6 VR headsets, professional setup, 3 trained supervisors, 100+ game selection, custom tournament brackets, photo & video package."
+            "description": "6 VR headsets, 4 hours of VR gaming, professional setup & supervision, 100+ game selection, custom tournament brackets, photo & video package. Suitable for up to 15 players."
           },
-          "price": "1299",
+          "price": "1599",
           "priceCurrency": "ZAR"
         }
       ]
@@ -186,7 +187,7 @@ export default async function Home() {
         "name": "How much does a VR experience cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile packages start from just R499 for the Starter package. Standard is R899 and Premium is R1299. Custom packages are available for large events."
+          "text": "Our mobile packages start from just R999 for the Starter package. Standard is R1,399 and Premium is R1,599. Custom packages are available for large events."
         }
       },
       {
@@ -273,24 +274,13 @@ export default async function Home() {
                     school, party, corporate event, or festival. We bring the
                     adventure to you.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <MotionButton>
-                      <Button asChild size="lg" className="text-lg px-8 py-6">
-                        <Link href="#contact">
-                          Book Your Experience <ArrowRight className="ml-2 h-5 w-5" />
-                        </Link>
-                      </Button>
-                    </MotionButton>
-                    <MotionButton>
-                      <Button
-                        asChild
-                        variant="outline"
-                        size="lg"
-                        className="text-lg px-8 py-6"
-                      >
-                        <Link href="/vr-games-catalogue">View Catalogue</Link>
-                      </Button>
-                    </MotionButton>
+                  <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
+                    <CyberButton href="#contact" size="lg" variant="primary">
+                      Book Your Experience <ArrowRight className="ml-2 h-5 w-5" />
+                    </CyberButton>
+                    <CyberButton href="/vr-games-catalogue" size="lg" variant="secondary">
+                      View Catalogue
+                    </CyberButton>
                   </div>
                   <div className="flex flex-wrap justify-center gap-8 pt-8 text-muted-foreground">
                     <div className="flex items-center gap-2">
@@ -498,41 +488,42 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Starter"
-              price="499"
+              price="999"
               duration="2 hours"
               players="Up to 5 players"
               features={[
-                "2 VR headsets",
-                "Professional setup",
-                "Trained supervisor",
+                "2 hours of VR gaming",
+                "4 VR headsets",
+                "Suitable for up to 5 players",
+                "Professional setup & supervision",
                 "30+ game selection",
-                "Suitable for small parties",
               ]}
             />
             <PricingCard
               title="Standard"
-              price="899"
+              price="1399"
               duration="3 hours"
               players="Up to 10 players"
               featured
               features={[
-                "4 VR headsets",
-                "Professional setup",
-                "2 trained supervisors",
+                "3 hours of VR gaming",
+                "5 VR headsets",
+                "Suitable for up to 10 players",
+                "Professional setup & supervision",
                 "60+ game selection",
                 "Multiplayer tournaments",
-                "Photo opportunities",
               ]}
             />
             <PricingCard
               title="Premium"
-              price="1299"
+              price="1599"
               duration="4 hours"
               players="Up to 15 players"
               features={[
+                "4 hours of VR gaming",
                 "6 VR headsets",
-                "Professional setup",
-                "3 trained supervisors",
+                "Suitable for up to 15 players",
+                "Professional setup & supervision",
                 "100+ game selection",
                 "Custom tournament brackets",
                 "Photo & video package",
@@ -592,11 +583,15 @@ export default async function Home() {
             <p className="text-xl text-muted-foreground text-center max-w-2xl">
               See what our amazing customers have to say about our mobile VR gaming experiences.
             </p>
-            <Button asChild size="lg" className="text-lg">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                See our reviews on Google
-              </a>
-            </Button>
+            <CyberButton
+              href="https://maps.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="lg"
+              variant="secondary"
+            >
+              See our reviews on Google
+            </CyberButton>
           </div>
         </div>
       </section>
@@ -685,7 +680,7 @@ export default async function Home() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does a VR experience cost?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile packages start from just R499 for the Starter package. Standard is R899 and Premium is R1299. Custom packages are available for large events.
+                Our mobile packages start from just R999 for the Starter package. Standard is R1,399 and Premium is R1,599. Custom packages are available for large events.
               </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">

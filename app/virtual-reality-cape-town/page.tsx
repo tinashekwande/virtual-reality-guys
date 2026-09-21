@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, MapPin, Sparkles, ArrowRight, Shield, Award, Users, Headset, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -169,13 +170,13 @@ export default function CapeTownVRPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Looking for standard-setting virtual reality near me? We bring premium, immersive mobile VR gaming setups directly to your private party, corporate team building, or school venue.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Book CPT Experience</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/mobile-vr-hire">View Setup Info</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Book CPT Experience
+            </CyberButton>
+            <CyberButton href="/mobile-vr-hire" size="lg" variant="secondary">
+              View Setup Info
+            </CyberButton>
           </div>
         </div>
       </section>

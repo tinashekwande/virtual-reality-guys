@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Calendar, Sparkles, Monitor, Star, ArrowRight, Shield, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -135,13 +136,13 @@ export default function CorporateEventsPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Wow your clients, colleagues, and guests. We provide high-end, turn-key mobile VR setups that add a major "wow factor" to year-end parties, launches, and trade shows across Cape Town.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Request Event Proposal</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/vr-team-building">Explore Team Building</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Request Event Proposal
+            </CyberButton>
+            <CyberButton href="/vr-team-building" size="lg" variant="secondary">
+              Explore Team Building
+            </CyberButton>
           </div>
         </div>
       </section>

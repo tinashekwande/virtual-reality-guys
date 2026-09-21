@@ -3,13 +3,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, ArrowRight, Shield, Cpu, HardDrive, Zap, Truck, Users, Headset, Clock, MapPin, Gamepad2, PartyPopper, GraduationCap, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
   title: 'Mobile VR Hire Cape Town | Rent VR Equipment for Events',
-  description: 'Hire premium mobile VR setups in Cape Town from R499. Includes headsets, spectator screens, trained supervisors, 100+ games, delivery, setup & cleanup. Book today!',
+  description: 'Hire premium mobile VR setups in Cape Town from R999. Includes headsets, spectator screens, trained supervisors, 100+ games, delivery, setup & cleanup. Book today!',
   alternates: {
     canonical: '/mobile-vr-hire',
   },
@@ -26,12 +27,12 @@ export default function MobileVRHirePage() {
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "Mobile VR Hire Cape Town",
-    "serviceType": "Equipment Rental & Event Entertainment",
     "provider": {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
-      "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
+      "email": "virtualrealityguyz@gmail.com",
+      "url": "https://virtualrealityguyz.co.za",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Cape Town",
@@ -39,34 +40,35 @@ export default function MobileVRHirePage() {
         "addressCountry": "ZA"
       }
     },
-    "areaServed": {
-      "@type": "Place",
-      "name": "Cape Town and surrounding Western Cape regions"
-    },
-    "description": "Premium mobile virtual reality headset hire and event entertainment setups. We handle delivery, technical staging, spectator screen integration, and supervisor facilitation.",
-    "offers": [
-      {
-        "@type": "Offer",
-        "name": "Starter VR Hire",
-        "price": "499",
-        "priceCurrency": "ZAR",
-        "description": "2 VR headsets, 1 supervisor, spectator display, 2 hours, delivery & setup included"
-      },
-      {
-        "@type": "Offer",
-        "name": "Standard VR Hire",
-        "price": "899",
-        "priceCurrency": "ZAR",
-        "description": "4 VR headsets, 2 supervisors, spectator displays, 2 hours, multiplayer tournaments included"
-      },
-      {
-        "@type": "Offer",
-        "name": "Premium VR Hire",
-        "price": "1299",
-        "priceCurrency": "ZAR",
-        "description": "6 VR headsets, 3 supervisors, spectator displays, 2 hours, custom tournament brackets & photo package"
-      }
-    ]
+    "description": "Full-service mobile VR equipment rental and event gaming services delivered directly to venues across Greater Cape Town. Headsets, TVs, safety gear, and supervision included.",
+    "areaServed": "Cape Town, Western Cape, South Africa",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Mobile VR Hire Packages",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "name": "Starter Package",
+          "price": "999",
+          "priceCurrency": "ZAR",
+          "description": "4 VR headsets, 2 hours of VR gaming, up to 5 players"
+        },
+        {
+          "@type": "Offer",
+          "name": "Standard Package",
+          "price": "1399",
+          "priceCurrency": "ZAR",
+          "description": "5 VR headsets, 3 hours of VR gaming, up to 10 players"
+        },
+        {
+          "@type": "Offer",
+          "name": "Premium Package",
+          "price": "1599",
+          "priceCurrency": "ZAR",
+          "description": "6 VR headsets, 4 hours of VR gaming, up to 15 players"
+        }
+      ]
+    }
   };
 
   const faqJsonLd = {
@@ -86,7 +88,7 @@ export default function MobileVRHirePage() {
         "name": "How much does mobile VR hire cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile VR hire packages start from R499 for 2 headsets (Starter), R899 for 4 headsets (Standard), and R1299 for 6 headsets (Premium). All packages include 2 hours of gameplay, delivery, setup, trained supervisors, and cleanup."
+          "text": "Our mobile VR hire packages start from R999 for 4 headsets (Starter), R1,399 for 5 headsets (Standard), and R1,599 for 6 headsets (Premium). All packages include professional setup, trained supervisors, and cleanup."
         }
       },
       {
@@ -180,15 +182,15 @@ export default function MobileVRHirePage() {
             Mobile VR <span className="text-primary">Hire</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Hire a complete virtual reality setup for your next event — headsets, spectator screens, trained supervisors, and 100+ games delivered directly to your venue in Cape Town. From just R499.
+            Hire a complete virtual reality setup for your next event — headsets, spectator screens, trained supervisors, and 100+ games delivered directly to your venue in Cape Town. From just R999.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Get a Free Quote <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="#packages">View Packages & Pricing</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Get a Free Quote <ArrowRight className="ml-1.5 h-4 w-4" />
+            </CyberButton>
+            <CyberButton href="#packages" size="lg" variant="secondary">
+              View Packages & Pricing
+            </CyberButton>
           </div>
           <div className="flex flex-wrap justify-center gap-6 pt-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" /> Free Delivery</span>
@@ -312,18 +314,18 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Starter</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R499</span>
+                  <span className="text-4xl font-bold">R999</span>
                   <span className="text-muted-foreground">/event</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" /> <span>2 hours</span>
+                  <Clock className="h-4 w-4" /> <span>2 hours of VR gaming</span>
                 </div>
                 <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" /> <span>Up to 10 players</span>
+                  <Users className="h-4 w-4" /> <span>Suitable for up to 5 players</span>
                 </div>
                 <ul className="space-y-2 mb-8 text-sm">
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 2 VR headsets</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 1 trained supervisor</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 4 VR headsets</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Professional setup & supervision</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Spectator display</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 30+ game selection</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Delivery, setup & cleanup</li>
@@ -342,18 +344,18 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Standard</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R899</span>
+                  <span className="text-4xl font-bold">R1,399</span>
                   <span className="text-muted-foreground">/event</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" /> <span>2 hours</span>
+                  <Clock className="h-4 w-4" /> <span>3 hours of VR gaming</span>
                 </div>
                 <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" /> <span>Up to 20 players</span>
+                  <Users className="h-4 w-4" /> <span>Suitable for up to 10 players</span>
                 </div>
                 <ul className="space-y-2 mb-8 text-sm">
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 4 VR headsets</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 2 trained supervisors</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 5 VR headsets</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Professional setup & supervision</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Spectator displays</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 60+ game selection</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Multiplayer tournaments</li>
@@ -370,18 +372,18 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Premium</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R1299</span>
+                  <span className="text-4xl font-bold">R1,599</span>
                   <span className="text-muted-foreground">/event</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" /> <span>2 hours</span>
+                  <Clock className="h-4 w-4" /> <span>4 hours of VR gaming</span>
                 </div>
                 <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" /> <span>Up to 30+ players</span>
+                  <Users className="h-4 w-4" /> <span>Suitable for up to 15 players</span>
                 </div>
                 <ul className="space-y-2 mb-8 text-sm">
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 6 VR headsets</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 3 trained supervisors</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Professional setup & supervision</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Spectator displays</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 100+ game selection</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Custom tournament brackets</li>
@@ -507,7 +509,7 @@ export default function MobileVRHirePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does mobile VR hire cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile VR hire packages start from R499 for 2 headsets (Starter), R899 for 4 headsets (Standard), and R1299 for 6 headsets (Premium). All packages include 2 hours of gameplay, delivery, setup, trained supervisors, and cleanup. Custom packages are available for larger events.
+                Our mobile VR hire packages start from R999 for 4 headsets (Starter), R1,399 for 5 headsets (Standard), and R1,599 for 6 headsets (Premium). All packages include professional setup, trained supervisors, and cleanup. Custom packages are available for larger events.
               </p>
             </div>
 

@@ -102,19 +102,19 @@ export default function RequestsAdminPage() {
 
       if (msg.includes("corporate") || msg.includes("team") || msg.includes("company") || (r.form_type || "").toLowerCase().includes("corporate")) {
         pkg = "Corporate Event VR Package (6-8 Headsets, 4 Hours)"
-        price = 1499
+        price = 1599
       } else if (msg.includes("school") || (r.form_type || "").toLowerCase().includes("school")) {
-        pkg = "School / Educational VR Experience (4 Headsets, 3 Hours)"
-        price = 899
+        pkg = "School / Educational VR Experience (4 Headsets, 2 Hours)"
+        price = 999
       } else if (count <= 5) {
-        pkg = "Starter VR Package (2 Headsets, 2 Hours, 1 Staff)"
-        price = 499
+        pkg = "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)"
+        price = 999
       } else if (count > 10) {
-        pkg = "Premium VR Package (6 Headsets, 4 Hours, 3 Staff)"
-        price = 1299
+        pkg = "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)"
+        price = 1599
       } else {
-        pkg = "Standard VR Package (4 Headsets, 3 Hours, 2 Staff)"
-        price = 899
+        pkg = "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)"
+        price = 1399
       }
     }
 

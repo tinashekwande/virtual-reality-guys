@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -48,9 +49,9 @@ export default function MobileNav() {
               </Link>
             ))}
             <div className="pt-4 border-t border-border/60">
-              <Button asChild className="w-full" size="lg">
-                <Link href="/contact" onClick={() => setOpen(false)}>Book Now</Link>
-              </Button>
+              <CyberButton href="/contact" size="full" onClick={() => setOpen(false)}>
+                Book Now
+              </CyberButton>
             </div>
           </div>
         </div>

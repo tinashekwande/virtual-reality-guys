@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { ArrowRight, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import MobileNav from "@/components/MobileNav"
-import MotionButton from "@/components/motion/MotionButton"
+import { CyberButton } from "@/components/ui/cyber-button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -144,13 +144,9 @@ export default function Header() {
           </div>
 
           <div className="hidden md:block">
-            <MotionButton>
-              <Button asChild size="lg">
-                <Link href="/contact">
-                  Book Now <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </MotionButton>
+            <CyberButton href="/contact" size="default">
+              Book Now <ArrowRight className="ml-1.5 h-4 w-4" />
+            </CyberButton>
           </div>
 
           <MobileNav />

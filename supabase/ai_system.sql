@@ -140,9 +140,9 @@ create table if not exists ai_settings (
     "deposit_percentage": 50,
     "fnb_account": "63124445502",
     "packages": [
-      {"name": "Starter Package", "price": 499, "headsets": 2, "hours": 2, "staff": 1, "players": 5},
-      {"name": "Standard Package", "price": 899, "headsets": 4, "hours": 3, "staff": 2, "players": 10},
-      {"name": "Premium Package", "price": 1299, "headsets": 6, "hours": 4, "staff": 3, "players": 15}
+      {"name": "Starter Package", "price": 999, "headsets": 4, "hours": 2, "staff": 1, "players": 5},
+      {"name": "Standard Package", "price": 1399, "headsets": 5, "hours": 3, "staff": 2, "players": 10},
+      {"name": "Premium Package", "price": 1599, "headsets": 6, "hours": 4, "staff": 3, "players": 15}
     ]
   }'::jsonb,
   approval_rules     jsonb not null default '{

@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Check, Users, Sparkles, Trophy, Star, ArrowRight, Shield, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -135,13 +136,13 @@ export default function TeamBuildingPage() {
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
             Break the corporate mold! Empower your team with highly engaging, collaborative, and competitive virtual reality experiences delivered straight to your Cape Town venue.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="#booking">Request Corporate Quote</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/corporate-events">Explore Corporate Events</Link>
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <CyberButton href="#booking" size="lg" variant="primary">
+              Request Corporate Quote
+            </CyberButton>
+            <CyberButton href="/corporate-events" size="lg" variant="secondary">
+              Explore Corporate Events
+            </CyberButton>
           </div>
         </div>
       </section>

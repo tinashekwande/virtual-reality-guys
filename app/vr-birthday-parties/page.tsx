@@ -74,7 +74,7 @@ export default function VrBirthdayPartiesPage() {
         "name": "How many kids or guests can play at a VR party?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our setups accommodate different group sizes. Our Starter package (2 headsets) is great for up to 5 players, Standard (4 headsets) serves up to 10, and Premium (6 headsets) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained."
+          "text": "Our setups accommodate different group sizes. Our Starter package (4 headsets, 2 hours) is great for up to 5 players, Standard (5 headsets, 3 hours) serves up to 10, and Premium (6 headsets, 4 hours) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained."
         }
       },
       {
@@ -171,7 +171,7 @@ export default function VrBirthdayPartiesPage() {
               <PartyPopper className="h-10 w-10 text-primary mb-4" />
               <h3 className="text-xl font-bold mb-2">Choose Your Package</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Flexible mobile VR packages starting from just R499. Options include 2 to 6 headsets, spectator displays, and tournament coordination.
+                Flexible mobile VR packages starting from just R999. Options include 4 to 6 headsets, spectator displays, and tournament coordination.
               </p>
             </div>
 
@@ -250,7 +250,7 @@ export default function VrBirthdayPartiesPage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How many kids or guests can play at a VR party?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our setups accommodate different group sizes. Our Starter package (2 headsets) is great for up to 5 players, Standard (4 headsets) serves up to 10, and Premium (6 headsets) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained.
+                Our setups accommodate different group sizes. Our Starter package (4 headsets, 2 hours) is great for up to 5 players, Standard (5 headsets, 3 hours) serves up to 10, and Premium (6 headsets, 4 hours) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained.
               </p>
             </div>
 
@@ -301,7 +301,7 @@ export default function VrBirthdayPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Packages starting from just R499</span>
+                <span>Packages starting from just R999</span>
               </p>
             </div>
           </div>

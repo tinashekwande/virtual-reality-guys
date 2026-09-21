@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { CyberButton } from "@/components/ui/cyber-button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -111,9 +112,20 @@ export default function BookingForm() {
         {status === "error" && (
           <p className="text-sm text-destructive">{errorMsg}</p>
         )}
-        <Button type="submit" size="lg" className="w-full" disabled={status === "sending"}>
-          {status === "sending" ? "Sending…" : <><span>Book Your VR Experience</span><ArrowRight className="ml-2 h-5 w-5" /></>}
-        </Button>
+        <CyberButton
+          type="submit"
+          size="full"
+          disabled={status === "sending"}
+        >
+          {status === "sending" ? (
+            "Sending…"
+          ) : (
+            <>
+              <span>Book Your VR Experience</span>
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </>
+          )}
+        </CyberButton>
       </form>
     </div>
   )
