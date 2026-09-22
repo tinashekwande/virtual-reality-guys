@@ -46,27 +46,37 @@ export default function VRCataloguePage() {
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Horror & Suspense Games"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
         "name": "Action & Combat Games"
       },
       {
         "@type": "ListItem",
-        "position": 3,
-        "name": "Sports & Racing Simulations"
-      },
-      {
-        "@type": "ListItem",
-        "position": 4,
+        "position": 2,
         "name": "Shooter & Archery Challenges"
       },
       {
         "@type": "ListItem",
+        "position": 3,
+        "name": "Adventure & Thrill Rides"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Sports & Fitness"
+      },
+      {
+        "@type": "ListItem",
         "position": 5,
+        "name": "Driving & Racing Simulations"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
         "name": "Educational & Exploration Experiences"
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "name": "Horror & Suspense Games"
       }
     ]
   };

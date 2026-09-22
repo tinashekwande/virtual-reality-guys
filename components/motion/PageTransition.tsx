@@ -26,7 +26,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
       className="transition-all duration-300 ease-out"
       style={{
         opacity: mounted ? 1 : 0,
-        transform: mounted ? "translateY(0px) scale(1)" : "translateY(8px) scale(0.995)",
+        transform: mounted ? "none" : "translateY(8px) scale(0.995)",
       }}
     >
       {children}

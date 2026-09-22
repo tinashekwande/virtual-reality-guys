@@ -21,250 +21,99 @@ export interface Game {
 }
 
 export const gamesData: Game[] = [
-  // 1. Horror Experiences
+  // Top Featured Games
   {
-    id: "richies-plank",
-    title: "Richie's Plank Experience",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Walk a thin plank 80 stories high and face your fear of heights.",
-    longDesc: "Richie's Plank Experience is a psychological thrill ride. Placed 80 stories above the ground, walk a narrow wooden plank and decide if you have the nerve to step off. It is designed to evoke strong physiological reactions, making it the perfect showcase for the power of immersive virtual reality. Includes multiple secondary modes such as superhero flying academy, firefighting simulators, and writing tools.",
-    difficulty: 4,
-    tags: ["Thrill", "Heights", "Short Play", "Immersive"],
+    id: "gorilla-tag",
+    title: "Gorilla Tag",
+    category: "Fighting & Action Games",
+    suitability: "All Ages / Kids & Teens",
+    shortDesc: "Reject humanity and master unique arm-only locomotion in the ultimate game of VR tag.",
+    longDesc: "Gorilla Tag is the groundbreaking VR multiplayer phenomenon where you run, climb, and jump using only your hands and arms—no buttons, no sticks, and no teleportation. Chase down other players or flee from infected gorillas in vibrant, multi-level environments including the forest, canyons, caves, and mountains. Its unmatched physical movement system makes it one of the most energetic and addictive VR experiences in the world.",
+    difficulty: 3,
+    tags: ["Parkour", "Multiplayer", "Active", "Tag", "Locomotion"],
     playStyle: "Standing/Room-Scale",
-    actionType: "Simulation",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/517160/header.jpg",
-    developer: "Toast Interactive",
-    publisher: "Toast Interactive",
+    actionType: "Physics Parkour & Tag",
+    image: "/images/games/gorilla-tag.jpg",
+    developer: "Another Axiom",
+    publisher: "Another Axiom",
     comfortRating: "Intense",
-    controllers: "Touch Controllers",
-    spaceRequired: "1.8 GB",
-    playerMode: "Single User",
-    features: [
-      "Real-world plank setup integration",
-      "Stomach-dropping height simulation",
-      "Superhero flight mode",
-      "Firefighting mini-missions",
-      "Skybrush skywriting tool"
-    ],
-    galleryImages: [
-      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
-    ]
-  },
-  {
-    id: "sleep-watch",
-    title: "Sleep Watch",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Stay alert and survive the horrors lurking in the dark.",
-    longDesc: "Sleep Watch places you in a dark and eerie environment where survival depends on your alertness and quick thinking. You must monitor multiple security cameras, check the hallway shadows, and keep your composure as tension rises in this sleep paralysis horror simulation.",
-    difficulty: 4,
-    tags: ["Survival", "Suspense", "Jump Scares", "Dark"],
-    playStyle: "Sitting/Standing",
-    actionType: "Survival Horror",
-    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80",
-    developer: "Cyberia Studios",
-    publisher: "Cyberia Studios",
-    comfortRating: "Moderate",
-    controllers: "Touch Controllers",
+    controllers: "Touch Controllers (Arm Only)",
     spaceRequired: "1.2 GB",
-    playerMode: "Single User",
+    playerMode: "Multiplayer",
     features: [
-      "Real-time security monitor feed",
-      "Heart-rate monitoring mechanics",
-      "Randomized horror triggers",
-      "Light and sound navigation puzzles"
+      "Pure physics-driven arm locomotion",
+      "Infection, Hunt, and Paintbrawl multiplayer game modes",
+      "Diverse biomes (Forest, Canyons, Caves, Mountains)",
+      "Endless parkour paths and branch swinging"
     ],
     galleryImages: [
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
+      "/images/games/gorilla-tag.jpg",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
-    id: "face-your-fears",
-    title: "Face Your Fears",
-    category: "Horror Experiences",
+    id: "population-one",
+    title: "Population: One",
+    category: "Shooting Games",
     suitability: "Teens & Adults",
-    shortDesc: "Confront your deepest fears in spine-chilling scenarios.",
-    longDesc: "Face Your Fears exposes you to common phobias and horror scenarios in full 360-degree immersion. From haunted houses to heights and paranormal entities, this experience is designed to test your limits and get your adrenaline pumping.",
-    difficulty: 5,
-    tags: ["Atmospheric", "Spooky", "Short Play", "Jump Scares"],
-    playStyle: "Sitting",
-    actionType: "Interactive Experience",
-    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
-    developer: "Turtle Rock Studios",
-    publisher: "Warner Bros. Interactive",
-    comfortRating: "Intense",
-    controllers: "Gaze/Touch Controllers",
-    spaceRequired: "3.5 GB",
-    playerMode: "Single User",
-    features: [
-      "Multi-sensory phobia modules",
-      "Haunted children's bedroom module",
-      "Giant skyscraper attack module",
-      "Deep-sea ghost ship experience"
-    ],
-    galleryImages: [
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
-    ]
-  },
-  {
-    id: "cursed-night-house",
-    title: "Cursed Night – The House",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Explore a haunted house and escape its cursed entities.",
-    longDesc: "Cursed Night: The House is a narrative-driven horror game where you explore a derelict, cursed mansion. Solve basic puzzles, find clues, and evade the malevolent spirits that haunt the corridors before it is too late.",
+    shortDesc: "Drop into a near-future battle royale with unmatched vertical freedom: climb anything and fly anywhere.",
+    longDesc: "Population: One delivers the premier vertical combat battle royale experience exclusively built for virtual reality. Climb any surface you see—from towering skyscrapers to water towers—glide through the air across city rooftops, and engage in high-octane squad firefights. Build strategic cover on the fly, coordinate with teammates using spatial voice chat, and outlast opponent squads to claim victory.",
     difficulty: 4,
-    tags: ["Exploration", "Puzzle", "Escape Room", "Spooky"],
+    tags: ["Battle Royale", "Shooter", "Multiplayer", "Climbing", "Flying"],
     playStyle: "Standing/Room-Scale",
-    actionType: "Exploration Horror",
-    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740570/header.jpg",
-    developer: "Red Soul Games",
-    publisher: "Red Soul Games",
+    actionType: "VR Battle Royale FPS",
+    image: "/images/games/population-one.jpg",
+    developer: "BigBox VR",
+    publisher: "BigBox VR / Meta",
     comfortRating: "Moderate",
     controllers: "Touch Controllers",
-    spaceRequired: "4.0 GB",
-    playerMode: "Single User",
+    spaceRequired: "6.5 GB",
+    playerMode: "Multiplayer / Squads",
     features: [
-      "Physics-based puzzle objects",
-      "Ambient lighting toggle mechanics",
-      "3D spatial audio whispers",
-      "Lock-and-key room locks"
+      "Vertical Combat System (VCS): climb anything and wingsuit glide anywhere",
+      "Squad-based battle royale action with up to 24 players",
+      "On-the-fly cover building and tactical terrain manipulation",
+      "Rich arsenal of real-time reloadable weapons"
     ],
     galleryImages: [
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80"
+      "/images/games/population-one.jpg",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80"
     ]
   },
   {
-    id: "z-show",
-    title: "Z-Show",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Survive a deadly zombie-infested television game show.",
-    longDesc: "Z-Show casts you as a contestant in an apocalyptic, dystopian game show where the prize is your life. Face waves of zombies, activate environmental traps, and entertain the audience to secure supply drops in this high-tension horror shootout.",
-    difficulty: 4,
-    tags: ["Zombies", "Survival", "Action", "Arena"],
-    playStyle: "Standing",
-    actionType: "Zombie Combat",
-    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
-    developer: "Pixelity Games",
-    publisher: "Pixelity Games",
-    comfortRating: "Intense",
-    controllers: "Touch Controllers",
-    spaceRequired: "2.1 GB",
-    playerMode: "Single User",
-    features: [
-      "Dystopian arena game show layout",
-      "Crowd noise feedback audio loop",
-      "Interactive stage environmental traps",
-      "High-score wave multiplier tracker"
-    ],
-    galleryImages: [
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80"
-    ]
-  },
-  {
-    id: "cursed-echoes",
-    title: "Cursed Echoes",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Investigate whispering ruins and piece together cursed histories.",
-    longDesc: "Cursed Echoes is a psychological thriller that relies on spatial audio. Navigate shifting dark corridors, solve auditory puzzles, and avoid spectral entities that react to every sound you make in the real world.",
-    difficulty: 4,
-    tags: ["Audio-focus", "Mystery", "Atmospheric", "Spooky"],
+    id: "pistol-whip",
+    title: "Pistol Whip",
+    category: "Shooting Games",
+    suitability: "Ages 10+",
+    shortDesc: "Become the ultimate action-hero in a pulse-pounding rhythm shooter inspired by John Wick.",
+    longDesc: "Pistol Whip combines the physical rhythm-action of Beat Saber with dynamic first-person gunplay inspired by iconic action cinema like John Wick and Equilibrium. Blast, duck, and dodge through vibrant dreamscapes to the beat of an electrifying EDM soundtrack. Every shot fired and melee whip delivered builds your flow state and score multiplier in this exhilarating physical workout.",
+    difficulty: 3,
+    tags: ["Rhythm", "Shooter", "Music", "Active", "Action"],
     playStyle: "Standing/Room-Scale",
-    actionType: "Psychological Horror",
-    image: "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=600&q=80",
-    developer: "Soundscape VR",
-    publisher: "Soundscape VR",
+    actionType: "Rhythm Shooter Action",
+    image: "/images/games/pistol-whip.jpg",
+    developer: "Cloudhead Games",
+    publisher: "Cloudhead Games",
     comfortRating: "Comfortable",
     controllers: "Touch Controllers",
-    spaceRequired: "1.8 GB",
+    spaceRequired: "2.4 GB",
     playerMode: "Single User",
     features: [
-      "Acoustic-guided gameplay",
-      "Spatial echo-location scanners",
-      "Shifting non-euclidean labyrinth",
-      "Microphone audio feedback detection"
+      "Adrenaline-pumping rhythm FPS mechanics with cinematic choreography",
+      "Electrifying electronic soundtrack by top EDM artists",
+      "Styles system allowing custom weapons, modifiers, and gameplay modes",
+      "Dual-wielding, burst fire, and intense physical bullet-dodging workouts"
     ],
     galleryImages: [
-      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80"
-    ]
-  },
-  {
-    id: "descending",
-    title: "Descending",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Descend into dark caverns with only a flashlight and your wits.",
-    longDesc: "Descending puts you in the shoes of a deep cave explorer. As your ropes break, you find yourself trapped in an ancient, uncharted cavern system. Explore narrow tunnels, manage your oxygen, and discover what lurks in the absolute dark.",
-    difficulty: 5,
-    tags: ["Caves", "Exploration", "Survival", "Claustrophobic"],
-    playStyle: "Standing/Room-Scale",
-    actionType: "Survival Horror",
-    image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=600&q=80",
-    developer: "Vertigo Games",
-    publisher: "Vertigo Games",
-    comfortRating: "Intense",
-    controllers: "Touch Controllers",
-    spaceRequired: "5.2 GB",
-    playerMode: "Single User",
-    features: [
-      "Rappelling and rock climbing physics",
-      "Realistic flashlight battery mechanics",
-      "Cave-in survival navigation scenarios",
-      "Mysterious runic text decryption"
-    ],
-    galleryImages: [
-      "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80"
-    ]
-  },
-  {
-    id: "panic-room-mr",
-    title: "Panic Room MR",
-    category: "Horror Experiences",
-    suitability: "Teens & Adults",
-    shortDesc: "Transform your actual room into a haunted mixed reality escape game.",
-    longDesc: "Panic Room MR uses advanced pass-through mixed reality. Watch as ghosts break through your physical walls and haunted objects float in your living room. Solve clues anchored in your physical space to escape the curse.",
-    difficulty: 4,
-    tags: ["Mixed Reality", "Escape Room", "Interactive", "Spooky"],
-    playStyle: "Room-Scale",
-    actionType: "Mixed Reality Escape",
-    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80",
-    developer: "Resolution Games",
-    publisher: "Resolution Games",
-    comfortRating: "Comfortable",
-    controllers: "Hand Tracking / Touch",
-    spaceRequired: "900 MB",
-    playerMode: "Single User / Co-op",
-    features: [
-      "Pass-through room mesh boundaries",
-      "Anchored holographic props",
-      "Furniture collider recognition",
-      "Local multiplayer escape cooperation"
-    ],
-    galleryImages: [
-      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
-      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
+      "/images/games/pistol-whip.jpg",
+      "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80"
     ]
   },
 
-  // 2. Fighting & Action Games
+  // 1. Fighting & Action Games
   {
     id: "ninja-legends",
     title: "Ninja Legends",
@@ -1956,6 +1805,249 @@ export const gamesData: Game[] = [
       "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=400&q=80",
       "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80"
     ]
-  }
+  },
   // ---- END 21 NEW EDUCATIONAL EXPERIENCES ----
+
+  // Horror Experiences (Moved to end)
+  {
+    id: "richies-plank",
+    title: "Richie's Plank Experience",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Walk a thin plank 80 stories high and face your fear of heights.",
+    longDesc: "Richie's Plank Experience is a psychological thrill ride. Placed 80 stories above the ground, walk a narrow wooden plank and decide if you have the nerve to step off. It is designed to evoke strong physiological reactions, making it the perfect showcase for the power of immersive virtual reality. Includes multiple secondary modes such as superhero flying academy, firefighting simulators, and writing tools.",
+    difficulty: 4,
+    tags: ["Thrill", "Heights", "Short Play", "Immersive"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Simulation",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/517160/header.jpg",
+    developer: "Toast Interactive",
+    publisher: "Toast Interactive",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Real-world plank setup integration",
+      "Stomach-dropping height simulation",
+      "Superhero flight mode",
+      "Firefighting mini-missions",
+      "Skybrush skywriting tool"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "sleep-watch",
+    title: "Sleep Watch",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Stay alert and survive the horrors lurking in the dark.",
+    longDesc: "Sleep Watch places you in a dark and eerie environment where survival depends on your alertness and quick thinking. You must monitor multiple security cameras, check the hallway shadows, and keep your composure as tension rises in this sleep paralysis horror simulation.",
+    difficulty: 4,
+    tags: ["Survival", "Suspense", "Jump Scares", "Dark"],
+    playStyle: "Sitting/Standing",
+    actionType: "Survival Horror",
+    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80",
+    developer: "Cyberia Studios",
+    publisher: "Cyberia Studios",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Real-time security monitor feed",
+      "Heart-rate monitoring mechanics",
+      "Randomized horror triggers",
+      "Light and sound navigation puzzles"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "face-your-fears",
+    title: "Face Your Fears",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Confront your deepest fears in spine-chilling scenarios.",
+    longDesc: "Face Your Fears exposes you to common phobias and horror scenarios in full 360-degree immersion. From haunted houses to heights and paranormal entities, this experience is designed to test your limits and get your adrenaline pumping.",
+    difficulty: 5,
+    tags: ["Atmospheric", "Spooky", "Short Play", "Jump Scares"],
+    playStyle: "Sitting",
+    actionType: "Interactive Experience",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+    developer: "Turtle Rock Studios",
+    publisher: "Warner Bros. Interactive",
+    comfortRating: "Intense",
+    controllers: "Gaze/Touch Controllers",
+    spaceRequired: "3.5 GB",
+    playerMode: "Single User",
+    features: [
+      "Multi-sensory phobia modules",
+      "Haunted children's bedroom module",
+      "Giant skyscraper attack module",
+      "Deep-sea ghost ship experience"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "cursed-night-house",
+    title: "Cursed Night – The House",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Explore a haunted house and escape its cursed entities.",
+    longDesc: "Cursed Night: The House is a narrative-driven horror game where you explore a derelict, cursed mansion. Solve basic puzzles, find clues, and evade the malevolent spirits that haunt the corridors before it is too late.",
+    difficulty: 4,
+    tags: ["Exploration", "Puzzle", "Escape Room", "Spooky"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Exploration Horror",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1740570/header.jpg",
+    developer: "Red Soul Games",
+    publisher: "Red Soul Games",
+    comfortRating: "Moderate",
+    controllers: "Touch Controllers",
+    spaceRequired: "4.0 GB",
+    playerMode: "Single User",
+    features: [
+      "Physics-based puzzle objects",
+      "Ambient lighting toggle mechanics",
+      "3D spatial audio whispers",
+      "Lock-and-key room locks"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "z-show",
+    title: "Z-Show",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Survive a deadly zombie-infested television game show.",
+    longDesc: "Z-Show casts you as a contestant in an apocalyptic, dystopian game show where the prize is your life. Face waves of zombies, activate environmental traps, and entertain the audience to secure supply drops in this high-tension horror shootout.",
+    difficulty: 4,
+    tags: ["Zombies", "Survival", "Action", "Arena"],
+    playStyle: "Standing",
+    actionType: "Zombie Combat",
+    image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
+    developer: "Pixelity Games",
+    publisher: "Pixelity Games",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "2.1 GB",
+    playerMode: "Single User",
+    features: [
+      "Dystopian arena game show layout",
+      "Crowd noise feedback audio loop",
+      "Interactive stage environmental traps",
+      "High-score wave multiplier tracker"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1601513525393-832777b9bb7a?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "cursed-echoes",
+    title: "Cursed Echoes",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Investigate whispering ruins and piece together cursed histories.",
+    longDesc: "Cursed Echoes is a psychological thriller that relies on spatial audio. Navigate shifting dark corridors, solve auditory puzzles, and avoid spectral entities that react to every sound you make in the real world.",
+    difficulty: 4,
+    tags: ["Audio-focus", "Mystery", "Atmospheric", "Spooky"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Psychological Horror",
+    image: "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=600&q=80",
+    developer: "Soundscape VR",
+    publisher: "Soundscape VR",
+    comfortRating: "Comfortable",
+    controllers: "Touch Controllers",
+    spaceRequired: "1.8 GB",
+    playerMode: "Single User",
+    features: [
+      "Acoustic-guided gameplay",
+      "Spatial echo-location scanners",
+      "Shifting non-euclidean labyrinth",
+      "Microphone audio feedback detection"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "descending",
+    title: "Descending",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Descend into dark caverns with only a flashlight and your wits.",
+    longDesc: "Descending puts you in the shoes of a deep cave explorer. As your ropes break, you find yourself trapped in an ancient, uncharted cavern system. Explore narrow tunnels, manage your oxygen, and discover what lurks in the absolute dark.",
+    difficulty: 5,
+    tags: ["Caves", "Exploration", "Survival", "Claustrophobic"],
+    playStyle: "Standing/Room-Scale",
+    actionType: "Survival Horror",
+    image: "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=600&q=80",
+    developer: "Vertigo Games",
+    publisher: "Vertigo Games",
+    comfortRating: "Intense",
+    controllers: "Touch Controllers",
+    spaceRequired: "5.2 GB",
+    playerMode: "Single User",
+    features: [
+      "Rappelling and rock climbing physics",
+      "Realistic flashlight battery mechanics",
+      "Cave-in survival navigation scenarios",
+      "Mysterious runic text decryption"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80"
+    ]
+  },
+  {
+    id: "panic-room-mr",
+    title: "Panic Room MR",
+    category: "Horror Experiences",
+    suitability: "Teens & Adults",
+    shortDesc: "Transform your actual room into a haunted mixed reality escape game.",
+    longDesc: "Panic Room MR uses advanced pass-through mixed reality. Watch as ghosts break through your physical walls and haunted objects float in your living room. Solve clues anchored in your physical space to escape the curse.",
+    difficulty: 4,
+    tags: ["Mixed Reality", "Escape Room", "Interactive", "Spooky"],
+    playStyle: "Room-Scale",
+    actionType: "Mixed Reality Escape",
+    image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=600&q=80",
+    developer: "Resolution Games",
+    publisher: "Resolution Games",
+    comfortRating: "Comfortable",
+    controllers: "Hand Tracking / Touch",
+    spaceRequired: "900 MB",
+    playerMode: "Single User / Co-op",
+    features: [
+      "Pass-through room mesh boundaries",
+      "Anchored holographic props",
+      "Furniture collider recognition",
+      "Local multiplayer escape cooperation"
+    ],
+    galleryImages: [
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1505635338219-0a113f66a337?auto=format&fit=crop&w=400&q=80"
+    ]
+  }
 ];

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { createPortal } from "react-dom"
 import Link from "next/link"
 import Image from "next/image"
 import { 
@@ -60,6 +61,21 @@ export default function VRCatalogueClient() {
   const [activeCategory, setActiveCategory] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
+  const [mounted, setMounted] = useState<boolean>(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (selectedGame) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = "hidden"
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [selectedGame])
 
   // Filter and Search Logic
   const filteredGames = useMemo(() => {
@@ -80,13 +96,13 @@ export default function VRCatalogueClient() {
   // Category Configuration
   const categories = [
     { id: "all", label: "All Experiences", icon: <Activity className="h-4 w-4" /> },
-    { id: "Horror Experiences", label: "👻 Horror", icon: <Ghost className="h-4 w-4" /> },
     { id: "Fighting & Action Games", label: "🥊 Fighting & Action", icon: <Swords className="h-4 w-4" /> },
-    { id: "Driving & Racing Simulation", label: "🏎️ Driving & Racing", icon: <Car className="h-4 w-4" /> },
-    { id: "Adventure & Thrill Rides", label: "🎢 Adventure & Thrill", icon: <Compass className="h-4 w-4" /> },
     { id: "Shooting Games", label: "🔫 Shooting", icon: <Target className="h-4 w-4" /> },
+    { id: "Adventure & Thrill Rides", label: "🎢 Adventure & Thrill", icon: <Compass className="h-4 w-4" /> },
     { id: "Sports & Fitness", label: "⚽ Sports & Fitness", icon: <Dumbbell className="h-4 w-4" /> },
+    { id: "Driving & Racing Simulation", label: "🏎️ Driving & Racing", icon: <Car className="h-4 w-4" /> },
     { id: "Educational & Learning Experiences", label: "🌍 Educational", icon: <GraduationCap className="h-4 w-4" /> },
+    { id: "Horror Experiences", label: "👻 Horror", icon: <Ghost className="h-4 w-4" /> },
   ]
 
   // Event List
@@ -277,9 +293,9 @@ export default function VRCatalogueClient() {
       </div>
 
       {/* Dynamic Pop-up Detail Modal Overlay */}
-      {selectedGame && (
+      {selectedGame && mounted && typeof document !== "undefined" && createPortal(
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-fade-in print:hidden"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-fade-in print:hidden"
           onClick={() => setSelectedGame(null)}
         >
           <div 
@@ -452,7 +468,8 @@ export default function VRCatalogueClient() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
