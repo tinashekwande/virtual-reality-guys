@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 import Link from "next/link"
 import Image from "next/image"
@@ -24,7 +24,9 @@ import {
   Star,
   Gamepad,
   Info,
-  Shield
+  Shield,
+  Play,
+  Film
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { gamesData, Game } from "@/lib/gamesData"
@@ -61,7 +63,9 @@ export default function VRCatalogueClient() {
   const [activeCategory, setActiveCategory] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
+  const [isPlayingTrailer, setIsPlayingTrailer] = useState<boolean>(false)
   const [mounted, setMounted] = useState<boolean>(false)
+  const modalBodyRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -69,11 +73,17 @@ export default function VRCatalogueClient() {
 
   useEffect(() => {
     if (selectedGame) {
+      setIsPlayingTrailer(false)
       const originalOverflow = document.body.style.overflow
       document.body.style.overflow = "hidden"
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTop = 0
+      }
       return () => {
         document.body.style.overflow = originalOverflow
       }
+    } else {
+      setIsPlayingTrailer(false)
     }
   }, [selectedGame])
 
@@ -225,6 +235,9 @@ export default function VRCatalogueClient() {
                         alt={game.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108 print:grayscale"
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.src = "/images/vr-hero.jpg"
+                        }}
                       />
                       {/* Badge Overlay */}
                       <div className="absolute top-4 left-4 right-4 flex justify-between items-center print:hidden">
@@ -236,6 +249,13 @@ export default function VRCatalogueClient() {
                           {game.suitability.split(" ")[0]}
                         </span>
                       </div>
+
+                      {/* Video Gameplay Indicator */}
+                      {game.youtubeId && (
+                        <div className="absolute bottom-3 right-3 px-2 py-0.5 bg-black/80 backdrop-blur-md rounded-full border border-primary/40 text-[10px] text-primary flex items-center gap-1 font-semibold group-hover:scale-105 transition-transform shadow-md print:hidden">
+                          <Play className="h-2.5 w-2.5 fill-primary" /> Trailer
+                        </div>
+                      )}
                     </div>
 
                     {/* Card Body */}
@@ -308,18 +328,38 @@ export default function VRCatalogueClient() {
                 src={selectedGame.image} 
                 alt={selectedGame.title} 
                 className="w-full h-full object-cover" 
+                onError={(e) => {
+                  e.currentTarget.src = "/images/vr-hero.jpg"
+                }}
               />
               <button 
                 onClick={() => setSelectedGame(null)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white cursor-pointer transition-all border border-white/10"
+                className="absolute top-4 right-4 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white cursor-pointer transition-all border border-white/10 z-10"
                 aria-label="Close details popup"
               >
                 <X className="h-5 w-5" />
               </button>
+
+              {/* Floating Quick Play Trailer Button if video available */}
+              {selectedGame.youtubeId && !isPlayingTrailer && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPlayingTrailer(true)
+                    const trailerEl = document.getElementById("trailer-player-container")
+                    if (trailerEl) {
+                      trailerEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
+                    }
+                  }}
+                  className="absolute bottom-4 left-4 px-3.5 py-1.5 rounded-full bg-black/80 hover:bg-black/95 backdrop-blur-md border border-primary/50 text-primary hover:text-white text-xs font-bold tracking-wider flex items-center gap-2 shadow-lg transition-all hover:scale-105 cursor-pointer z-10"
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" /> Watch Trailer
+                </button>
+              )}
             </div>
 
             {/* Modal Content - Scrollable to fit any height */}
-            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
+            <div ref={modalBodyRef} className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
               
               {/* Header Info */}
               <div className="space-y-1">
@@ -364,6 +404,62 @@ export default function VRCatalogueClient() {
                 </div>
               </div>
 
+              {/* Meta Horizon Store Style Video Trailer Player */}
+              {selectedGame.youtubeId && (
+                <div id="trailer-player-container" className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                    <span className="flex items-center gap-1.5 text-primary">
+                      <Film className="h-3.5 w-3.5" /> Experience Trailer & Gameplay
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground/80">
+                      HD Preview
+                    </span>
+                  </div>
+                  
+                  <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-border/60 bg-black shadow-2xl group/player">
+                    {isPlayingTrailer ? (
+                      <iframe
+                        className="w-full h-full border-0"
+                        src={`https://www.youtube-nocookie.com/embed/${selectedGame.youtubeId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                        title={`${selectedGame.title} Gameplay Trailer`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div 
+                        onClick={() => setIsPlayingTrailer(true)}
+                        className="relative w-full h-full cursor-pointer flex items-center justify-center overflow-hidden"
+                      >
+                        <img
+                          src={`https://img.youtube.com/vi/${selectedGame.youtubeId}/hqdefault.jpg`}
+                          alt={`${selectedGame.title} Trailer Preview`}
+                          className="w-full h-full object-cover group-hover/player:scale-105 transition-transform duration-500 opacity-80 group-hover/player:opacity-95"
+                          onError={(e) => {
+                            e.currentTarget.src = selectedGame.image
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                        
+                        {/* Center glowing Play Button */}
+                        <div className="absolute z-10 flex flex-col items-center gap-2">
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary text-black flex items-center justify-center shadow-[0_0_25px_rgba(0,210,255,0.6)] group-hover/player:scale-110 group-hover/player:shadow-[0_0_35px_rgba(0,210,255,0.9)] transition-all duration-300">
+                            <Play className="h-6 w-6 sm:h-7 sm:w-7 fill-black ml-1" />
+                          </div>
+                          <span className="text-xs font-bold text-white tracking-wider uppercase px-3 py-1 bg-black/60 rounded-full border border-white/10 backdrop-blur-sm">
+                            Click to Play Trailer
+                          </span>
+                        </div>
+
+                        {/* Official Gameplay Footage Badge */}
+                        <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-md border border-white/10 text-[10px] text-white font-medium flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" /> Official Gameplay Footage
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Long Description */}
               <div className="space-y-2">
                 <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider flex items-center gap-1">
@@ -403,6 +499,9 @@ export default function VRCatalogueClient() {
                           src={img} 
                           alt={`${selectedGame.title} Scene ${idx + 1}`} 
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.currentTarget.src = "/images/vr-hero.jpg"
+                          }}
                         />
                       </div>
                     ))}
