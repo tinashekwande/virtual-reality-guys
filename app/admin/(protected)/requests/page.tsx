@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -102,19 +102,19 @@ export default function RequestsAdminPage() {
 
       if (msg.includes("corporate") || msg.includes("team") || msg.includes("company") || (r.form_type || "").toLowerCase().includes("corporate")) {
         pkg = "Corporate Event VR Package (6-8 Headsets, 4 Hours)"
-        price = 1599
+        price = 1499
       } else if (msg.includes("school") || (r.form_type || "").toLowerCase().includes("school")) {
         pkg = "School / Educational VR Experience (4 Headsets, 2 Hours)"
-        price = 999
+        price = 899
       } else if (count <= 5) {
         pkg = "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)"
-        price = 999
+        price = 899
       } else if (count > 10) {
         pkg = "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)"
-        price = 1599
+        price = 1499
       } else {
         pkg = "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)"
-        price = 1399
+        price = 1299
       }
     }
 

@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Users, Headset, MapPin, Truck } from "lucide-react"
@@ -118,7 +118,7 @@ export default function VrGamingNearMePage() {
         "name": "How much does VR gaming cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Packages start from R999 for a Starter session with 4 headsets."
+          "text": "Packages start from R899 for a Starter session with 4 headsets."
         }
       },
       {
@@ -335,7 +335,7 @@ export default function VrGamingNearMePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does VR gaming cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Packages start from R999 for a Starter session with 4 headsets.
+                Packages start from R899 for a Starter session with 4 headsets.
               </p>
             </div>
 

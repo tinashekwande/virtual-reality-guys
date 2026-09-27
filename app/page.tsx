@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+﻿import { createAdminClient } from "@/lib/supabase/admin";
 import type { Media, Category, TeamMember } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,7 +48,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Mobile VR Gaming Experiences for Events in Cape Town',
-  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R999.',
+  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R899.',
   alternates: {
     canonical: '/',
   },
@@ -130,7 +130,7 @@ export default async function Home() {
             "name": "Starter Package",
             "description": "4 VR headsets, 2 hours of VR gaming, professional setup & supervision, 30+ game selection. Suitable for up to 5 players."
           },
-          "price": "999",
+          "price": "899",
           "priceCurrency": "ZAR"
         },
         {
@@ -140,7 +140,7 @@ export default async function Home() {
             "name": "Standard Package",
             "description": "5 VR headsets, 3 hours of VR gaming, professional setup & supervision, 60+ game selection, multiplayer tournaments. Suitable for up to 10 players."
           },
-          "price": "1399",
+          "price": "1299",
           "priceCurrency": "ZAR"
         },
         {
@@ -150,7 +150,7 @@ export default async function Home() {
             "name": "Premium Package",
             "description": "6 VR headsets, 4 hours of VR gaming, professional setup & supervision, 100+ game selection, custom tournament brackets, photo & video package. Suitable for up to 15 players."
           },
-          "price": "1599",
+          "price": "1499",
           "priceCurrency": "ZAR"
         }
       ]
@@ -187,7 +187,7 @@ export default async function Home() {
         "name": "How much does a VR experience cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile packages start from just R999 for the Starter package. Standard is R1,399 and Premium is R1,599. Custom packages are available for large events."
+          "text": "Our mobile packages start from just R899 for the Starter package. Standard is R1,299 and Premium is R1,499. Custom packages are available for large events."
         }
       },
       {
@@ -488,7 +488,7 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Starter"
-              price="999"
+              price="899"
               duration="2 hours"
               players="Up to 5 players"
               features={[
@@ -501,7 +501,7 @@ export default async function Home() {
             />
             <PricingCard
               title="Standard"
-              price="1399"
+              price="1299"
               duration="3 hours"
               players="Up to 10 players"
               featured
@@ -516,7 +516,7 @@ export default async function Home() {
             />
             <PricingCard
               title="Premium"
-              price="1599"
+              price="1499"
               duration="4 hours"
               players="Up to 15 players"
               features={[
@@ -680,7 +680,7 @@ export default async function Home() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does a VR experience cost?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile packages start from just R999 for the Starter package. Standard is R1,399 and Premium is R1,599. Custom packages are available for large events.
+                Our mobile packages start from just R899 for the Starter package. Standard is R1,299 and Premium is R1,499. Custom packages are available for large events.
               </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">

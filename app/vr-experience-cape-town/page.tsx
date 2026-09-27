@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { Check, ArrowRight, Shield, Award, Users, Headset, MapPin, Gamepad2, Clock, CalendarDays } from "lucide-react"
@@ -52,9 +52,9 @@ export default function VrExperienceCapeTownPage() {
     "description": "Discover immersive VR experiences in Cape Town. We bring premium virtual reality using Meta Quest equipment directly to your venue for an unforgettable event.",
     "offers": {
       "@type": "Offer",
-      "price": "999",
+      "price": "899",
       "priceCurrency": "ZAR",
-      "description": "Packages starting from R999"
+      "description": "Packages starting from R899"
     }
   };
 
@@ -252,7 +252,7 @@ export default function VrExperienceCapeTownPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground pt-4 border-t border-border/40">
-                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Packages starting from R999.
+                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Packages starting from R899.
               </p>
             </div>
           </div>

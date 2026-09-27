@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import Link from "next/link"
 import { Check, Phone, Mail, MapPin, Star, Sparkles, Trophy, Calendar } from "lucide-react"
 import Header from "@/components/Header"
@@ -176,19 +176,19 @@ export default function ContactPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-foreground">Starter Package</span>
-                  <span className="text-primary font-bold">R 999</span>
+                  <span className="text-primary font-bold">R 899</span>
                 </div>
                 <p className="text-xs text-muted-foreground">2 hours of VR gaming, 4 VR headsets, up to 5 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Standard Package</span>
-                  <span className="text-primary font-bold">R 1,399</span>
+                  <span className="text-primary font-bold">R 1,299</span>
                 </div>
                 <p className="text-xs text-muted-foreground">3 hours of VR gaming, 5 VR headsets, up to 10 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Premium Package</span>
-                  <span className="text-primary font-bold">R 1,599</span>
+                  <span className="text-primary font-bold">R 1,499</span>
                 </div>
                 <p className="text-xs text-muted-foreground">4 hours of VR gaming, 6 VR headsets, up to 15 players</p>
               </div>

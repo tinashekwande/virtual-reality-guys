@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+﻿import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Users, Headset, Heart } from "lucide-react"
@@ -275,7 +275,7 @@ export default function KidsPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Affordable packages starting from just R999</span>
+                <span>Affordable packages starting from just R899</span>
               </p>
             </div>
           </div>
