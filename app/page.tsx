@@ -1,4 +1,4 @@
-﻿import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { Media, Category, TeamMember } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,14 +47,14 @@ import TiltCard from "@/components/motion/TiltCard";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Mobile VR Gaming Experiences for Events in Cape Town',
-  description: 'Bring the future of gaming to your event! Virtual Reality Guys delivers immersive mobile VR experiences for schools, parties, corporate events, and festivals across Cape Town. From R899.',
+  title: 'VR Cape Town From R499 | Mobile Gaming Delivered To Your Venue',
+  description: 'Cape Town\'s mobile VR entertainment specialists. We deliver headsets, spectator screens & trained supervisors to your party, school, or corporate event. Packages from R499. Book now!',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town',
-    description: 'Premium mobile VR gaming experiences delivered to your venue in Cape Town. Schools, parties, corporate events & festivals. Book today!',
+    title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town From R499',
+    description: 'Premium mobile VR gaming delivered to your venue in Cape Town. Parties, schools, corporate events & festivals. 100+ games, trained supervisors. From R499.',
     url: 'https://virtualrealityguyz.co.za',
     images: [{ url: '/images/logo.png', alt: 'Virtual Reality Guys Logo' }],
   }

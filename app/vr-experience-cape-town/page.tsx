@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { Check, ArrowRight, Shield, Award, Users, Headset, MapPin, Gamepad2, Clock, CalendarDays } from "lucide-react"
@@ -8,14 +8,14 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'VR Experiences Cape Town | Immersive Virtual Reality | Virtual Reality Guys',
-  description: 'Discover immersive VR experiences in Cape Town. From action-packed gaming to educational adventures, we bring premium virtual reality directly to your venue. Book today!',
+  title: 'VR Experiences Cape Town | 100+ Games Delivered To Your Venue',
+  description: 'Book an immersive VR experience in Cape Town from R499. Action, racing, horror, sports & educational VR — delivered with trained supervisors to any venue. All ages welcome!',
   alternates: {
     canonical: '/vr-experience-cape-town',
   },
   openGraph: {
-    title: 'VR Experiences Cape Town | Immersive Virtual Reality | Virtual Reality Guys',
-    description: 'Discover immersive VR experiences in Cape Town. From action-packed gaming to educational adventures, we bring premium virtual reality directly to your venue. Book today!',
+    title: 'VR Experiences Cape Town | 100+ Games Delivered To Your Venue',
+    description: 'Discover immersive VR experiences in Cape Town. From action-packed gaming to educational adventures, we bring premium virtual reality directly to your venue.',
     url: 'https://virtualrealityguyz.co.za/vr-experience-cape-town',
     images: [{ url: '/images/vr-hero.jpg', alt: 'VR Experiences Cape Town' }],
   }

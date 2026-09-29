@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { Check, Star, ArrowRight, Shield, Award, Users, Headset, MapPin, Truck } from "lucide-react"
@@ -8,16 +8,16 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'VR Gaming Near Me Cape Town | Mobile Virtual Reality Delivered',
-  description: 'Looking for VR gaming near you in Cape Town? We deliver premium mobile virtual reality setups to your door across all suburbs. No arcade needed!',
+  title: 'VR Gaming Cape Town | Mobile Setup From R499 — No Arcade Needed',
+  description: 'Skip the arcade. We deliver VR gaming setups with 100+ games, spectator screens & supervisors directly to your Cape Town venue. Parties, events & team building from R499.',
   alternates: {
     canonical: '/vr-gaming-near-me',
   },
   openGraph: {
-    title: 'VR Gaming Near Me Cape Town | Mobile Virtual Reality Delivered',
-    description: 'Looking for premium virtual reality entertainment in Cape Town? We deliver interactive VR headsets, displays, and supervisors directly to your venue.',
+    title: 'VR Gaming Cape Town | Mobile Setup From R499 — No Arcade Needed',
+    description: 'Looking for VR gaming in Cape Town? We deliver premium mobile virtual reality setups to your door across all suburbs. No arcade needed!',
     url: 'https://virtualrealityguyz.co.za/vr-gaming-near-me',
-    images: [{ url: '/images/vr-hero.jpg', alt: 'VR Gaming Near Me Cape Town' }],
+    images: [{ url: '/images/vr-hero.jpg', alt: 'VR Gaming Cape Town' }],
   }
 }
 

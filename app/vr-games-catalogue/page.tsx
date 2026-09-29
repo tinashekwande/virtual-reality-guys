@@ -4,16 +4,16 @@ import Footer from "@/components/Footer"
 import VRCatalogueClient from "@/components/VRCatalogueClient"
 
 export const metadata: Metadata = {
-  title: 'VR Games & Experiences Catalogue | Virtual Reality Guys',
-  description: 'Explore our immersive virtual reality games catalogue! Grouped by category, including horror, combat, sports, racing, shooting, and educational experiences.',
+  title: 'VR Games Cape Town | 100+ Games For Parties, Schools & Events',
+  description: 'Browse our full VR games catalogue — action, horror, racing, sports, rhythm & educational experiences. Available at your Cape Town event from R499 with trained supervisors.',
   alternates: {
     canonical: '/vr-games-catalogue',
   },
   openGraph: {
-    title: 'VR Games & Experiences Catalogue | Virtual Reality Guys',
-    description: 'Browse the ultimate virtual reality entertainment library perfect for birthday parties, schools, corporate events, and festivals in Cape Town.',
+    title: 'VR Games Cape Town | 100+ Games For Parties, Schools & Events',
+    description: 'Browse the ultimate VR games library. Action, horror, racing, sports & educational experiences for birthday parties, schools, and corporate events in Cape Town.',
     url: 'https://virtualrealityguyz.co.za/vr-games-catalogue',
-    images: [{ url: '/images/vr-hero.jpg', alt: 'VR Games Catalogue Hub' }],
+    images: [{ url: '/images/vr-hero.jpg', alt: 'VR Games Cape Town' }],
   }
 }
 

@@ -9,16 +9,16 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'Virtual Reality Cape Town | Premium VR Experiences Near Me',
-  description: 'Experience the ultimate Virtual Reality in Cape Town! We deliver state-of-the-art mobile VR gaming, team building, and party setups to your venue across CPT.',
+  title: 'Virtual Reality Cape Town | Mobile VR From R499 — We Come To You',
+  description: 'Cape Town\'s top-rated mobile VR entertainment. 100+ games, trained supervisors & spectator screens delivered to your venue. Parties, schools & corporate events from R499. Book today!',
   alternates: {
     canonical: '/virtual-reality-cape-town',
   },
   openGraph: {
-    title: 'Virtual Reality Cape Town | Premium VR Experiences Near Me',
-    description: 'Looking for virtual reality in Cape Town? We bring the future of gaming directly to your home, office, or school venue with expert supervisors.',
+    title: 'Virtual Reality Cape Town | Mobile VR From R499 — We Come To You',
+    description: 'Looking for virtual reality in Cape Town? We deliver premium VR gaming setups with supervisors to your home, office, or school. From R499.',
     url: 'https://virtualrealityguyz.co.za/virtual-reality-cape-town',
-    images: [{ url: '/images/vr-hero.jpg', alt: 'Virtual Reality Cape Town Hub' }],
+    images: [{ url: '/images/vr-hero.jpg', alt: 'Virtual Reality Cape Town' }],
   }
 }
 
