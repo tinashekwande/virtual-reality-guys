@@ -515,21 +515,27 @@ button, .button, a[class*="button"] {
 
 /* ── Print / PDF Styles ────────────────────────────────────────────────── */
 @media print {
-  /* Hide backgrounds and fixed overlays */
+  /* Enforce exact color printing for backgrounds, borders, badges, and images */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Hide decorative canvas, navigation header, footer, and interactive elements */
   canvas,
   [class*="print\:hidden"],
   nav,
   footer,
-  .fixed {
+  .fixed:not([id^="pdf-document-preview"]) {
     display: none !important;
     visibility: hidden !important;
   }
 
-  body {
-    background: white !important;
-    color: black !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  /* Keep full vibrant dark theme branding */
+  html, body {
+    background-color: #040817 !important;
+    color: #ffffff !important;
   }
 
   /* Invoice / Quote PDF preview pages (only visible content when ID exists) */
@@ -561,9 +567,11 @@ button, .button, a[class*="button"] {
     page-break-inside: avoid !important;
   }
 
-  /* Ensure images print */
+  /* Ensure all images and artwork print in full vibrant RGB color */
   img {
     max-width: 100% !important;
     height: auto !important;
+    filter: none !important;
+    -webkit-filter: none !important;
   }
 }

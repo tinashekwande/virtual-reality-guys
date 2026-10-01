@@ -190,10 +190,10 @@ export default function VRCatalogueClient() {
           <p className="text-primary font-semibold tracking-wide uppercase mb-4 print:hidden">
             VR Library
           </p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 font-tech tracking-tight text-white uppercase bg-gradient-to-r from-white via-white to-primary/80 bg-clip-text text-transparent print:text-black print:text-3xl">
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 font-tech tracking-tight text-white uppercase bg-gradient-to-r from-white via-white to-primary/80 bg-clip-text text-transparent print:text-white print:text-3xl">
             Games & Experiences
           </h1>
-          <p className="text-lg text-muted-foreground print:text-slate-700">
+          <p className="text-lg text-muted-foreground print:text-slate-300">
             Step into another world! We bring state-of-the-art mobile virtual reality setups to your venue, pre-loaded with these world-class games and interactive experiences.
           </p>
           
@@ -248,11 +248,18 @@ export default function VRCatalogueClient() {
           </div>
         </section>
 
-        {/* PRINT ONLY CATEGORY SPLIT */}
-        <div className="hidden print:block space-y-8">
-          <p className="text-xs text-slate-500 mb-6 border-b pb-2">
-            Virtual Reality Guys • Email: info@virtualrealityguyz.co.za • Tel: 081 765 6431
-          </p>
+        {/* PRINT ONLY BRANDED HEADER */}
+        <div className="hidden print:flex items-center justify-between border-b border-primary/40 pb-4 mb-8">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-bold font-tech text-white">
+              Virtual Reality <span className="text-primary">Guys</span>
+            </span>
+            <span className="text-xs text-primary/90 border-l border-border/60 pl-3 uppercase tracking-wider font-semibold">Official Games Catalogue</span>
+          </div>
+          <div className="text-right text-xs text-slate-300 space-y-0.5">
+            <p>Tel: <span className="text-white font-semibold">+27 71 780 0323</span> • Web: <span className="text-primary font-semibold">virtualrealityguyz.co.za</span></p>
+            <p>Email: <span className="text-primary">info@virtualrealityguyz.co.za</span> • Cape Town &amp; Surrounds</p>
+          </div>
         </div>
 
         {/* Dynamic Card Grid */}
@@ -266,31 +273,31 @@ export default function VRCatalogueClient() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 print:grid-cols-2 print:gap-4">
               {filteredGames.map(game => (
-                <div key={game.id} className="h-full transition-transform duration-300 hover:scale-[1.02]">
+                <div key={game.id} className="h-full transition-transform duration-300 hover:scale-[1.02] print:break-inside-avoid print:page-break-inside-avoid">
                   <article
                     onClick={() => setSelectedGame(game)}
-                    className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 cursor-pointer flex flex-col h-full group print:border-slate-300 print:shadow-none print:break-inside-avoid print:bg-white"
+                    className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 cursor-pointer flex flex-col h-full group print:border-primary/30 print:bg-[#070e22] print:shadow-none print:break-inside-avoid print:page-break-inside-avoid"
                   >
                     {/* Card Image */}
                     <div className="relative h-48 w-full bg-secondary/20 overflow-hidden">
                       <img
                         src={game.image}
                         alt={game.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108 print:grayscale"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
                         loading="lazy"
                         onError={(e) => {
                           e.currentTarget.src = "/images/vr-hero.jpg"
                         }}
                       />
                       {/* Badge Overlay */}
-                      <div className="absolute top-4 left-4 right-4 flex justify-between items-center print:hidden">
-                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 text-primary">
+                      <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+                        <span className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/85 backdrop-blur-md rounded-full border border-primary/40 text-primary">
                           {getCategoryIcon(game.category)}
                           {getShortCategory(game.category)}
                         </span>
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-white/10 text-white">
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/85 backdrop-blur-md rounded-full border border-white/20 text-white">
                           {game.suitability.split(" ")[0]}
                         </span>
                       </div>
@@ -305,26 +312,26 @@ export default function VRCatalogueClient() {
 
                     {/* Card Body */}
                     <div className="p-5 flex flex-col flex-grow">
-                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors print:text-black">
+                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary transition-colors">
                         {game.title}
                       </h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed flex-grow mb-4 line-clamp-3 print:text-slate-800 print:line-clamp-none">
+                      <p className="text-xs text-muted-foreground leading-relaxed flex-grow mb-4 line-clamp-3 print:text-slate-300 print:line-clamp-none">
                         {game.shortDesc}
                       </p>
                       
                       {/* Specs Bottom */}
-                      <div className="flex justify-between items-center pt-4 border-t border-border/40 text-[11px] text-muted-foreground print:text-slate-600 print:border-slate-200">
-                        <span className="flex items-center gap-1">
+                      <div className="flex justify-between items-center pt-4 border-t border-border/40 text-[11px] text-muted-foreground print:text-slate-400 print:border-border/40">
+                        <span className="flex items-center gap-1 text-primary">
                           <Activity className="h-3 w-3" /> {game.playStyle.split("/")[0]}
                         </span>
                         
                         {/* Difficulty stars */}
                         <span className="flex gap-0.5 items-center">
-                          <span className="mr-1">Diff:</span>
+                          <span className="mr-1 text-slate-400">Diff:</span>
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star 
                               key={i} 
-                              className={`h-2.5 w-2.5 ${i < game.difficulty ? 'text-primary fill-primary print:text-slate-800 print:fill-slate-800' : 'text-muted/40'}`} 
+                              className={`h-2.5 w-2.5 ${i < game.difficulty ? 'text-primary fill-primary' : 'text-muted/40'}`} 
                             />
                           ))}
                         </span>
@@ -338,17 +345,17 @@ export default function VRCatalogueClient() {
         </section>
 
         {/* Perfect For Events Grid */}
-        <section className="py-16 bg-card/20 border border-border/40 rounded-3xl p-8 text-center space-y-8 mb-16 print:border-slate-300 print:bg-slate-50 print:break-inside-avoid">
-          <h2 className="text-2xl font-bold font-tech uppercase text-white tracking-wide print:text-black">
-            Perfect For <span className="text-primary print:text-slate-800">Your Event</span>
+        <section className="py-16 bg-card/20 border border-border/40 rounded-3xl p-8 text-center space-y-8 mb-16 print:border-primary/30 print:bg-[#070e22] print:break-inside-avoid">
+          <h2 className="text-2xl font-bold font-tech uppercase text-white tracking-wide">
+            Perfect For <span className="text-primary">Your Event</span>
           </h2>
           <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             {perfectForEvents.map(event => (
               <span 
                 key={event} 
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-background/50 border border-border/80 text-sm font-semibold text-foreground print:bg-white print:border-slate-300 print:text-slate-800"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-background/50 border border-border/80 text-sm font-semibold text-foreground print:bg-[#0c1427] print:border-primary/30 print:text-white"
               >
-                <Check className="h-4 w-4 text-primary print:text-slate-700" />
+                <Check className="h-4 w-4 text-primary" />
                 {event}
               </span>
             ))}
