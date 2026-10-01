@@ -30,7 +30,6 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { gamesData, Game } from "@/lib/gamesData"
-import TiltCard from "@/components/motion/TiltCard"
 
 // Category Icons Mapper
 const getCategoryIcon = (category: string) => {
@@ -65,10 +64,19 @@ export default function VRCatalogueClient() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
   const [isPlayingTrailer, setIsPlayingTrailer] = useState<boolean>(false)
   const [mounted, setMounted] = useState<boolean>(false)
+  const [hasError, setHasError] = useState<boolean>(false)
   const modalBodyRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
+    
+    // Catch any runtime errors that might break rendering
+    const handleError = (event: ErrorEvent) => {
+      console.error("VR Catalogue error caught:", event.error)
+      setHasError(true)
+    }
+    window.addEventListener("error", handleError)
+    return () => window.removeEventListener("error", handleError)
   }, [])
 
   useEffect(() => {
@@ -129,6 +137,43 @@ export default function VRCatalogueClient() {
   // Print function
   const handlePrint = () => {
     window.print()
+  }
+
+  // Error fallback — show basic static game list
+  if (hasError) {
+    return (
+      <div className="w-full min-h-screen pt-24 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h1 className="text-4xl font-bold text-white mb-4">VR Games &amp; Experiences</h1>
+            <p className="text-muted-foreground mb-6">
+              Browse our full catalogue of virtual reality games available for your event.
+            </p>
+            <Button onClick={() => { setHasError(false); window.location.reload(); }} variant="outline" className="rounded-xl">
+              Try Reload
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {gamesData.map(game => (
+              <div key={game.id} className="bg-card/30 border border-border/60 rounded-2xl overflow-hidden">
+                <img
+                  src={game.image}
+                  alt={game.title}
+                  className="w-full h-48 object-cover"
+                  loading="lazy"
+                  onError={(e) => { e.currentTarget.src = "/images/vr-hero.jpg" }}
+                />
+                <div className="p-4">
+                  <h3 className="font-bold text-white mb-1">{game.title}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{game.shortDesc}</p>
+                  <span className="text-[10px] text-primary mt-2 block">{game.category}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -223,7 +268,7 @@ export default function VRCatalogueClient() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredGames.map(game => (
-                <TiltCard key={game.id} maxTilt={8} scale={1.025} className="h-full">
+                <div key={game.id} className="h-full transition-transform duration-300 hover:scale-[1.02]">
                   <article
                     onClick={() => setSelectedGame(game)}
                     className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 cursor-pointer flex flex-col h-full group print:border-slate-300 print:shadow-none print:break-inside-avoid print:bg-white"
@@ -286,7 +331,7 @@ export default function VRCatalogueClient() {
                       </div>
                     </div>
                   </article>
-                </TiltCard>
+                </div>
               ))}
             </div>
           )}

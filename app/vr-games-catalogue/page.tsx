@@ -144,6 +144,18 @@ export default function VRCataloguePage() {
       />
       <Header />
       <main className="print:m-0 print:p-0">
+        <noscript>
+          <div className="max-w-4xl mx-auto px-6 py-32 text-center space-y-4">
+            <h1 className="text-3xl font-bold text-white">VR Games Catalogue</h1>
+            <p className="text-muted-foreground">
+              This page requires JavaScript to display the interactive game catalogue.
+              Please enable JavaScript in your browser settings and reload the page.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Alternatively, contact us at <a href="mailto:info@virtualrealityguyz.co.za" className="text-primary underline">info@virtualrealityguyz.co.za</a> or call <a href="tel:+27717800323" className="text-primary underline">+27 71 780 0323</a> to receive a PDF catalogue.
+            </p>
+          </div>
+        </noscript>
         <VRCatalogueClient />
 
         {/* FAQ Section */}

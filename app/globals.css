@@ -515,9 +515,24 @@ button, .button, a[class*="button"] {
 
 /* ── Print / PDF Styles ────────────────────────────────────────────────── */
 @media print {
-  body * {
-    visibility: hidden;
+  /* Hide backgrounds and fixed overlays */
+  canvas,
+  [class*="print\:hidden"],
+  nav,
+  footer,
+  .fixed {
+    display: none !important;
+    visibility: hidden !important;
   }
+
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Invoice / Quote PDF preview pages (only visible content when ID exists) */
   [id^="pdf-document-preview"], [id^="pdf-document-preview"] * {
     visibility: visible !important;
   }
@@ -534,6 +549,21 @@ button, .button, a[class*="button"] {
     border: none !important;
     box-shadow: none !important;
   }
+
+  /* Catalogue print layout */
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  article {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure images print */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
 }
-
-
