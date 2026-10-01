@@ -570,8 +570,16 @@ button, .button, a[class*="button"] {
   /* Ensure all images and artwork print in full vibrant RGB color */
   img {
     max-width: 100% !important;
-    height: auto !important;
     filter: none !important;
     -webkit-filter: none !important;
+  }
+
+  /* Ensure catalogue card images fill their container fully in print */
+  article img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    display: block !important;
   }
 }

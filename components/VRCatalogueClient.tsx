@@ -26,7 +26,8 @@ import {
   Info,
   Shield,
   Play,
-  Film
+  Film,
+  Loader2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { gamesData, Game } from "@/lib/gamesData"
@@ -134,9 +135,40 @@ export default function VRCatalogueClient() {
     "Exhibitions & Festivals"
   ]
 
-  // Print function
-  const handlePrint = () => {
-    window.print()
+  const [isPreparingPdf, setIsPreparingPdf] = useState<boolean>(false)
+
+  // Print function: pre-load and decode all game images before opening print dialog
+  const handlePrint = async () => {
+    if (isPreparingPdf) return
+    setIsPreparingPdf(true)
+
+    try {
+      // Find all game card images in the DOM
+      const cardImages = Array.from(document.querySelectorAll<HTMLImageElement>("article img"))
+      
+      // Wait for all images to fully load and decode
+      const imagePromises = cardImages.map(img => {
+        if (img.complete && img.naturalWidth > 0) {
+          return Promise.resolve()
+        }
+        return new Promise<void>((resolve) => {
+          const finish = () => resolve()
+          img.addEventListener("load", finish, { once: true })
+          img.addEventListener("error", finish, { once: true })
+          // Safety timeout so slow network will never freeze the button indefinitely
+          setTimeout(finish, 4000)
+        })
+      })
+
+      await Promise.all(imagePromises)
+      // Allow browser layout engine to paint loaded bitmaps into memory
+      await new Promise(r => setTimeout(r, 350))
+    } catch {
+      // Continue to print even if some promise rejected
+    } finally {
+      setIsPreparingPdf(false)
+      window.print()
+    }
   }
 
   // Error fallback — show basic static game list
@@ -202,8 +234,21 @@ export default function VRCatalogueClient() {
             <a href="#catalogue" className="px-6 py-3 rounded-xl font-bold bg-primary text-black hover:shadow-lg hover:shadow-primary/30 transition-all">
               Explore Games
             </a>
-            <Button onClick={handlePrint} variant="outline" className="px-6 py-3 rounded-xl border-border/80 hover:bg-secondary">
-              <Printer className="mr-2 h-4 w-4" /> Save PDF Catalogue
+            <Button 
+              onClick={handlePrint} 
+              variant="outline" 
+              disabled={isPreparingPdf}
+              className="px-6 py-3 rounded-xl border-border/80 hover:bg-secondary disabled:opacity-75 transition-all"
+            >
+              {isPreparingPdf ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" /> Preparing Images for PDF...
+                </>
+              ) : (
+                <>
+                  <Printer className="mr-2 h-4 w-4" /> Save PDF Catalogue
+                </>
+              )}
             </Button>
             <Link href="/contact" className="px-6 py-3 rounded-xl font-bold border border-primary/40 hover:border-primary text-primary hover:bg-primary/5 transition-all">
               Book Event Now
@@ -286,9 +331,11 @@ export default function VRCatalogueClient() {
                         src={game.image}
                         alt={game.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
-                        loading="lazy"
+                        decoding="sync"
                         onError={(e) => {
-                          e.currentTarget.src = "/images/vr-hero.jpg"
+                          if (!e.currentTarget.src.includes("/images/vr-hero.jpg")) {
+                            e.currentTarget.src = "/images/vr-hero.jpg"
+                          }
                         }}
                       />
                       {/* Badge Overlay */}
