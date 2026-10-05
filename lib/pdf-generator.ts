@@ -30,11 +30,20 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       windowWidth: 1024,
       imageTimeout: 15000,
       onclone: (clonedDoc, clonedEl) => {
-        // Remove decorative elements & print:hidden nodes from the PDF canvas clone
-        const hideNodes = clonedEl.querySelectorAll(".print\\:hidden, [class*='blur']");
-        hideNodes.forEach((node) => node.remove());
+        // 1. COMPLETELY REMOVE all toasts, alerts, and banners from clonedDoc so they NEVER appear on the PDF
+        const toasts = clonedDoc.querySelectorAll(
+          "[data-sonner-toaster], [data-sonner-toast], [aria-label*='Notification'], [class*='toaster'], .toaster, [role='status'], [role='alert'], [data-portal]"
+        );
+        toasts.forEach((node) => node.remove());
 
-        // Set clean desktop dimensions on clone for 100% consistent canvas rendering
+        // Remove any siblings outside clonedEl that might overlap
+        clonedDoc.querySelectorAll("nav, header, footer, [class*='print:hidden']").forEach((node) => {
+          if (!node.contains(clonedEl) && !clonedEl.contains(node)) {
+            node.remove();
+          }
+        });
+
+        // 2. Set clean desktop dimensions on root clone with 100% pure white background and NO borders
         clonedEl.style.width = "800px";
         clonedEl.style.maxWidth = "800px";
         clonedEl.style.minWidth = "800px";
@@ -49,57 +58,79 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
         clonedEl.style.borderRadius = "0px";
         clonedEl.style.border = "none";
         clonedEl.style.boxShadow = "none";
+        clonedEl.style.outline = "none";
 
-        // Style cards with clean light backgrounds
-        const bgDarkCards = clonedEl.querySelectorAll(
-          ".bg-slate-900\\/60, .bg-slate-900\\/80, .bg-slate-900\\/40, .bg-slate-950\\/90, .bg-cyan-950\\/80"
-        );
-        bgDarkCards.forEach((node) => {
-          const el = node as HTMLElement;
-          el.style.backgroundColor = "#f8fafc";
-          el.style.borderColor = "#e2e8f0";
-          el.style.color = "#0f172a";
-        });
+        // Remove dark classes directly from root element
+        clonedEl.classList.remove("bg-[#040817]", "border", "border-cyan-900/40", "shadow-2xl", "rounded-3xl");
 
-        // Banking card gold / amber styling
-        const bankingCards = clonedEl.querySelectorAll(".border-amber-500\\/30");
-        bankingCards.forEach((node) => {
-          const el = node as HTMLElement;
-          el.style.backgroundColor = "#fffbeb";
-          el.style.borderColor = "#fcd34d";
-        });
+        // 3. Remove all decorative elements & print:hidden nodes inside the document
+        const hideNodes = clonedEl.querySelectorAll(".print\\:hidden, [class*='blur']");
+        hideNodes.forEach((node) => node.remove());
 
-        // Text color overrides for high-contrast legible PDF
-        const whiteTexts = clonedEl.querySelectorAll(".text-white, .text-slate-100, .text-slate-200");
-        whiteTexts.forEach((node) => {
-          const el = node as HTMLElement;
-          el.style.color = "#0f172a";
-        });
-
-        const mutedTexts = clonedEl.querySelectorAll(".text-slate-300, .text-slate-400, .text-slate-500");
-        mutedTexts.forEach((node) => {
-          const el = node as HTMLElement;
-          el.style.color = "#475569";
-        });
-
-        const cyanAccents = clonedEl.querySelectorAll(".text-cyan-400, .text-cyan-300");
-        cyanAccents.forEach((node) => {
-          const el = node as HTMLElement;
-          el.style.color = "#0284c7";
-        });
-
-        const borders = clonedEl.querySelectorAll(
-          ".border-cyan-900\\/40, .border-cyan-900\\/30, .border-cyan-800\\/50, .border-cyan-800\\/60, .divide-cyan-900\\/30"
-        );
-        borders.forEach((node) => {
-          const el = node as HTMLElement;
-          el.style.borderColor = "#e2e8f0";
-        });
-
-        // Strip filter blurs and backdrop filters from all remaining elements
+        // 4. Thoroughly clean all child elements: eliminate all dark blue backgrounds, cyan borders, and dark corners
         const allNodes = clonedEl.querySelectorAll("*");
         allNodes.forEach((node) => {
           const el = node as HTMLElement;
+          const cls = el.className || "";
+
+          // Neutral light background for all cards and boxes
+          if (
+            typeof cls === "string" &&
+            (cls.includes("bg-slate-9") ||
+              cls.includes("bg-slate-8") ||
+              cls.includes("bg-cyan-9") ||
+              cls.includes("bg-cyan-8") ||
+              cls.includes("bg-[#040817]"))
+          ) {
+            el.style.backgroundColor = "#f8fafc";
+            el.style.borderColor = "#e2e8f0";
+            el.style.color = "#0f172a";
+          }
+
+          // Banking details card
+          if (typeof cls === "string" && cls.includes("border-amber")) {
+            el.style.borderColor = "#fcd34d";
+            if (cls.includes("bg-")) {
+              el.style.backgroundColor = "#fffbeb";
+            }
+          }
+
+          // Any cyan, dark blue, or dark slate border -> neutral soft gray border (#e2e8f0)
+          if (
+            typeof cls === "string" &&
+            (cls.includes("border-cyan") ||
+              cls.includes("divide-cyan") ||
+              cls.includes("border-slate-8") ||
+              cls.includes("border-slate-9") ||
+              cls.includes("border-slate-7"))
+          ) {
+            el.style.borderColor = "#e2e8f0";
+          }
+
+          // Table borders (rows, cells, headers)
+          if (
+            el.tagName === "TR" ||
+            el.tagName === "TD" ||
+            el.tagName === "TH" ||
+            el.tagName === "TABLE" ||
+            el.tagName === "TBODY" ||
+            el.tagName === "THEAD"
+          ) {
+            el.style.borderColor = "#e2e8f0";
+          }
+
+          // High-contrast text colors
+          if (typeof cls === "string") {
+            if (cls.includes("text-white") || cls.includes("text-slate-1") || cls.includes("text-slate-2")) {
+              el.style.color = "#0f172a";
+            } else if (cls.includes("text-slate-3") || cls.includes("text-slate-4") || cls.includes("text-slate-5")) {
+              el.style.color = "#475569";
+            } else if (cls.includes("text-cyan-400") || cls.includes("text-cyan-300")) {
+              el.style.color = "#0284c7";
+            }
+          }
+
+          // Strip all blurs and filters
           if (el.style) {
             el.style.filter = "none";
             el.style.backdropFilter = "none";
@@ -195,22 +226,35 @@ export function printPDFDocument(elementId: string): void {
     return;
   }
 
+  // Clone all active stylesheets and styles so all CSS is available in the print window
+  const styles = Array.from(document.querySelectorAll("link[rel='stylesheet'], style"))
+    .map((el) => el.outerHTML)
+    .join("\n");
+
   const htmlContent = `
     <!DOCTYPE html>
     <html>
       <head>
         <title>Print Document</title>
-        <link rel="stylesheet" href="/_next/static/css/app/layout.css" />
+        ${styles}
         <style>
           body {
             background-color: #ffffff !important;
             color: #0f172a !important;
             font-family: system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 24px;
+          }
+          [id^="pdf-document-preview"] {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
           }
           @media print {
-            body { padding: 0; background-color: #ffffff !important; }
+            body { padding: 0 !important; background-color: #ffffff !important; }
+            [id^="pdf-document-preview"] { border: none !important; box-shadow: none !important; }
           }
         </style>
       </head>

@@ -146,16 +146,15 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
       return;
     }
     try {
-      toast.loading("Generating PDF...", { id: "pdf-direct-toast" });
       setActiveTab("preview");
       setTimeout(async () => {
         const previewRefId = `pdf-document-preview-${docNumber || "draft"}`;
         const filename = `${type === "quote" ? "Quote" : "Invoice"}_${docNumber || "draft"}_${clientName}`;
         await exportToPDF(previewRefId, filename);
-        toast.success("PDF Downloaded successfully! 📄", { id: "pdf-direct-toast" });
+        toast.success("PDF Downloaded successfully! 📄");
       }, 250);
     } catch (err: any) {
-      toast.error(`PDF export error: ${err.message}`, { id: "pdf-direct-toast" });
+      toast.error(`PDF export error: ${err.message}`);
     }
   };
 

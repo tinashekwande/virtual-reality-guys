@@ -19,12 +19,11 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
 
   const handleExportPDF = async () => {
     try {
-      toast.loading("Generating high-definition PDF...", { id: "pdf-toast" });
       const filename = `${invoice.type === "quote" ? "Quote" : "Invoice"}_${invoice.doc_number || "draft"}_${invoice.client_name || "Client"}`;
       await exportToPDF(previewRefId, filename);
-      toast.success("PDF exported successfully! 📄", { id: "pdf-toast" });
+      toast.success("PDF exported successfully! 📄");
     } catch (err: any) {
-      toast.error(`Failed to export PDF: ${err.message}`, { id: "pdf-toast" });
+      toast.error(`Failed to export PDF: ${err.message}`);
     }
   };
 
