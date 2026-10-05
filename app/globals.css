@@ -532,13 +532,13 @@ button, .button, a[class*="button"] {
     visibility: hidden !important;
   }
 
-  /* Keep full vibrant dark theme branding */
+  /* Standard document print background is clean white (for invoices, quotes, receipts) */
   html, body {
-    background-color: #040817 !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
   }
 
-  /* Invoice / Quote PDF preview pages (only visible content when ID exists) */
+  /* Invoice / Quote PDF preview pages (clean professional white document, NO blue background) */
   [id^="pdf-document-preview"], [id^="pdf-document-preview"] * {
     visibility: visible !important;
   }
@@ -550,10 +550,20 @@ button, .button, a[class*="button"] {
     max-width: 100% !important;
     padding: 24px !important;
     margin: 0 !important;
-    background-color: #040817 !important;
-    color: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
     border: none !important;
     box-shadow: none !important;
+  }
+
+  /* When printing the VR Games Catalogue specifically, preserve the dark cyber styling */
+  body:has(#catalogue-print-container) {
+    background-color: #040817 !important;
+    color: #ffffff !important;
+  }
+  #catalogue-print-container {
+    background-color: #040817 !important;
+    color: #ffffff !important;
   }
 
   /* Catalogue print layout */

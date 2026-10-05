@@ -209,7 +209,7 @@ export default function VRCatalogueClient() {
   }
 
   return (
-    <div className="w-full relative min-h-screen pt-24 pb-16">
+    <div id="catalogue-print-container" className="w-full relative min-h-screen pt-24 pb-16">
       {/* Neon Floating Ambient Background Orbs */}
       <div className="absolute top-20 left-[10%] w-[300px] h-[300px] rounded-full bg-primary/20 blur-[120px] pointer-events-none animate-pulse duration-[8000ms] print:hidden" />
       <div className="absolute bottom-40 right-[10%] w-[350px] h-[350px] rounded-full bg-accent/20 blur-[120px] pointer-events-none animate-pulse duration-[10000ms] print:hidden" />
