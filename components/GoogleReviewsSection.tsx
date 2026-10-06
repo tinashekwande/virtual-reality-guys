@@ -242,39 +242,6 @@ export default function GoogleReviewsSection() {
           </div>
         </ScrollReveal>
 
-        {/* Quick Stats Banner */}
-        <ScrollReveal variant="zoom-in" delay={150}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 sm:p-8 rounded-3xl bg-card/40 backdrop-blur-md border border-border/60 mb-12 shadow-xl">
-            <div className="text-center space-y-1">
-              <div className="text-3xl sm:text-4xl font-extrabold font-tech text-white flex items-center justify-center gap-1">
-                4.8 <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground font-medium">Google Rating</p>
-            </div>
-            
-            <div className="text-center space-y-1">
-              <div className="text-3xl sm:text-4xl font-extrabold font-tech text-primary">
-                10
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground font-medium">Verified Reviews</p>
-            </div>
-
-            <div className="text-center space-y-1">
-              <div className="text-3xl sm:text-4xl font-extrabold font-tech text-white">
-                100%
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground font-medium">5-Star Feedback</p>
-            </div>
-
-            <div className="text-center space-y-1">
-              <div className="text-3xl sm:text-4xl font-extrabold font-tech text-cyan-400">
-                Turnkey
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground font-medium">Supervised Setup</p>
-            </div>
-          </div>
-        </ScrollReveal>
-
         {/* Interactive Filter Pills */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
           {[
