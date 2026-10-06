@@ -39,6 +39,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GallerySection from "@/components/GallerySection";
 import BookingForm from "@/components/BookingForm";
+import GoogleReviewsSection from "@/components/GoogleReviewsSection";
 import HeroParallax from "@/components/motion/HeroParallax";
 import ScrollReveal from "@/components/motion/ScrollReveal";
 import MotionButton from "@/components/motion/MotionButton";
@@ -93,6 +94,13 @@ export default async function Home() {
     "telephone": "+27717800323",
     "email": "virtualrealityguyz@gmail.com",
     "priceRange": "$$",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5.0",
+      "reviewCount": "38",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Cape Town",
@@ -309,6 +317,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Google Customer Reviews Section */}
+      <GoogleReviewsSection />
 
       {/* About Section */}
       <section id="about" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
@@ -564,35 +575,6 @@ export default async function Home() {
           </div>
 
           <GallerySection media={media} categories={categories} preview={true} />
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="text-primary font-semibold tracking-wide uppercase mb-4">
-              Testimonials
-            </p>
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
-              What Our Customers Say
-            </h2>
-          </div>
-
-          <div className="flex flex-col items-center justify-center space-y-6">
-            <p className="text-xl text-muted-foreground text-center max-w-2xl">
-              See what our amazing customers have to say about our mobile VR gaming experiences.
-            </p>
-            <CyberButton
-              href="https://maps.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              size="lg"
-              variant="secondary"
-            >
-              See our reviews on Google
-            </CyberButton>
-          </div>
         </div>
       </section>
 
