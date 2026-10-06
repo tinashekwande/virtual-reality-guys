@@ -551,7 +551,7 @@ export default function RentalAgreementDocument({
                   <td className="border border-slate-300 p-2 font-medium">{eq.item}</td>
                   <td className="border border-slate-300 p-2 text-center font-bold">{eq.quantity || "____"}</td>
                   <td className="border border-slate-300 p-2">{eq.serialNo || "____________________"}</td>
-                  <td className="border border-slate-300 p-2">{eq.handoverCondition || "Good / Tested"}</td>
+                  <td className="border border-slate-300 p-2">{eq.handoverCondition || "____________________"}</td>
                   <td className="border border-slate-300 p-2">{eq.returnCondition || "____________________"}</td>
                 </tr>
               ))}

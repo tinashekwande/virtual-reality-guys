@@ -16,7 +16,10 @@ import {
   CheckCircle2,
   Calendar,
   Building,
-  DollarSign
+  DollarSign,
+  Plus,
+  Trash2,
+  ListPlus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -485,6 +488,64 @@ function RentalAgreementContent() {
     }))
   }
 
+  // Section 5: Equipment Rented management handlers
+  const handleEquipmentChange = (
+    index: number,
+    field: "item" | "quantity" | "serialNo" | "handoverCondition" | "returnCondition",
+    value: string
+  ) => {
+    setAgreement((prev) => {
+      const nextList = [...prev.equipmentList]
+      nextList[index] = { ...nextList[index], [field]: value }
+      return { ...prev, equipmentList: nextList }
+    })
+  }
+
+  const handleAddEquipmentRow = (custom?: {
+    item?: string
+    quantity?: string
+    serialNo?: string
+    handoverCondition?: string
+    returnCondition?: string
+  }) => {
+    setAgreement((prev) => ({
+      ...prev,
+      equipmentList: [
+        ...prev.equipmentList,
+        {
+          item: custom?.item || "New Equipment / Accessory",
+          quantity: custom?.quantity || "1",
+          serialNo: custom?.serialNo || "",
+          handoverCondition: custom?.handoverCondition || "Good / Tested",
+          returnCondition: custom?.returnCondition || "",
+        },
+      ],
+    }))
+    toast.success(`Added ${custom?.item || "equipment item"} to checklist`)
+  }
+
+  const handleRemoveEquipmentRow = (index: number) => {
+    setAgreement((prev) => {
+      if (prev.equipmentList.length <= 1) {
+        toast.error("You must have at least one equipment item.")
+        return prev
+      }
+      const itemRemoved = prev.equipmentList[index]?.item
+      const nextList = prev.equipmentList.filter((_, i) => i !== index)
+      toast.info(`Removed ${itemRemoved || "item"}`)
+      return { ...prev, equipmentList: nextList }
+    })
+  }
+
+  const handleResetEquipmentToDefault = () => {
+    setAgreement((prev) => ({
+      ...prev,
+      equipmentList: DEFAULT_BLANK_AGREEMENT.equipmentList,
+      headsetSerialNumbers: DEFAULT_BLANK_AGREEMENT.headsetSerialNumbers,
+    }))
+    toast.info("Reset equipment checklist to standard default items.")
+  }
+
   return (
     <div className="space-y-6">
       {/* ============================================================ */}
@@ -830,11 +891,11 @@ function RentalAgreementContent() {
                 </Select>
               </div>
               <div>
-                <Label className="text-[11px]">Headset Serial Numbers</Label>
+                <Label className="text-[11px]">Special Event / Purpose Details</Label>
                 <Input
-                  value={agreement.headsetSerialNumbers}
-                  onChange={(e) => setAgreement({ ...agreement, headsetSerialNumbers: e.target.value })}
-                  placeholder="e.g. VRG-01, VRG-02, VRG-03"
+                  value={agreement.purposeOther}
+                  onChange={(e) => setAgreement({ ...agreement, purposeOther: e.target.value })}
+                  placeholder="e.g. Indoor party, team building details"
                   className="h-8 text-xs bg-background"
                 />
               </div>
@@ -937,6 +998,222 @@ function RentalAgreementContent() {
                     className="h-8 text-xs bg-background"
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ============================================================ */}
+          {/* 4. Section 5: Equipment Rented Checklist Editor */}
+          {/* ============================================================ */}
+          <div className="p-5 rounded-xl bg-secondary/20 border border-border/60 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/50 pb-3">
+              <div>
+                <h3 className="font-bold text-sm text-cyan-400 flex items-center gap-1.5">
+                  <Package className="w-4 h-4" /> 4. Section 5: Equipment Rented Table
+                </h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Manage the items, quantities, serial/asset numbers, and handover/return conditions for Section 5. Changes update the agreement live.
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleAddEquipmentRow()}
+                  className="h-8 text-xs bg-primary/10 border-primary/30 text-primary hover:bg-primary/20 flex items-center gap-1.5 font-medium"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Equipment Item
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleResetEquipmentToDefault}
+                  className="h-8 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                >
+                  <RotateCcw className="w-3 h-3" /> Reset Standard Items
+                </Button>
+              </div>
+            </div>
+
+            {/* Quick Add Buttons */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] text-muted-foreground font-semibold flex items-center gap-1 mr-1">
+                <Sparkles className="w-3 h-3 text-cyan-400" /> Quick Add Accessory:
+              </span>
+              {[
+                { item: "VR Headset(s)", quantity: "1", serialNo: "Meta Quest 3", handoverCondition: "Good / Tested", returnCondition: "" },
+                { item: "Controller(s)", quantity: "2", serialNo: "Touch Controllers", handoverCondition: "Good / Cleaned", returnCondition: "" },
+                { item: "Head Strap(s)", quantity: "1", serialNo: "Elite Strap", handoverCondition: "Good / Intact", returnCondition: "" },
+                { item: "Charging Cable(s)", quantity: "1", serialNo: "USB-C High Speed", handoverCondition: "Good", returnCondition: "" },
+                { item: "Charging Plug(s)", quantity: "1", serialNo: "Fast Adapter", handoverCondition: "Good", returnCondition: "" },
+                { item: "Carrying Case(s)", quantity: "1", serialNo: "Hard Protective Case", handoverCondition: "Good", returnCondition: "" },
+                { item: "Battery / Power Bank(s)", quantity: "1", serialNo: "Power Pack", handoverCondition: "Fully Charged", returnCondition: "" },
+                { item: "Microfiber Lens Cloth", quantity: "1", serialNo: "Cleaning Kit", handoverCondition: "Clean", returnCondition: "" },
+                { item: "VR Boundary Mat", quantity: "1", serialNo: "Anti-slip mat", handoverCondition: "Clean", returnCondition: "" },
+                { item: "Chromecast / Casting Hub", quantity: "1", serialNo: "Spectator Screen Cast", handoverCondition: "Tested", returnCondition: "" },
+              ].map((presetItem) => (
+                <button
+                  key={presetItem.item}
+                  type="button"
+                  onClick={() => handleAddEquipmentRow(presetItem)}
+                  className="px-2.5 py-1 rounded-md bg-secondary/50 hover:bg-secondary border border-border/60 text-[11px] text-foreground transition-colors flex items-center gap-1 shadow-sm"
+                >
+                  <Plus className="w-2.5 h-2.5 text-cyan-400" />
+                  <span>{presetItem.item}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Equipment Table Editor */}
+            <div className="overflow-x-auto rounded-lg border border-border/80 bg-background/50">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="bg-secondary/40 text-muted-foreground border-b border-border/80 text-[11px]">
+                    <th className="p-2.5 text-center font-semibold w-10">#</th>
+                    <th className="p-2.5 text-left font-semibold min-w-[180px]">Item Name</th>
+                    <th className="p-2.5 text-left font-semibold w-24">Quantity</th>
+                    <th className="p-2.5 text-left font-semibold min-w-[180px]">Serial / Asset No.</th>
+                    <th className="p-2.5 text-left font-semibold min-w-[160px]">Condition at Handover</th>
+                    <th className="p-2.5 text-left font-semibold min-w-[160px]">Condition at Return</th>
+                    <th className="p-2.5 text-center font-semibold w-14">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {agreement.equipmentList.map((eq, index) => (
+                    <tr key={index} className="hover:bg-secondary/10 transition-colors">
+                      <td className="p-2 text-center text-muted-foreground font-mono text-[11px]">
+                        {index + 1}
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          value={eq.item}
+                          onChange={(e) => handleEquipmentChange(index, "item", e.target.value)}
+                          placeholder="e.g. VR Headset(s)"
+                          className="h-8 text-xs bg-background"
+                        />
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          value={eq.quantity}
+                          onChange={(e) => handleEquipmentChange(index, "quantity", e.target.value)}
+                          placeholder="e.g. 4"
+                          className="h-8 text-xs bg-background text-center font-bold"
+                        />
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          value={eq.serialNo}
+                          onChange={(e) => handleEquipmentChange(index, "serialNo", e.target.value)}
+                          placeholder="e.g. VRG-Q3-01 or Asset No."
+                          className="h-8 text-xs bg-background"
+                        />
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          value={eq.handoverCondition}
+                          onChange={(e) => handleEquipmentChange(index, "handoverCondition", e.target.value)}
+                          placeholder="e.g. Good / Tested"
+                          className="h-8 text-xs bg-background"
+                        />
+                      </td>
+                      <td className="p-2">
+                        <Input
+                          value={eq.returnCondition}
+                          onChange={(e) => handleEquipmentChange(index, "returnCondition", e.target.value)}
+                          placeholder="e.g. Good / Undamaged"
+                          className="h-8 text-xs bg-background"
+                        />
+                      </td>
+                      <td className="p-2 text-center">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveEquipmentRow(index)}
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-red-400 hover:bg-red-500/10"
+                          title="Delete row"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                  {agreement.equipmentList.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="p-6 text-center text-muted-foreground text-xs">
+                        No equipment items added yet. Click &quot;Add Equipment Item&quot; above to add rows.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Headset Serial Numbers & Handover Notes */}
+            <div className="grid md:grid-cols-2 gap-4 pt-2">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                  Headset Serial Numbers (Section 5 Note)
+                </Label>
+                <textarea
+                  value={agreement.headsetSerialNumbers}
+                  onChange={(e) => setAgreement({ ...agreement, headsetSerialNumbers: e.target.value })}
+                  placeholder="e.g. VRG-Q3-01, VRG-Q3-02, VRG-Q2-03, VRG-Q2-04"
+                  rows={3}
+                  className="w-full text-xs rounded-md border border-border bg-background p-2.5 font-mono focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <span className="text-[10px] text-muted-foreground">
+                  Comma-separated serial numbers of all headsets assigned to this booking.
+                </span>
+              </div>
+
+              {/* Handover Notes */}
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-foreground">
+                  Handover Notes &amp; Special Inspection Remarks
+                </Label>
+                <textarea
+                  value={agreement.handoverNotes}
+                  onChange={(e) => setAgreement({ ...agreement, handoverNotes: e.target.value })}
+                  placeholder="Inspection notes recorded at handover..."
+                  rows={3}
+                  className="w-full text-xs rounded-md border border-border bg-background p-2.5 focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <span className="text-[10px] text-muted-foreground">
+                  Recorded in Section 35 Handover Checklist before equipment leaves VRG possession.
+                </span>
+              </div>
+            </div>
+
+            {/* Section 21 Replacement Values editor */}
+            <div className="pt-3 border-t border-border/40">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                  <DollarSign className="w-3.5 h-3.5 text-amber-400" /> Section 21 Replacement Schedule Values:
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  Standard liability schedule for lost, stolen or unrepairable equipment
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {agreement.replacementValues.map((rv, rIndex) => (
+                  <div key={rIndex} className="p-2 rounded bg-background/80 border border-border/60 space-y-1">
+                    <span className="text-[10px] text-muted-foreground font-medium block truncate">
+                      {rv.equipment}
+                    </span>
+                    <Input
+                      value={rv.value}
+                      onChange={(e) => {
+                        const nextRV = [...agreement.replacementValues]
+                        nextRV[rIndex] = { ...nextRV[rIndex], value: e.target.value }
+                        setAgreement({ ...agreement, replacementValues: nextRV })
+                      }}
+                      className="h-7 text-xs bg-background font-medium"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
