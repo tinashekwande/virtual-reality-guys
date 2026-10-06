@@ -614,7 +614,9 @@ function RentalAgreementContent() {
 
     try {
       setIsExporting(true)
-      const filename = `Rental_Agreement_${agreement.agreementNumber || "VRG"}_${agreement.renterName ? agreement.renterName.replace(/\s+/g, "_") : "Client"}`
+      const safeRenter = (agreement.renterName || "Client").replace(/[^a-zA-Z0-9_\-]/g, "_")
+      const safeNumber = (agreement.agreementNumber || "VRG").replace(/[^a-zA-Z0-9_\-]/g, "_")
+      const filename = `Rental_Agreement_${safeNumber}_${safeRenter}`
       await exportToPDF("rental-agreement-document", filename)
 
       // Restore toast display and notify user of successful PDF file generation

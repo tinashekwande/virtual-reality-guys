@@ -29,15 +29,15 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isRentalAgreement = elementId.includes("rental-agreement") || element.id.includes("rental-agreement");
 
-    // Dynamic safe scale: for tall multi-page legal contracts (> 4,000px), use 1.25 to 1.5 to prevent exceeding browser GPU canvas limits (16K px)
+    // Dynamic safe scale: for tall multi-page legal contracts (> 5,000px), use 1.5 to stay within safe GPU canvas limits
     const elHeight = element.scrollHeight || element.offsetHeight || 2000;
-    const safeScale = elHeight > 6000 ? 1.25 : elHeight > 3500 ? 1.5 : 2;
+    const safeScale = elHeight > 5000 ? 1.5 : 2;
 
     // Clone & sanitize DOM, formatting as a clean, high-definition white document PDF
     const canvas = await html2canvas(element, {
       scale: safeScale,
       useCORS: true,
-      allowTaint: true,
+      allowTaint: false,
       logging: false,
       backgroundColor: "#ffffff",
       windowWidth: 1024,
@@ -161,8 +161,6 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       },
     });
 
-    const imgData = canvas.toDataURL("image/png");
-
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -171,21 +169,48 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
 
     const pdfWidth = pdf.internal.pageSize.getWidth(); // 210mm
     const pdfHeight = pdf.internal.pageSize.getHeight(); // 297mm
-    const imgWidth = pdfWidth;
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    // Multi-page loop: cleanly split content across all necessary A4 pages
-    const totalPages = Math.max(1, Math.ceil(imgHeight / pdfHeight));
+    // Slice source canvas into distinct A4 page chunks so each page gets its own cropped image.
+    // This avoids negative offsets, oversized textures, and Chromium PDFium decoding crashes.
+    const pageCanvasHeight = Math.floor(canvas.width * (pdfHeight / pdfWidth));
+    const totalPages = Math.max(1, Math.ceil(canvas.height / pageCanvasHeight));
 
     for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
       if (pageIdx > 0) {
         pdf.addPage();
       }
-      pdf.setFillColor(255, 255, 255);
-      pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
 
-      const yOffset = -(pageIdx * pdfHeight);
-      pdf.addImage(imgData, "PNG", 0, yOffset, imgWidth, imgHeight);
+      // Create an individual sub-canvas for this specific A4 page
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = pageCanvasHeight;
+
+      const pageCtx = pageCanvas.getContext("2d");
+      if (pageCtx) {
+        // Pure white background for crisp paper rendering
+        pageCtx.fillStyle = "#ffffff";
+        pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+        const sourceY = pageIdx * pageCanvasHeight;
+        const sourceHeight = Math.min(pageCanvasHeight, canvas.height - sourceY);
+
+        if (sourceHeight > 0) {
+          pageCtx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            sourceHeight,
+            0,
+            0,
+            canvas.width,
+            sourceHeight
+          );
+        }
+
+        const pageImgData = pageCanvas.toDataURL("image/jpeg", 0.95);
+        pdf.addImage(pageImgData, "JPEG", 0, 0, pdfWidth, pdfHeight, undefined, "FAST");
+      }
     }
 
     const safeName = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
