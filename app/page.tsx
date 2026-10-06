@@ -96,8 +96,8 @@ export default async function Home() {
     "priceRange": "$$",
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "5.0",
-      "reviewCount": "38",
+      "ratingValue": "4.8",
+      "reviewCount": "10",
       "bestRating": "5",
       "worstRating": "1"
     },
