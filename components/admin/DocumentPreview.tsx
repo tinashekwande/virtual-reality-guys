@@ -2,7 +2,8 @@
 
 import React, { useRef } from "react";
 import Image from "next/image";
-import { Download, Printer, Shield, Building2, CreditCard, Hash, MapPin, User, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { Download, Printer, Shield, Building2, CreditCard, Hash, MapPin, User, CheckCircle2, FileSignature } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Invoice } from "@/types";
 import { exportToPDF, printPDFDocument } from "@/lib/pdf-generator";
@@ -51,6 +52,20 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="border-border hover:bg-secondary flex items-center gap-2"
+          >
+            <Link
+              href={`/admin/rental-agreement?name=${encodeURIComponent(invoice.client_name || "")}&email=${encodeURIComponent(invoice.client_email || "")}&phone=${encodeURIComponent(invoice.client_phone || "")}&date=${encodeURIComponent(invoice.event_date || "")}&price=${encodeURIComponent(String(invoice.total || ""))}&address=${encodeURIComponent(invoice.client_address || "")}`}
+            >
+              <FileSignature className="h-4 w-4 text-cyan-400" />
+              Rental Agreement
+            </Link>
+          </Button>
+
           <Button
             variant="outline"
             size="sm"
