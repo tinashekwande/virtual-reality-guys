@@ -122,4 +122,47 @@ export interface ExpenseItem {
   updated_at?: string
 }
 
+export type RentalAgreementStatus = 'draft' | 'active' | 'returned' | 'completed' | 'cancelled'
+
+export interface RentalAgreementRecord {
+  id: string
+  agreement_number: string
+  renter_name: string
+  renter_email?: string
+  renter_phone?: string
+  renter_id_number?: string
+  renter_address?: string
+  is_company?: boolean
+  company_name?: string
+  company_reg?: string
+  company_rep?: string
+  company_position?: string
+  start_date?: string
+  start_time?: string
+  end_date?: string
+  end_time?: string
+  delivery_address?: string
+  purpose?: string
+  purpose_other?: string
+  rental_fee: number
+  delivery_fee: number
+  other_charges: number
+  total_amount: number
+  booking_deposit_paid: number
+  deposit_date_paid?: string
+  security_deposit: number
+  status: RentalAgreementStatus
+  equipment_list: any[]
+  headset_serial_numbers?: string
+  replacement_values?: any[]
+  late_return_charge?: number
+  late_return_unit?: string
+  handover_notes?: string
+  return_notes?: string
+  full_agreement_data: any
+  created_at: string
+  updated_at?: string
+}
+
 export * from './ai'
+
