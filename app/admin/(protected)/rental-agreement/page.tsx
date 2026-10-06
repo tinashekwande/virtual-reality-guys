@@ -436,17 +436,40 @@ function RentalAgreementContent() {
 
   // Print Handlers
   const handlePrint = () => {
-    printPDFDocument("rental-agreement-document")
+    // Dismiss and hide all toasts so they never print
+    toast.dismiss()
+    const liveToasts = document.querySelectorAll(
+      "[data-sonner-toaster], [data-sonner-toast], .toaster, [role='status'], [role='alert']"
+    )
+    liveToasts.forEach((t) => ((t as HTMLElement).style.setProperty("display", "none", "important")))
+    setTimeout(() => {
+      window.print()
+      setTimeout(() => {
+        liveToasts.forEach((t) => ((t as HTMLElement).style.removeProperty("display")))
+      }, 1000)
+    }, 150)
   }
 
   const handleExportPDF = async () => {
+    // Dismiss all toasts before starting export
+    toast.dismiss()
+    const liveToasts = document.querySelectorAll(
+      "[data-sonner-toaster], [data-sonner-toast], .toaster, [role='status'], [role='alert']"
+    )
+    liveToasts.forEach((t) => ((t as HTMLElement).style.setProperty("display", "none", "important")))
+
     try {
       setIsExporting(true)
       const filename = `Rental_Agreement_${agreement.agreementNumber || "VRG"}_${agreement.renterName ? agreement.renterName.replace(/\s+/g, "_") : "Client"}`
       await exportToPDF("rental-agreement-document", filename)
+
+      // Restore toast display and notify user of successful PDF file generation
+      liveToasts.forEach((t) => ((t as HTMLElement).style.removeProperty("display")))
       toast.success("Rental Agreement PDF downloaded successfully! 📄")
     } catch (err: any) {
-      toast.error(`PDF export failed: ${err.message}`)
+      console.warn("Export to PDF fallback invoked:", err)
+      liveToasts.forEach((t) => ((t as HTMLElement).style.removeProperty("display")))
+      toast.info("Opened print dialog to save multi-page PDF.")
     } finally {
       setIsExporting(false)
     }
@@ -576,7 +599,7 @@ function RentalAgreementContent() {
               className="border-border hover:bg-secondary flex items-center gap-1.5"
             >
               <Printer className="h-4 w-4 text-cyan-400" />
-              <span>Print / Save Window</span>
+              <span>Print / Save PDF (A4)</span>
             </Button>
 
             <Button

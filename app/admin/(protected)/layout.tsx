@@ -213,9 +213,9 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
   )?.label ?? "Admin"
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background print:h-auto print:overflow-visible print:bg-white print:block">
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:w-60 md:flex-shrink-0">
+      <div className="hidden md:flex md:w-60 md:flex-shrink-0 print:hidden">
         {mounted ? (
           <AdminSidebar />
         ) : (
@@ -239,7 +239,7 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && mounted && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 md:hidden print:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
           <div className="absolute left-0 top-0 bottom-0 w-64">
             <AdminSidebar onClose={() => setSidebarOpen(false)} />
@@ -248,9 +248,9 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden print:h-auto print:overflow-visible print:block">
         {/* Top Bar */}
-        <header className="flex items-center justify-between gap-4 px-6 py-3.5 border-b border-border bg-card/50 backdrop-blur flex-shrink-0">
+        <header className="flex items-center justify-between gap-4 px-6 py-3.5 border-b border-border bg-card/50 backdrop-blur flex-shrink-0 print:hidden">
           <div className="flex items-center gap-3">
             <button className="md:hidden" onClick={() => setSidebarOpen(true)}>
               <Menu className="h-5 w-5" />
@@ -264,11 +264,13 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 print:h-auto print:overflow-visible print:p-0 print:m-0 print:block">
           {children}
         </main>
-        <PersistentAiAssistant />
-        <Toaster />
+        <div className="print:hidden">
+          <PersistentAiAssistant />
+          <Toaster />
+        </div>
       </div>
     </div>
   )
