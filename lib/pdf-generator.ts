@@ -41,6 +41,8 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       logging: false,
       backgroundColor: "#ffffff",
       windowWidth: 1024,
+      scrollX: 0,
+      scrollY: 0,
       imageTimeout: 15000,
       onclone: (clonedDoc, clonedEl) => {
         // Completely remove all toasts, alerts, headers, sidebars, and buttons from clonedDoc
@@ -68,6 +70,19 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
             node.remove();
           }
         });
+
+        // Ensure clonedDoc body and all ancestor wrappers do not clip or hide clonedEl
+        clonedDoc.body.style.overflow = "visible";
+        clonedDoc.body.style.height = "auto";
+        let curr: HTMLElement | null = clonedEl;
+        while (curr && curr !== clonedDoc.body) {
+          curr.style.display = "block";
+          curr.style.visibility = "visible";
+          curr.style.overflow = "visible";
+          curr.style.height = "auto";
+          curr.style.maxHeight = "none";
+          curr = curr.parentElement;
+        }
 
         // Set clean desktop dimensions on root clone with 100% pure white background
         clonedEl.style.width = isRentalAgreement ? "860px" : "800px";
@@ -161,6 +176,10 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       },
     });
 
+    if (!canvas || canvas.width <= 0 || canvas.height <= 0) {
+      throw new Error(`Captured canvas has invalid dimensions: ${canvas?.width || 0}x${canvas?.height || 0}`);
+    }
+
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
@@ -173,6 +192,9 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
     // Slice source canvas into distinct A4 page chunks so each page gets its own cropped image.
     // This avoids negative offsets, oversized textures, and Chromium PDFium decoding crashes.
     const pageCanvasHeight = Math.floor(canvas.width * (pdfHeight / pdfWidth));
+    if (pageCanvasHeight <= 0) {
+      throw new Error("Invalid pageCanvasHeight calculation");
+    }
     const totalPages = Math.max(1, Math.ceil(canvas.height / pageCanvasHeight));
 
     for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
@@ -213,13 +235,20 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       }
     }
 
+    // Generate ArrayBuffer and Blob to verify valid non-empty byte stream
+    const arrayBuffer = pdf.output("arraybuffer");
+    if (!arrayBuffer || arrayBuffer.byteLength < 500) {
+      throw new Error(`PDF generation produced an empty or truncated byte stream (${arrayBuffer?.byteLength || 0} bytes)`);
+    }
+
+    const blob = new Blob([arrayBuffer], { type: "application/pdf" });
     const safeName = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
 
-    // Mobile specific PDF download strategy for iOS Safari & Android Chrome
-    if (isMobile) {
-      const blob = pdf.output("blob");
+    // Download via Blob link with prolonged revoke timeout to prevent Chromium 0-byte abort
+    if ((navigator as any).msSaveOrOpenBlob) {
+      (navigator as any).msSaveOrOpenBlob(blob, safeName);
+    } else {
       const blobUrl = URL.createObjectURL(blob);
-
       const a = document.createElement("a");
       a.href = blobUrl;
       a.download = safeName;
@@ -227,14 +256,20 @@ export async function exportToPDF(elementId: string, filename: string): Promise<
       document.body.appendChild(a);
       a.click();
 
-      setTimeout(() => {
-        document.body.removeChild(a);
-        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      // On iOS Safari, also open the blob URL in a new tab so user can share/save
+      if (isMobile && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        setTimeout(() => {
           window.open(blobUrl, "_blank");
-        }
-      }, 500);
-    } else {
-      pdf.save(safeName);
+        }, 300);
+      }
+
+      // Maintain object URL for 60 seconds so browser download manager finishes streaming bytes to disk
+      setTimeout(() => {
+        try {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        } catch {}
+      }, 60000);
     }
   } catch (err) {
     console.error("Direct PDF generation error, launching clean browser print:", err);

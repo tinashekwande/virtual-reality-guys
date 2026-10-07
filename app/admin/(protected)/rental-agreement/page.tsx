@@ -588,8 +588,11 @@ function RentalAgreementContent() {
     toast.info("Started new rental agreement form.")
   }
 
-  // Print Handlers
   const handlePrint = () => {
+    // If currently in records mode, switch to preview so the document element is printable
+    if (viewMode === "records") {
+      setViewMode("preview")
+    }
     // Dismiss and hide all toasts so they never print
     toast.dismiss()
     const liveToasts = document.querySelectorAll(
@@ -614,6 +617,12 @@ function RentalAgreementContent() {
 
     try {
       setIsExporting(true)
+      // If currently in records mode, switch to preview so the document element is fully mounted and visible
+      if (viewMode === "records") {
+        setViewMode("preview")
+        await new Promise((r) => setTimeout(r, 150))
+      }
+
       const safeRenter = (agreement.renterName || "Client").replace(/[^a-zA-Z0-9_\-]/g, "_")
       const safeNumber = (agreement.agreementNumber || "VRG").replace(/[^a-zA-Z0-9_\-]/g, "_")
       const filename = `Rental_Agreement_${safeNumber}_${safeRenter}`
