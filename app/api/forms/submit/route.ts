@@ -4,8 +4,7 @@ import { sendNewLeadNotification } from '@/lib/email/notifier'
 
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
-  const body = await request.json()
-  const { name, email, phone, suburb, message, event_date, form_type = 'contact' } = body
+  const { name, email, phone, suburb, message, event_date, form_type = 'contact', game_title, game_id } = body
 
   if (!name || !email || !message) {
     return NextResponse.json({ error: 'Name, email and message are required' }, { status: 400 })
@@ -16,8 +15,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
   }
 
-  // Prepend metadata headers (event date & suburb) so they are preserved across all views
+  // Prepend metadata headers (game, event date & suburb) so they are preserved across all views
   const metaHeaders: string[] = []
+  if (game_title) metaHeaders.push(`[Booked Game: ${game_title}${game_id ? ` (ID: ${game_id})` : ''}]`)
   if (event_date) metaHeaders.push(`[Event Date: ${event_date}]`)
   if (suburb) metaHeaders.push(`[Suburb: ${suburb}]`)
 
@@ -68,8 +68,9 @@ export async function POST(request: Request) {
     suburb: suburb || null,
     eventDate: event_date || null,
     formType: form_type,
+    bookedGame: game_title || null,
     message,
-    source: form_type === 'chatbot_booking' ? 'AI Chatbot' : 'Website Form',
+    source: form_type === 'game_booking' ? 'Game Page Booking' : form_type === 'chatbot_booking' ? 'AI Chatbot' : 'Website Form',
     requestId: data?.id || null,
   }).catch((err) => {
     console.error('[forms/submit] Email notification error:', err)

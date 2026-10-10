@@ -42,7 +42,9 @@ export async function sendNewLeadNotification(params: NewLeadNotificationParams)
   }
 
   const recipients = NOTIFICATION_RECIPIENTS
-  const subject = `🎮 New VR Booking Enquiry: ${params.name} (${params.source})`
+  const subject = params.bookedGame
+    ? `🎮 New VR Booking: ${params.name} booked "${params.bookedGame}"`
+    : `🎮 New VR Booking Enquiry: ${params.name} (${params.source})`
   const html = generateLeadEmailHtml(params)
   const text = generateLeadEmailText(params)
 

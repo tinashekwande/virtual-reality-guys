@@ -40,6 +40,7 @@ export interface FormRequest {
   form_type: string
   status: RequestStatus
   created_at: string
+  booked_game?: string
 }
 
 export interface DashboardStats {

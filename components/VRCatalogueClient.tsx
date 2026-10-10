@@ -27,10 +27,12 @@ import {
   Shield,
   Play,
   Film,
-  Loader2
+  Loader2,
+  ExternalLink
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { gamesData, Game } from "@/lib/gamesData"
+import GameBookingModal from "@/components/GameBookingModal"
 
 // Category Icons Mapper
 const getCategoryIcon = (category: string) => {
@@ -63,6 +65,7 @@ export default function VRCatalogueClient() {
   const [activeCategory, setActiveCategory] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
+  const [bookingGame, setBookingGame] = useState<Game | null>(null)
   const [isPlayingTrailer, setIsPlayingTrailer] = useState<boolean>(false)
   const [mounted, setMounted] = useState<boolean>(false)
   const [hasError, setHasError] = useState<boolean>(false)
@@ -383,6 +386,21 @@ export default function VRCatalogueClient() {
                           ))}
                         </span>
                       </div>
+
+                      {/* Store Page Direct Link */}
+                      <div className="mt-3 pt-2.5 border-t border-border/20 flex items-center justify-between text-xs print:hidden">
+                        <span className="text-[11px] text-muted-foreground group-hover:text-slate-300 transition-colors">
+                          Quick Preview
+                        </span>
+                        <Link
+                          href={`/vr-games-catalogue/${game.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:text-cyan-300 py-0.5 px-2 rounded-md hover:bg-primary/10 transition-colors"
+                        >
+                          <span>Store Page</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 </div>
@@ -653,14 +671,25 @@ export default function VRCatalogueClient() {
                 Rated: <strong className="text-white">{selectedGame.suitability}</strong>
               </span>
               
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setSelectedGame(null)} className="rounded-xl border-border/80 hover:bg-secondary">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <Button variant="outline" onClick={() => setSelectedGame(null)} className="rounded-xl border-border/80 hover:bg-secondary text-xs">
                   Close
                 </Button>
-                <Button asChild className="rounded-xl font-bold bg-primary text-black hover:shadow-lg hover:shadow-primary/30">
-                  <Link href={`/contact?game=${encodeURIComponent(selectedGame.title)}`}>
-                    <CalendarCheck className="mr-2 h-4.5 w-4.5" /> Book Experience
+                <Button asChild variant="outline" className="rounded-xl border-primary/40 hover:bg-primary/10 text-primary text-xs font-semibold">
+                  <Link href={`/vr-games-catalogue/${selectedGame.id}`}>
+                    <span>Store Page</span>
+                    <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                   </Link>
+                </Button>
+                <Button 
+                  onClick={() => {
+                    const g = selectedGame
+                    setSelectedGame(null)
+                    setBookingGame(g)
+                  }}
+                  className="rounded-xl font-bold bg-primary text-black hover:shadow-lg hover:shadow-primary/30 text-xs"
+                >
+                  <CalendarCheck className="mr-1.5 h-4 w-4 fill-black" /> Book Experience
                 </Button>
               </div>
             </div>
@@ -669,6 +698,13 @@ export default function VRCatalogueClient() {
         </div>,
         document.body
       )}
+
+      {/* Direct Booking Modal */}
+      <GameBookingModal
+        game={bookingGame}
+        isOpen={!!bookingGame}
+        onClose={() => setBookingGame(null)}
+      />
 
     </div>
   )

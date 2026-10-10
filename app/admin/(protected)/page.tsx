@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Image as ImageIcon, FolderOpen, Users, ClipboardList, Upload, Plus, UserPlus, Inbox, Trash2, ShieldCheck } from "lucide-react"
+import { Image as ImageIcon, FolderOpen, Users, ClipboardList, Upload, Plus, UserPlus, Inbox, Trash2, ShieldCheck, Gamepad2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { StatCard } from "@/components/admin/stat-card"
@@ -10,6 +10,12 @@ import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import { AiCommandCenter } from "@/components/admin/ai/AiCommandCenter"
 import { AiRevenueForecast } from "@/components/admin/ai/AiRevenueForecast"
 import type { DashboardStats } from "@/types"
+
+function extractBookedGame(message?: string): string | null {
+  if (!message) return null
+  const m = message.match(/\[Booked Game:\s*([^\(\]\n]+)(?:\s*\(ID:[^\)]+\))?\]/i)
+  return m ? m[1].trim() : null
+}
 
 const STATUS_COLORS: Record<string, string> = {
   new: "bg-primary/10 text-primary border-primary/20",
@@ -159,17 +165,28 @@ export default function AdminDashboardPage() {
           <div className="divide-y divide-border">
             {stats?.recentRequests?.length === 0 ? (
               <p className="px-5 py-8 text-sm text-muted-foreground text-center">No submissions yet</p>
-            ) : stats?.recentRequests?.map(r => (
-              <div key={r.id} className="flex items-center gap-3 px-5 py-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium truncate">{r.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{r.email}</p>
+            ) : stats?.recentRequests?.map(r => {
+              const game = extractBookedGame((r as any).message)
+              return (
+                <div key={r.id} className="flex items-center gap-3 px-5 py-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">{r.name}</p>
+                      {game && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                          <Gamepad2 className="w-2.5 h-2.5 text-purple-400 flex-shrink-0" />
+                          <span className="truncate max-w-[100px]">{game}</span>
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{r.email}</p>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border ${STATUS_COLORS[r.status] ?? ''}`}>
+                    {r.status.replace('_', ' ')}
+                  </span>
                 </div>
-                <span className={`text-xs px-2 py-0.5 rounded-full border ${STATUS_COLORS[r.status] ?? ''}`}>
-                  {r.status.replace('_', ' ')}
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>

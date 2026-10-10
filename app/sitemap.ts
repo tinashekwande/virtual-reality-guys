@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { BLOG_CATEGORIES, slugify } from '@/lib/blog'
+import { gamesData } from '@/lib/gamesData'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://virtualrealityguyz.co.za'
@@ -153,6 +154,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...blogRoutes, ...categoryRoutes]
+  // Generate individual VR game experience routes dynamically
+  const gameRoutes = gamesData.map(game => ({
+    url: `${baseUrl}/vr-games-catalogue/${game.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
+  return [...staticRoutes, ...blogRoutes, ...categoryRoutes, ...gameRoutes]
 }
 

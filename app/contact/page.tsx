@@ -1,6 +1,7 @@
-﻿import type { Metadata } from "next"
+import { Suspense } from "react"
+import type { Metadata } from "next"
 import Link from "next/link"
-import { Check, Phone, Mail, MapPin, Star, Sparkles, Trophy, Calendar } from "lucide-react"
+import { Check, Phone, Mail, MapPin, Star, Sparkles, Trophy, Calendar, Loader2 } from "lucide-react"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
@@ -237,7 +238,14 @@ export default function ContactPage() {
 
           {/* Interactive Form */}
           <div className="bg-card/40 border border-border/60 p-2 sm:p-6 rounded-3xl">
-            <BookingForm />
+            <Suspense fallback={
+              <div className="p-12 text-center text-muted-foreground flex flex-col items-center gap-3">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <p className="text-xs">Loading booking form...</p>
+              </div>
+            }>
+              <BookingForm />
+            </Suspense>
           </div>
 
         </div>

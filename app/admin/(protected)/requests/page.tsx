@@ -1,8 +1,8 @@
-﻿"use client"
+"use client"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame, MapPin } from "lucide-react"
+import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame, MapPin, Gamepad2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
@@ -29,6 +29,13 @@ function extractRequestSuburb(r: FormRequest): string {
   if (explicitMatch) return explicitMatch[1].trim()
   const locMatch = r.message.match(/(?:suburb|location|area|venue)\s*[:\-]\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i)
   if (locMatch && locMatch[1].trim().length > 2) return locMatch[1].trim()
+  return ""
+}
+
+function extractBookedGame(message: string): string {
+  if (!message) return ""
+  const explicitMatch = message.match(/\[Booked Game:\s*([^\]]+)\]/i)
+  if (explicitMatch) return explicitMatch[1].trim()
   return ""
 }
 
@@ -90,31 +97,37 @@ export default function RequestsAdminPage() {
     customPrice?: number
   ) => {
     const date = extractEventDate(r.message)
+    const bookedGame = extractBookedGame(r.message)
 
     // Intelligently infer package and price based on enquiry message and player count
     let pkg = customPackage
     let price = customPrice
 
     if (!pkg || !price) {
-      const msg = (r.message || "").toLowerCase()
-      const numMatch = msg.match(/\b(\d{1,3})\s*(kids|children|players|people|guests|adults|participants|students)\b/i)
-      const count = numMatch ? parseInt(numMatch[1], 10) : 8
-
-      if (msg.includes("corporate") || msg.includes("team") || msg.includes("company") || (r.form_type || "").toLowerCase().includes("corporate")) {
-        pkg = "Corporate Event VR Package (6-8 Headsets, 4 Hours)"
-        price = 1499
-      } else if (msg.includes("school") || (r.form_type || "").toLowerCase().includes("school")) {
-        pkg = "School / Educational VR Experience (4 Headsets, 2 Hours)"
-        price = 899
-      } else if (count <= 5) {
-        pkg = "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)"
-        price = 899
-      } else if (count > 10) {
-        pkg = "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)"
-        price = 1499
+      if (bookedGame) {
+        pkg = `VR Game Experience featuring ${bookedGame} (4 Headsets, 2-3 Hours)`
+        price = 1199
       } else {
-        pkg = "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)"
-        price = 1299
+        const msg = (r.message || "").toLowerCase()
+        const numMatch = msg.match(/\b(\d{1,3})\s*(kids|children|players|people|guests|adults|participants|students)\b/i)
+        const count = numMatch ? parseInt(numMatch[1], 10) : 8
+
+        if (msg.includes("corporate") || msg.includes("team") || msg.includes("company") || (r.form_type || "").toLowerCase().includes("corporate")) {
+          pkg = "Corporate Event VR Package (6-8 Headsets, 4 Hours)"
+          price = 1499
+        } else if (msg.includes("school") || (r.form_type || "").toLowerCase().includes("school")) {
+          pkg = "School / Educational VR Experience (4 Headsets, 2 Hours)"
+          price = 899
+        } else if (count <= 5) {
+          pkg = "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)"
+          price = 899
+        } else if (count > 10) {
+          pkg = "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)"
+          price = 1499
+        } else {
+          pkg = "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)"
+          price = 1299
+        }
       }
     }
 
@@ -286,7 +299,15 @@ export default function RequestsAdminPage() {
                   return (
                     <tr key={r.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => handleOpenRequest(r)}>
                       <td className="px-5 py-4">
-                        <div className="font-semibold text-foreground">{r.name}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-foreground">{r.name}</span>
+                          {extractBookedGame(r.message) && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                              <Gamepad2 className="w-3 h-3 text-purple-400 flex-shrink-0" />
+                              <span className="truncate max-w-[130px]">{extractBookedGame(r.message)}</span>
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[11px] text-muted-foreground truncate max-w-[180px]">{r.email}</div>
                       </td>
                       <td className="px-5 py-4">
@@ -399,6 +420,24 @@ export default function RequestsAdminPage() {
                     </div>
                   )
                 })()}
+
+                {/* Booked Game Experience Badge */}
+                {extractBookedGame(selected.message) && (
+                  <div className="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-lg bg-purple-500/20 text-purple-300">
+                        <Gamepad2 className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase font-bold text-purple-400 tracking-wider">Booked VR Game Experience</p>
+                        <p className="text-xs font-bold text-foreground">{extractBookedGame(selected.message)}</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-semibold text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-md border border-purple-500/30">
+                      Direct Game Lead
+                    </span>
+                  </div>
+                )}
 
                 {/* Contact info */}
                 <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-secondary/20 border border-border/40">

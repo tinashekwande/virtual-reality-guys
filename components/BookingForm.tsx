@@ -1,17 +1,21 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowRight } from "lucide-react"
+import { useState, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
+import { ArrowRight, Gamepad2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CyberButton } from "@/components/ui/cyber-button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export default function BookingForm() {
+function BookingFormInner() {
+  const searchParams = useSearchParams()
+  const gameParam = searchParams?.get("game") || ""
+
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = useState("")
-  const [formType, setFormType] = useState("contact")
+  const [formType, setFormType] = useState(gameParam ? "birthday" : "contact")
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -25,7 +29,8 @@ export default function BookingForm() {
       suburb: fd.get("suburb"),
       event_date: fd.get("event_date"),
       message: fd.get("message"),
-      form_type: formType,
+      form_type: gameParam ? "game_booking" : formType,
+      game_title: gameParam || undefined,
     }
 
     const res = await fetch("/api/forms/submit", {
@@ -56,7 +61,18 @@ export default function BookingForm() {
   }
 
   return (
-    <div className="bg-secondary rounded-2xl p-8 border border-border">
+    <div className="bg-secondary rounded-2xl p-8 border border-border space-y-4">
+      {gameParam && (
+        <div className="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <Gamepad2 className="h-4 w-4 text-purple-400" />
+            <span>Selected Experience: <strong className="text-white">{gameParam}</strong></span>
+          </div>
+          <span className="text-[10px] font-bold text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-full">
+            Direct Game Lead
+          </span>
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -128,5 +144,18 @@ export default function BookingForm() {
         </CyberButton>
       </form>
     </div>
+  )
+}
+
+export default function BookingForm() {
+  return (
+    <Suspense fallback={
+      <div className="bg-secondary rounded-2xl p-8 border border-border text-center space-y-3">
+        <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto" />
+        <p className="text-xs text-muted-foreground">Loading booking form...</p>
+      </div>
+    }>
+      <BookingFormInner />
+    </Suspense>
   )
 }
