@@ -130,6 +130,17 @@ function QuotesInvoicesContent() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    const editId = searchParams.get("edit");
+    if (editId && invoices.length > 0) {
+      const target = invoices.find((i) => i.id === editId);
+      if (target) {
+        setSelectedInvoice(target);
+        setViewMode("edit");
+      }
+    }
+  }, [searchParams, invoices]);
+
   const handleCreateNew = (type: InvoiceType) => {
     setSelectedInvoice({
       type,

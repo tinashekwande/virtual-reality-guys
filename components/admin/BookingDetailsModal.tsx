@@ -269,7 +269,11 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         )}
 
         {/* Date & Time Highlights */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/60 p-4 rounded-2xl border border-cyan-900/40">
+        <div
+          onClick={() => setIsRescheduling(true)}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/60 p-4 rounded-2xl border border-cyan-900/40 cursor-pointer hover:border-cyan-500/50 transition-all group"
+          title="Click to edit date and time slot"
+        >
           <div className="space-y-1">
             <p className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Event Date</p>
             <p className="text-sm font-bold font-tech text-white flex items-center gap-1.5">
@@ -279,7 +283,12 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
           </div>
 
           <div className="space-y-1">
-            <p className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Time / Slot</p>
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Time / Slot</p>
+              <span className="text-[9px] text-cyan-400/80 group-hover:text-cyan-300 flex items-center gap-0.5 font-sans">
+                <Edit3 className="h-2.5 w-2.5" /> Edit
+              </span>
+            </div>
             <p className="text-sm font-bold font-tech text-cyan-300 flex items-center gap-1.5">
               <Clock className="h-4 w-4 text-cyan-400" />
               {event.time || (event.start_time ? `${event.start_time}${event.end_time ? ` - ${event.end_time}` : ""}` : "Time TBC")}
@@ -398,6 +407,18 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
                 Create Quote
               </Button>
             </div>
+
+            {isInvoice && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push(`/admin/quotes-invoices?edit=${event.id}`)}
+                className="w-full text-xs border-cyan-900/60 text-cyan-300 hover:bg-cyan-950 rounded-xl flex items-center justify-center gap-1.5 mt-2"
+              >
+                <Edit3 className="h-3.5 w-3.5" />
+                Edit Full {event.raw_data?.type === "quote" ? "Quote" : "Invoice"} in Document Editor →
+              </Button>
+            )}
           </div>
         )}
 
@@ -451,8 +472,8 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         {/* Reschedule Drawer Section */}
         <div className="bg-slate-900/60 p-5 rounded-2xl border border-cyan-900/40 space-y-3">
           <div className="flex justify-between items-center">
-            <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400">
-              Reschedule Event Date
+            <h4 className="text-xs font-bold font-tech uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+              <Clock className="h-4 w-4 text-cyan-400" /> Edit Date & Time Slot
             </h4>
             <Button
               variant="outline"
@@ -460,7 +481,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
               onClick={() => setIsRescheduling(!isRescheduling)}
               className="text-xs border-cyan-900/50 hover:bg-cyan-950 text-cyan-300 rounded-xl"
             >
-              {isRescheduling ? "Cancel" : "Reschedule Date"}
+              {isRescheduling ? "Cancel" : "Change Date / Time"}
             </Button>
           </div>
 
@@ -468,7 +489,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
             <div className="space-y-3 pt-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[11px] text-slate-400 block mb-1">New Event Date:</label>
+                  <label className="text-[11px] text-slate-400 block mb-1 font-medium">Event Date:</label>
                   <Input
                     type="date"
                     value={rescheduleDate}
@@ -477,7 +498,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] text-slate-400 block mb-1">New Time / Slot:</label>
+                  <label className="text-[11px] text-slate-400 block mb-1 font-medium">Event Time / Slot:</label>
                   <Input
                     type="text"
                     value={rescheduleTime}
@@ -487,12 +508,28 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
                   />
                 </div>
               </div>
+
+              {/* Quick time slot presets */}
+              <div className="flex flex-wrap gap-1.5 pt-1 items-center">
+                <span className="text-[10px] text-slate-500 mr-1">Quick Slots:</span>
+                {["10:00 - 13:00", "14:00 - 17:00", "15:00 - 18:00", "18:00 - 21:00"].map((slot) => (
+                  <button
+                    key={slot}
+                    type="button"
+                    onClick={() => setRescheduleTime(slot)}
+                    className="text-[10px] px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-cyan-950 text-slate-300 hover:text-cyan-300 border border-slate-700 transition-colors"
+                  >
+                    {slot}
+                  </button>
+                ))}
+              </div>
+
               <Button
                 onClick={handleReschedule}
                 disabled={updating}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl py-2"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl py-2 mt-2 shadow-lg shadow-primary/20"
               >
-                Confirm Reschedule
+                {updating ? "Saving Changes..." : "Save Date & Time"}
               </Button>
             </div>
           )}
