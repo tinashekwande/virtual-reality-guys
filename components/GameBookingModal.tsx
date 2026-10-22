@@ -6,6 +6,7 @@ import Image from "next/image"
 import { 
   X, 
   Calendar, 
+  Clock,
   MapPin, 
   User, 
   Mail, 
@@ -41,6 +42,7 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
   const [phone, setPhone] = useState("")
   const [suburb, setSuburb] = useState("")
   const [eventDate, setEventDate] = useState("")
+  const [eventTime, setEventTime] = useState("14:00")
   const [eventType, setEventType] = useState("birthday")
   const [guestsCount, setGuestsCount] = useState("6-10")
   const [notes, setNotes] = useState("")
@@ -83,6 +85,7 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
         phone,
         suburb,
         event_date: eventDate,
+        event_time: eventTime,
         form_type: "game_booking",
         game_id: game.id,
         game_title: game.title,
@@ -116,12 +119,13 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
     setPhone("")
     setSuburb("")
     setEventDate("")
+    setEventTime("14:00")
     setNotes("")
     onClose()
   }
 
   const whatsappMessage = encodeURIComponent(
-    `Hi VR Guys! I'm interested in booking the "${game.title}" VR experience for my event on ${eventDate || "[date]"}. My name is ${name || "[name]"}.`
+    `Hi VR Guys! I'm interested in booking the "${game.title}" VR experience for my event on ${eventDate || "[date]"}${eventTime ? ` at ${eventTime}` : ""}. My name is ${name || "[name]"}.`
   )
 
   const modalContent = (
@@ -196,8 +200,8 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
                   <span className="font-semibold text-white">{name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Event Date:</span>
-                  <span className="font-semibold text-white">{eventDate || "To be confirmed"}</span>
+                  <span className="text-muted-foreground">Event Date & Time:</span>
+                  <span className="font-semibold text-white">{eventDate || "To be confirmed"}{eventTime ? ` at ${eventTime}` : ""}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Suburb:</span>
@@ -295,11 +299,11 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
                 </div>
               </div>
 
-              {/* Date & Event Type */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              {/* Date, Time & Event Type */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-primary" /> Preferred Event Date *
+                    <Calendar className="h-3.5 w-3.5 text-primary" /> Event Date *
                   </label>
                   <Input
                     required
@@ -307,6 +311,18 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
                     min={new Date().toISOString().split("T")[0]}
                     value={eventDate}
                     onChange={e => setEventDate(e.target.value)}
+                    className="bg-background/60 border-border/70 rounded-xl text-xs h-10"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-primary" /> Start Time *
+                  </label>
+                  <Input
+                    required
+                    type="time"
+                    value={eventTime}
+                    onChange={e => setEventTime(e.target.value)}
                     className="bg-background/60 border-border/70 rounded-xl text-xs h-10"
                   />
                 </div>

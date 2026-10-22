@@ -4,6 +4,7 @@ export interface NewLeadNotificationParams {
   phone?: string | null
   suburb?: string | null
   eventDate?: string | null
+  eventTime?: string | null
   formType: string
   bookedGame?: string | null
   message: string
@@ -51,7 +52,7 @@ function formatFormType(type: string): string {
 }
 
 export function generateLeadEmailHtml(params: NewLeadNotificationParams): string {
-  const { name, email, phone, suburb, eventDate, formType, bookedGame, message, source } = params
+  const { name, email, phone, suburb, eventDate, eventTime, formType, bookedGame, message, source } = params
   const whatsappUrl = getWhatsAppLink(phone)
   const friendlyFormType = formatFormType(formType)
   const adminUrl = process.env.NEXT_PUBLIC_SITE_URL
@@ -123,6 +124,14 @@ export function generateLeadEmailHtml(params: NewLeadNotificationParams): string
                   <td style="padding: 16px 20px; border-bottom: 1px solid #334155;">
                     <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Requested Event Date</span>
                     <strong style="font-size: 15px; color: #facc15;">📅 ${eventDate}</strong>
+                  </td>
+                </tr>
+                ` : ''}
+                ${eventTime ? `
+                <tr>
+                  <td style="padding: 16px 20px; border-bottom: 1px solid #334155;">
+                    <span style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Requested Event Time</span>
+                    <strong style="font-size: 15px; color: #38bdf8;">⏰ ${eventTime}</strong>
                   </td>
                 </tr>
                 ` : ''}
@@ -200,7 +209,7 @@ export function generateLeadEmailHtml(params: NewLeadNotificationParams): string
 }
 
 export function generateLeadEmailText(params: NewLeadNotificationParams): string {
-  const { name, email, phone, suburb, eventDate, formType, bookedGame, message, source } = params
+  const { name, email, phone, suburb, eventDate, eventTime, formType, bookedGame, message, source } = params
   const friendlyFormType = formatFormType(formType)
 
   return `
@@ -210,7 +219,7 @@ export function generateLeadEmailText(params: NewLeadNotificationParams): string
 Source: ${source}
 Client Name: ${name}
 Event Type: ${friendlyFormType}
-${bookedGame ? `🎮 Booked VR Game: ${bookedGame}\n` : ''}${eventDate ? `Requested Date: ${eventDate}\n` : ''}${suburb ? `Location / Suburb: ${suburb}\n` : ''}Email: ${email}
+${bookedGame ? `🎮 Booked VR Game: ${bookedGame}\n` : ''}${eventDate ? `Requested Date: ${eventDate}\n` : ''}${eventTime ? `Requested Time: ${eventTime}\n` : ''}${suburb ? `Location / Suburb: ${suburb}\n` : ''}Email: ${email}
 ${phone ? `Phone / WhatsApp: ${phone}\n` : ''}
 ---------------------------------------------------
 CUSTOMER MESSAGE & DETAILS:

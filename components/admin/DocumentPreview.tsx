@@ -59,7 +59,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
             className="border-border hover:bg-secondary flex items-center gap-2"
           >
             <Link
-              href={`/admin/rental-agreement?name=${encodeURIComponent(invoice.client_name || "")}&email=${encodeURIComponent(invoice.client_email || "")}&phone=${encodeURIComponent(invoice.client_phone || "")}&date=${encodeURIComponent(invoice.event_date || "")}&price=${encodeURIComponent(String(invoice.total || ""))}&address=${encodeURIComponent(invoice.client_address || "")}`}
+              href={`/admin/rental-agreement?name=${encodeURIComponent(invoice.client_name || "")}&email=${encodeURIComponent(invoice.client_email || "")}&phone=${encodeURIComponent(invoice.client_phone || "")}&date=${encodeURIComponent(invoice.event_date || "")}&time=${encodeURIComponent(invoice.event_time || "")}&price=${encodeURIComponent(String(invoice.total || ""))}&address=${encodeURIComponent(invoice.client_address || "")}`}
             >
               <FileSignature className="h-4 w-4 text-cyan-400" />
               Rental Agreement
@@ -191,6 +191,11 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
               </p>
             ) : (
               <p className="text-xs text-slate-400 print:text-slate-600">Event date to be confirmed</p>
+            )}
+            {invoice.event_time && (
+              <p className="text-sm font-semibold text-white print:text-black">
+                ⏰ Time / Slot: <span className="text-cyan-300 print:text-cyan-800">{invoice.event_time}</span>
+              </p>
             )}
             <p className="text-xs text-slate-400 leading-relaxed pt-1 print:text-slate-700">
               Includes full mobile VR setup, calibrated safety zoning, clean medical sanitization, and trained on-site supervisors.

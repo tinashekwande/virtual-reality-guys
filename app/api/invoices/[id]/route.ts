@@ -8,15 +8,23 @@ interface Props {
 
 function normalizeInvoice(inv: any) {
   if (!inv) return inv
-  if (typeof inv.notes === 'string' && inv.notes.includes('[STATUS:')) {
-    const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
-    if (match && match[1]) {
-      // Only let [STATUS:...] override if the database status is 'sent' (used as a fallback placeholder for pending/deposit_paid)
-      // If the database status is explicitly 'paid', 'cancelled', or 'draft', trust the real database status!
-      if (inv.status === 'sent') {
-        inv.status = match[1]
+  if (typeof inv.notes === 'string') {
+    if (inv.notes.includes('[STATUS:')) {
+      const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
+      if (match && match[1]) {
+        // Only let [STATUS:...] override if the database status is 'sent' (used as a fallback placeholder for pending/deposit_paid)
+        // If the database status is explicitly 'paid', 'cancelled', or 'draft', trust the real database status!
+        if (inv.status === 'sent') {
+          inv.status = match[1]
+        }
+        inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
       }
-      inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
+    }
+    if (inv.notes.includes('[TIME:')) {
+      const timeMatch = inv.notes.match(/\[TIME:([^\]]+)\]/)
+      if (timeMatch && timeMatch[1]) {
+        inv.event_time = timeMatch[1].trim()
+      }
     }
   }
   return inv
@@ -61,6 +69,7 @@ export async function PUT(request: Request, { params }: Props) {
   if (body.client_phone !== undefined) updatePayload.client_phone = body.client_phone
   if (body.client_address !== undefined) updatePayload.client_address = body.client_address
   if (body.event_date !== undefined) updatePayload.event_date = body.event_date
+  if (body.event_time !== undefined) updatePayload.event_time = body.event_time
   if (body.issue_date !== undefined) updatePayload.issue_date = body.issue_date
   if (body.due_date !== undefined) updatePayload.due_date = body.due_date
   if (body.status !== undefined) updatePayload.status = body.status
@@ -71,17 +80,22 @@ export async function PUT(request: Request, { params }: Props) {
   if (body.total !== undefined) updatePayload.total = body.total
   if (body.deposit_percentage !== undefined) updatePayload.deposit_percentage = Number(body.deposit_percentage)
 
-  // Clean stale [STATUS:...] tag from notes when status or notes is updated
+  // Clean stale [STATUS:...] and update [TIME:...] tag from notes when updated
   let currentNotes = body.notes
-  if (currentNotes === undefined && body.status !== undefined) {
+  if (currentNotes === undefined && (body.status !== undefined || body.event_time !== undefined)) {
     const { data: currentInv } = await admin.from('invoices').select('notes').eq('id', id).single()
-    if (currentInv?.notes && currentInv.notes.includes('[STATUS:')) {
+    if (currentInv?.notes) {
       currentNotes = currentInv.notes
     }
   }
 
-  if (currentNotes !== undefined) {
-    updatePayload.notes = (currentNotes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim()
+  if (currentNotes !== undefined || body.event_time !== undefined) {
+    let cleanNotes = (currentNotes || '').replace(/\[STATUS:[^\]]+\]/g, '').replace(/\[TIME:[^\]]+\]/g, '').trim()
+    const finalTime = body.event_time !== undefined ? body.event_time : ''
+    if (finalTime) {
+      cleanNotes = `${cleanNotes} [TIME:${finalTime.trim()}]`.trim()
+    }
+    updatePayload.notes = cleanNotes
   }
 
   let { data, error } = await admin
@@ -90,6 +104,19 @@ export async function PUT(request: Request, { params }: Props) {
     .eq('id', id)
     .select()
     .single()
+
+  // Fallback: if event_time column has not been added to DB yet
+  if (error && error.message?.includes('event_time')) {
+    delete updatePayload.event_time
+    const retry = await admin
+      .from('invoices')
+      .update(updatePayload)
+      .eq('id', id)
+      .select()
+      .single()
+    data = retry.data
+    error = retry.error
+  }
 
   // Fallback 1: if deposit_percentage column has not been added to DB yet
   if (error && error.message?.includes('deposit_percentage')) {

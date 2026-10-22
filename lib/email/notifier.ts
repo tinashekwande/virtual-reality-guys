@@ -42,9 +42,11 @@ export async function sendNewLeadNotification(params: NewLeadNotificationParams)
   }
 
   const recipients = NOTIFICATION_RECIPIENTS
+  const timeInfo = params.eventTime ? ` at ${params.eventTime}` : ''
+  const dateInfo = params.eventDate ? ` (${params.eventDate}${timeInfo})` : ''
   const subject = params.bookedGame
-    ? `🎮 New VR Booking: ${params.name} booked "${params.bookedGame}"`
-    : `🎮 New VR Booking Enquiry: ${params.name} (${params.source})`
+    ? `🎮 New VR Booking: ${params.name} booked "${params.bookedGame}"${dateInfo}`
+    : `🎮 New VR Booking: ${params.name}${dateInfo} [${params.source}]`
   const html = generateLeadEmailHtml(params)
   const text = generateLeadEmailText(params)
 

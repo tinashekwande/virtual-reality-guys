@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -61,6 +61,7 @@ function QuotesInvoicesContent() {
       const email = searchParams.get("email") || "";
       const phone = searchParams.get("phone") || "";
       const date = searchParams.get("date") || "";
+      const time = searchParams.get("time") || "";
       const address = searchParams.get("address") || "";
       const notes = searchParams.get("notes") || "";
       const packageType = searchParams.get("package") || "";
@@ -114,6 +115,7 @@ function QuotesInvoicesContent() {
         client_phone: phone,
         client_address: address,
         event_date: date,
+        event_time: time,
         issue_date: new Date().toISOString().split("T")[0],
         due_date: date || new Date().toISOString().split("T")[0],
         notes: notes ? `Client Request Notes:\n${notes}` : "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time.",

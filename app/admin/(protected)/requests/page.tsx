@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame, MapPin, Gamepad2 } from "lucide-react"
+import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame, MapPin, Gamepad2, Clock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import { AiMessageGeneratorModal } from "@/components/admin/ai/AiMessageGeneratorModal"
 import { calculateLeadScore } from "@/lib/ai/lead-scoring"
+import { extractTimeFromText } from "@/lib/time-utils"
 import { toast } from "sonner"
 import type { FormRequest, RequestStatus } from "@/types"
 
@@ -132,6 +133,7 @@ export default function RequestsAdminPage() {
     }
 
     const suburb = extractRequestSuburb(r)
+    const time = extractTimeFromText(r.message) || ""
     const params = new URLSearchParams({
       create: type,
       name: r.name,
@@ -139,6 +141,7 @@ export default function RequestsAdminPage() {
       phone: r.phone || "",
       address: suburb || "",
       date: date || "",
+      time: time,
       package: pkg,
       price: String(price),
       notes: r.message || "",
@@ -344,7 +347,13 @@ export default function RequestsAdminPage() {
                         </Select>
                       </td>
                       <td className="px-5 py-4 text-muted-foreground hidden lg:table-cell">
-                        {new Date(r.created_at).toLocaleDateString()}
+                        <div>{new Date(r.created_at).toLocaleDateString()}</div>
+                        {extractTimeFromText(r.message) && (
+                          <div className="text-[10px] text-cyan-400 font-mono flex items-center gap-1 mt-0.5 font-semibold">
+                            <Clock className="w-2.5 h-2.5 flex-shrink-0" />
+                            <span>{extractTimeFromText(r.message)}</span>
+                          </div>
+                        )}
                       </td>
                       <td className="px-5 py-4" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center gap-1.5 justify-end">
@@ -458,6 +467,19 @@ export default function RequestsAdminPage() {
                     <p className="font-bold text-cyan-400 mt-0.5 flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
                       <span>{extractRequestSuburb(selected) || "Not specified"}</span>
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-[10px] font-semibold uppercase">Requested Date</p>
+                    <p className="font-bold text-amber-400 mt-0.5">
+                      {extractEventDate(selected.message) || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-[10px] font-semibold uppercase">Requested Time</p>
+                    <p className="font-bold text-cyan-400 mt-0.5 flex items-center gap-1 font-mono">
+                      <Clock className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
+                      <span>{extractTimeFromText(selected.message) || "Flexible / Not specified"}</span>
                     </p>
                   </div>
                   <div className="col-span-2">

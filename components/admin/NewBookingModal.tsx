@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Calendar, User, Mail, Phone, MapPin, DollarSign, Save, X, Sparkles, Flag, Tag, Receipt } from "lucide-react";
+import { Plus, Calendar, Clock, User, Mail, Phone, MapPin, DollarSign, Save, X, Sparkles, Flag, Tag, Receipt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,6 +47,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
   const [clientPhone, setClientPhone] = useState("");
   const [clientAddress, setClientAddress] = useState("");
   const [eventDate, setEventDate] = useState(selectedDate || new Date().toISOString().split("T")[0]);
+  const [eventTime, setEventTime] = useState("14:00 - 17:00");
   const [packagePreset, setPackagePreset] = useState("Standard VR Package (4 Headsets, 3 Hours, 2 Staff)");
   const [price, setPrice] = useState(899);
   const [notes, setNotes] = useState("");
@@ -55,6 +56,8 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
   const [eventTitle, setEventTitle] = useState("");
   const [eventType, setEventType] = useState("Corporate Activation");
   const [eventLocation, setEventLocation] = useState("");
+  const [startTime, setStartTime] = useState("10:00");
+  const [endTime, setEndTime] = useState("16:00");
   const [eventRevenue, setEventRevenue] = useState(0);
   const [eventExpenses, setEventExpenses] = useState(0);
   const [eventDescription, setEventDescription] = useState("");
@@ -90,6 +93,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
         client_phone: clientPhone,
         client_address: clientAddress,
         event_date: eventDate,
+        event_time: eventTime,
         issue_date: new Date().toISOString().split("T")[0],
         due_date: eventDate,
         status: "draft",
@@ -142,6 +146,8 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
       const newEventPayload = {
         title: eventTitle,
         event_date: eventDate,
+        start_time: startTime,
+        end_time: endTime,
         event_type: eventType,
         location: eventLocation,
         description: eventDescription,
@@ -211,7 +217,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
 
         {entryKind === "booking" ? (
           <form onSubmit={handleSubmitBooking} className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="text-slate-400 font-semibold mb-1 block">Document Type</label>
                 <Select value={docType} onValueChange={(val: any) => setDocType(val)}>
@@ -233,6 +239,17 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
                   onChange={(e) => setEventDate(e.target.value)}
                   className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
                   required
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400 font-semibold mb-1 block">Time / Slot</label>
+                <Input
+                  type="text"
+                  value={eventTime}
+                  onChange={(e) => setEventTime(e.target.value)}
+                  placeholder="e.g. 14:00 - 17:00"
+                  className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
                 />
               </div>
             </div>
@@ -342,18 +359,18 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
           </form>
         ) : (
           <form onSubmit={handleSubmitEvent} className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-purple-300 font-semibold mb-1 block">Event Title *</label>
-                <Input
-                  value={eventTitle}
-                  onChange={(e) => setEventTitle(e.target.value)}
-                  placeholder="e.g. Cape Town Tech Expo 2026"
-                  className="bg-slate-950 border-purple-900/60 text-xs rounded-xl"
-                  required
-                />
-              </div>
+            <div>
+              <label className="text-purple-300 font-semibold mb-1 block">Event Title *</label>
+              <Input
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                placeholder="e.g. Cape Town Tech Expo 2026"
+                className="bg-slate-950 border-purple-900/60 text-xs rounded-xl"
+                required
+              />
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="text-slate-400 font-semibold mb-1 block">Event Date *</label>
                 <Input
@@ -362,6 +379,26 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
                   onChange={(e) => setEventDate(e.target.value)}
                   className="bg-slate-950 border-purple-900/60 text-xs rounded-xl"
                   required
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400 font-semibold mb-1 block">Start Time</label>
+                <Input
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className="bg-slate-950 border-purple-900/60 text-xs rounded-xl"
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400 font-semibold mb-1 block">End Time</label>
+                <Input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="bg-slate-950 border-purple-900/60 text-xs rounded-xl"
                 />
               </div>
             </div>

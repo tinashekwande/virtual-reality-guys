@@ -4,15 +4,23 @@ import { requireAdmin } from '@/lib/auth'
 
 function normalizeInvoice(inv: any) {
   if (!inv) return inv
-  if (typeof inv.notes === 'string' && inv.notes.includes('[STATUS:')) {
-    const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
-    if (match && match[1]) {
-      // Only let [STATUS:...] override if the database status is 'sent' (used as a fallback placeholder for pending/deposit_paid)
-      // If the database status is explicitly 'paid', 'cancelled', or 'draft', trust the real database status!
-      if (inv.status === 'sent') {
-        inv.status = match[1]
+  if (typeof inv.notes === 'string') {
+    if (inv.notes.includes('[STATUS:')) {
+      const match = inv.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
+      if (match && match[1]) {
+        // Only let [STATUS:...] override if the database status is 'sent' (used as a fallback placeholder for pending/deposit_paid)
+        // If the database status is explicitly 'paid', 'cancelled', or 'draft', trust the real database status!
+        if (inv.status === 'sent') {
+          inv.status = match[1]
+        }
+        inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
       }
-      inv.notes = inv.notes.replace(/\[STATUS:[a-zA-Z0-9_]+\]/g, '').trim()
+    }
+    if (inv.notes.includes('[TIME:')) {
+      const timeMatch = inv.notes.match(/\[TIME:([^\]]+)\]/)
+      if (timeMatch && timeMatch[1]) {
+        inv.event_time = timeMatch[1].trim()
+      }
     }
   }
   return inv
@@ -54,6 +62,9 @@ export async function POST(request: Request) {
     const body = await request.json()
     const admin = createAdminClient()
 
+    const timeTag = body.event_time ? ` [TIME:${body.event_time.trim()}]` : ''
+    const cleanNotes = (body.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').replace(/\[TIME:[^\]]+\]/g, '').trim()
+
     const insertPayload: any = {
       type: body.type || 'quote',
       doc_number: body.doc_number,
@@ -62,6 +73,7 @@ export async function POST(request: Request) {
       client_phone: body.client_phone || '',
       client_address: body.client_address || '',
       event_date: body.event_date || '',
+      event_time: body.event_time || '',
       issue_date: body.issue_date || new Date().toISOString().split('T')[0],
       due_date: body.due_date || '',
       status: body.status || 'draft',
@@ -71,7 +83,7 @@ export async function POST(request: Request) {
       transport_fee: body.transport_fee || 0,
       total: body.total || 0,
       deposit_percentage: body.deposit_percentage !== undefined ? Number(body.deposit_percentage) : 0,
-      notes: (body.notes || '').replace(/\[STATUS:[^\]]+\]/g, '').trim(),
+      notes: `${cleanNotes}${timeTag}`.trim(),
     }
 
     let { data, error } = await admin
@@ -79,6 +91,18 @@ export async function POST(request: Request) {
       .insert([insertPayload])
       .select()
       .single()
+
+    // Fallback: if event_time column has not been added to DB yet
+    if (error && error.message?.includes('event_time')) {
+      delete insertPayload.event_time
+      const retry = await admin
+        .from('invoices')
+        .insert([insertPayload])
+        .select()
+        .single()
+      data = retry.data
+      error = retry.error
+    }
 
     // Fallback 1: if deposit_percentage column has not been added to DB yet
     if (error && error.message?.includes('deposit_percentage')) {

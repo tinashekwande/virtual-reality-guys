@@ -27,6 +27,8 @@ export interface PlannerEvent {
   client_address?: string;
   date: string; // YYYY-MM-DD
   time?: string;
+  start_time?: string;
+  end_time?: string;
   event_type: string;
   status: string;
   total_amount?: number;
@@ -36,6 +38,7 @@ export interface PlannerEvent {
   items?: any[];
   raw_data: any;
   has_conflict?: boolean;
+  conflict_details?: string;
 }
 
 export function getStatusLabel(status: string): string {
@@ -98,10 +101,18 @@ interface BookingDetailsModalProps {
 export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }: BookingDetailsModalProps) {
   const router = useRouter();
   const [rescheduleDate, setRescheduleDate] = useState("");
+  const [rescheduleTime, setRescheduleTime] = useState("");
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [isPlannerOpen, setIsPlannerOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (event) {
+      setRescheduleDate(event.date || "");
+      setRescheduleTime(event.time || (event.start_time ? `${event.start_time}${event.end_time ? ` - ${event.end_time}` : ""}` : ""));
+    }
+  }, [event]);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -121,6 +132,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
       email: event.client_email || "",
       phone: event.client_phone || "",
       date: event.date || "",
+      time: event.time || (event.start_time ? `${event.start_time}${event.end_time ? ` - ${event.end_time}` : ""}` : ""),
       package: event.event_type || "",
       address: event.client_address || "",
       notes: event.notes_or_message || "",
@@ -175,13 +187,20 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         const res = await fetch(`/api/invoices/${event.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...event.raw_data, event_date: rescheduleDate }),
+          body: JSON.stringify({ ...event.raw_data, event_date: rescheduleDate, event_time: rescheduleTime }),
+        });
+        if (!res.ok) throw new Error("Failed to reschedule.");
+      } else if (event.source === "event") {
+        const res = await fetch(`/api/events/${event.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...event.raw_data, event_date: rescheduleDate, start_time: rescheduleTime }),
         });
         if (!res.ok) throw new Error("Failed to reschedule.");
       } else {
         // Append updated event date in message if request
         const currentMsg = event.raw_data.message || "";
-        const updatedMsg = `[Rescheduled Event Date: ${rescheduleDate}]\n${currentMsg}`;
+        const updatedMsg = `[Rescheduled Event: ${rescheduleDate}${rescheduleTime ? ` ${rescheduleTime}` : ""}]\n${currentMsg}`;
         const res = await fetch(`/api/requests/${event.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -190,7 +209,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         if (!res.ok) throw new Error("Failed to reschedule.");
       }
 
-      toast.success(`Booking rescheduled to ${rescheduleDate}! 📅`);
+      toast.success(`Booking rescheduled to ${rescheduleDate}${rescheduleTime ? ` (${rescheduleTime})` : ""}! 📅`);
       setIsRescheduling(false);
       onUpdate();
     } catch (err: any) {
@@ -243,14 +262,14 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
             <div className="space-y-1 text-xs">
               <p className="font-bold text-amber-400">Schedule Conflict Detected</p>
               <p className="text-amber-200/80">
-                Another VR booking is scheduled on this same date ({event.date}). Please review logistics and equipment allocation.
+                {event.conflict_details || `Another VR booking is scheduled on this date (${event.date}). Please review timing, turnaround travel, and equipment allocation.`}
               </p>
             </div>
           </div>
         )}
 
         {/* Date & Time Highlights */}
-        <div className="grid grid-cols-2 gap-3 bg-slate-900/60 p-4 rounded-2xl border border-cyan-900/40">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/60 p-4 rounded-2xl border border-cyan-900/40">
           <div className="space-y-1">
             <p className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Event Date</p>
             <p className="text-sm font-bold font-tech text-white flex items-center gap-1.5">
@@ -260,10 +279,18 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
           </div>
 
           <div className="space-y-1">
+            <p className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Time / Slot</p>
+            <p className="text-sm font-bold font-tech text-cyan-300 flex items-center gap-1.5">
+              <Clock className="h-4 w-4 text-cyan-400" />
+              {event.time || (event.start_time ? `${event.start_time}${event.end_time ? ` - ${event.end_time}` : ""}` : "Time TBC")}
+            </p>
+          </div>
+
+          <div className="space-y-1">
             <p className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">Package / Type</p>
-            <p className="text-sm font-bold text-white flex items-center gap-1.5 capitalize">
-              <Tag className="h-4 w-4 text-cyan-400" />
-              {event.event_type}
+            <p className="text-sm font-bold text-white flex items-center gap-1.5 capitalize truncate" title={event.event_type}>
+              <Tag className="h-4 w-4 text-cyan-400 flex-shrink-0" />
+              <span className="truncate">{event.event_type}</span>
             </p>
           </div>
         </div>
@@ -439,22 +466,34 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
 
           {isRescheduling && (
             <div className="space-y-3 pt-2">
-              <label className="text-[11px] text-slate-400 block">Select New Event Date:</label>
-              <div className="flex gap-2">
-                <Input
-                  type="date"
-                  value={rescheduleDate}
-                  onChange={(e) => setRescheduleDate(e.target.value)}
-                  className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
-                />
-                <Button
-                  onClick={handleReschedule}
-                  disabled={updating}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl px-4"
-                >
-                  Confirm
-                </Button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] text-slate-400 block mb-1">New Event Date:</label>
+                  <Input
+                    type="date"
+                    value={rescheduleDate}
+                    onChange={(e) => setRescheduleDate(e.target.value)}
+                    className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-slate-400 block mb-1">New Time / Slot:</label>
+                  <Input
+                    type="text"
+                    value={rescheduleTime}
+                    onChange={(e) => setRescheduleTime(e.target.value)}
+                    placeholder="e.g. 14:00 - 17:00"
+                    className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
+                  />
+                </div>
               </div>
+              <Button
+                onClick={handleReschedule}
+                disabled={updating}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl py-2"
+              >
+                Confirm Reschedule
+              </Button>
             </div>
           )}
         </div>

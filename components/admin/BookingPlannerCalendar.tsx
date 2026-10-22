@@ -111,6 +111,16 @@ export default function BookingPlannerCalendar({
 
   const monthName = currentDate.toLocaleString("en-ZA", { month: "long", year: "numeric" });
 
+  // Helper to extract sort minutes from time string
+  const getEventSortMinutes = (timeStr?: string, defaultMins = 840) => {
+    if (!timeStr) return defaultMins;
+    const match = timeStr.match(/(\d{1,2}):(\d{2})/);
+    if (match) {
+      return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+    }
+    return defaultMins;
+  };
+
   // Map business events by date (YYYY-MM-DD)
   const eventsByDate: Record<string, PlannerEvent[]> = {};
   events.forEach((evt) => {
@@ -118,6 +128,15 @@ export default function BookingPlannerCalendar({
     const cleanDate = evt.date.split("T")[0];
     if (!eventsByDate[cleanDate]) eventsByDate[cleanDate] = [];
     eventsByDate[cleanDate].push(evt);
+  });
+
+  // Sort business events for each date chronologically by time
+  Object.keys(eventsByDate).forEach((d) => {
+    eventsByDate[d].sort((a, b) => {
+      const timeA = a.time || a.start_time;
+      const timeB = b.time || b.start_time;
+      return getEventSortMinutes(timeA) - getEventSortMinutes(timeB);
+    });
   });
 
   // Map personal events by date
@@ -268,7 +287,7 @@ export default function BookingPlannerCalendar({
               const dayBusinessEvents = showBusiness ? (eventsByDate[dateKey] || []) : [];
               const dayPersonalEvents = showPersonal ? (personalEventsByDate[dateKey] || []) : [];
               const isToday = dateKey === todayStr;
-              const hasBusinessConflict = dayBusinessEvents.length > 1;
+              const hasBusinessConflict = dayBusinessEvents.some((e) => e.has_conflict);
               const hasOverlayConflict = calendarMode === "overlay" && overlayConflictDates.has(dateKey);
 
               return (
@@ -293,11 +312,11 @@ export default function BookingPlannerCalendar({
                     <div className="flex items-center gap-1 flex-wrap justify-end">
                       {hasBusinessConflict && (
                         <span
-                          title="Multiple bookings on this date"
+                          title="Schedule clash or tight turnaround on this date"
                           className="flex items-center gap-0.5 text-[9px] font-bold text-amber-400 bg-amber-500/10 px-1 py-0.5 rounded border border-amber-500/30"
                         >
                           <AlertTriangle className="h-2.5 w-2.5" />
-                          {dayBusinessEvents.length}
+                          clash
                         </span>
                       )}
                       {hasOverlayConflict && (
@@ -322,20 +341,31 @@ export default function BookingPlannerCalendar({
                           onSelectEvent(evt);
                         }}
                         className={`p-1.5 rounded-lg text-[11px] font-medium border transition-all truncate hover:scale-[1.02] shadow-sm flex items-center justify-between gap-1 ${
-                          evt.source === "event"
-                            ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
-                            : evt.source === "invoice"
-                              ? evt.status === "paid"
-                                ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                                : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
-                              : "bg-amber-500/10 text-amber-300 border-amber-500/30"
+                          evt.has_conflict
+                            ? "border-amber-500/60 bg-amber-500/20 text-amber-200 ring-1 ring-amber-500/30"
+                            : evt.source === "event"
+                              ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
+                              : evt.source === "invoice"
+                                ? evt.status === "paid"
+                                  ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
+                                  : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
+                                : "bg-amber-500/10 text-amber-300 border-amber-500/30"
                         }`}
                       >
-                        <span className="truncate flex items-center gap-1">
-                          {evt.source === "event" && <Sparkles className="h-3 w-3 text-purple-400 flex-shrink-0" />}
-                          {evt.client_name || evt.title}
+                        <span className="truncate flex items-center gap-1 min-w-0">
+                          {evt.has_conflict && <AlertTriangle className="h-3 w-3 text-amber-400 flex-shrink-0" />}
+                          {evt.source === "event" && !evt.has_conflict && <Sparkles className="h-3 w-3 text-purple-400 flex-shrink-0" />}
+                          <span className="truncate">{evt.client_name || evt.title}</span>
                         </span>
-                        <span className="text-[9px] font-mono opacity-80 uppercase">{evt.event_type}</span>
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {(evt.time || evt.start_time) ? (
+                            <span className="text-[9px] font-mono font-semibold text-cyan-200 bg-black/40 px-1 py-0.2 rounded border border-cyan-800/40">
+                              {(evt.time || evt.start_time || "").split(/[\s–-]/)[0]}
+                            </span>
+                          ) : (
+                            <span className="text-[9px] font-mono opacity-80 uppercase">{evt.event_type}</span>
+                          )}
+                        </div>
                       </div>
                     ))}
 
@@ -407,7 +437,12 @@ export default function BookingPlannerCalendar({
           <div className="divide-y divide-border">
             {/* Business events */}
             {showBusiness && events
-              .sort((a, b) => a.date.localeCompare(b.date))
+              .slice()
+              .sort((a, b) => {
+                const dateCmp = a.date.localeCompare(b.date);
+                if (dateCmp !== 0) return dateCmp;
+                return getEventSortMinutes(a.time || a.start_time) - getEventSortMinutes(b.time || b.start_time);
+              })
               .map((evt) => (
                 <div
                   key={`biz-${evt.id}`}
@@ -425,7 +460,7 @@ export default function BookingPlannerCalendar({
                     </div>
 
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h4 className="font-bold text-foreground text-sm">{evt.client_name || evt.title}</h4>
                         <span
                           className={`px-2 py-0.5 text-[9px] uppercase font-bold rounded-full border ${
@@ -440,9 +475,21 @@ export default function BookingPlannerCalendar({
                         >
                           {getPlannerStatusLabel(evt.status)}
                         </span>
+                        {evt.has_conflict && (
+                          <span
+                            title={evt.conflict_details}
+                            className="px-2 py-0.5 text-[9px] uppercase font-bold rounded-full border bg-amber-500/15 text-amber-300 border-amber-500/40 flex items-center gap-1"
+                          >
+                            <AlertTriangle className="h-2.5 w-2.5 text-amber-400" /> Clash
+                          </span>
+                        )}
                       </div>
 
-                      <p className="text-xs text-muted-foreground flex items-center gap-3">
+                      <p className="text-xs text-muted-foreground flex items-center gap-3 flex-wrap">
+                        <span className="text-cyan-300 font-mono font-medium flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-cyan-400" />
+                          {evt.time || (evt.start_time ? `${evt.start_time}${evt.end_time ? ` - ${evt.end_time}` : ""}` : "Time TBC")}
+                        </span>
                         <span>📦 Package: {evt.event_type}</span>
                         {evt.client_address && <span>📍 {evt.client_address}</span>}
                       </p>
@@ -533,14 +580,24 @@ export default function BookingPlannerCalendar({
                 if (viewMode === "day") return evt.date === currentDate.toISOString().split("T")[0];
                 return true;
               })
+              .slice()
+              .sort((a, b) => {
+                const dateCmp = a.date.localeCompare(b.date);
+                if (dateCmp !== 0) return dateCmp;
+                return getEventSortMinutes(a.time || a.start_time) - getEventSortMinutes(b.time || b.start_time);
+              })
               .map((evt) => (
                 <div
                   key={`biz-${evt.id}`}
                   onClick={() => onSelectEvent(evt)}
-                  className="bg-secondary/40 p-4 rounded-2xl border border-border/80 hover:border-cyan-500/50 transition-all cursor-pointer space-y-3"
+                  className={`bg-secondary/40 p-4 rounded-2xl border transition-all cursor-pointer space-y-3 ${
+                    evt.has_conflict ? "border-amber-500/50 hover:border-amber-400 bg-amber-500/5" : "border-border/80 hover:border-cyan-500/50"
+                  }`}
                 >
-                  <div className="flex justify-between items-start">
-                    <span className="text-xs font-bold font-tech text-cyan-400">📅 {evt.date}</span>
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-xs font-bold font-tech text-cyan-400 flex items-center gap-1">
+                      <CalendarIcon className="h-3.5 w-3.5" /> {evt.date}
+                    </span>
                     <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full border ${
                       evt.status === "paid" || evt.status === "completed" || evt.status === "booking_confirmed" || evt.status === "archived"
                         ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
@@ -556,8 +613,19 @@ export default function BookingPlannerCalendar({
 
                   <div>
                     <h4 className="font-bold text-sm text-white">{evt.client_name || evt.title}</h4>
-                    <p className="text-xs text-muted-foreground">Type: {evt.event_type}</p>
+                    <p className="text-xs text-cyan-300 font-mono font-medium flex items-center gap-1.5 mt-0.5">
+                      <Clock className="h-3.5 w-3.5 text-cyan-400" />
+                      {evt.time || (evt.start_time ? `${evt.start_time}${evt.end_time ? ` - ${evt.end_time}` : ""}` : "Time TBC")}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Type: {evt.event_type}</p>
                   </div>
+
+                  {evt.has_conflict && (
+                    <div className="text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/30 p-2 rounded-xl flex items-center gap-1.5">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-400 flex-shrink-0" />
+                      <span className="truncate">{evt.conflict_details || "Schedule conflict detected"}</span>
+                    </div>
+                  )}
 
                   {evt.client_address && (
                     <p className="text-xs text-slate-400 flex items-center gap-1">

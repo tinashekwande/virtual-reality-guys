@@ -4,7 +4,8 @@ import { sendNewLeadNotification } from '@/lib/email/notifier'
 
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
-  const { name, email, phone, suburb, message, event_date, form_type = 'contact', game_title, game_id } = body
+  const body = await request.json()
+  const { name, email, phone, suburb, message, event_date, event_time, form_type = 'contact', game_title, game_id } = body
 
   if (!name || !email || !message) {
     return NextResponse.json({ error: 'Name, email and message are required' }, { status: 400 })
@@ -15,10 +16,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
   }
 
-  // Prepend metadata headers (game, event date & suburb) so they are preserved across all views
+  // Prepend metadata headers (game, event date, event time & suburb) so they are preserved across all views
   const metaHeaders: string[] = []
   if (game_title) metaHeaders.push(`[Booked Game: ${game_title}${game_id ? ` (ID: ${game_id})` : ''}]`)
   if (event_date) metaHeaders.push(`[Event Date: ${event_date}]`)
+  if (event_time) metaHeaders.push(`[Event Time: ${event_time}]`)
   if (suburb) metaHeaders.push(`[Suburb: ${suburb}]`)
 
   const formattedMessage = metaHeaders.length > 0
@@ -67,6 +69,7 @@ export async function POST(request: Request) {
     phone: phone || null,
     suburb: suburb || null,
     eventDate: event_date || null,
+    eventTime: event_time || null,
     formType: form_type,
     bookedGame: game_title || null,
     message,

@@ -45,6 +45,14 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
   const [clientPhone, setClientPhone] = useState<string>(initialData?.client_phone || "");
   const [clientAddress, setClientAddress] = useState<string>(initialData?.client_address || "");
   const [eventDate, setEventDate] = useState<string>(initialData?.event_date || "");
+  const [eventTime, setEventTime] = useState<string>(
+    initialData?.event_time ||
+      (initialData?.start_time
+        ? initialData?.end_time
+          ? `${initialData.start_time} - ${initialData.end_time}`
+          : initialData.start_time
+        : "")
+  );
   const [issueDate, setIssueDate] = useState<string>(initialData?.issue_date || new Date().toISOString().split("T")[0]);
   const [dueDate, setDueDate] = useState<string>(initialData?.due_date || "");
   const [status, setStatus] = useState<InvoiceStatus>(initialData?.status || "draft");
@@ -128,6 +136,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
     client_phone: clientPhone,
     client_address: clientAddress,
     event_date: eventDate,
+    event_time: eventTime,
     issue_date: issueDate,
     due_date: dueDate,
     status,
@@ -470,6 +479,17 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
+                    className="rounded-xl border-border bg-secondary/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground mb-1 block">Event Time / Slot</label>
+                  <Input
+                    type="text"
+                    value={eventTime}
+                    onChange={(e) => setEventTime(e.target.value)}
+                    placeholder="e.g. 14:00 - 17:00 or 14:30"
                     className="rounded-xl border-border bg-secondary/50"
                   />
                 </div>

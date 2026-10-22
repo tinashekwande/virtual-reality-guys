@@ -41,6 +41,8 @@ export interface FormRequest {
   status: RequestStatus
   created_at: string
   booked_game?: string
+  event_date?: string
+  event_time?: string
 }
 
 export interface DashboardStats {
@@ -73,6 +75,9 @@ export interface Invoice {
   client_phone?: string
   client_address?: string
   event_date?: string
+  event_time?: string
+  start_time?: string
+  end_time?: string
   issue_date: string
   due_date?: string
   status: InvoiceStatus
@@ -91,6 +96,9 @@ export interface EventItem {
   id: string
   title: string
   event_date: string
+  event_time?: string
+  start_time?: string
+  end_time?: string
   event_type: string
   location?: string
   description?: string

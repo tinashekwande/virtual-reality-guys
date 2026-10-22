@@ -291,10 +291,19 @@ function RentalAgreementContent() {
     const phoneParam = searchParams.get("phone")
     const emailParam = searchParams.get("email")
     const dateParam = searchParams.get("date")
+    const timeParam = searchParams.get("time")
     const priceParam = searchParams.get("price")
     const addressParam = searchParams.get("address")
 
-    if (nameParam || phoneParam || emailParam || dateParam) {
+    let parsedStart = ""
+    let parsedEnd = ""
+    if (timeParam) {
+      const parts = timeParam.split(/\s*(?:–|-|\bto\b)\s*/i)
+      if (parts[0]) parsedStart = parts[0].trim()
+      if (parts[1]) parsedEnd = parts[1].trim()
+    }
+
+    if (nameParam || phoneParam || emailParam || dateParam || timeParam) {
       setAgreement((prev) => ({
         ...prev,
         renterName: nameParam || prev.renterName,
@@ -302,6 +311,8 @@ function RentalAgreementContent() {
         renterEmail: emailParam || prev.renterEmail,
         startDate: dateParam || prev.startDate,
         endDate: dateParam || prev.endDate,
+        startTime: parsedStart || prev.startTime,
+        endTime: parsedEnd || prev.endTime,
         deliveryAddress: addressParam || prev.deliveryAddress,
         rentalFee: priceParam || prev.rentalFee,
         totalAmount: priceParam || prev.totalAmount,
@@ -320,6 +331,17 @@ function RentalAgreementContent() {
     const total = String(inv.total || 0)
     const deposit = String(Math.round(Number(inv.total || 0) * 0.5))
 
+    let invStart = ""
+    let invEnd = ""
+    if (inv.event_time) {
+      const parts = inv.event_time.split(/\s*(?:–|-|\bto\b)\s*/i)
+      if (parts[0]) invStart = parts[0].trim()
+      if (parts[1]) invEnd = parts[1].trim()
+    } else if (inv.start_time) {
+      invStart = inv.start_time
+      invEnd = inv.end_time || ""
+    }
+
     setAgreement((prev) => ({
       ...prev,
       agreementNumber: `VRG-RA-${inv.doc_number || "INV"}`,
@@ -330,6 +352,8 @@ function RentalAgreementContent() {
       deliveryAddress: inv.client_address || prev.deliveryAddress,
       startDate: inv.event_date || prev.startDate,
       endDate: inv.event_date || prev.endDate,
+      startTime: invStart || prev.startTime,
+      endTime: invEnd || prev.endTime,
       rentalFee: String(inv.subtotal || total),
       deliveryFee: String(inv.transport_fee || 0),
       totalAmount: total,
@@ -344,11 +368,25 @@ function RentalAgreementContent() {
     const req = requests.find((r) => r.id === requestId)
     if (!req) return
 
+    const reqDate = (req as any).event_date || (req.message?.match(/\b(20\d{2})[-/](0[1-9]|1[0-2])[-/](0[1-9]|[12]\d|3[01])\b/)?.[0] ?? "");
+    let reqStart = ""
+    let reqEnd = ""
+    const reqTime = (req as any).event_time || (req.message?.match(/\[(?:EVENT\s+)?TIME:\s*([^\]]+)\]/i)?.[1] ?? "");
+    if (reqTime) {
+      const parts = reqTime.split(/\s*(?:–|-|\bto\b)\s*/i)
+      if (parts[0]) reqStart = parts[0].trim()
+      if (parts[1]) reqEnd = parts[1].trim()
+    }
+
     setAgreement((prev) => ({
       ...prev,
       renterName: req.name || prev.renterName,
       renterEmail: req.email || prev.renterEmail,
       renterPhone: req.phone || prev.renterPhone,
+      startDate: reqDate || prev.startDate,
+      endDate: reqDate || prev.endDate,
+      startTime: reqStart || prev.startTime,
+      endTime: reqEnd || prev.endTime,
       deliveryAddress: req.suburb ? `${req.suburb}, Cape Town` : prev.deliveryAddress,
       renterSignatureName: req.name || prev.renterSignatureName,
     }))

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
@@ -20,6 +20,7 @@ import { Invoice, FormRequest } from "@/types";
 import {
   PersonalCalendarEvent, CalendarMode, CalendarSubscription
 } from "@/types/personal-calendar";
+import { extractTimeFromText, parseTimeRange, evaluateClash } from "@/lib/time-utils";
 import { toast } from "sonner";
 
 function extractDateFromMessage(message: string | undefined, fallbackDate: string): string {
@@ -95,13 +96,17 @@ export default function BookingPlannerPage() {
       if (Array.isArray(invoicesRes)) {
         invoicesRes.forEach((inv: Invoice) => {
           const date = inv.event_date || inv.issue_date || inv.created_at.split("T")[0];
+          const time = inv.event_time || (inv.start_time ? (inv.end_time ? `${inv.start_time} - ${inv.end_time}` : inv.start_time) : extractTimeFromText(inv.notes) || undefined);
           dateCounts[date] = (dateCounts[date] || 0) + 1;
           formattedEvents.push({
             id: inv.id, source: "invoice",
             title: `${inv.type === "quote" ? "Quote" : "Invoice"}: ${inv.client_name}`,
             client_name: inv.client_name, client_email: inv.client_email,
             client_phone: inv.client_phone, client_address: inv.client_address,
-            date, event_type: inv.type, status: inv.status,
+            date, time,
+            start_time: inv.start_time,
+            end_time: inv.end_time,
+            event_type: inv.type, status: inv.status,
             total_amount: Number(inv.total) || 0,
             deposit_percentage: inv.deposit_percentage,
             notes_or_message: inv.notes, items: inv.items, raw_data: inv,
@@ -112,7 +117,8 @@ export default function BookingPlannerPage() {
       if (Array.isArray(requestsRes)) {
         requestsRes.forEach((req: FormRequest) => {
           const fallbackDate = req.created_at.split("T")[0];
-          const date = extractDateFromMessage(req.message, fallbackDate);
+          const date = req.event_date || extractDateFromMessage(req.message, fallbackDate);
+          const time = req.event_time || extractTimeFromText(req.message) || undefined;
           const suburb = req.suburb || (req.message.match(/\[Suburb:\s*([^\]]+)\]/i) || req.message.match(/(?:suburb|location|area|venue)\s*[:\-]\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i))?.[1]?.trim();
           dateCounts[date] = (dateCounts[date] || 0) + 1;
           formattedEvents.push({
@@ -120,7 +126,8 @@ export default function BookingPlannerPage() {
             title: `Booking Request: ${req.name}`,
             client_name: req.name, client_email: req.email,
             client_phone: req.phone, client_address: suburb || undefined,
-            date, event_type: req.form_type || "VR Experience",
+            date, time,
+            event_type: req.form_type || "VR Experience",
             status: req.status, notes_or_message: req.message, raw_data: req,
           });
         });
@@ -129,12 +136,15 @@ export default function BookingPlannerPage() {
       if (Array.isArray(eventsRes)) {
         eventsRes.forEach((evt: any) => {
           const date = evt.event_date || evt.created_at?.split("T")[0] || "";
+          const time = evt.start_time ? (evt.end_time ? `${evt.start_time} - ${evt.end_time}` : evt.start_time) : extractTimeFromText(evt.description) || undefined;
           dateCounts[date] = (dateCounts[date] || 0) + 1;
           formattedEvents.push({
             id: evt.id, source: "event",
             title: evt.title || "Standalone Event",
             client_name: evt.title || "Standalone Event",
-            client_address: evt.location, date,
+            client_address: evt.location, date, time,
+            start_time: evt.start_time,
+            end_time: evt.end_time,
             event_type: evt.event_type || "Corporate Activation",
             status: evt.status || "scheduled",
             total_amount: Number(evt.total_revenue) || 0,
@@ -144,8 +154,50 @@ export default function BookingPlannerPage() {
         });
       }
 
+      // Group by date to determine intelligent, time-aware clashes
+      const eventsByDay: Record<string, PlannerEvent[]> = {};
       formattedEvents.forEach((evt) => {
-        if ((dateCounts[evt.date] || 0) > 1) evt.has_conflict = true;
+        if (!eventsByDay[evt.date]) eventsByDay[evt.date] = [];
+        eventsByDay[evt.date].push(evt);
+      });
+
+      Object.entries(eventsByDay).forEach(([day, dayEvts]) => {
+        if (dayEvts.length <= 1) return;
+
+        // Check each pair for direct overlap or travel/setup buffer issues
+        for (let i = 0; i < dayEvts.length; i++) {
+          for (let j = i + 1; j < dayEvts.length; j++) {
+            const evA = dayEvts[i];
+            const evB = dayEvts[j];
+
+            // If neither has time specified, flag as potential same-day unconfirmed timing
+            if (!evA.time && !evB.time) {
+              evA.has_conflict = true;
+              evB.has_conflict = true;
+              evA.conflict_details = `Multiple bookings on ${day} with unconfirmed times`;
+              evB.conflict_details = `Multiple bookings on ${day} with unconfirmed times`;
+              continue;
+            }
+
+            const rangeA = parseTimeRange(evA.time);
+            const rangeB = parseTimeRange(evB.time);
+            const clash = evaluateClash(rangeA, rangeB, 30, 30);
+
+            if (clash.isDirectOverlap) {
+              evA.has_conflict = true;
+              evB.has_conflict = true;
+              const detail = `Direct time overlap on ${day}: (${rangeA.displayTime} vs ${rangeB.displayTime})`;
+              evA.conflict_details = detail;
+              evB.conflict_details = detail;
+            } else if (clash.isBufferClash) {
+              evA.has_conflict = true;
+              evB.has_conflict = true;
+              const detail = `Tight turnaround (${clash.gapMinutes} min gap between ${rangeA.displayTime} and ${rangeB.displayTime}; requires 60 min for travel & setup)`;
+              evA.conflict_details = detail;
+              evB.conflict_details = detail;
+            }
+          }
+        }
       });
 
       setEvents(formattedEvents);

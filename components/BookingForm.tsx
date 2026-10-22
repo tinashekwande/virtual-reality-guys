@@ -28,6 +28,7 @@ function BookingFormInner() {
       phone: fd.get("phone"),
       suburb: fd.get("suburb"),
       event_date: fd.get("event_date"),
+      event_time: fd.get("event_time"),
       message: fd.get("message"),
       form_type: gameParam ? "game_booking" : formType,
       game_title: gameParam || undefined,
@@ -94,7 +95,7 @@ function BookingFormInner() {
             <Input id="suburb" name="suburb" placeholder="e.g. Camps Bay, Durbanville, Somerset West..." className="bg-background" required />
           </div>
         </div>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-3 gap-4">
           <div className="space-y-2">
             <label htmlFor="event-type" className="text-sm font-medium">Event Type</label>
             <Select value={formType} onValueChange={setFormType}>
@@ -117,6 +118,16 @@ function BookingFormInner() {
               name="event_date"
               type="date"
               min={new Date().toISOString().split("T")[0]}
+              className="bg-background text-sm"
+            />
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="event_time" className="text-sm font-medium">Preferred Time</label>
+            <Input
+              id="event_time"
+              name="event_time"
+              type="time"
+              defaultValue="14:00"
               className="bg-background text-sm"
             />
           </div>
