@@ -250,3 +250,109 @@ export function evaluateClash(
     requiredBufferMinutes,
   };
 }
+
+/**
+ * Normalizes phone numbers to comparable digits (last 9 digits, e.g. 71 123 4567).
+ */
+export function normalizePhone(phone?: string | null): string {
+  if (!phone) return "";
+  const digits = phone.replace(/\D/g, "");
+  // South African numbers: e.g. 0711234567 or 27711234567 -> last 9 digits '711234567'
+  return digits.length >= 9 ? digits.slice(-9) : digits;
+}
+
+/**
+ * Normalizes client name for fuzzy matching (lowercase, trimmed, strip extra spaces/titles).
+ */
+export function normalizeName(name?: string | null): string {
+  if (!name) return "";
+  return name
+    .toLowerCase()
+    .replace(/^(mr|mrs|ms|dr|prof)\.?\s+/i, "")
+    .replace(/[^\w\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Normalizes email address.
+ */
+export function normalizeEmail(email?: string | null): string {
+  if (!email) return "";
+  return email.toLowerCase().trim();
+}
+
+/**
+ * Checks whether two bookings/records belong to the same person and event.
+ * Used to merge requests and invoices into one unified booking, and prevent false conflict alarms.
+ */
+export function isSameClientBooking(
+  a: {
+    client_name?: string;
+    client_email?: string;
+    client_phone?: string;
+    date?: string;
+    id?: string;
+    raw_data?: any;
+    raw?: any;
+  },
+  b: {
+    client_name?: string;
+    client_email?: string;
+    client_phone?: string;
+    date?: string;
+    id?: string;
+    raw_data?: any;
+    raw?: any;
+  }
+): boolean {
+  if (!a || !b) return false;
+
+  // If identical IDs, it's the exact same record
+  if (a.id && b.id && a.id === b.id) return true;
+
+  const aRaw = a.raw_data || a.raw || {};
+  const bRaw = b.raw_data || b.raw || {};
+
+  // Check explicit request reference (e.g. invoice has request_id or [REQUEST: id] in notes)
+  const aReqId = aRaw.request_id || aRaw.notes?.match(/\[REQUEST:\s*([^\]]+)\]/i)?.[1];
+  const bReqId = bRaw.request_id || bRaw.notes?.match(/\[REQUEST:\s*([^\]]+)\]/i)?.[1];
+
+  if (aReqId && b.id && aReqId === b.id) return true;
+  if (bReqId && a.id && bReqId === a.id) return true;
+
+  // Date check: they must refer to the same event date (or missing/TBC on one side)
+  const dateA = a.date || aRaw.event_date || aRaw.date;
+  const dateB = b.date || bRaw.event_date || bRaw.date;
+  if (dateA && dateB && dateA !== dateB) {
+    return false;
+  }
+
+  // Check email match (strongest signal)
+  const emailA = normalizeEmail(a.client_email || aRaw.client_email || aRaw.email);
+  const emailB = normalizeEmail(b.client_email || bRaw.client_email || bRaw.email);
+  if (emailA && emailB && emailA === emailB) {
+    return true;
+  }
+
+  // Check phone match (strong signal: 9 matching digits)
+  const phoneA = normalizePhone(a.client_phone || aRaw.client_phone || aRaw.phone);
+  const phoneB = normalizePhone(b.client_phone || bRaw.client_phone || bRaw.phone);
+  if (phoneA && phoneB && phoneA.length >= 7 && phoneA === phoneB) {
+    return true;
+  }
+
+  // Check name match
+  const nameA = normalizeName(a.client_name || aRaw.client_name || aRaw.name);
+  const nameB = normalizeName(b.client_name || bRaw.client_name || bRaw.name);
+  if (nameA && nameB && nameA.length >= 3) {
+    // Exact name match
+    if (nameA === nameB) return true;
+    // One name contains the other (e.g. "John Smith" vs "John")
+    if (nameA.includes(nameB) || nameB.includes(nameA)) {
+      if (Math.min(nameA.length, nameB.length) >= 4) return true;
+    }
+  }
+
+  return false;
+}

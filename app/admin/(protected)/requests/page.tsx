@@ -136,6 +136,7 @@ export default function RequestsAdminPage() {
     const time = extractTimeFromText(r.message) || ""
     const params = new URLSearchParams({
       create: type,
+      request_id: r.id,
       name: r.name,
       email: r.email,
       phone: r.phone || "",

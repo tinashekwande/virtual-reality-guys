@@ -22,6 +22,12 @@ function normalizeInvoice(inv: any) {
         inv.event_time = timeMatch[1].trim()
       }
     }
+    if (inv.notes.includes('[REQUEST:')) {
+      const reqMatch = inv.notes.match(/\[REQUEST:([^\]]+)\]/)
+      if (reqMatch && reqMatch[1]) {
+        inv.request_id = reqMatch[1].trim()
+      }
+    }
   }
   return inv
 }

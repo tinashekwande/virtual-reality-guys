@@ -39,6 +39,8 @@ export interface PlannerEvent {
   raw_data: any;
   has_conflict?: boolean;
   conflict_details?: string;
+  linked_request?: any;
+  linked_invoice?: any;
 }
 
 export function getStatusLabel(status: string): string {
@@ -264,6 +266,32 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
               <p className="text-amber-200/80">
                 {event.conflict_details || `Another VR booking is scheduled on this date (${event.date}). Please review timing, turnaround travel, and equipment allocation.`}
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Linked Request Notification (merged as one thing) */}
+        {event.linked_request && (
+          <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-4 flex items-start gap-3 text-cyan-300">
+            <Sparkles className="h-5 w-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+            <div className="space-y-1 text-xs">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-cyan-300">Matched Website Lead Request</span>
+                <span className="text-[10px] bg-cyan-950 px-2 py-0.5 rounded-full border border-cyan-800/60 font-mono text-cyan-200">
+                  Lead #{event.linked_request.id?.slice(0, 8)}
+                </span>
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-semibold">
+                  Unified Booking
+                </span>
+              </div>
+              <p className="text-slate-300 leading-relaxed">
+                This client submitted a website request which has been linked with this document. The calendar recognizes them as the same person and represents them as one unified booking.
+              </p>
+              {event.linked_request.message && (
+                <p className="text-slate-400 text-[11px] italic pt-1 border-t border-cyan-900/40">
+                  Customer request message: &ldquo;{event.linked_request.message}&rdquo;
+                </p>
+              )}
             </div>
           </div>
         )}

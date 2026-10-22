@@ -65,6 +65,7 @@ function QuotesInvoicesContent() {
       const address = searchParams.get("address") || "";
       const notes = searchParams.get("notes") || "";
       const packageType = searchParams.get("package") || "";
+      const requestId = searchParams.get("request_id") || "";
       const customPriceParam = searchParams.get("price");
       const customPrice = customPriceParam ? Number(customPriceParam) : null;
 
@@ -118,7 +119,10 @@ function QuotesInvoicesContent() {
         event_time: time,
         issue_date: new Date().toISOString().split("T")[0],
         due_date: date || new Date().toISOString().split("T")[0],
-        notes: notes ? `Client Request Notes:\n${notes}` : "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time.",
+        request_id: requestId || undefined,
+        notes: notes
+          ? `${requestId ? `[REQUEST: ${requestId}]\n` : ""}Client Request Notes:\n${notes}`
+          : (requestId ? `[REQUEST: ${requestId}]\n` : "") + "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time.",
         items: initialItems,
         subtotal: initialItems[0].total,
         total: initialItems[0].total,

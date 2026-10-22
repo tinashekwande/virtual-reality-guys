@@ -20,7 +20,7 @@ import { Invoice, FormRequest } from "@/types";
 import {
   PersonalCalendarEvent, CalendarMode, CalendarSubscription
 } from "@/types/personal-calendar";
-import { extractTimeFromText, parseTimeRange, evaluateClash } from "@/lib/time-utils";
+import { extractTimeFromText, parseTimeRange, evaluateClash, isSameClientBooking } from "@/lib/time-utils";
 import { toast } from "sonner";
 
 function extractDateFromMessage(message: string | undefined, fallbackDate: string): string {
@@ -90,15 +90,13 @@ export default function BookingPlannerPage() {
         fetch("/api/events").then((r) => (r.ok ? r.json() : [])).catch(() => []),
       ]);
 
-      const formattedEvents: PlannerEvent[] = [];
-      const dateCounts: Record<string, number> = {};
+      const rawEvents: PlannerEvent[] = [];
 
       if (Array.isArray(invoicesRes)) {
         invoicesRes.forEach((inv: Invoice) => {
           const date = inv.event_date || inv.issue_date || inv.created_at.split("T")[0];
           const time = inv.event_time || (inv.start_time ? (inv.end_time ? `${inv.start_time} - ${inv.end_time}` : inv.start_time) : extractTimeFromText(inv.notes) || undefined);
-          dateCounts[date] = (dateCounts[date] || 0) + 1;
-          formattedEvents.push({
+          rawEvents.push({
             id: inv.id, source: "invoice",
             title: `${inv.type === "quote" ? "Quote" : "Invoice"}: ${inv.client_name}`,
             client_name: inv.client_name, client_email: inv.client_email,
@@ -120,8 +118,7 @@ export default function BookingPlannerPage() {
           const date = req.event_date || extractDateFromMessage(req.message, fallbackDate);
           const time = req.event_time || extractTimeFromText(req.message) || undefined;
           const suburb = req.suburb || (req.message.match(/\[Suburb:\s*([^\]]+)\]/i) || req.message.match(/(?:suburb|location|area|venue)\s*[:\-]\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i))?.[1]?.trim();
-          dateCounts[date] = (dateCounts[date] || 0) + 1;
-          formattedEvents.push({
+          rawEvents.push({
             id: req.id, source: "request",
             title: `Booking Request: ${req.name}`,
             client_name: req.name, client_email: req.email,
@@ -137,8 +134,7 @@ export default function BookingPlannerPage() {
         eventsRes.forEach((evt: any) => {
           const date = evt.event_date || evt.created_at?.split("T")[0] || "";
           const time = evt.start_time ? (evt.end_time ? `${evt.start_time} - ${evt.end_time}` : evt.start_time) : extractTimeFromText(evt.description) || undefined;
-          dateCounts[date] = (dateCounts[date] || 0) + 1;
-          formattedEvents.push({
+          rawEvents.push({
             id: evt.id, source: "event",
             title: evt.title || "Standalone Event",
             client_name: evt.title || "Standalone Event",
@@ -152,6 +148,48 @@ export default function BookingPlannerPage() {
             notes_or_message: evt.description, raw_data: evt,
           });
         });
+      }
+
+      // ── Unify matching requests and invoices into one single booking ──
+      // When the same person submitted a request and an invoice was created for them,
+      // the calendar treats them as ONE unified booking rather than duplicate entries.
+      const formattedEvents: PlannerEvent[] = [];
+      const mergedIds = new Set<string>();
+
+      // Sort so invoices/quotes take precedence over raw requests
+      const sortedCandidates = rawEvents.slice().sort((a, b) => {
+        if (a.source === "invoice" && b.source !== "invoice") return -1;
+        if (b.source === "invoice" && a.source !== "invoice") return 1;
+        return 0;
+      });
+
+      for (let i = 0; i < sortedCandidates.length; i++) {
+        const item = sortedCandidates[i];
+        if (mergedIds.has(item.id)) continue;
+
+        // Search for matching counterpart (e.g. request corresponding to this invoice)
+        for (let j = i + 1; j < sortedCandidates.length; j++) {
+          const other = sortedCandidates[j];
+          if (mergedIds.has(other.id)) continue;
+
+          if (isSameClientBooking(item, other)) {
+            mergedIds.add(other.id);
+            if (other.source === "request") {
+              item.linked_request = other.raw_data;
+            } else if (item.source === "request" && other.source === "invoice") {
+              other.linked_request = item.raw_data;
+            }
+
+            // Inherit any missing details from the matching request
+            if (!item.client_address && other.client_address) item.client_address = other.client_address;
+            if (!item.client_phone && other.client_phone) item.client_phone = other.client_phone;
+            if (!item.client_email && other.client_email) item.client_email = other.client_email;
+            if (!item.time && other.time) item.time = other.time;
+          }
+        }
+
+        mergedIds.add(item.id);
+        formattedEvents.push(item);
       }
 
       // Group by date to determine intelligent, time-aware clashes
@@ -169,6 +207,11 @@ export default function BookingPlannerPage() {
           for (let j = i + 1; j < dayEvts.length; j++) {
             const evA = dayEvts[i];
             const evB = dayEvts[j];
+
+            // If both items belong to the same client, they are the same person — NOT a conflict!
+            if (isSameClientBooking(evA, evB)) {
+              continue;
+            }
 
             // If neither has time specified, flag as potential same-day unconfirmed timing
             if (!evA.time && !evB.time) {

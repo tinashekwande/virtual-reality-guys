@@ -7,6 +7,7 @@ import {
   extractDurationMinutes,
   parseTimeRange,
   evaluateClash,
+  isSameClientBooking,
   ParsedTimeRange,
 } from '@/lib/time-utils'
 
@@ -180,17 +181,41 @@ export async function detectAllConflicts(targetDate?: string): Promise<AiConflic
 
     // ── Analyze each date for conflicts ──
     for (const [dateStr, dayItems] of Object.entries(itemsByDate)) {
-      // Sort day items chronologically by start time
-      dayItems.sort((a, b) => a.timeRange.startMinutes - b.timeRange.startMinutes)
+      // Deduplicate items representing the same client booking on the same day (e.g. request + invoice for same person)
+      const uniqueDayItems: EventScheduleItem[] = []
+      for (const item of dayItems) {
+        const duplicate = uniqueDayItems.find((existing) =>
+          isSameClientBooking(
+            {
+              id: existing.id,
+              client_name: existing.title,
+              date: existing.date,
+              raw: existing.raw,
+            },
+            {
+              id: item.id,
+              client_name: item.title,
+              date: item.date,
+              raw: item.raw,
+            }
+          )
+        )
+        if (!duplicate) {
+          uniqueDayItems.push(item)
+        }
+      }
+
+      // Sort unique day items chronologically by start time
+      uniqueDayItems.sort((a, b) => a.timeRange.startMinutes - b.timeRange.startMinutes)
 
       // ── A. Time-Aware Concurrent Equipment Demand ──
       // Instead of blindly summing all items on the day, we test 30-min intervals
-      // to check peak concurrent headset demand.
+      // on unique client bookings to check peak concurrent headset demand.
       let peakConcurrentHeadsets = 0
       let peakIntervalStr = ''
 
       for (let m = 480; m <= 1320; m += 30) { // 08:00 to 22:00
-        const activeEventsInSlot = dayItems.filter(
+        const activeEventsInSlot = uniqueDayItems.filter(
           (item) => item.timeRange.startMinutes <= m && item.timeRange.endMinutes > m
         )
         const concurrentDemand = activeEventsInSlot.reduce(
@@ -217,17 +242,27 @@ export async function detectAllConflicts(targetDate?: string): Promise<AiConflic
           title: `VR Headset Shortage on ${dateStr} (${peakIntervalStr})`,
           description: `During peak hours (${peakIntervalStr}), overlapping bookings require ${peakConcurrentHeadsets} VR headsets, but your active fleet has ${availableHeadsets} headsets (shortage: ${shortage} units).`,
           target_date: dateStr,
-          affected_records: dayItems.map((i) => i.title),
+          affected_records: uniqueDayItems.map((i) => i.title),
           required_action: `Rent ${shortage} additional Meta Quest headset(s) or adjust booking time slots so they do not overlap.`,
           recommendation: `Secure rental from partner or stagger event times by 2-3 hours to allow headset recharging and reuse.`,
         })
       }
 
       // ── B. Pairwise Time Overlap & Buffer Analysis ──
-      for (let i = 0; i < dayItems.length; i++) {
-        for (let j = i + 1; j < dayItems.length; j++) {
-          const a = dayItems[i]
-          const b = dayItems[j]
+      for (let i = 0; i < uniqueDayItems.length; i++) {
+        for (let j = i + 1; j < uniqueDayItems.length; j++) {
+          const a = uniqueDayItems[i]
+          const b = uniqueDayItems[j]
+
+          // Extra safety check: if same client, skip conflict
+          if (
+            isSameClientBooking(
+              { id: a.id, client_name: a.title, date: a.date, raw: a.raw },
+              { id: b.id, client_name: b.title, date: b.date, raw: b.raw }
+            )
+          ) {
+            continue
+          }
 
           const travelMins = estimateTravelMinutes(a.location, b.location)
           const clash = evaluateClash(a.timeRange, b.timeRange, travelMins, 30)
@@ -262,7 +297,7 @@ export async function detectAllConflicts(targetDate?: string): Promise<AiConflic
 
       // ── C. Personal Calendar Clashes ──
       const dayPersonalEvents = personalByDate[dateStr] || []
-      for (const bEvent of dayItems) {
+      for (const bEvent of uniqueDayItems) {
         for (const pEvent of dayPersonalEvents) {
           const clash = evaluateClash(bEvent.timeRange, pEvent.timeRange, 15, 0)
           if (clash.isDirectOverlap) {
