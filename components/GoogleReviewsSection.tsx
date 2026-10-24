@@ -1,10 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
-import Link from "next/link"
-import { Star, CheckCircle, ExternalLink, MessageSquare, Award, MessageCircle } from "lucide-react"
+import React from "react"
+import { Star, CheckCircle, ExternalLink, MessageCircle } from "lucide-react"
 import ScrollReveal from "@/components/motion/ScrollReveal"
-import { CyberButton } from "@/components/ui/cyber-button"
 
 // Google 4-Color Icon SVG
 const GoogleIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -191,16 +189,13 @@ const realReviews: RealGoogleReview[] = [
 ]
 
 export default function GoogleReviewsSection() {
-  const [activeCategory, setActiveCategory] = useState<"all" | "birthday" | "school" | "service">("all")
-
-  const filteredReviews = activeCategory === "all"
-    ? realReviews
-    : realReviews.filter(r => r.category === activeCategory)
+  // Limit displayed reviews to only 3 as requested; visitors can view all reviews on Google
+  const displayedReviews = realReviews.slice(0, 3)
 
   return (
     <section 
       id="google-reviews" 
-      className="py-20 sm:py-28 bg-gradient-to-b from-background via-background/40 to-background relative z-10 border-b border-border/40 overflow-hidden"
+      className="py-20 sm:py-28 bg-gradient-to-b from-background via-background/40 to-background relative z-10 border-t border-border/40 overflow-hidden"
     >
       {/* Neon Ambient Background Blurs */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
@@ -208,41 +203,33 @@ export default function GoogleReviewsSection() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Top Header */}
+        {/* Top Header with Google 5-Star Badge */}
         <ScrollReveal variant="fade-up">
-          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 space-y-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/80 border border-border/80 text-xs font-semibold text-slate-200 shadow-sm">
+              <GoogleIcon className="w-4 h-4" />
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <span className="text-white font-bold">5.0 Star Rating</span>
+              <span className="text-muted-foreground">on Google</span>
+            </div>
+
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-tech uppercase">
               What People Are Saying
             </h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Real verified reviews from parents, schools, and clients across Cape Town.
+            </p>
           </div>
         </ScrollReveal>
 
-        {/* Interactive Filter Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-          {[
-            { id: "all", label: "All Reviews (10)" },
-            { id: "birthday", label: "Birthdays & Kids" },
-            { id: "school", label: "Schools & STEM" },
-            { id: "service", label: "Client Experiences" }
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id as any)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 ${
-                activeCategory === cat.id
-                  ? "bg-primary text-black font-bold shadow-md shadow-primary/25"
-                  : "bg-card/50 text-muted-foreground hover:text-white hover:bg-card border border-border/60"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Reviews Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-14">
-          {filteredReviews.map((review, idx) => (
-            <ScrollReveal key={review.id} variant="fade-up" delay={idx * 60}>
+        {/* Reviews Cards Grid — exactly 3 featured reviews */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12">
+          {displayedReviews.map((review, idx) => (
+            <ScrollReveal key={review.id} variant="fade-up" delay={idx * 80}>
               <div className="h-full bg-card/35 backdrop-blur-md border border-border/70 hover:border-primary/50 rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 group">
                 
                 {/* Review Header: User info & Google Badge */}
@@ -337,34 +324,22 @@ export default function GoogleReviewsSection() {
           ))}
         </div>
 
-        {/* Bottom CTA & Direct Google Reviews Action */}
+        {/* Direct Google Reviews Action — See More on Google */}
         <ScrollReveal variant="fade-up" delay={200}>
-          <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-card/60 via-card/80 to-card/60 border border-primary/30 text-center max-w-4xl mx-auto space-y-6 shadow-2xl relative overflow-hidden">
-            <div className="space-y-2">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-tech uppercase">
-                Ready for an Unforgettable VR Experience?
-              </h3>
-              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-                Join our family of happy clients across Cape Town. We bring high-end VR gear, calibrated safety boundaries, and trained staff directly to your venue.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <CyberButton href="#contact" size="lg" variant="primary">
-                Book Your Event Now
-              </CyberButton>
-
-              <a
-                href={GOOGLE_REVIEWS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-secondary/80 hover:bg-secondary border border-border/80 hover:border-primary/40 text-sm font-semibold text-white transition-all duration-300 shadow-md hover:shadow-primary/10"
-              >
-                <GoogleIcon className="w-4 h-4" />
-                <span>View All Reviews on Google</span>
-                <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
-              </a>
-            </div>
+          <div className="text-center space-y-4 pt-2">
+            <a
+              href={GOOGLE_REVIEWS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-secondary/90 hover:bg-secondary border border-border/80 hover:border-primary/50 text-base font-bold text-white transition-all duration-300 shadow-xl hover:shadow-primary/10 hover:-translate-y-0.5 group"
+            >
+              <GoogleIcon className="w-5 h-5" />
+              <span>See More Reviews on Google</span>
+              <ExternalLink className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-transform" />
+            </a>
+            <p className="text-xs text-muted-foreground">
+              Rated 5.0 / 5.0 on Google · See all customer reviews & photos directly on Google
+            </p>
           </div>
         </ScrollReveal>
 

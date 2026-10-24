@@ -318,9 +318,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Google Customer Reviews Section */}
-      <GoogleReviewsSection />
-
       {/* About Section */}
       <section id="about" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-y border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -709,6 +706,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Google Customer Reviews Section */}
+      <GoogleReviewsSection />
 
       {/* Contact Section */}
       <section id="contact" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-t border-border/40 relative z-10">
