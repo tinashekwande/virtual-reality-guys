@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
   Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
-  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot, FileSignature
+  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot, FileSignature, Megaphone
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -23,6 +23,7 @@ const NAV_ITEMS = [
   { href: "/admin/accounting", label: "Accounts & Financials", icon: DollarSign },
   { href: "/admin/equipment", label: "Equipment & Fleet", icon: Glasses },
   { href: "/admin/requests", label: "Requests", icon: ClipboardList },
+  { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/admin/categories", label: "Categories", icon: FolderOpen },
