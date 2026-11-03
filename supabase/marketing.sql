@@ -90,6 +90,8 @@ create unique index if not exists email_campaign_recipients_unique_idx
   on email_campaign_recipients (campaign_id, email);
 create index if not exists email_campaign_recipients_status_idx
   on email_campaign_recipients (campaign_id, status);
+create index if not exists email_campaign_recipients_contact_idx
+  on email_campaign_recipients (contact_id);
 
 -- 4. Ad campaigns --------------------------------------------------------
 create table if not exists ad_campaigns (
@@ -137,7 +139,9 @@ create table if not exists client_communications (
 );
 
 create index if not exists client_communications_request_idx on client_communications (request_id);
-create index if not exists client_communications_email_idx on client_communications (lower(client_email));
+create index if not exists client_communications_invoice_idx on client_communications (invoice_id);
+-- Emails are stored lower-cased by the app.
+create index if not exists client_communications_email_idx on client_communications (client_email);
 
 -- Row Level Security ------------------------------------------------------
 alter table marketing_contacts        enable row level security;
