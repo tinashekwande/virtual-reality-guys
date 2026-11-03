@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Calendar, Clock, User, Mail, Phone, MapPin, DollarSign, AlertTriangle,
-  CheckCircle2, XCircle, FileText, Edit3, Trash2, ArrowRight, Shield, Tag, Receipt
+  CheckCircle2, XCircle, FileText, Edit3, Trash2, ArrowRight, Shield, Tag, Receipt, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
