@@ -15,7 +15,6 @@ import {
 import * as marketing from '@/lib/marketing/service'
 import { getConfiguredEmailProvider } from '@/lib/email/sender'
 import { scheduleFollowUpsForInvoice, reconcileFollowUpsForInvoice } from '@/lib/followups/scheduler'
-import { renderInvoicePdf, invoicePdfFilename } from '@/lib/pdf/invoice-pdf'
 
 /**
  * Virtual Reality Guys — Admin Portal MCP server.
@@ -37,9 +36,7 @@ REPLYING TO A NEW REQUEST
 2. Draft a warm, professional reply: thank them by first name, recommend the best-fit package for their group size/event, confirm date availability (never promise a date that has a clash), mention the 50% deposit to secure the date, and invite them to confirm. Sign off as "The Virtual Reality Guys team" with phone/WhatsApp +27 71 780 0323.
 3. Send it with the connected Gmail tools (send_message to the client's address; use reply instead if the client already emailed you and a thread exists). Put formatted HTML in htmlBody and a plain-text version in body.
 4. Immediately call log_client_email with the returned Gmail message id so it appears in the portal, and set the request status (usually "in_progress" or "pending_confirmation").
-Optionally create a quote with create_quote_or_invoice, then call get_invoice_pdf to get a shareable PDF link and include it in the email.
-
-QUOTES & INVOICES: create_quote_or_invoice makes a draft (totals and the document number are computed for you); update_invoice edits it or advances its status (e.g. deposit_paid, paid); get_invoice_pdf renders a branded PDF and returns a download link valid ~14 days. Ask the owner before changing amounts on an invoice that was already sent.
+Optionally create a quote with create_quote_or_invoice and reference its number in the email. The owner downloads or sends the PDF from the portal's Quotes & Invoices page.
 
 EMAIL MARKETING
 1. sync_contacts_from_clients / add_marketing_contacts to build the audience. Only email contacts with status "subscribed".
@@ -630,49 +627,6 @@ export function createPortalMcpServer() {
       await marketing.logAudit(actor, 'update_invoice', 'finance', `${data.doc_number} — ${data.client_name}`, { ...upd, items: items ? `${items.length} items` : undefined })
       reconcileFollowUpsForInvoice(data).catch(() => {})
       return data
-    })
-  )
-
-  server.registerTool(
-    'get_invoice_pdf',
-    {
-      title: 'Generate quote / invoice PDF',
-      description:
-        'Generates a branded PDF of a quote or invoice and returns a shareable download link (valid ~14 days). Use after creating or editing a document so you can attach the link in the email you draft to the client. The owner can also open and download it.',
-      inputSchema: { id: z.string().uuid() },
-      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
-    },
-    run(async ({ id }) => {
-      const admin = createAdminClient()
-      const invoice = unwrap(await admin.from('invoices').select('*').eq('id', id).single(), 'Get invoice') as any
-
-      // Resolve embedded status/time tags before rendering
-      if (typeof invoice.notes === 'string') {
-        const sm = invoice.notes.match(/\[STATUS:([a-zA-Z0-9_]+)\]/)
-        if (sm && invoice.status === 'sent') invoice.status = sm[1]
-        const tm = invoice.notes.match(/\[TIME:([^\]]+)\]/)
-        if (tm && !invoice.event_time) invoice.event_time = tm[1].trim()
-        invoice.notes = invoice.notes.replace(/\[(STATUS|TIME|REQUEST):[^\]]*\]/g, '').trim()
-      }
-
-      const pdf = renderInvoicePdf(invoice)
-      const filename = invoicePdfFilename(invoice)
-      const path = `invoices/${(invoice.doc_number || invoice.id).replace(/[^\w.-]+/g, '-')}.pdf`
-
-      const up = await admin.storage.from('documents').upload(path, pdf, { contentType: 'application/pdf', upsert: true })
-      if (up.error) throw new Error(`Upload failed: ${up.error.message}`)
-      const signed = await admin.storage.from('documents').createSignedUrl(path, 60 * 60 * 24 * 14, { download: filename })
-      if (signed.error || !signed.data) throw new Error(`Link failed: ${signed.error?.message || 'no url'}`)
-
-      await marketing.logAudit(actor, 'generate_invoice_pdf', 'sales', `${invoice.doc_number} — ${invoice.client_name}`, { id: invoice.id })
-      return {
-        doc_number: invoice.doc_number,
-        type: invoice.type,
-        filename,
-        download_url: signed.data.signedUrl,
-        expires_in_days: 14,
-        note: 'Link is valid for ~14 days. Re-run this tool to refresh it.',
-      }
     })
   )
 
