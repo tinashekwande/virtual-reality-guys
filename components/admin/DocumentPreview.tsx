@@ -19,6 +19,27 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
   const previewRefId = `pdf-document-preview-${invoice.doc_number || "draft"}`;
 
   const handleExportPDF = async () => {
+    // Saved documents use the reliable server-generated PDF; unsaved drafts fall
+    // back to the in-browser export.
+    if (invoice.id) {
+      try {
+        const res = await fetch(`/api/invoices/${invoice.id}/pdf`);
+        if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.error || `HTTP ${res.status}`);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${invoice.type === "quote" ? "Quote" : "Invoice"}_${invoice.doc_number || "draft"}_${invoice.client_name || "Client"}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        toast.success("PDF downloaded 📄");
+        return;
+      } catch (err: any) {
+        toast.error(`Server PDF failed (${err.message}); using browser export…`);
+      }
+    }
     try {
       const filename = `${invoice.type === "quote" ? "Quote" : "Invoice"}_${invoice.doc_number || "draft"}_${invoice.client_name || "Client"}`;
       await exportToPDF(previewRefId, filename);
