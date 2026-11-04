@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
   Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
-  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot, FileSignature, Megaphone
+  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot, FileSignature, Megaphone, CalendarCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -18,6 +18,7 @@ import { UniversalAiSearch } from "@/components/admin/ai/UniversalAiSearch"
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/today", label: "Today", icon: CalendarCheck },
   { href: "/admin/planner", label: "Booking Planner", icon: Calendar },
   { href: "/admin/quotes-invoices", label: "Quotes & Invoices", icon: Receipt },
   { href: "/admin/rental-agreement", label: "Rental Agreement", icon: FileSignature },
