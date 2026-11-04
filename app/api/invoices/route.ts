@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { scheduleFollowUpsForInvoice } from '@/lib/followups/scheduler'
 
 function normalizeInvoice(inv: any) {
   if (!inv) return inv
@@ -141,6 +142,9 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+
+    // Auto-schedule follow-ups (quote chaser, deposit reminder, event prep, review request)
+    scheduleFollowUpsForInvoice(data).catch((e) => console.error('[invoices] follow-up scheduling error:', e))
 
     return NextResponse.json(normalizeInvoice(data), { status: 201 })
   } catch (err: any) {

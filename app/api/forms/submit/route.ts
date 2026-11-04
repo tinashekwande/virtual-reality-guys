@@ -1,6 +1,47 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendNewLeadNotification } from '@/lib/email/notifier'
+import { sendEmail, getConfiguredEmailProvider } from '@/lib/email/sender'
+import { buildAcknowledgementEmail } from '@/lib/email/client-templates'
+import { scheduleRequestFollowUp } from '@/lib/followups/scheduler'
+
+/**
+ * Fire-and-forget: send the client an instant acknowledgement and record it
+ * against their request so it shows in the portal's communication log.
+ */
+async function sendClientAcknowledgement(params: {
+  name: string
+  email: string
+  formType: string
+  eventDate?: string | null
+  bookedGame?: string | null
+  requestId?: string | null
+}) {
+  if (!getConfiguredEmailProvider()) return // no provider configured — skip silently
+  const ack = buildAcknowledgementEmail({
+    name: params.name,
+    formType: params.formType,
+    eventDate: params.eventDate,
+    bookedGame: params.bookedGame,
+  })
+  const res = await sendEmail({ to: params.email, subject: ack.subject, html: ack.html, text: ack.text })
+  try {
+    await createAdminClient().from('client_communications').insert({
+      request_id: params.requestId || null,
+      client_name: params.name,
+      client_email: params.email.trim().toLowerCase(),
+      direction: 'outbound',
+      channel: 'email',
+      subject: ack.subject,
+      body: ack.text,
+      status: res.success ? 'sent' : 'failed',
+      external_id: res.id || null,
+      sent_by: 'System (auto-reply)',
+    })
+  } catch (err) {
+    console.error('[forms/submit] Failed to log acknowledgement:', err)
+  }
+}
 
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
@@ -78,6 +119,25 @@ export async function POST(request: Request) {
   }).catch((err) => {
     console.error('[forms/submit] Email notification error:', err)
   })
+
+  // Instant acknowledgement to the client (does not block the response)
+  sendClientAcknowledgement({
+    name,
+    email,
+    formType: form_type,
+    eventDate: event_date || null,
+    bookedGame: game_title || null,
+    requestId: data?.id || null,
+  }).catch((err) => {
+    console.error('[forms/submit] Client acknowledgement error:', err)
+  })
+
+  // Schedule a follow-up so this enquiry can't be forgotten if not quoted
+  if (data?.id) {
+    scheduleRequestFollowUp({ id: data.id, name, email, phone: phone || null }).catch((err) => {
+      console.error('[forms/submit] Follow-up scheduling error:', err)
+    })
+  }
 
   return NextResponse.json({ success: true, id: data.id }, { status: 201 })
 }

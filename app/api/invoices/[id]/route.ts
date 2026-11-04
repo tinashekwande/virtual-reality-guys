@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { reconcileFollowUpsForInvoice } from '@/lib/followups/scheduler'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -156,7 +157,12 @@ export async function PUT(request: Request, { params }: Props) {
   }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(normalizeInvoice(data))
+
+  const normalized = normalizeInvoice(data)
+  // Add/cancel follow-ups to match the invoice's new status & date
+  reconcileFollowUpsForInvoice(normalized).catch((e) => console.error('[invoices] follow-up reconcile error:', e))
+
+  return NextResponse.json(normalized)
 }
 
 // DELETE invoice/quote
@@ -166,6 +172,13 @@ export async function DELETE(request: Request, { params }: Props) {
 
   const { id } = await params
   const admin = createAdminClient()
+
+  // Cancel any pending follow-ups tied to this document
+  await admin
+    .from('follow_ups')
+    .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+    .eq('invoice_id', id)
+    .eq('status', 'pending')
 
   const { error } = await admin.from('invoices').delete().eq('id', id)
 
