@@ -2,6 +2,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { toast } from "sonner"
 import { 
   Heading2, Heading3, Bold, Italic, List, ListOrdered, 
   Quote, Link as LinkIcon, Table, Youtube, Image as ImageIcon, 
@@ -106,11 +107,11 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
         insertMarkdown(`![${file.name.split(".")[0]}](${data.url})`, "", "")
       } else {
         const error = await res.json()
-        alert(error.error || "Failed to upload image")
+        toast.error(error.error || "Failed to upload image")
       }
     } catch (err) {
       console.error(err)
-      alert("Error uploading image")
+      toast.error("Error uploading image")
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ""

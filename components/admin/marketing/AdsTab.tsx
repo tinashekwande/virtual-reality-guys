@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { api, zar, StatusPill, ActorBadge, Field, selectClass, EmptyState } from "./shared"
+import { useConfirm } from "@/components/admin/confirm-provider"
 
 const PLATFORMS: Record<string, string> = {
   meta: "Meta (FB + IG)",
@@ -31,6 +32,7 @@ const empty = {
 }
 
 export function AdsTab({ onChanged }: { onChanged: () => void }) {
+  const confirm = useConfirm()
   const [ads, setAds] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
@@ -76,7 +78,7 @@ export function AdsTab({ onChanged }: { onChanged: () => void }) {
   }
 
   const remove = async (ad: any) => {
-    if (!confirm(`Delete "${ad.name}"?`)) return
+    if (!(await confirm({ title: "Delete ad campaign?", description: `"${ad.name}" will be permanently deleted.`, confirmLabel: "Delete" }))) return
     try {
       await api(`/api/marketing/ads/${ad.id}`, { method: "DELETE" })
       load()

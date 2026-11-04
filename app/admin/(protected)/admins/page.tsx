@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import { ShieldCheck, Plus, Trash2, Key, Calendar, Mail, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -100,7 +101,7 @@ export default function AdminsAdminPage() {
         await load()
       } else {
         const data = await res.json()
-        alert(data.error ?? "Failed to delete admin account")
+        toast.error(data.error ?? "Failed to delete admin account")
       }
     } catch (err) {
       console.error(err)

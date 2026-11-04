@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { api, fmtDate, StatusPill, Field, selectClass, EmptyState } from "./shared"
+import { useConfirm } from "@/components/admin/confirm-provider"
 
 export function ContactsTab({ onChanged }: { onChanged: () => void }) {
+  const confirm = useConfirm()
   const [contacts, setContacts] = useState<any[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -82,7 +84,7 @@ export function ContactsTab({ onChanged }: { onChanged: () => void }) {
 
   const toggleSub = async (c: any) => {
     const next = c.status === "subscribed" ? "unsubscribed" : "subscribed"
-    if (next === "subscribed" && !confirm(`Re-subscribe ${c.email}? Only do this if they asked to receive emails again.`)) return
+    if (next === "subscribed" && !(await confirm({ title: "Re-subscribe this contact?", description: `Only re-subscribe ${c.email} if they asked to receive emails again.`, confirmLabel: "Re-subscribe", destructive: false }))) return
     try {
       await api(`/api/marketing/contacts/${c.id}`, { method: "PATCH", body: JSON.stringify({ status: next }) })
       load()
@@ -93,7 +95,7 @@ export function ContactsTab({ onChanged }: { onChanged: () => void }) {
   }
 
   const remove = async (c: any) => {
-    if (!confirm(`Delete ${c.email} from marketing contacts?`)) return
+    if (!(await confirm({ title: "Delete contact?", description: `${c.email} will be removed from marketing contacts.`, confirmLabel: "Delete" }))) return
     try {
       await api(`/api/marketing/contacts/${c.id}`, { method: "DELETE" })
       load()

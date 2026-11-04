@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, Suspense } from "react"
+import { useConfirm } from "@/components/admin/confirm-provider"
 import { useSearchParams } from "next/navigation"
 import {
   FileSignature,
@@ -230,6 +231,7 @@ const DEFAULT_BLANK_AGREEMENT: RentalAgreementData = {
 }
 
 function RentalAgreementContent() {
+  const confirm = useConfirm()
   const searchParams = useSearchParams()
   const [agreement, setAgreement] = useState<RentalAgreementData>(DEFAULT_BLANK_AGREEMENT)
   const [viewMode, setViewMode] = useState<"preview" | "edit" | "records">("preview")
@@ -598,7 +600,7 @@ function RentalAgreementContent() {
   }
 
   const handleDeleteAgreement = async (id: string, agreementNumber: string) => {
-    if (!confirm(`Are you sure you want to delete agreement ${agreementNumber} from the database?`)) {
+    if (!(await confirm({ title: "Delete agreement?", description: `Agreement ${agreementNumber} will be permanently deleted.`, confirmLabel: "Delete" }))) {
       return
     }
 

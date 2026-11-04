@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useRef, useCallback } from "react";
+import { useConfirm } from "@/components/admin/confirm-provider"
 import {
   X, Upload, Link as LinkIcon, RefreshCw, Trash2, CheckCircle2,
   AlertCircle, FileText, Globe, Loader2
@@ -28,6 +29,7 @@ export default function CalendarImportModal({
   subscriptions,
   onSubscriptionsChange,
 }: CalendarImportModalProps) {
+  const confirm = useConfirm();
   const [activeTab, setActiveTab] = useState<Tab>("upload");
 
   // Upload tab state
@@ -157,7 +159,7 @@ export default function CalendarImportModal({
   };
 
   const handleDeleteSub = async (id: string) => {
-    if (!confirm("Delete this subscription and all its events?")) return;
+    if (!(await confirm({ title: "Delete subscription?", description: "This subscription and all its imported events will be deleted.", confirmLabel: "Delete" }))) return;
     setDeletingId(id);
     try {
       const res = await fetch(`/api/calendar-subscriptions?id=${id}`, { method: "DELETE" });

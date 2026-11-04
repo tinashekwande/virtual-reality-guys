@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
 import { PersistentAiAssistant } from "@/components/admin/ai/PersistentAiAssistant"
+import { ConfirmProvider } from "@/components/admin/confirm-provider"
 import { UniversalAiSearch } from "@/components/admin/ai/UniversalAiSearch"
 
 const NAV_ITEMS = [
@@ -266,7 +267,7 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-6 print:h-auto print:overflow-visible print:p-0 print:m-0 print:block">
-          {children}
+          <ConfirmProvider>{children}</ConfirmProvider>
         </main>
         <div className="print:hidden">
           <PersistentAiAssistant />

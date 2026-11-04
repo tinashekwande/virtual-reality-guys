@@ -9,6 +9,7 @@ import { StatCard } from "@/components/admin/stat-card"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import { AiCommandCenter } from "@/components/admin/ai/AiCommandCenter"
 import { AiRevenueForecast } from "@/components/admin/ai/AiRevenueForecast"
+import { KpiRowSkeleton, ListSkeleton } from "@/components/admin/skeletons"
 import type { DashboardStats } from "@/types"
 
 function extractBookedGame(message?: string): string | null {
@@ -69,7 +70,13 @@ export default function AdminDashboardPage() {
   }
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64 text-muted-foreground">Loading dashboard…</div>
+    <div className="space-y-8 max-w-6xl">
+      <KpiRowSkeleton count={4} />
+      <div className="grid lg:grid-cols-2 gap-6">
+        <ListSkeleton rows={4} />
+        <ListSkeleton rows={4} />
+      </div>
+    </div>
   )
 
   return (

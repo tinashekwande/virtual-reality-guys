@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useConfirm } from "@/components/admin/confirm-provider"
 import {
   DollarSign, TrendingUp, TrendingDown, Wallet, Calendar, Plus, Search,
   Download, Filter, ArrowUpRight, ArrowDownRight, PieChart, BarChart3,
@@ -18,6 +19,7 @@ import { toast } from "sonner";
 import { EventItem, ExpenseItem, ExpenseCategory, Invoice } from "@/types";
 
 export default function AccountingPage() {
+  const confirm = useConfirm();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
@@ -366,7 +368,7 @@ export default function AccountingPage() {
 
   // Handle Delete Expense
   const handleDeleteExpense = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this expense? This action cannot be undone.")) return;
+    if (!(await confirm({ title: "Delete expense?", description: "This action cannot be undone.", confirmLabel: "Delete" }))) return;
     setDeletingExpenseId(id);
     try {
       const res = await fetch(`/api/expenses/${id}`, { method: "DELETE" });

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import { useConfirm } from "@/components/admin/confirm-provider"
 import { useSearchParams } from "next/navigation";
 import {
   FileText, Plus, Search, Filter, Download, Trash2, Edit3, Eye, DollarSign,
@@ -21,6 +22,7 @@ import DocumentPreview from "@/components/admin/DocumentPreview";
 import { toast } from "sonner";
 
 function QuotesInvoicesContent() {
+  const confirm = useConfirm();
   const searchParams = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -166,7 +168,7 @@ function QuotesInvoicesContent() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this document?")) return;
+    if (!(await confirm({ title: "Delete document?", description: "This quote/invoice will be permanently deleted.", confirmLabel: "Delete" }))) return;
 
     try {
       const res = await fetch(`/api/invoices/${id}`, { method: "DELETE" });

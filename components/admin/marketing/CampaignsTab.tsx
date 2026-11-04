@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { api, zar, fmtDate, fmtDateTime, StatusPill, ActorBadge, Field, selectClass, EmptyState } from "./shared"
+import { useConfirm } from "@/components/admin/confirm-provider"
 
 const STARTER_HTML = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;color:#111827">
   <h2 style="color:#0891b2">Hi {{first_name}} 👋</h2>
@@ -30,6 +31,7 @@ const emptyForm = {
 }
 
 export function CampaignsTab({ provider, onChanged }: { provider: string | null; onChanged: () => void }) {
+  const confirm = useConfirm()
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
   const [editorOpen, setEditorOpen] = useState(false)
@@ -122,7 +124,7 @@ export function CampaignsTab({ provider, onChanged }: { provider: string | null;
   }
 
   const sendBatch = async (id: string) => {
-    if (!confirm("Send the next batch (up to 50 emails) from the portal now?")) return
+    if (!(await confirm({ title: "Send batch now?", description: "This sends the next batch (up to 50 emails) from the portal immediately.", confirmLabel: "Send batch", destructive: false }))) return
     setBusy(true)
     try {
       const r = await api(`/api/marketing/campaigns/${id}/send-batch`, { method: "POST", body: JSON.stringify({ limit: 50 }) })
@@ -150,7 +152,7 @@ export function CampaignsTab({ provider, onChanged }: { provider: string | null;
   }
 
   const remove = async (c: Campaign) => {
-    if (!confirm(`Delete campaign "${c.name}" and its send log?`)) return
+    if (!(await confirm({ title: "Delete campaign?", description: `"${c.name}" and its send log will be permanently deleted.`, confirmLabel: "Delete" }))) return
     try {
       await api(`/api/marketing/campaigns/${c.id}`, { method: "DELETE" })
       toast.success("Campaign deleted")
