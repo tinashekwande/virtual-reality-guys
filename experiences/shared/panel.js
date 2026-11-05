@@ -91,9 +91,9 @@ export class Panel {
 
     // footer note
     if (c.footer) {
-      ctx.fillStyle = '#8fa6c9'
-      ctx.font = `30px ${FONT}`
-      wrap(ctx, c.footer, 56, H - 300, W - 112, 38, 2)
+      ctx.fillStyle = c.footerColor || '#8fa6c9'
+      ctx.font = `${c.footerColor ? 'bold ' : ''}32px ${FONT}`
+      wrap(ctx, c.footer, 56, H - 330, W - 112, 38, 3)
     }
 
     // buttons: laid out in a row (or column of up to 4 for quiz answers)
