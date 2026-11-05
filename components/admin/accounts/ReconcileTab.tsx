@@ -98,7 +98,7 @@ export default function ReconcileTab({ invoices, payments, cashPosition, onChang
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-card/70 rounded-xl border border-border p-4">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Portal says you should have</p>
-          <p className="font-mono font-bold text-lg text-foreground">{money(cashPosition)}</p>
+          <p className="font-sans tabular-nums font-bold text-lg text-foreground">{money(cashPosition)}</p>
           <p className="text-[10px] text-muted-foreground">money received minus everything paid out</p>
         </div>
         <div className="bg-card/70 rounded-xl border border-border p-4">
@@ -117,10 +117,10 @@ export default function ReconcileTab({ invoices, payments, cashPosition, onChang
           {diff === null ? (
             <p className="text-muted-foreground pt-1">Enter your bank balance to compare.</p>
           ) : Math.abs(diff) < 0.5 ? (
-            <p className="font-mono font-bold text-lg text-emerald-400">Matches</p>
+            <p className="font-sans tabular-nums font-bold text-lg text-emerald-400">Matches</p>
           ) : (
             <>
-              <p className="font-mono font-bold text-lg text-amber-400">{diff > 0 ? "+" : "-"}{money(Math.abs(diff))}</p>
+              <p className="font-sans tabular-nums font-bold text-lg text-amber-400">{diff > 0 ? "+" : "-"}{money(Math.abs(diff))}</p>
               <p className="text-[10px] text-muted-foreground">
                 {diff > 0 ? "Bank has more than the portal expects: a payment or income is missing or too low." : "Bank has less than the portal expects: a payment is overstated, or an expense isn't logged."}
               </p>
@@ -157,11 +157,11 @@ export default function ReconcileTab({ invoices, payments, cashPosition, onChang
                 const editing = editingId === p.id;
                 return (
                   <tr key={p.id} className="border-b border-border/50">
-                    <td className="py-2.5 px-4 font-mono">
+                    <td className="py-2.5 px-4 font-sans tabular-nums">
                       {editing ? <Input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} className="h-8 text-xs w-36" /> : p.paid_on}
                     </td>
                     <td className="py-2.5 px-4">{inv?.client_name || "Unknown"}<span className="text-muted-foreground"> · {p.method}</span></td>
-                    <td className="py-2.5 px-4 text-right font-mono">
+                    <td className="py-2.5 px-4 text-right font-sans tabular-nums">
                       {editing ? <Input inputMode="decimal" value={editAmount} onChange={(e) => setEditAmount(e.target.value)} className="h-8 text-xs w-28 ml-auto text-right" /> : money(Number(p.amount))}
                     </td>
                     <td className="py-2.5 px-4">

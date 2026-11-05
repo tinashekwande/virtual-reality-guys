@@ -124,15 +124,15 @@ export default function PaymentsDialog({ invoice, payments, open, onClose, onCha
         <div className="grid grid-cols-3 gap-3 text-center">
           <div className="rounded-xl border border-border bg-secondary/40 p-3">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Received</p>
-            <p className="font-mono font-bold text-emerald-400 text-sm">{rand(summary.received)}</p>
+            <p className="font-sans tabular-nums font-bold text-emerald-400 text-sm">{rand(summary.received)}</p>
           </div>
           <div className="rounded-xl border border-border bg-secondary/40 p-3">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Balance due</p>
-            <p className={`font-mono font-bold text-sm ${summary.balance > 0 ? "text-amber-400" : "text-emerald-400"}`}>{rand(summary.balance)}</p>
+            <p className={`font-sans tabular-nums font-bold text-sm ${summary.balance > 0 ? "text-amber-400" : "text-emerald-400"}`}>{rand(summary.balance)}</p>
           </div>
           <div className="rounded-xl border border-border bg-secondary/40 p-3">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Deposit ({invoice.deposit_percentage ?? 50}%)</p>
-            <p className={`font-mono font-bold text-sm ${summary.depositMet ? "text-emerald-400" : "text-foreground"}`}>
+            <p className={`font-sans tabular-nums font-bold text-sm ${summary.depositMet ? "text-emerald-400" : "text-foreground"}`}>
               {rand(summary.depositRequired)} {summary.depositMet ? "✓" : ""}
             </p>
           </div>
@@ -160,7 +160,7 @@ export default function PaymentsDialog({ invoice, payments, open, onClose, onCha
                 .map((p) => (
                   <div key={p.id} className="flex items-center justify-between gap-3 p-3 text-xs">
                     <div className="min-w-0">
-                      <p className="font-mono font-bold text-emerald-400">{rand(Number(p.amount))}</p>
+                      <p className="font-sans tabular-nums font-bold text-emerald-400">{rand(Number(p.amount))}</p>
                       <p className="text-muted-foreground truncate">
                         {p.paid_on} · {p.method}
                         {p.reference ? ` · ref ${p.reference}` : ""}
