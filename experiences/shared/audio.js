@@ -147,6 +147,44 @@ export function createAudio() {
       n.stop(t + 1.4)
       tone(140, { type: 'sine', dur: 1.1, vol: 0.12, attack: 0.25, slideTo: 60 })
     },
+    /** Soft engine swell for a flight of `seconds`. */
+    cruise(seconds = 8) {
+      if (!ctx || !enabled) return
+      const t = ctx.currentTime
+      const n = ctx.createBufferSource()
+      n.buffer = noiseBuffer(2)
+      n.loop = true
+      const f = ctx.createBiquadFilter()
+      f.type = 'lowpass'
+      f.Q.value = 2
+      f.frequency.setValueAtTime(150, t)
+      f.frequency.linearRampToValueAtTime(900, t + seconds * 0.35)
+      f.frequency.linearRampToValueAtTime(300, t + seconds * 0.55)
+      f.frequency.linearRampToValueAtTime(1100, t + seconds * 0.8)
+      f.frequency.linearRampToValueAtTime(120, t + seconds)
+      const g = ctx.createGain()
+      g.gain.setValueAtTime(0, t)
+      g.gain.linearRampToValueAtTime(0.18, t + 1)
+      g.gain.setValueAtTime(0.18, t + seconds - 1.2)
+      g.gain.linearRampToValueAtTime(0, t + seconds)
+      n.connect(f).connect(g).connect(sfxBus)
+      n.start(t)
+      n.stop(t + seconds + 0.1)
+      const o = ctx.createOscillator()
+      o.type = 'sine'
+      o.frequency.setValueAtTime(55, t)
+      o.frequency.linearRampToValueAtTime(82, t + seconds * 0.4)
+      o.frequency.linearRampToValueAtTime(55, t + seconds)
+      const og = ctx.createGain()
+      og.gain.setValueAtTime(0, t)
+      og.gain.linearRampToValueAtTime(0.1, t + 1)
+      og.gain.linearRampToValueAtTime(0, t + seconds)
+      o.connect(og).connect(sfxBus)
+      o.start(t)
+      o.stop(t + seconds + 0.1)
+      tone(660, { start: seconds * 0.42, dur: 1.2, vol: 0.06, type: 'triangle' }) // soft chime at the overview
+      tone(990, { start: seconds * 0.42 + 0.12, dur: 1.2, vol: 0.04, type: 'triangle' })
+    },
     sparkle() {
       for (let i = 0; i < 9; i++) tone(1200 + Math.random() * 1800, { start: i * 0.06, dur: 0.4, vol: 0.07 })
       tone(523.25, { dur: 0.8, vol: 0.08, type: 'triangle' })

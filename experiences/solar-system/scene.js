@@ -9,21 +9,33 @@ const TEX = new URL('../textures/solar/', import.meta.url).href
 
 export const SPEC = {
   sun: { r: 12, x: 0 },
-  mercury: { r: 1.2, x: 34, spin: 0.06, tilt: 0.03, atmo: null },
-  venus: { r: 2.2, x: 52, spin: -0.03, tilt: 0.05, atmo: [1.0, 0.85, 0.55, 0.9] },
-  earth: { r: 2.4, x: 72, spin: 0.12, tilt: 0.41, atmo: [0.35, 0.6, 1.0, 1.2] },
-  mars: { r: 1.6, x: 90, spin: 0.12, tilt: 0.44, atmo: [1.0, 0.55, 0.35, 0.5] },
-  jupiter: { r: 7, x: 150, spin: 0.25, tilt: 0.05, atmo: [1.0, 0.85, 0.7, 0.5] },
-  saturn: { r: 5.6, x: 195, spin: 0.22, tilt: 0.47, atmo: [1.0, 0.9, 0.7, 0.45] },
-  uranus: { r: 3.4, x: 232, spin: 0.15, tilt: 1.7, atmo: [0.6, 0.95, 1.0, 0.8] },
-  neptune: { r: 3.3, x: 262, spin: 0.16, tilt: 0.49, atmo: [0.45, 0.6, 1.0, 0.9] },
+  mercury: { a: 25, r: 1.2, x: 34, spin: 0.06, tilt: 0.03, atmo: null },
+  venus: { a: -35, r: 2.2, x: 52, spin: -0.03, tilt: 0.05, atmo: [1.0, 0.85, 0.55, 0.9] },
+  earth: { a: 15, r: 2.4, x: 72, spin: 0.12, tilt: 0.41, atmo: [0.35, 0.6, 1.0, 1.2] },
+  mars: { a: -20, r: 1.6, x: 90, spin: 0.12, tilt: 0.44, atmo: [1.0, 0.55, 0.35, 0.5] },
+  jupiter: { a: 35, r: 7, x: 150, spin: 0.25, tilt: 0.05, atmo: [1.0, 0.85, 0.7, 0.5] },
+  saturn: { a: -25, r: 5.6, x: 195, spin: 0.22, tilt: 0.47, atmo: [1.0, 0.9, 0.7, 0.45] },
+  uranus: { a: 30, r: 3.4, x: 232, spin: 0.15, tilt: 1.7, atmo: [0.6, 0.95, 1.0, 0.8] },
+  neptune: { a: -15, r: 3.3, x: 262, spin: 0.16, tilt: 0.49, atmo: [0.45, 0.6, 1.0, 0.9] },
 }
+
+/** Where a body sits: x = distance from the Sun, a = angle around its orbit (degrees). */
+export function posOf(id) {
+  const s = SPEC[id]
+  const a = ((s.a || 0) * Math.PI) / 180
+  return new THREE.Vector3(Math.cos(a) * s.x, EYE, Math.sin(a) * s.x)
+}
+
+/** High viewpoint above and behind the Sun where the whole solar system is spread out ahead of you. */
+export const OVERVIEW = new THREE.Vector3(-150, 62, 0)
 
 /** Where to stand for a stop: on the Sun side, looking at the planet. */
 export function placeFor(id) {
   const s = SPEC[id]
   const dist = s.r * (id === 'sun' ? 2.4 : 3.2) + 4
-  return { position: new THREE.Vector3(s.x - dist, 0, 0), yaw: -Math.PI / 2 }
+  const p = posOf(id)
+  // always look along +x at the planet, so the view never has to turn between stops
+  return { position: new THREE.Vector3(p.x - dist, 0, p.z), yaw: -Math.PI / 2 }
 }
 
 export function buildScene(app, manager) {
@@ -174,11 +186,12 @@ export function buildScene(app, manager) {
   // ---------------- planets ----------------
   const bodies = {}
   const tilts = {}
+  const labels = []
   const spinners = []
   function planet(id, material) {
     const s = SPEC[id]
     const tiltGroup = new THREE.Group()
-    tiltGroup.position.set(s.x, EYE, 0)
+    tiltGroup.position.copy(posOf(id))
     tiltGroup.rotation.z = s.tilt * 0.8
     tiltGroup.rotation.x = s.tilt * 0.6
     scene.add(tiltGroup)
@@ -189,7 +202,9 @@ export function buildScene(app, manager) {
     bodies[id] = mesh
     tilts[id] = tiltGroup
     spinners.push({ mesh, speed: s.spin, boost: 0 })
-    scene.add(label(id, s))
+    const lab = label(id, s)
+    labels.push(lab)
+    scene.add(lab)
     return mesh
   }
   const std = (name, opts = {}) => new THREE.MeshStandardMaterial({ map: tex(name), roughness: 1, metalness: 0, ...opts })
@@ -222,15 +237,15 @@ export function buildScene(app, manager) {
   // ---------------- moons ----------------
   const moonsOf = {}
   const moonMat = (name, bump) => std(name, bump ? { bumpMap: tex(name + '_bump', false), bumpScale: 2 } : {})
-  addMoon('earth', moonMat('moon', true), 0.6, 6.2, 0.09, 0.25, null, 1.2)
-  addMoon('mars', moonMat('rockmoon'), 0.22, 3.0, 0.5, 0.1, [1, 0.75, 0.85])
-  addMoon('mars', moonMat('rockmoon'), 0.15, 4.6, 0.3, -0.2, [1, 0.8, 0.9])
-  addMoon('jupiter', moonMat('io'), 0.55, 10.5, 0.32, 0.05)
-  addMoon('jupiter', moonMat('europa'), 0.48, 13, 0.24, 0.12)
-  addMoon('jupiter', moonMat('ganymede'), 0.8, 16.5, 0.17, -0.08)
-  addMoon('jupiter', moonMat('callisto'), 0.72, 18.5, 0.12, 0.15)
-  addMoon('saturn', moonMat('titan'), 0.7, 14, 0.12, 0.35, null, 2.4)
-  addMoon('neptune', moonMat('triton'), 0.45, 7.5, -0.2, 0.3)
+  addMoon('earth', moonMat('moon', true), 0.6, 6.2, 0.05, 0.25, null, 1.2)
+  addMoon('mars', moonMat('rockmoon'), 0.22, 3.0, 0.14, 0.1, [1, 0.75, 0.85])
+  addMoon('mars', moonMat('rockmoon'), 0.15, 4.6, 0.09, -0.2, [1, 0.8, 0.9])
+  addMoon('jupiter', moonMat('io'), 0.55, 10.5, 0.12, 0.05)
+  addMoon('jupiter', moonMat('europa'), 0.48, 13, 0.09, 0.12)
+  addMoon('jupiter', moonMat('ganymede'), 0.8, 16.5, 0.07, -0.08)
+  addMoon('jupiter', moonMat('callisto'), 0.72, 18.5, 0.05, 0.15)
+  addMoon('saturn', moonMat('titan'), 0.7, 14, 0.06, 0.35, null, 2.4)
+  addMoon('neptune', moonMat('triton'), 0.45, 7.5, -0.08, 0.3)
   function addMoon(parent, mat, r, dist, speed, incline, squash, startAngle = Math.random() * 6.28) {
     const pivot = new THREE.Group()
     ;(moonsOf[parent] ||= []).push(pivot)
@@ -277,12 +292,14 @@ export function buildScene(app, manager) {
     updaters.push((dt) => (beltGroup.rotation.y += dt * 0.004))
   }
 
-  // faint orbit lines
+  // faint orbit lines (brighter when you are high above the system)
+  const orbitMats = []
   for (const [id, s] of Object.entries(SPEC)) {
     if (id === 'sun') continue
     const pts = []
     for (let i = 0; i <= 256; i++) { const a = (i / 256) * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * s.x, 0, Math.sin(a) * s.x)) }
     const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x7fb4ff, transparent: true, opacity: 0.12, depthWrite: false }))
+    orbitMats.push(line.material)
     line.position.copy(sunPos)
     scene.add(line)
   }
@@ -303,6 +320,30 @@ export function buildScene(app, manager) {
     updaters.push((dt, t) => (rim.material.color.setHSL(0.52, 0.85, 0.5 + 0.08 * Math.sin(t * 1.6))))
   }
 
+  // ---------------- destination marker (seen from the overview) ----------------
+  const marker = new THREE.Sprite(new THREE.SpriteMaterial({ map: markerTexture(), transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, toneMapped: false }))
+  marker.renderOrder = 15
+  marker.visible = false
+  scene.add(marker)
+  let markerSize = 1
+
+  // labels and orbits stay readable from far away
+  const tmp = new THREE.Vector3()
+  updaters.push((dt, t) => {
+    const head = camera.getWorldPosition(tmp)
+    for (const l of labels) {
+      const d = l.position.distanceTo(head)
+      const k = Math.min(5, Math.max(1, d / 45))
+      l.scale.set(l.userData.w * k, (l.userData.w / 4) * k, 1)
+    }
+    const high = Math.min(1, Math.max(0, (rig.position.y - 5) / 60))
+    for (const m of orbitMats) m.opacity = 0.12 + 0.3 * high
+    if (marker.visible) {
+      const d = marker.position.distanceTo(head)
+      marker.scale.setScalar(Math.max(markerSize, d * 0.06) * (1 + 0.12 * Math.sin(t * 4)))
+    }
+  })
+
   // ---------------- animation ----------------
   updaters.push((dt) => {
     for (const s of spinners) {
@@ -313,12 +354,24 @@ export function buildScene(app, manager) {
 
   return {
     bodies, tilts, sun, sunPos,
+    /** Show a pulsing ring around the planet you are flying to (null to hide). */
+    markDestination(id) {
+      if (!id) { marker.visible = false; return }
+      const s = SPEC[id]
+      marker.position.copy(posOf(id))
+      markerSize = s.r * 3
+      marker.visible = true
+    },
     update(dt, t) { for (const u of updaters) u(dt, t) },
     /** Make a planet spin faster for a moment (when a child taps it). */
     /** Put a planet's moons beside/behind it so they don't block the view when you arrive. */
-    arrangeMoons(id) {
+    arrangeMoons(id, leadSeconds = 0) {
       const list = moonsOf[id] || []
-      list.forEach((p, k) => (p.rotation.y = -0.45 - (k * 2.2) / Math.max(1, list.length)))
+      list.forEach((p, k) => {
+        const sp = spinners.find((x) => x.mesh === p)
+        // start ahead of the target spot so the moon drifts into it as you arrive
+        p.rotation.y = -0.45 - (k * 2.2) / Math.max(1, list.length) + Math.abs(sp ? sp.speed : 0) * leadSeconds
+      })
     },
     boost(id, amount = 2.5) { const s = spinners.find((x) => x.mesh === bodies[id]); if (s) s.boost = amount },
     spinnerOf(id) { return spinners.find((x) => x.mesh === bodies[id]) },
@@ -345,6 +398,23 @@ export function glowTexture(inner, outer, falloff = 0.4) {
   g.addColorStop(1, `rgba(${outer},0)`)
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 256, 256)
+  const t = new THREE.CanvasTexture(c)
+  t.colorSpace = THREE.SRGBColorSpace
+  return t
+}
+
+function markerTexture() {
+  const c = document.createElement('canvas')
+  c.width = c.height = 256
+  const ctx = c.getContext('2d')
+  ctx.strokeStyle = 'rgba(255,230,120,0.95)'
+  ctx.shadowColor = 'rgba(255,200,60,1)'
+  ctx.shadowBlur = 16
+  ctx.lineWidth = 7
+  ctx.setLineDash([26, 14])
+  ctx.beginPath()
+  ctx.arc(128, 128, 104, 0, Math.PI * 2)
+  ctx.stroke()
   const t = new THREE.CanvasTexture(c)
   t.colorSpace = THREE.SRGBColorSpace
   return t
@@ -410,7 +480,8 @@ function label(id, s) {
   const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }))
   const w = Math.max(2.4, s.r * 1.1)
   spr.scale.set(w, w / 4, 1)
-  spr.position.set(s.x, EYE + s.r * (id === 'saturn' ? 1.5 : 1.25) + 0.6, 0)
+  spr.userData.w = w
+  spr.position.copy(posOf(id)).add(new THREE.Vector3(0, s.r * (id === 'saturn' ? 1.5 : 1.25) + 0.6, 0))
   return spr
 }
 
