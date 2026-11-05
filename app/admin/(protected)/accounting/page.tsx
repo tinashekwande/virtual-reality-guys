@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { EventItem, ExpenseItem, ExpenseCategory, Invoice, PaymentItem } from "@/types";
 import PaymentsDialog from "@/components/admin/accounts/PaymentsDialog";
 import PayoutsTab from "@/components/admin/accounts/PayoutsTab";
+import ReconcileTab from "@/components/admin/accounts/ReconcileTab";
 import MonthlyTab from "@/components/admin/accounts/MonthlyTab";
 import {
   summarisePayments, totalExpenses, expenseIssues, payeeTotals, depreciationToDate,
@@ -35,7 +36,7 @@ export default function AccountingPage() {
   const [loading, setLoading] = useState(true);
 
   // Active View Tab
-  const [activeTab, setActiveTab] = useState<"ledger" | "expenses" | "payouts" | "monthly">("ledger");
+  const [activeTab, setActiveTab] = useState<"ledger" | "expenses" | "payouts" | "monthly" | "reconcile">("ledger");
 
   // Ledger Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -251,6 +252,16 @@ export default function AccountingPage() {
   const owedToTeam = useMemo(() => payeeTotals(expenses).reduce((a, p) => a + p.owed, 0), [expenses]);
   const attentionCount = useMemo(() => expenses.filter((e) => expenseIssues(e).length > 0).length, [expenses]);
   const expenseTotals = useMemo(() => totalExpenses(expenses), [expenses]);
+  // Cash view: everything received minus everything actually paid out (equipment at full price).
+  // Costs typed straight onto an event with no matching expense entries are included so nothing is hidden.
+  const cashPosition = useMemo(() => {
+    const cashIn = ledgerItems.reduce((a, i) => a + i.revenue, 0);
+    const legacyEventCosts = events.reduce((a, evt) => {
+      const hasLinked = expenses.some((e) => e.event_id === evt.id);
+      return a + (hasLinked ? 0 : Number(evt.total_expenses) || 0);
+    }, 0);
+    return { cashIn, cashOut: expenseTotals.cashOut + legacyEventCosts, balance: cashIn - expenseTotals.cashOut - legacyEventCosts };
+  }, [ledgerItems, events, expenses, expenseTotals]);
   const knownPayees = useMemo(() => payeeTotals(expenses).map((p) => p.payee), [expenses]);
 
   // Expense Categories Breakdown
@@ -664,7 +675,12 @@ export default function AccountingPage() {
       </div>
 
       {/* Money owed, team payouts and equipment at a glance */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+        <button onClick={() => setActiveTab("reconcile")} className="text-left bg-card/70 rounded-xl border border-emerald-500/30 p-3 hover:bg-secondary/40 transition-colors" title="Money received minus everything paid out, equipment at full price. Compare with your bank balance.">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cash position (vs bank)</p>
+          <p className="font-mono font-bold text-sm text-emerald-300">R {cashPosition.balance.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className="text-[10px] text-muted-foreground">R {cashPosition.cashIn.toLocaleString("en-ZA")} in − R {cashPosition.cashOut.toLocaleString("en-ZA")} out</p>
+        </button>
         <button onClick={() => setActiveTab("monthly")} className="text-left bg-card/70 rounded-xl border border-amber-500/30 p-3 hover:bg-secondary/40 transition-colors">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Owed to us</p>
           <p className="font-mono font-bold text-amber-400 text-sm">R {owedToUs.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
@@ -765,6 +781,17 @@ export default function AccountingPage() {
             <CalendarDays className="h-4 w-4" />
             Monthly &amp; Owed
           </button>
+          <button
+            onClick={() => setActiveTab("reconcile")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === "reconcile"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Banknote className="h-4 w-4" />
+            Check Payments
+          </button>
         </div>
 
         {activeTab === "expenses" ? (
@@ -774,7 +801,7 @@ export default function AccountingPage() {
               R {expenseTotals.cashOut.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
             </span>
           </div>
-        ) : activeTab === "payouts" || activeTab === "monthly" ? (
+        ) : activeTab === "payouts" || activeTab === "monthly" || activeTab === "reconcile" ? (
           <div />
         ) : (
           <div className="text-xs text-muted-foreground font-mono">
@@ -1185,6 +1212,10 @@ export default function AccountingPage() {
           expenses={expenses}
           onOpenPayments={(inv) => setPaymentsInvoice(inv)}
         />
+      )}
+
+      {activeTab === "reconcile" && (
+        <ReconcileTab invoices={invoices} payments={payments} cashPosition={cashPosition.balance} onChanged={fetchData} />
       )}
 
       {/* Payments for one invoice */}
