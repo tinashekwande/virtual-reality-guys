@@ -55,10 +55,14 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     camera.rotation.set(pitch, yaw, 0, 'YXZ')
   })
 
+  const gestureListeners = [] // first user action unlocks audio in the browser
   // --- pointer interaction with panels ---
   const raycaster = new THREE.Raycaster()
   const panels = []
+  const targets = [] // 3D objects you can point at and select (e.g. planets)
   const listeners = []
+  const hoverListeners = []
+  let hoveredTarget = null
   const tmpMat = new THREE.Matrix4()
   const controllers = []
 
@@ -72,19 +76,30 @@ export function createXrApp({ canvasParent = document.body } = {}) {
         best = { panel: p, id: p.hit(hit.uv), distance: hit.distance, point: hit.point }
       }
     }
+    for (const t of targets) {
+      if (!t.enabled()) continue
+      const hit = raycaster.intersectObject(t.mesh, false)[0]
+      if (hit && (!best || hit.distance < best.distance)) best = { target: t, id: t.id, distance: hit.distance, point: hit.point }
+    }
     return best
   }
 
   function updateHover(origin, direction) {
     const r = pick(origin, direction)
     for (const p of panels) p.setHover(r && r.panel === p ? r.id : null)
+    const t = r && r.target ? r.target.id : null
+    if (t !== hoveredTarget) {
+      hoveredTarget = t
+      for (const l of hoverListeners) l(t)
+    }
     return r
   }
 
   function press(origin, direction) {
     const r = pick(origin, direction)
+    for (const g of gestureListeners) g()
     if (r && r.id) {
-      for (const l of listeners) l(r.id, r.panel)
+      for (const l of listeners) l(r.id, r.panel || null, r.point)
       return true
     }
     return false
@@ -210,6 +225,18 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     },
     onPress(fn) {
       listeners.push(fn)
+    },
+    onHoverTarget(fn) {
+      hoverListeners.push(fn)
+    },
+    onGesture(fn) {
+      gestureListeners.push(fn)
+      dom.addEventListener('pointerdown', fn)
+      vrButton.addEventListener('click', fn)
+    },
+    /** Make a mesh selectable. id is passed to onPress listeners. enabled() decides when it reacts. */
+    addTarget(mesh, id, enabled = () => true) {
+      targets.push({ mesh, id, enabled })
     },
     onFrame(fn) {
       onFrame.push(fn)

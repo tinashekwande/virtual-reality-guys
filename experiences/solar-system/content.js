@@ -10,7 +10,7 @@ export const STOPS = [
       'The Sun is a star: a giant ball of hot, glowing gas. Everything in the solar system goes around it.',
       'It is about 109 Earths wide, and it makes up almost all of the weight of the whole solar system.',
     ],
-    fact: 'Fun fact: the surface is around 5 500 °C.',
+    secret: 'The surface is around 5 500 °C, and light from the Sun takes about 8 minutes to reach Earth.',
   },
   {
     id: 'mercury',
@@ -20,7 +20,7 @@ export const STOPS = [
       'Mercury is the closest planet to the Sun and the smallest. It has no air to hold heat in.',
       'Days are scorching hot and nights are freezing cold. A year here is only 88 Earth days long.',
     ],
-    fact: 'Fun fact: its surface is covered in craters, like the Moon.',
+    secret: 'Its surface is covered in craters from space rocks crashing into it, just like our Moon.',
   },
   {
     id: 'venus',
@@ -30,7 +30,7 @@ export const STOPS = [
       'Venus is wrapped in thick clouds that trap heat. That makes it the hottest planet, even hotter than Mercury.',
       'It also spins backwards compared to most planets.',
     ],
-    fact: 'Fun fact: it is about 465 °C on the surface.',
+    secret: 'It is about 465 °C on the surface: hot enough to melt lead!',
   },
   {
     id: 'earth',
@@ -40,7 +40,7 @@ export const STOPS = [
       'This is home! Earth is the only planet we know of with life. About 70% of it is covered in water.',
       'It takes 365 days to go around the Sun, which is one year. Earth has one Moon.',
     ],
-    fact: 'Look closely: can you see the white clouds moving?',
+    secret: 'See the pin? That is Cape Town, where you are right now! The lights on the dark side are cities at night.',
   },
   {
     id: 'mars',
@@ -50,7 +50,7 @@ export const STOPS = [
       'Mars is called the Red Planet because its dust and rocks contain iron that has rusted.',
       'It has the biggest volcano in the solar system, Olympus Mons, and two tiny moons.',
     ],
-    fact: 'Fun fact: robots called rovers are exploring it right now.',
+    secret: 'Robots called rovers are exploring Mars right now, looking for signs of water and life.',
   },
   {
     id: 'jupiter',
@@ -60,7 +60,7 @@ export const STOPS = [
       'Jupiter is the biggest planet. More than 1 000 Earths could fit inside it!',
       'It is a gas giant with no solid ground. The Great Red Spot is a storm bigger than Earth that has lasted for hundreds of years.',
     ],
-    fact: 'Fun fact: Jupiter has more than 90 moons.',
+    secret: 'Jupiter has more than 90 moons. You can see its four biggest moons circling it.',
   },
   {
     id: 'saturn',
@@ -70,7 +70,7 @@ export const STOPS = [
       'Saturn is famous for its beautiful rings. They are made of billions of pieces of ice and rock.',
       'Saturn is so light for its size that it would float in a giant bathtub of water!',
     ],
-    fact: 'Fun fact: Saturn has well over 100 moons.',
+    secret: 'Saturn has well over 100 moons. Its biggest, Titan, has thick orange clouds.',
   },
   {
     id: 'uranus',
@@ -80,7 +80,7 @@ export const STOPS = [
       'Uranus is an ice giant that is tipped over on its side, so it rolls around the Sun like a ball.',
       'It is freezing cold, and one trip around the Sun takes 84 Earth years.',
     ],
-    fact: 'Fun fact: its blue-green colour comes from methane gas.',
+    secret: 'Its blue-green colour comes from methane gas, and it has thin, dark rings.',
   },
   {
     id: 'neptune',
@@ -90,7 +90,7 @@ export const STOPS = [
       'Neptune is the farthest planet from the Sun. It is dark, cold and very windy, with the fastest winds of any planet.',
       'One year on Neptune is about 165 Earth years.',
     ],
-    fact: 'Fun fact: Neptune was found using maths before anyone saw it with a telescope.',
+    secret: 'Neptune was found using maths before anyone saw it through a telescope!',
   },
 ]
 
