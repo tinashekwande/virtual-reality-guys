@@ -606,7 +606,7 @@ export default function AccountingPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{payments.length > 0 ? "Cash Received" : "Total Revenue"}</p>
-              <h3 className="text-2xl font-bold font-mono text-emerald-400 pt-1">
+              <h3 className="text-2xl font-bold font-sans tabular-nums text-emerald-400 pt-1">
                 R {kpis.totalRevenue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -614,7 +614,7 @@ export default function AccountingPage() {
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-emerald-400/80 pt-2 flex items-center gap-1 font-mono">
+          <p className="text-[10px] text-emerald-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
             <ArrowUpRight className="h-3 w-3" /> {payments.length > 0 ? "Money actually received" : "Gross sales from events & invoices"}
           </p>
         </div>
@@ -624,7 +624,7 @@ export default function AccountingPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Costs</p>
-              <h3 className="text-2xl font-bold font-mono text-rose-400 pt-1">
+              <h3 className="text-2xl font-bold font-sans tabular-nums text-rose-400 pt-1">
                 R {kpis.totalExpenses.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -632,7 +632,7 @@ export default function AccountingPage() {
               <TrendingDown className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-rose-400/80 pt-2 flex items-center gap-1 font-mono">
+          <p className="text-[10px] text-rose-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
             <ArrowDownRight className="h-3 w-3" /> Running costs + equipment used so far
           </p>
         </div>
@@ -642,7 +642,7 @@ export default function AccountingPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Net Profit</p>
-              <h3 className={`text-2xl font-bold font-mono pt-1 ${kpis.netProfit >= 0 ? "text-purple-400" : "text-rose-400"}`}>
+              <h3 className={`text-2xl font-bold font-sans tabular-nums pt-1 ${kpis.netProfit >= 0 ? "text-purple-400" : "text-rose-400"}`}>
                 R {kpis.netProfit.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -650,7 +650,7 @@ export default function AccountingPage() {
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-purple-400/80 pt-2 flex items-center gap-1 font-mono">
+          <p className="text-[10px] text-purple-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
             <Sparkles className="h-3 w-3 text-purple-400" /> Received minus costs
           </p>
         </div>
@@ -660,7 +660,7 @@ export default function AccountingPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Profit Margin</p>
-              <h3 className="text-2xl font-bold font-mono text-cyan-400 pt-1">
+              <h3 className="text-2xl font-bold font-sans tabular-nums text-cyan-400 pt-1">
                 {kpis.profitMargin.toFixed(1)}%
               </h3>
             </div>
@@ -668,7 +668,7 @@ export default function AccountingPage() {
               <PieChart className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-cyan-400/80 pt-2 flex items-center gap-1 font-mono">
+          <p className="text-[10px] text-cyan-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
             <BarChart3 className="h-3 w-3" /> Net margin efficiency ratio
           </p>
         </div>
@@ -678,21 +678,21 @@ export default function AccountingPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
         <button onClick={() => setActiveTab("reconcile")} className="text-left bg-card/70 rounded-xl border border-emerald-500/30 p-3 hover:bg-secondary/40 transition-colors" title="Money received minus everything paid out, equipment at full price. Compare with your bank balance.">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cash position (vs bank)</p>
-          <p className="font-mono font-bold text-sm text-emerald-300">R {cashPosition.balance.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className="font-sans tabular-nums font-bold text-sm text-emerald-300">R {cashPosition.balance.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
           <p className="text-[10px] text-muted-foreground">R {cashPosition.cashIn.toLocaleString("en-ZA")} in − R {cashPosition.cashOut.toLocaleString("en-ZA")} out</p>
         </button>
         <button onClick={() => setActiveTab("monthly")} className="text-left bg-card/70 rounded-xl border border-amber-500/30 p-3 hover:bg-secondary/40 transition-colors">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Owed to us</p>
-          <p className="font-mono font-bold text-amber-400 text-sm">R {owedToUs.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className="font-sans tabular-nums font-bold text-amber-400 text-sm">R {owedToUs.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
           {owedToUs.overdue > 0 && <p className="text-[10px] text-rose-400">R {owedToUs.overdue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })} overdue</p>}
         </button>
         <button onClick={() => setActiveTab("payouts")} className="text-left bg-card/70 rounded-xl border border-border p-3 hover:bg-secondary/40 transition-colors">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Owed to the team</p>
-          <p className={`font-mono font-bold text-sm ${owedToTeam > 0 ? "text-amber-400" : "text-foreground"}`}>R {owedToTeam.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className={`font-sans tabular-nums font-bold text-sm ${owedToTeam > 0 ? "text-amber-400" : "text-foreground"}`}>R {owedToTeam.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
         </button>
         <div className="bg-card/70 rounded-xl border border-border p-3">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Equipment bought</p>
-          <p className="font-mono font-bold text-sm text-cyan-300">R {expenseTotals.assetPurchases.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className="font-sans tabular-nums font-bold text-sm text-cyan-300">R {expenseTotals.assetPurchases.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
           <p className="text-[10px] text-muted-foreground">R {expenseTotals.depreciation.toLocaleString("en-ZA", { minimumFractionDigits: 2 })} counted as a cost so far</p>
         </div>
         <button
@@ -700,7 +700,7 @@ export default function AccountingPage() {
           className="text-left bg-card/70 rounded-xl border border-border p-3 hover:bg-secondary/40 transition-colors"
         >
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Expenses to review</p>
-          <p className={`font-mono font-bold text-sm ${attentionCount > 0 ? "text-amber-400" : "text-emerald-400"}`}>{attentionCount}</p>
+          <p className={`font-sans tabular-nums font-bold text-sm ${attentionCount > 0 ? "text-amber-400" : "text-emerald-400"}`}>{attentionCount}</p>
           <p className="text-[10px] text-muted-foreground">missing link, receipt or a clear title</p>
         </button>
       </div>
@@ -725,7 +725,7 @@ export default function AccountingPage() {
                 title={`Filter expenses by ${cat}`}
               >
                 <p className="text-[10px] text-muted-foreground group-hover:text-foreground font-semibold truncate">{cat}</p>
-                <p className="text-xs font-bold font-mono text-foreground">
+                <p className="text-xs font-bold font-sans tabular-nums text-foreground">
                   R {val.toLocaleString("en-ZA")}
                 </p>
               </div>
@@ -795,7 +795,7 @@ export default function AccountingPage() {
         </div>
 
         {activeTab === "expenses" ? (
-          <div className="text-xs text-rose-400 font-mono font-semibold flex items-center gap-2">
+          <div className="text-xs text-rose-400 font-sans tabular-nums font-semibold flex items-center gap-2">
             <span>Total Paid Out:</span>
             <span className="font-bold">
               R {expenseTotals.cashOut.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
@@ -804,7 +804,7 @@ export default function AccountingPage() {
         ) : activeTab === "payouts" || activeTab === "monthly" || activeTab === "reconcile" ? (
           <div />
         ) : (
-          <div className="text-xs text-muted-foreground font-mono">
+          <div className="text-xs text-muted-foreground font-sans tabular-nums">
             Showing <span className="text-foreground font-bold">{filteredLedger.length}</span> entries
           </div>
         )}
@@ -913,11 +913,11 @@ export default function AccountingPage() {
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono text-muted-foreground">
+                        <td className="py-3.5 px-4 font-sans tabular-nums text-muted-foreground">
                           {item.category}
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono">
+                        <td className="py-3.5 px-4 font-sans tabular-nums">
                           {item.date}
                         </td>
 
@@ -935,11 +935,11 @@ export default function AccountingPage() {
                           </span>
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-400">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-emerald-400">
                           R {item.revenue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums">
                           {item.kind === "invoice" && item.raw?.type === "invoice" ? (
                             <div className="flex items-center justify-end gap-1.5">
                               <span className={item.balance > 0 ? (item.overdue ? "font-bold text-rose-400" : "font-bold text-amber-400") : "text-muted-foreground"}>
@@ -959,7 +959,7 @@ export default function AccountingPage() {
                           )}
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-rose-400">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-rose-400">
                           <div className="flex items-center justify-end gap-1.5">
                             <span>R {item.expenses.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>
                             {item.expenses > 0 && (
@@ -977,13 +977,13 @@ export default function AccountingPage() {
                           </div>
                         </td>
 
-                        <td className={`py-3.5 px-4 text-right font-mono font-bold ${
+                        <td className={`py-3.5 px-4 text-right font-sans tabular-nums font-bold ${
                           item.netProfit >= 0 ? "text-purple-400" : "text-rose-400"
                         }`}>
                           R {item.netProfit.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-cyan-400">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-cyan-400">
                           {item.margin.toFixed(1)}%
                         </td>
                       </tr>
@@ -1098,7 +1098,7 @@ export default function AccountingPage() {
                       const link = getExpenseLinkDetails(exp);
                       return (
                         <tr key={exp.id} className="hover:bg-secondary/30 transition-colors group">
-                          <td className="py-3.5 px-4 font-mono text-muted-foreground whitespace-nowrap">
+                          <td className="py-3.5 px-4 font-sans tabular-nums text-muted-foreground whitespace-nowrap">
                             {exp.date ? exp.date.split("T")[0] : "—"}
                           </td>
 
@@ -1153,7 +1153,7 @@ export default function AccountingPage() {
                             </span>
                           </td>
 
-                          <td className="py-3.5 px-4 text-right font-mono font-bold text-rose-400 whitespace-nowrap">
+                          <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-rose-400 whitespace-nowrap">
                             R {Number(exp.amount).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                           </td>
 
@@ -1248,7 +1248,7 @@ export default function AccountingPage() {
                 )}
               </DialogTitle>
               {editingExpense && (
-                <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
+                <span className="text-[10px] font-sans tabular-nums text-cyan-400/80 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
                   ID: {editingExpense.id.slice(0, 8)}
                 </span>
               )}
@@ -1300,7 +1300,7 @@ export default function AccountingPage() {
                   value={expenseAmount}
                   onChange={(e) => setExpenseAmount(e.target.value ? Number(e.target.value) : "")}
                   placeholder="e.g. 450.00"
-                  className="bg-slate-950 border-rose-900/60 text-rose-400 font-bold font-mono text-xs rounded-xl"
+                  className="bg-slate-950 border-rose-900/60 text-rose-400 font-bold font-sans tabular-nums text-xs rounded-xl"
                   required
                 />
               </div>

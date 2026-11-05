@@ -63,16 +63,16 @@ export default function PayoutsTab({ expenses, invoices, onChanged, onAdd, onEdi
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-card/70 p-4 rounded-2xl border border-amber-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Still owed to team</p>
-          <p className="text-2xl font-bold font-mono text-amber-400 pt-1">{rand(totalOwed)}</p>
+          <p className="text-2xl font-bold font-sans tabular-nums text-amber-400 pt-1">{rand(totalOwed)}</p>
         </div>
         <div className="bg-card/70 p-4 rounded-2xl border border-emerald-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Paid out so far</p>
-          <p className="text-2xl font-bold font-mono text-emerald-400 pt-1">{rand(totalPaid)}</p>
+          <p className="text-2xl font-bold font-sans tabular-nums text-emerald-400 pt-1">{rand(totalPaid)}</p>
         </div>
         <div className="bg-card/70 p-4 rounded-2xl border border-border flex items-center justify-between">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Team members paid</p>
-            <p className="text-2xl font-bold font-mono pt-1">{people.length}</p>
+            <p className="text-2xl font-bold font-sans tabular-nums pt-1">{people.length}</p>
           </div>
           <Button onClick={onAdd} className="bg-primary text-primary-foreground text-xs">Add payout</Button>
         </div>
@@ -100,9 +100,9 @@ export default function PayoutsTab({ expenses, invoices, onChanged, onAdd, onEdi
               people.map((p) => (
                 <tr key={p.payee} className={selected.toLowerCase() === p.payee.toLowerCase() ? "bg-secondary/40" : ""}>
                   <td className="py-3 px-4 font-semibold">{p.payee}</td>
-                  <td className="py-3 px-4 text-right font-mono">{p.count}</td>
-                  <td className="py-3 px-4 text-right font-mono text-emerald-400">{rand(p.paid)}</td>
-                  <td className={`py-3 px-4 text-right font-mono ${p.owed > 0 ? "text-amber-400 font-bold" : "text-muted-foreground"}`}>{rand(p.owed)}</td>
+                  <td className="py-3 px-4 text-right font-sans tabular-nums">{p.count}</td>
+                  <td className="py-3 px-4 text-right font-sans tabular-nums text-emerald-400">{rand(p.paid)}</td>
+                  <td className={`py-3 px-4 text-right font-sans tabular-nums ${p.owed > 0 ? "text-amber-400 font-bold" : "text-muted-foreground"}`}>{rand(p.owed)}</td>
                   <td className="py-3 px-4 text-right">
                     <button
                       className="text-[11px] text-primary hover:underline"
@@ -142,10 +142,10 @@ export default function PayoutsTab({ expenses, invoices, onChanged, onAdd, onEdi
                 const owed = e.payment_status === "owed";
                 return (
                   <tr key={e.id} className="hover:bg-secondary/30">
-                    <td className="py-3 px-4 font-mono">{e.date}</td>
+                    <td className="py-3 px-4 font-sans tabular-nums">{e.date}</td>
                     <td className="py-3 px-4 font-semibold cursor-pointer hover:text-primary" onClick={() => onEdit(e)}>{nameOf(e)}</td>
                     <td className="py-3 px-4 text-muted-foreground">{bookingLabel(e)}</td>
-                    <td className="py-3 px-4 text-right font-mono font-bold">{rand(Number(e.amount))}</td>
+                    <td className="py-3 px-4 text-right font-sans tabular-nums font-bold">{rand(Number(e.amount))}</td>
                     <td className="py-3 px-4">
                       {owed ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border bg-amber-500/10 text-amber-400 border-amber-500/30">

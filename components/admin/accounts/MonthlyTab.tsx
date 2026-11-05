@@ -98,20 +98,20 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-card/70 p-4 rounded-2xl border border-emerald-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cash received (all time)</p>
-          <p className="text-xl font-bold font-mono text-emerald-400 pt-1">{rand(received)}</p>
+          <p className="text-xl font-bold font-sans tabular-nums text-emerald-400 pt-1">{rand(received)}</p>
         </div>
         <div className="bg-card/70 p-4 rounded-2xl border border-amber-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Still owed to us</p>
-          <p className="text-xl font-bold font-mono text-amber-400 pt-1">{rand(totalOwing)}</p>
+          <p className="text-xl font-bold font-sans tabular-nums text-amber-400 pt-1">{rand(totalOwing)}</p>
           {overdueTotal > 0 && <p className="text-[10px] text-rose-400 pt-1">{rand(overdueTotal)} overdue</p>}
         </div>
         <div className="bg-card/70 p-4 rounded-2xl border border-rose-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Costs (running + equipment used)</p>
-          <p className="text-xl font-bold font-mono text-rose-400 pt-1">{rand(totals.costs)}</p>
+          <p className="text-xl font-bold font-sans tabular-nums text-rose-400 pt-1">{rand(totals.costs)}</p>
         </div>
         <div className="bg-card/70 p-4 rounded-2xl border border-purple-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Profit</p>
-          <p className={`text-xl font-bold font-mono pt-1 ${received - totals.costs >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(received - totals.costs)}</p>
+          <p className={`text-xl font-bold font-sans tabular-nums pt-1 ${received - totals.costs >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(received - totals.costs)}</p>
         </div>
       </div>
 
@@ -146,11 +146,11 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
                 months.map((m) => (
                   <tr key={m.month} className="hover:bg-secondary/30">
                     <td className="py-3 px-4 font-semibold">{monthLabel(m.month)}</td>
-                    <td className="py-3 px-4 text-right font-mono text-emerald-400">{rand(m.received)}</td>
-                    <td className="py-3 px-4 text-right font-mono text-rose-400">{rand(m.runningCosts)}</td>
-                    <td className="py-3 px-4 text-right font-mono text-rose-300">{rand(m.depreciation)}</td>
-                    <td className={`py-3 px-4 text-right font-mono font-bold ${m.net >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(m.net)}</td>
-                    <td className="py-3 px-4 text-right font-mono text-muted-foreground">{m.assetPurchases > 0 ? rand(m.assetPurchases) : "-"}</td>
+                    <td className="py-3 px-4 text-right font-sans tabular-nums text-emerald-400">{rand(m.received)}</td>
+                    <td className="py-3 px-4 text-right font-sans tabular-nums text-rose-400">{rand(m.runningCosts)}</td>
+                    <td className="py-3 px-4 text-right font-sans tabular-nums text-rose-300">{rand(m.depreciation)}</td>
+                    <td className={`py-3 px-4 text-right font-sans tabular-nums font-bold ${m.net >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(m.net)}</td>
+                    <td className="py-3 px-4 text-right font-sans tabular-nums text-muted-foreground">{m.assetPurchases > 0 ? rand(m.assetPurchases) : "-"}</td>
                   </tr>
                 ))
               )}
@@ -183,13 +183,13 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
               owing.map(({ inv, s }) => (
                 <tr key={inv.id} className="hover:bg-secondary/30">
                   <td className="py-3 px-4"><p className="font-semibold">{inv.client_name}</p><p className="text-[10px] text-muted-foreground">{inv.doc_number}</p></td>
-                  <td className="py-3 px-4 font-mono">
+                  <td className="py-3 px-4 font-sans tabular-nums">
                     {inv.due_date ? inv.due_date.split("T")[0] : "-"}
                     {s.overdue && <span className="ml-2 inline-flex items-center gap-1 text-rose-400 font-bold"><AlertCircle className="h-3 w-3" />overdue</span>}
                   </td>
-                  <td className="py-3 px-4 text-right font-mono">{rand(s.total)}</td>
-                  <td className="py-3 px-4 text-right font-mono text-emerald-400">{rand(s.received)}</td>
-                  <td className="py-3 px-4 text-right font-mono font-bold text-amber-400">{rand(s.balance)}</td>
+                  <td className="py-3 px-4 text-right font-sans tabular-nums">{rand(s.total)}</td>
+                  <td className="py-3 px-4 text-right font-sans tabular-nums text-emerald-400">{rand(s.received)}</td>
+                  <td className="py-3 px-4 text-right font-sans tabular-nums font-bold text-amber-400">{rand(s.balance)}</td>
                   <td className="py-3 px-4 text-right"><Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => onOpenPayments(inv)}>Payments</Button></td>
                 </tr>
               ))
