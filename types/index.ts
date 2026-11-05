@@ -119,6 +119,9 @@ export type ExpenseCategory =
   | 'Food & Refreshments'
   | 'Other'
 
+export type ExpenseKind = 'running' | 'asset'
+export type ExpensePaymentStatus = 'paid' | 'owed'
+
 export interface ExpenseItem {
   id: string
   event_id?: string
@@ -128,8 +131,32 @@ export interface ExpenseItem {
   amount: number
   date: string
   notes?: string
+  /** 'running' = normal cost; 'asset' = equipment bought to keep (spread over useful_life_months) */
+  kind?: ExpenseKind
+  useful_life_months?: number | null
+  receipt_path?: string | null
+  /** Explicitly marked as general business overhead (not tied to a booking) */
+  is_overhead?: boolean
+  /** Who was paid (staff payouts) */
+  payee?: string | null
+  payment_status?: ExpensePaymentStatus
+  paid_on?: string | null
   created_at: string
   updated_at?: string
+}
+
+export type PaymentMethod = 'EFT' | 'Cash' | 'Card' | 'Other'
+
+export interface PaymentItem {
+  id: string
+  invoice_id: string
+  amount: number
+  paid_on: string
+  method: PaymentMethod
+  reference?: string | null
+  received_by?: string | null
+  notes?: string | null
+  created_at?: string
 }
 
 export type RentalAgreementStatus = 'draft' | 'active' | 'returned' | 'completed' | 'cancelled'
