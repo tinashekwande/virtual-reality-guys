@@ -19,6 +19,9 @@ const nextConfig = {
         destination: '/virtual-reality-cape-town',
         permanent: true,
       },
+      // Static VR school experiences (built from /experiences into /public/experiences)
+      { source: '/experiences', destination: '/experiences/index.html', permanent: false },
+      { source: '/experiences/solar-system', destination: '/experiences/solar-system/index.html', permanent: false },
     ]
   },
 }
