@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendNewLeadNotification } from '@/lib/email/notifier'
 import { sendEmail, getConfiguredEmailProvider } from '@/lib/email/sender'
@@ -42,6 +42,8 @@ async function sendClientAcknowledgement(params: {
     console.error('[forms/submit] Failed to log acknowledgement:', err)
   }
 }
+
+export const maxDuration = 30
 
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
@@ -103,41 +105,49 @@ export async function POST(request: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Trigger automated email notification to business owners
-  sendNewLeadNotification({
-    name,
-    email,
-    phone: phone || null,
-    suburb: suburb || null,
-    eventDate: event_date || null,
-    eventTime: event_time || null,
-    formType: form_type,
-    bookedGame: game_title || null,
-    message,
-    source: form_type === 'game_booking' ? 'Game Page Booking' : form_type === 'chatbot_booking' ? 'AI Chatbot' : 'Website Form',
-    requestId: data?.id || null,
-  }).catch((err) => {
-    console.error('[forms/submit] Email notification error:', err)
-  })
-
-  // Instant acknowledgement to the client (does not block the response)
-  sendClientAcknowledgement({
-    name,
-    email,
-    formType: form_type,
-    eventDate: event_date || null,
-    bookedGame: game_title || null,
-    requestId: data?.id || null,
-  }).catch((err) => {
-    console.error('[forms/submit] Client acknowledgement error:', err)
-  })
-
-  // Schedule a follow-up so this enquiry can't be forgotten if not quoted
-  if (data?.id) {
-    scheduleRequestFollowUp({ id: data.id, name, email, phone: phone || null }).catch((err) => {
-      console.error('[forms/submit] Follow-up scheduling error:', err)
+  // Run notification, client acknowledgement and follow-up scheduling AFTER the
+  // response is sent. `after()` keeps the serverless function alive until these
+  // finish; bare fire-and-forget promises are frozen when the function returns on
+  // Vercel, which meant the owner notification, client acknowledgement and
+  // follow-up were silently dropped.
+  const leadId: string | null = data?.id || null
+  after(async () => {
+    // 1. Notify the business owners of the new lead
+    await sendNewLeadNotification({
+      name,
+      email,
+      phone: phone || null,
+      suburb: suburb || null,
+      eventDate: event_date || null,
+      eventTime: event_time || null,
+      formType: form_type,
+      bookedGame: game_title || null,
+      message,
+      source: form_type === 'game_booking' ? 'Game Page Booking' : form_type === 'chatbot_booking' ? 'AI Chatbot' : 'Website Form',
+      requestId: leadId,
+    }).catch((err) => {
+      console.error('[forms/submit] Email notification error:', err)
     })
-  }
+
+    // 2. Instant acknowledgement to the client
+    await sendClientAcknowledgement({
+      name,
+      email,
+      formType: form_type,
+      eventDate: event_date || null,
+      bookedGame: game_title || null,
+      requestId: leadId,
+    }).catch((err) => {
+      console.error('[forms/submit] Client acknowledgement error:', err)
+    })
+
+    // 3. Schedule a follow-up so this enquiry can't be forgotten if not quoted
+    if (leadId) {
+      await scheduleRequestFollowUp({ id: leadId, name, email, phone: phone || null }).catch((err) => {
+        console.error('[forms/submit] Follow-up scheduling error:', err)
+      })
+    }
+  })
 
   return NextResponse.json({ success: true, id: data.id }, { status: 201 })
 }
