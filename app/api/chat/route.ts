@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import {
   createMessage,
   sanitizeInput,
@@ -133,19 +133,21 @@ async function persistBooking(data: BookingData) {
     })
     if (error) console.error('[chat] Supabase insert error:', error)
 
-    // Fire-and-forget notifications
-    sendNewLeadNotification({
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      suburb: data.location,
-      eventDate: data.eventDate,
-      formType: data.eventType || 'chatbot_booking',
-      message: `[Chatbot Booking]\nEvent Type: ${data.eventType}\nDate: ${data.eventDate}\nLocation: ${data.location}\nAttendees: ${data.attendees}`,
-      source: 'AI Chatbot',
-    }).catch((err) => console.error('[chat] Email notification error:', err))
+    // Run notifications after the response so Vercel doesn't freeze them mid-send
+    after(async () => {
+      await sendNewLeadNotification({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        suburb: data.location,
+        eventDate: data.eventDate,
+        formType: data.eventType || 'chatbot_booking',
+        message: `[Chatbot Booking]\nEvent Type: ${data.eventType}\nDate: ${data.eventDate}\nLocation: ${data.location}\nAttendees: ${data.attendees}`,
+        source: 'AI Chatbot',
+      }).catch((err) => console.error('[chat] Email notification error:', err))
 
-    sendWhatsAppNotification(data).catch(() => {})
+      await sendWhatsAppNotification(data).catch(() => {})
+    })
   } catch (err) {
     console.error('[chat] persistBooking error:', err)
   }
