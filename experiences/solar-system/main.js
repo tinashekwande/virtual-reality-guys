@@ -3,7 +3,7 @@ import { createXrApp } from '../shared/xr-app.js'
 import { Panel } from '../shared/panel.js'
 import { createAudio } from '../shared/audio.js'
 import { createNarration } from '../shared/narration.js'
-import { buildScene, placeFor, SPEC, EYE } from './scene.js'
+import { buildScene, placeFor, posOf, SPEC, EYE, OVERVIEW } from './scene.js'
 import { STOPS, QUIZ } from './content.js'
 
 const app = createXrApp()
@@ -35,7 +35,7 @@ panel.mesh.rotation.y = -0.38
 app.addPanel(panel)
 
 // ---- tapping planets ----
-const state = { screen: 'intro', stop: 0, quiz: 0, score: 0, answered: null, discovered: new Set() }
+const state = { travel: 'fly', screen: 'intro', stop: 0, quiz: 0, score: 0, answered: null, discovered: new Set() }
 const currentId = () => (state.screen === 'stop' ? STOPS[state.stop].id : null)
 for (const s of STOPS) {
   const mesh = s.id === 'sun' ? world.sun : world.bodies[s.id]
@@ -65,7 +65,7 @@ app.onHoverTarget((id) => {
   highlight.visible = !!hovered && !state.discovered.has(hovered)
   if (hovered) {
     const s = SPEC[hovered]
-    highlight.position.set(s.x, EYE, 0)
+    highlight.position.copy(posOf(hovered))
     highlight.userData.size = s.r * 2.6
   }
 })
@@ -159,7 +159,7 @@ const capePin = (() => {
 let earthTurn = null
 function turnEarthToCapeTown() {
   const earth = world.bodies.earth
-  const center = new THREE.Vector3(SPEC.earth.x, EYE, 0)
+  const center = posOf('earth')
   const toViewer = new THREE.Vector3(-1, 0, 0)
   // find the spin angle that puts Cape Town facing us
   const saved = earth.rotation.y
@@ -196,7 +196,7 @@ function discover(id, point) {
   state.discovered.add(id)
   highlight.visible = false
   audio.sfx.sparkle()
-  burst(point || new THREE.Vector3(SPEC[id].x, EYE, 0), Math.max(1, SPEC[id].r * 0.4))
+  burst(point || posOf(id), Math.max(1, SPEC[id].r * 0.4))
   if (id === 'earth') turnEarthToCapeTown()
   else world.boost(id, 2.5)
   drawStop()
@@ -204,6 +204,46 @@ function discover(id, point) {
 }
 
 // ---- flow ----
+/**
+ * Travel to a place. In "fly" mode you rise up until the whole solar system is spread out below you,
+ * hover while the next planet is marked, then glide in. "Jump" mode is a quick fade for anyone who
+ * feels unwell with movement. Very short hops always fade.
+ */
+function travelTo(place, destId, destName, then) {
+  narration.stop()
+  const far = place.position.distanceTo(rig.position) > 12
+  if (state.travel === 'fly' && far) {
+    world.markDestination(destId)
+    world.arrangeMoons(destId, 8.6)
+    panel.show({
+      title: `Next stop: ${destName}`,
+      body: 'Hold on, explorer! We are flying up to see the whole solar system.',
+      buttons: [{ id: 'skip', label: 'Skip the flight' }],
+      accent: '#fde68a',
+    })
+    audio.sfx.cruise(8.6)
+    app.fly(place, OVERVIEW, {
+      out: 3.2,
+      hold: 1.8,
+      in: 3.6,
+      onVia: () =>
+        panel.show({
+          title: 'The whole solar system!',
+          body: [`Look down: there is the Sun and all the planets going around it.`, `The glowing ring shows ${destName}, our next stop.`],
+          buttons: [{ id: 'skip', label: 'Skip the flight' }],
+          accent: '#fde68a',
+        }),
+      then: () => {
+        world.markDestination(null)
+        then()
+      },
+    })
+  } else {
+    audio.sfx.whoosh()
+    app.teleport(place, then)
+  }
+}
+
 function soundButton() {
   return { id: 'sound', label: audio.enabled ? 'Sound: on' : 'Sound: off' }
 }
@@ -216,8 +256,12 @@ function showIntro() {
       'Welcome, space explorer! We will visit the Sun and all 8 planets.',
       'Point at a button and squeeze the trigger (or pinch your fingers) to choose it.',
     ],
-    footer: 'Sizes and distances here are made to fit, not to scale. Space is much, much bigger!',
-    buttons: [{ id: 'start', label: 'Start the journey', primary: true }, soundButton()],
+    footer: 'Sizes and distances are made to fit, not to scale. Feeling dizzy when flying? Choose "Travel: jump".',
+    buttons: [
+      { id: 'start', label: 'Start', primary: true },
+      soundButton(),
+      { id: 'travel', label: state.travel === 'fly' ? 'Travel: fly' : 'Travel: jump' },
+    ],
     accent: '#22d3ee',
   })
   narration.play('intro')
@@ -242,11 +286,9 @@ function drawStop() {
 
 function showStop(i) {
   state.screen = 'travel'
-  narration.stop()
-  audio.sfx.whoosh()
   resetEarth()
-  app.teleport(placeFor(STOPS[i].id), () => {
-    world.arrangeMoons(STOPS[i].id)
+  if (state.travel !== 'fly') world.arrangeMoons(STOPS[i].id, 0.8)
+  travelTo(placeFor(STOPS[i].id), STOPS[i].id, STOPS[i].name, () => {
     state.screen = 'stop'
     state.stop = i
     drawStop()
@@ -274,9 +316,10 @@ function showQuiz(i) {
   state.redraw = draw
   if (i === 0) {
     state.score = 0
-    audio.sfx.whoosh()
+    state.screen = 'travel'
     resetEarth()
-    app.teleport(HOME, () => {
+    travelTo(HOME, 'sun', 'Quiz time', () => {
+      state.screen = 'quiz'
       draw()
       narration.play('quiz')
     })
@@ -305,6 +348,12 @@ function showResult() {
 app.onPress((id, _panel, point) => {
   if (id.startsWith('planet:')) return discover(id.slice(7), point)
   audio.sfx.click()
+  if (id === 'skip') return app.skipFlight()
+  if (app.isMoving()) return // ignore double presses while travelling
+  if (id === 'travel') {
+    state.travel = state.travel === 'fly' ? 'jump' : 'fly'
+    return showIntro()
+  }
   if (id === 'sound') {
     audio.setEnabled(!audio.enabled)
     narration.setEnabled(audio.enabled)

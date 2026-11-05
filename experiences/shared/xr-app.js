@@ -30,6 +30,24 @@ export function createXrApp({ canvasParent = document.body } = {}) {
   fade.frustumCulled = false
   camera.add(fade)
 
+  // --- comfort vignette: darkens the edges of your view while you are moving ---
+  const vignetteMat = new THREE.ShaderMaterial({
+    uniforms: { uStrength: { value: 0 } },
+    vertexShader: `varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform float uStrength; varying vec3 vP;
+      void main(){
+        float a = acos(clamp(dot(normalize(vP), vec3(0.0, 0.0, -1.0)), -1.0, 1.0)); // angle from straight ahead
+        float inner = mix(1.6, 0.42, uStrength);
+        float k = smoothstep(inner, inner + 0.35, a);
+        gl_FragColor = vec4(0.0, 0.02, 0.06, k * min(1.0, uStrength * 1.6));
+      }`,
+    side: THREE.BackSide, transparent: true, depthTest: false, depthWrite: false,
+  })
+  const vignette = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 16), vignetteMat)
+  vignette.renderOrder = 999
+  vignette.frustumCulled = false
+  camera.add(vignette)
+
   // --- flat-screen look controls (drag / touch) ---
   let yaw = 0
   let pitch = 0
@@ -156,6 +174,7 @@ export function createXrApp({ canvasParent = document.body } = {}) {
   }
   function placeNow(place) {
     rig.position.copy(place.position)
+    lastPos.copy(place.position)
     rig.rotation.set(0, place.yaw || 0, 0)
     if (!renderer.xr.isPresenting) {
       yaw = 0
@@ -163,6 +182,32 @@ export function createXrApp({ canvasParent = document.body } = {}) {
       camera.rotation.set(0, 0, 0)
     }
   }
+
+  // --- smooth flights: rise out to a viewpoint, hover, then glide in (no turning, gentle speed changes) ---
+  let flight = null
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+  /**
+   * Fly the player from where they are to `place`, via `via` (a high viewpoint).
+   * opts: { out = 3.2, hold = 1.8, in = 3.6, onVia(), then() }
+   */
+  function fly(place, via, opts = {}) {
+    if (fading || flight) return
+    const A = rig.position.clone()
+    const B = place.position.clone()
+    const up = Math.max(20, (via.y - A.y) * 0.5)
+    const legOut = new THREE.CubicBezierCurve3(A, A.clone().add(new THREE.Vector3(-0.15 * up, up, 0)), via.clone().add(new THREE.Vector3(0.2 * up, -0.25 * up, 0)), via.clone())
+    const legIn = new THREE.CubicBezierCurve3(via.clone(), via.clone().add(new THREE.Vector3(0.35 * up, 0, 0)), B.clone().add(new THREE.Vector3(-0.35 * up, 0.55 * up, 0)), B)
+    flight = { place, legOut, legIn, t: 0, out: opts.out ?? 3.2, hold: opts.hold ?? 1.8, in: opts.in ?? 3.6, onVia: opts.onVia, then: opts.then, viaDone: false }
+    rig.rotation.set(0, place.yaw || 0, 0)
+  }
+  function skipFlight() {
+    if (!flight) return
+    const f = flight
+    flight = null
+    teleport(f.place, () => { if (!f.viaDone && f.onVia) f.onVia(); if (f.then) f.then() })
+  }
+  const lastPos = new THREE.Vector3()
+  let speed = 0
 
   const onFrame = []
   const clock = new THREE.Clock()
@@ -187,6 +232,27 @@ export function createXrApp({ canvasParent = document.body } = {}) {
         }
       }
     }
+    if (flight) {
+      const f = flight
+      f.t += dt
+      if (f.t < f.out) rig.position.copy(f.legOut.getPoint(ease(f.t / f.out)))
+      else if (f.t < f.out + f.hold) {
+        rig.position.copy(f.legOut.getPoint(1))
+        if (!f.viaDone) { f.viaDone = true; if (f.onVia) f.onVia() }
+      } else if (f.t < f.out + f.hold + f.in) rig.position.copy(f.legIn.getPoint(ease((f.t - f.out - f.hold) / f.in)))
+      else {
+        rig.position.copy(f.place.position)
+        flight = null
+        if (f.then) f.then()
+      }
+    }
+    // vignette follows how fast you are moving
+    const v = dt > 0 ? rig.position.distanceTo(lastPos) / dt : 0
+    lastPos.copy(rig.position)
+    speed += (Math.min(v, 200) - speed) * Math.min(1, dt * 6)
+    vignetteMat.uniforms.uStrength.value = Math.min(0.85, speed / 45)
+    vignette.visible = vignetteMat.uniforms.uStrength.value > 0.01
+
     // hover from each controller ray
     if (renderer.xr.isPresenting) {
       for (const c of controllers) {
@@ -243,5 +309,8 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     },
     teleport,
     placeNow,
+    fly,
+    skipFlight,
+    isMoving: () => !!flight || !!fading,
   }
 }
