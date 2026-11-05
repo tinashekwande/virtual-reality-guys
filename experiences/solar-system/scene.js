@@ -146,6 +146,7 @@ export function buildScene(app, manager) {
   scene.add(sunLight)
 
   // ---------------- the Sun ----------------
+  // Deep red-orange plasma with bright yellow-white veins, darker cooler patches and a fiery rim.
   const sunMat = new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 0 } },
     vertexShader: `varying vec3 vP; varying vec3 vN; varying vec3 vV;
@@ -154,33 +155,89 @@ export function buildScene(app, manager) {
       uniform float uTime; varying vec3 vP; varying vec3 vN; varying vec3 vV;
       void main(){
         vec3 p = normalize(vP);
-        float n = snoise(p * 3.0 + vec3(uTime * 0.03, 0.0, uTime * 0.02)) * 0.5
-                + snoise(p * 9.0 - vec3(0.0, uTime * 0.06, 0.0)) * 0.3
-                + snoise(p * 24.0 + vec3(uTime * 0.1)) * 0.2;
-        float spots = smoothstep(0.8, 0.9, snoise(p * 5.0 + vec3(0.0, uTime * 0.01, 0.0)));
-        vec3 col = mix(vec3(1.0, 0.42, 0.06), vec3(1.0, 0.86, 0.45), 0.55 + 0.45 * n);
-        col = mix(col, vec3(0.6, 0.2, 0.03), spots * 0.45);
+        float t = uTime;
+        // swirl the surface (domain warping) so the plasma looks like it is flowing
+        vec3 q = p * 2.0 + vec3(0.0, t * 0.012, 0.0);
+        vec3 w = vec3(snoise(q + vec3(1.7, 9.2, 0.0)), snoise(q + vec3(8.3, 2.8, 4.1)), snoise(q + vec3(3.1, 5.7, 7.3)));
+        vec3 pw = p * 2.6 + w * 0.6 + vec3(t * 0.01, -t * 0.008, t * 0.006);
+        float base = 0.5 + 0.5 * (0.6 * snoise(pw) + 0.3 * snoise(pw * 2.3 + 4.0) + 0.1 * snoise(pw * 5.3 - 2.0));
+        // bright plasma veins (ridged noise)
+        float r1 = 1.0 - abs(snoise(pw * 1.5 + vec3(t * 0.02)));
+        float r2 = 1.0 - abs(snoise(pw * 3.4 - vec3(t * 0.03)));
+        float r3 = 1.0 - abs(snoise(pw * 8.0 + vec3(0.0, t * 0.05, 0.0)));
+        float veinMask = smoothstep(0.15, 0.7, 0.5 + 0.5 * snoise(p * 1.3 + w * 0.45 + vec3(t * 0.003)));
+        float veins = clamp((pow(r1, 7.0) * 1.0 + pow(r2, 9.0) * 0.6 + pow(r3, 12.0) * 0.3) * (0.3 + 0.9 * veinMask), 0.0, 1.0);
+        // darker, cooler patches
+        float spots = smoothstep(0.25, 0.7, snoise(p * 1.6 + w * 0.3 + vec3(4.0, t * 0.004, 1.0))) * (1.0 - veins);
+        vec3 deep = vec3(0.42, 0.04, 0.0);
+        vec3 red = vec3(0.92, 0.18, 0.01);
+        vec3 orange = vec3(1.0, 0.45, 0.03);
+        vec3 yellow = vec3(1.0, 0.82, 0.22);
+        vec3 white = vec3(1.0, 0.97, 0.78);
+        vec3 col = mix(deep, red, smoothstep(0.0, 0.5, base));
+        col = mix(col, orange, smoothstep(0.5, 0.9, base) * (0.5 + 0.5 * veinMask));
+        col = mix(col, yellow, veins);
+        col = mix(col, white, pow(veins, 2.5) * 0.5);
+        col = mix(col, vec3(0.3, 0.03, 0.0), spots * 0.55);
+        // fine boiling texture
+        col *= 0.82 + 0.3 * (0.5 + 0.5 * snoise(p * 34.0 + vec3(t * 0.08)));
+        // fiery rim
         float mu = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);
-        col *= 0.55 + 0.6 * pow(mu, 0.45);
-        col = mix(vec3(1.0, 0.35, 0.05), col, smoothstep(0.0, 0.35, mu));
-        gl_FragColor = vec4(col * 1.25, 1.0);
+        float rim = pow(1.0 - mu, 2.2);
+        col = mix(col, vec3(1.0, 0.55, 0.1), rim * 0.55);
+        col += vec3(1.0, 0.4, 0.05) * pow(1.0 - mu, 6.0) * 0.6;
+        gl_FragColor = vec4(col * 1.3, 1.0);
       }`,
     toneMapped: false,
   })
-  const sun = new THREE.Mesh(new THREE.SphereGeometry(SPEC.sun.r, 96, 64), sunMat)
+  const sun = new THREE.Mesh(new THREE.SphereGeometry(SPEC.sun.r, 128, 96), sunMat)
   sun.position.copy(sunPos)
   scene.add(sun)
-  const glowA = sprite(glowTexture([255, 210, 120], [255, 120, 20]), 62, sunPos)
-  const glowB = sprite(glowTexture([255, 170, 80], [255, 90, 10], 0.35), 120, sunPos)
-  const rays = sprite(raysTexture(), 90, sunPos)
-  scene.add(glowA, glowB, rays)
+
+  // flames licking off the edge: a camera-facing disc drawn around the Sun's outline
+  const flameMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uDisc: { value: SPEC.sun.r }, uHalf: { value: SPEC.sun.r * 2.2 } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `${SIMPLEX}
+      uniform float uTime; uniform float uDisc; uniform float uHalf; varying vec2 vUv;
+      void main(){
+        vec2 d = (vUv - 0.5) * 2.0 * uHalf;
+        float r = length(d) / uDisc;          // 1.0 = edge of the Sun
+        if (r < 0.97) discard;
+        vec2 dir = d / max(length(d), 1e-4);
+        float t = uTime;
+        float n1 = 0.5 + 0.5 * snoise(vec3(dir * 3.0, t * 0.12));
+        float n2 = 0.5 + 0.5 * snoise(vec3(dir * 11.0, t * 0.35));
+        float big = max(0.0, snoise(vec3(dir * 1.4, t * 0.04 + 7.0)));
+        float h = 0.035 + 0.09 * pow(n1, 2.0) + 0.04 * n2 + 0.3 * pow(big, 3.0);   // flame height around the rim
+        float x = (r - 1.0) / h;
+        // flickering tongues: noise that streams outwards
+        float tongue = 0.55 + 0.45 * snoise(vec3(dir * 18.0, (r - t * 0.08) * 6.0));
+        float flame = exp(-max(x, 0.0) * 2.2) * tongue * smoothstep(0.97, 1.0, r);
+        float haze = exp(-(r - 1.0) * 3.5) * 0.35;
+        vec3 col = mix(vec3(1.0, 0.85, 0.45), vec3(1.0, 0.28, 0.02), clamp(x, 0.0, 1.0)) * flame * 1.4
+                 + vec3(1.0, 0.35, 0.05) * haze;
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false,
+  })
+  const flames = new THREE.Mesh(new THREE.PlaneGeometry(SPEC.sun.r * 4.4, SPEC.sun.r * 4.4), flameMat)
+  flames.position.copy(sunPos)
+  scene.add(flames)
+  const glow = sprite(glowTexture([255, 150, 60], [255, 70, 0], 0.35), 130, sunPos)
+  glow.material.opacity = 0.75
+  scene.add(glow)
+  const camPos = new THREE.Vector3()
   updaters.push((dt, t) => {
     sunMat.uniforms.uTime.value = t
+    flameMat.uniforms.uTime.value = t
     sun.rotation.y += dt * 0.01
-    const pulse = 1 + 0.03 * Math.sin(t * 0.8) + 0.015 * Math.sin(t * 2.3)
-    glowA.scale.setScalar(62 * pulse)
-    glowB.scale.setScalar(120 * (2 - pulse))
-    rays.material.rotation += dt * 0.01
+    camera.getWorldPosition(camPos)
+    flames.lookAt(camPos)
+    // size of the Sun's outline on the flame disc, seen from where you are
+    const D = Math.max(camPos.distanceTo(sunPos), SPEC.sun.r * 1.05)
+    flameMat.uniforms.uDisc.value = (SPEC.sun.r * D) / Math.sqrt(D * D - SPEC.sun.r * SPEC.sun.r)
+    glow.scale.setScalar(130 * (1 + 0.025 * Math.sin(t * 0.7)))
   })
 
   // ---------------- planets ----------------
@@ -415,34 +472,6 @@ function markerTexture() {
   ctx.beginPath()
   ctx.arc(128, 128, 104, 0, Math.PI * 2)
   ctx.stroke()
-  const t = new THREE.CanvasTexture(c)
-  t.colorSpace = THREE.SRGBColorSpace
-  return t
-}
-
-function raysTexture() {
-  const c = document.createElement('canvas')
-  c.width = c.height = 512
-  const ctx = c.getContext('2d')
-  ctx.translate(256, 256)
-  ctx.globalCompositeOperation = 'lighter'
-  for (let i = 0; i < 90; i++) {
-    const a = Math.random() * Math.PI * 2
-    const len = 120 + Math.random() * 130
-    const w = 2 + Math.random() * 7
-    ctx.save()
-    ctx.rotate(a)
-    const g = ctx.createLinearGradient(0, 0, len, 0)
-    g.addColorStop(0, 'rgba(255,200,120,0.18)')
-    g.addColorStop(1, 'rgba(255,140,40,0)')
-    ctx.fillStyle = g
-    ctx.beginPath()
-    ctx.moveTo(60, -w)
-    ctx.lineTo(len, 0)
-    ctx.lineTo(60, w)
-    ctx.fill()
-    ctx.restore()
-  }
   const t = new THREE.CanvasTexture(c)
   t.colorSpace = THREE.SRGBColorSpace
   return t
