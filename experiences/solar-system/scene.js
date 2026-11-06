@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { buildComet } from './comet.js'
 
 // Builds the Solar System: realistic textures (generated at build time, see tools/gen-textures.mjs),
 // glowing atmospheres, an animated Sun, moons, an asteroid belt, stars and the Milky Way.
@@ -288,11 +289,14 @@ export function buildScene(app, manager) {
   planet('neptune', std('neptune'))
 
   // Saturn's rings (with the planet's shadow falling across them) and Uranus's faint rings
-  tilts.saturn.add(rings(SPEC.saturn.r * 1.24, SPEC.saturn.r * 2.3, saturnRingTexture(), bodies.saturn, sunPos, 1))
+  const satRingTex = saturnRingTexture()
+  const satRing = rings(SPEC.saturn.r * 1.24, SPEC.saturn.r * 2.3, satRingTex, bodies.saturn, sunPos, 1)
+  tilts.saturn.add(satRing)
   tilts.uranus.add(rings(SPEC.uranus.r * 1.6, SPEC.uranus.r * 2.0, faintRingTexture(), bodies.uranus, sunPos, 0.5))
 
   // ---------------- moons ----------------
   const moonsOf = {}
+  const moonMeshes = {}
   const moonMat = (name, bump) => std(name, bump ? { bumpMap: tex(name + '_bump', false), bumpScale: 2 } : {})
   addMoon('earth', moonMat('moon', true), 0.6, 6.2, 0.05, 0.25, null, 1.2)
   addMoon('mars', moonMat('rockmoon'), 0.22, 3.0, 0.14, 0.1, [1, 0.75, 0.85])
@@ -316,7 +320,24 @@ export function buildScene(app, manager) {
     pivot.add(m)
     scene.add(pivot)
     spinners.push({ mesh: pivot, speed, boost: 0 })
+    ;(moonMeshes[parent] ||= []).push({ obj: m, r })
+    return m
   }
+
+  // ---------------- shadows ----------------
+  const shadowMats = []
+  for (const id of ['earth', 'mars', 'jupiter', 'saturn', 'neptune']) {
+    const moons = moonMeshes[id] || []
+    const planetMesh = bodies[id]
+    const ring = id === 'saturn' ? { mesh: satRing, inner: SPEC.saturn.r * 1.24, outer: SPEC.saturn.r * 2.3, texture: satRingTex } : null
+    sunShadows(planetMesh.material, sunPos, moons, ring)
+    shadowMats.push(planetMesh.material)
+    for (const m of moons) {
+      sunShadows(m.obj.material, sunPos, [{ obj: planetMesh, r: SPEC[id].r }, ...moons.filter((x) => x !== m)])
+      shadowMats.push(m.obj.material)
+    }
+  }
+  updaters.push(() => { for (const m of shadowMats) m.userData.updateShadows() })
 
   // ---------------- asteroid belt between Mars and Jupiter ----------------
   {
@@ -362,6 +383,7 @@ export function buildScene(app, manager) {
   }
 
   // ---------------- your observation platform ----------------
+  let padRef = null
   {
     const pad = new THREE.Group()
     const base = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.05, 0.06, 72), new THREE.MeshStandardMaterial({ color: 0x182235, metalness: 0.7, roughness: 0.35, emissive: 0x0a1424, emissiveMap: gridTexture(), emissiveIntensity: 3 }))
@@ -374,6 +396,7 @@ export function buildScene(app, manager) {
     glow.position.y = -0.09
     pad.add(base, rim, glow)
     rig.add(pad)
+    padRef = { pad, base, rim, glow }
     updaters.push((dt, t) => (rim.material.color.setHSL(0.52, 0.85, 0.5 + 0.08 * Math.sin(t * 1.6))))
   }
 
@@ -401,6 +424,10 @@ export function buildScene(app, manager) {
     }
   })
 
+  // ---------------- a comet crossing the inner solar system ----------------
+  const comet = buildComet(scene, sunPos)
+  updaters.push((dt, t) => comet.update(dt, t))
+
   // ---------------- animation ----------------
   updaters.push((dt) => {
     for (const s of spinners) {
@@ -410,7 +437,19 @@ export function buildScene(app, manager) {
   })
 
   return {
-    bodies, tilts, sun, sunPos,
+    bodies, tilts, sun, sunPos, moonsOf, comet, satRingTex, skyTexture: sky.material.map,
+    /** See-through platform, for looking down at the Earth. */
+    setPadGlass(on) {
+      const { base, rim, glow } = padRef
+      base.material.transparent = on
+      base.material.opacity = on ? 0.18 : 1
+      base.material.depthWrite = !on
+      base.material.needsUpdate = true
+      glow.visible = !on
+      rim.scale.setScalar(on ? 0.6 : 1)
+      rim.material.transparent = on
+      rim.material.opacity = on ? 0.5 : 1
+    },
     /** Show a pulsing ring around the planet you are flying to (null to hide). */
     markDestination(id) {
       if (!id) { marker.visible = false; return }
@@ -534,8 +573,87 @@ function atmosphere(r, [cr, cg, cb, strength], sunPos) {
 }
 
 /** Earth's city lights should only glow on the night side. */
+/** Add a shader patch to a built-in material; several patches can be stacked. */
+export function addPatch(material, key, fn) {
+  const prev = material.onBeforeCompile
+  const keys = (material.userData.patchKeys ||= [])
+  keys.push(key)
+  material.onBeforeCompile = (shader, renderer) => {
+    prev.call(material, shader, renderer)
+    fn(shader)
+  }
+  material.customProgramCacheKey = () => keys.join('+')
+}
+
+/**
+ * Real shadows from the Sun: moons darken planets (eclipses), planets darken their moons, and Saturn's rings
+ * throw their banded shadow on Saturn. Done with maths in the shader (sphere and ring occluders), with a soft edge.
+ */
+export function sunShadows(material, sunPos, occluders, ring) {
+  const occ = Array.from({ length: 4 }, () => new THREE.Vector4())
+  const u = {
+    uShSun: { value: sunPos }, uShSunR: { value: 1.6 }, uOcc: { value: occ }, uOccN: { value: 0 },
+    uRingOn: { value: ring ? 1 : 0 }, uRingC: { value: new THREE.Vector3() }, uRingN: { value: new THREE.Vector3(0, 1, 0) },
+    uRingIn: { value: ring ? ring.inner : 0 }, uRingOut: { value: ring ? ring.outer : 0 }, uRingTex: { value: ring ? ring.texture : null },
+  }
+  const tmp = new THREE.Vector3(), sc = new THREE.Vector3()
+  material.userData.updateShadows = () => {
+    let n = 0
+    for (const o of occluders) {
+      if (n >= 4) break
+      o.obj.getWorldPosition(tmp)
+      o.obj.getWorldScale(sc)
+      occ[n++].set(tmp.x, tmp.y, tmp.z, o.r * Math.max(sc.x, sc.y, sc.z))
+    }
+    u.uOccN.value = n
+    if (ring) {
+      ring.mesh.getWorldPosition(u.uRingC.value)
+      u.uRingN.value.set(0, 0, 1).transformDirection(ring.mesh.matrixWorld)
+    }
+  }
+  addPatch(material, 'shadow' + (ring ? 'R' : ''), (shader) => {
+    Object.assign(shader.uniforms, u)
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vShWP;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvShWP = (modelMatrix * vec4(transformed, 1.0)).xyz;')
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+        varying vec3 vShWP; uniform vec3 uShSun; uniform float uShSunR; uniform vec4 uOcc[4]; uniform int uOccN;
+        uniform float uRingOn; uniform vec3 uRingC; uniform vec3 uRingN; uniform float uRingIn; uniform float uRingOut; uniform sampler2D uRingTex;
+        float vrgShadow(vec3 P) {
+          vec3 toS = uShSun - P; float dS = length(toS); vec3 L = toS / dS;
+          float as = uShSunR / dS;
+          float vis = 1.0;
+          for (int i = 0; i < 4; i++) {
+            if (i >= uOccN) break;
+            vec3 toC = uOcc[i].xyz - P; float dC = length(toC);
+            if (dot(toC, L) <= 0.0 || dC > dS || dC < uOcc[i].w * 1.001) continue;
+            float ao = asin(min(uOcc[i].w / dC, 1.0));
+            float sep = acos(clamp(dot(toC / dC, L), -1.0, 1.0));
+            float full = 1.0 - min(1.0, (ao * ao) / (as * as));
+            vis *= mix(full, 1.0, smoothstep(abs(ao - as), ao + as, sep));
+          }
+          if (uRingOn > 0.5) {
+            float den = dot(L, uRingN);
+            if (abs(den) > 1e-4) {
+              float t = dot(uRingC - P, uRingN) / den;
+              if (t > 0.0) {
+                float rr = length(P + L * t - uRingC);
+                if (rr > uRingIn && rr < uRingOut) vis *= 1.0 - 0.85 * texture2D(uRingTex, vec2((rr - uRingIn) / (uRingOut - uRingIn), 0.5)).a;
+              }
+            }
+          }
+          return vis;
+        }`)
+      .replace('#include <lights_fragment_end>', `float vrgSh = vrgShadow(vShWP);
+        reflectedLight.directDiffuse *= vrgSh;
+        reflectedLight.directSpecular *= vrgSh;
+        #include <lights_fragment_end>`)
+  })
+}
+
 function nightSideOnly(material, sunPos) {
-  material.onBeforeCompile = (shader) => {
+  addPatch(material, 'night', (shader) => {
     shader.uniforms.uSun = { value: sunPos }
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vWN2; varying vec3 vWP2;')
@@ -550,7 +668,7 @@ function nightSideOnly(material, sunPos) {
           totalEmissiveRadiance *= emissiveColor.rgb * nightF;
         #endif`,
       )
-  }
+  })
 }
 
 function rings(inner, outer, texture, planetMesh, sunPos, brightness) {
@@ -596,7 +714,7 @@ function ringCanvas(fn) {
   t.colorSpace = THREE.SRGBColorSpace
   return t
 }
-function saturnRingTexture() {
+export function saturnRingTexture() {
   const rnd = (i) => { const x = Math.sin(i * 127.1) * 43758.5453; return x - Math.floor(x) }
   return ringCanvas((t) => {
     let ringlets = 0
@@ -623,7 +741,7 @@ function faintRingTexture() {
 }
 
 // Ashima/Gustavson 3D simplex noise (MIT) for the Sun's surface
-const SIMPLEX = `
+export const SIMPLEX = `
 vec3 mod289(vec3 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
 vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
 vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}

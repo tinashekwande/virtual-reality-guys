@@ -21,6 +21,7 @@ export function createXrApp({ canvasParent = document.body } = {}) {
   const rig = new THREE.Group()
   rig.add(camera)
   scene.add(rig)
+  let activeScene = scene
   camera.position.set(0, 1.6, 0) // flat-screen eye height; replaced by the headset pose in VR
 
   // --- comfort fade (a black shell around the head) ---
@@ -266,7 +267,7 @@ export function createXrApp({ canvasParent = document.body } = {}) {
       }
     }
     for (const f of onFrame) f(dt, t)
-    renderer.render(scene, camera)
+    renderer.render(activeScene, camera)
   })
 
   window.addEventListener('resize', () => {
@@ -309,6 +310,16 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     },
     teleport,
     placeNow,
+    /** Fade to black, run fn (e.g. swap scenes), fade back in. */
+    blink(fn) {
+      teleport({ position: rig.position.clone(), yaw: rig.rotation.y }, fn)
+    },
+    /** Move the player (and everything attached to them) into another scene. */
+    setScene(s) {
+      s.add(rig)
+      activeScene = s
+    },
+    get activeScene() { return activeScene },
     fly,
     skipFlight,
     isMoving: () => !!flight || !!fading,
