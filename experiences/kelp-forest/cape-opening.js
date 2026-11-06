@@ -231,7 +231,9 @@ function buildSky(group) {
   const sky = new THREE.Mesh(new THREE.SphereGeometry(1000, 32, 16), mat)
   sky.frustumCulled = false
   sky.renderOrder = -10
-  sky.onBeforeRender = (r, s, cam) => sky.position.copy(cam.getWorldPosition(new THREE.Vector3()))
+  // read the eye position straight from the matrix: getWorldPosition() would recompute the headset eye's
+  // matrix from its local pose and drop you at the origin, in among the buildings
+  sky.onBeforeRender = (r, s, cam) => sky.position.setFromMatrixPosition(cam.matrixWorld)
   group.add(sky)
 }
 function cloudTexture(seed) {
