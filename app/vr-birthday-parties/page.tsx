@@ -74,7 +74,7 @@ export default function VrBirthdayPartiesPage() {
         "name": "How many kids or guests can play at a VR party?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our setups accommodate different group sizes. Our Starter package (4 headsets, 2 hours) is great for up to 5 players, Standard (5 headsets, 3 hours) serves up to 10, and Premium (6 headsets, 4 hours) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained."
+          "text": "Our setups accommodate different group sizes. Our Starter package (4 headsets, 2 hours) is great for up to 8 players, Standard (5 headsets, 3 hours) serves up to 12, and Premium (6 headsets, 4 hours) handles up to 20 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained."
         }
       },
       {
@@ -98,7 +98,7 @@ export default function VrBirthdayPartiesPage() {
         "name": "How long does a VR party last?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 5 players) and 3 to 4 hours for larger parties."
+          "text": "Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 8 players) and 3 to 4 hours for larger parties."
         }
       },
       {
@@ -171,7 +171,7 @@ export default function VrBirthdayPartiesPage() {
               <PartyPopper className="h-10 w-10 text-primary mb-4" />
               <h3 className="text-xl font-bold mb-2">Choose Your Package</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Flexible mobile VR packages for every party size. Options include 4 to 6 headsets, spectator displays, and tournament coordination.
+                Flexible mobile VR packages starting from just R999. Options include 4 to 6 headsets, spectator displays, and tournament coordination.
               </p>
             </div>
 
@@ -250,7 +250,7 @@ export default function VrBirthdayPartiesPage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How many kids or guests can play at a VR party?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our setups accommodate different group sizes. Our Starter package (4 headsets, 2 hours) is great for up to 5 players, Standard (5 headsets, 3 hours) serves up to 10, and Premium (6 headsets, 4 hours) handles up to 15 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained.
+                Our setups accommodate different group sizes. Our Starter package (4 headsets, 2 hours) is great for up to 8 players, Standard (5 headsets, 3 hours) serves up to 12, and Premium (6 headsets, 4 hours) handles up to 20 players. Because players take turns and spectators can watch on TV displays, everyone stays thoroughly entertained.
               </p>
             </div>
 
@@ -271,7 +271,7 @@ export default function VrBirthdayPartiesPage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How long does a VR party last?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 5 players) and 3 to 4 hours for larger parties.
+                Packages range from 2 to 4 hours of pure gaming time. This excludes our setup and pack-down time, which we do beforehand and afterward at no extra charge. We recommend 2 hours for smaller groups (up to 8 players) and 3 to 4 hours for larger parties.
               </p>
             </div>
 
@@ -301,7 +301,7 @@ export default function VrBirthdayPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Free, no-obligation quotes</span>
+                <span>Packages starting from just R999</span>
               </p>
             </div>
           </div>

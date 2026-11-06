@@ -19,11 +19,11 @@ interface NewBookingModalProps {
 }
 
 const PRESET_PACKAGES = [
-  { description: "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)", price: 999 },
-  { description: "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)", price: 1399 },
-  { description: "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)", price: 1599 },
-  { description: "Corporate Event VR Package", price: 1599 },
-  { description: "School / Educational VR Experience", price: 999 },
+  { description: "Starter VR Package (4 Headsets, 2 Hours, up to 8 players)", price: 999 },
+  { description: "Standard VR Package (5 Headsets, 3 Hours, up to 12 players)", price: 1499 },
+  { description: "Premium VR Package (6 Headsets, 4 Hours, up to 20 players)", price: 1999 },
+  { description: "Corporate Event VR Package (Half Day, 4 Hours)", price: 2999 },
+  { description: "School / Educational VR Experience (Minimum)", price: 2500 },
 ];
 
 const EVENT_TYPES = [
