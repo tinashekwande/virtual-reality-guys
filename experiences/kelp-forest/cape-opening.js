@@ -323,6 +323,7 @@ async function buildCity(group, meta) {
     im.setMatrixAt(i, m)
     im.setColorAt(i, c.setHex(WALLS[data[o + 6] | 0]))
   }
+  im.renderOrder = -2 // drawn before the ground, so where depth is ambiguous far away the ground wins
   group.add(im)
 }
 
@@ -431,7 +432,25 @@ const FLIGHT = new THREE.CatmullRomCurve3([
 ], false, 'catmullrom', 0.5)
 const FLIGHT_TIME = 34
 
+const shellScale = new Map()
+let shellCamera = null
+/** Scale the camera-attached shells (fade, vignette) so they sit beyond the near plane. */
+function setShells(k) {
+  for (const c of shellCamera?.children || []) {
+    if (!c.isMesh || c.userData.splash) continue
+    if (!shellScale.has(c)) shellScale.set(c, c.scale.x)
+    c.scale.setScalar(shellScale.get(c) * k)
+  }
+}
+export function leaveCapeOpening(app) {
+  setShells(1)
+  app.camera.near = 0.05
+  app.camera.far = 2000
+  app.camera.updateProjectionMatrix()
+}
+
 export function buildCapeOpening(app) {
+  shellCamera = app.camera
   const scene = new THREE.Scene()
   const group = new THREE.Group()
   scene.add(group)
@@ -459,8 +478,9 @@ export function buildCapeOpening(app) {
 
   // splash: the view fills with white water and bubbles as you hit the sea
   const splashMat = new THREE.MeshBasicMaterial({ color: 0xd8f4f2, side: THREE.BackSide, transparent: true, opacity: 0, depthTest: false })
-  const splash = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 12), splashMat)
+  const splash = new THREE.Mesh(new THREE.SphereGeometry(1.3, 16, 12), splashMat)
   splash.renderOrder = 998
+  splash.userData.splash = true
   splash.frustumCulled = false
   app.camera.add(splash)
 
@@ -503,8 +523,13 @@ export function buildCapeOpening(app) {
     update,
     enter() {
       app.setScene(scene)
-      app.camera.near = 0.15
-      app.camera.far = 90000
+      // Headsets may give a coarse depth buffer, and with a near plane of a few centimetres a city kilometres
+      // away turns into a jumble (buildings poking through hills and the sea). Nothing in the helicopter is
+      // closer than the menu, so push the near plane out to 1 m, and grow the comfort fade and vignette
+      // (which sit just in front of your eyes) so they are not clipped away.
+      app.camera.near = 1.0
+      app.camera.far = 60000
+      setShells(3)
       app.camera.updateProjectionMatrix()
       app.placeNow(HOVER)
       labels.visible = true
