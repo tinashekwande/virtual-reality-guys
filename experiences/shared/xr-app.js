@@ -195,7 +195,7 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     if (fading || flight) return
     const A = rig.position.clone()
     const B = place.position.clone()
-    const up = Math.max(20, (via.y - A.y) * 0.5)
+    const up = opts.lift ?? Math.max(20, (via.y - A.y) * 0.5) // lift: how far the path bulges (small underwater)
     const legOut = new THREE.CubicBezierCurve3(A, A.clone().add(new THREE.Vector3(-0.15 * up, up, 0)), via.clone().add(new THREE.Vector3(0.2 * up, -0.25 * up, 0)), via.clone())
     const legIn = new THREE.CubicBezierCurve3(via.clone(), via.clone().add(new THREE.Vector3(0.35 * up, 0, 0)), B.clone().add(new THREE.Vector3(-0.35 * up, 0.55 * up, 0)), B)
     flight = { place, legOut, legIn, t: 0, out: opts.out ?? 3.2, hold: opts.hold ?? 1.8, in: opts.in ?? 3.6, onVia: opts.onVia, then: opts.then, viaDone: false }

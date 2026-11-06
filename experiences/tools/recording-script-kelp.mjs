@@ -1,7 +1,7 @@
 // Writes kelp-forest/RECORDING_SCRIPT.md: every narration line with the file name to save it as.
 import { writeFileSync } from 'node:fs'
 import { STOPS, QUIZ } from '../kelp-forest/content.js'
-const lines = [['intro', 'Welcome, ocean explorer! We are going to dive into a giant kelp forest near Cape Town. Point at a button and squeeze the trigger, or pinch your fingers, to choose it.']]
+const lines = [['intro', "Welcome, ocean explorer! You are in a helicopter, high above Cape Town. Look around. Can you find Table Mountain, Lion's Head, and the big white stadium? When you are ready, we will fly along the coast and dive into a giant kelp forest. Point at a button and squeeze the trigger, or pinch your fingers, to choose it."]]
 for (const s of STOPS) { lines.push([s.id, s.text.join(' ')]); lines.push(['secret-' + s.id, s.secret]) }
 lines.push(['quiz', `Great diving! Now let's see what you remember. ${QUIZ[0].q}`])
 QUIZ.slice(1).forEach((q, i) => lines.push(['q' + (i + 2), q.q]))

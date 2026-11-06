@@ -107,7 +107,8 @@ export function extraLand(lat, lon) {
 }
 
 /** Height in metres at a point, given how much of it is land (0..1) and how far inland it is (0..1). */
-export function capeHeight(lat, lon, land, inland) {
+/** detail: extra close-up sculpting (cliff gullies, buttresses, crags) for the low helicopter view. */
+export function capeHeight(lat, lon, land, inland, detail = false) {
   if (land <= 0) return 0
   const X = lon * KX, Y = lat * KY
   let h = 0, mount = 0, mesa = 0
@@ -115,16 +116,38 @@ export function capeHeight(lat, lon, land, inland) {
     const dx = (lon - m.c[1]) * KX, dy = (lat - m.c[0]) * KY
     const a = (m.ang * Math.PI) / 180
     const u = dx * Math.cos(a) + dy * Math.sin(a), v = -dx * Math.sin(a) + dy * Math.cos(a)
-    const r = Math.pow(Math.pow(Math.abs(u) / m.len, m.p) + Math.pow(Math.abs(v) / m.wid, m.p), 1 / m.p)
-    const top = m.h * (1 - (m.soft ? smoothstep(0.6, 1.5, r) : smoothstep(0.93, 1.22, r))) * (0.985 + 0.03 * fbm(n2, X * 2, Y * 2, 0, 3))
-    const apron = m.h * 0.62 * Math.exp(-Math.max(0, r - 1) * 2.4) * smoothstep(0.9, 1.15, r)
-    h = Math.max(h, top, apron)
+    let r = Math.pow(Math.pow(Math.abs(u) / m.len, m.p) + Math.pow(Math.abs(v) / m.wid, m.p), 1 / m.p)
+    if (detail && !m.soft) {
+      // a ragged rim: buttresses and gorges (like Platteklip) cut into the cliffs, and a wavy edge
+      const ang = Math.atan2(v / m.wid, u / m.len)
+      r += 0.07 * (fbm(n2, Math.cos(ang) * 4 + 3, Math.sin(ang) * 4, 5, 4) - 0.5)
+      r += 0.09 * Math.pow(Math.abs(Math.sin(ang * 13 + 3 * fbm(n3, Math.cos(ang) * 2, Math.sin(ang) * 2, 9, 3))), 14)
+      const top = m.h * (0.985 + 0.03 * fbm(n2, X * 2, Y * 2, 0, 3)) * (1 - smoothstep(0.985, 1.0, r))
+      // sheer cliffs from the rim down to the top of the slopes, then steep, gullied fynbos slopes
+      const cliffBase = m.h * 0.7
+      const cliff = r < 1.12 ? cliffBase + (m.h - cliffBase) * smoothstep(1.12, 0.99, r) * (0.92 + 0.08 * ridged(n1, X * 8, Y * 8, 2, 3)) : 0
+      const gully = ridged(n1, Math.cos(ang) * 18, Math.sin(ang) * 18 + r * 2.5, 4, 4)
+      const slope = cliffBase * Math.exp(-Math.max(0, r - 1.08) * 2.2) * (0.92 + 0.12 * gully) * smoothstep(0.9, 1.1, r)
+      h = Math.max(h, top, cliff, slope)
+    } else {
+      const top = m.h * (1 - (m.soft ? smoothstep(0.6, 1.5, r) : smoothstep(0.93, 1.22, r))) * (0.985 + 0.03 * fbm(n2, X * 2, Y * 2, 0, 3))
+      const apron = m.h * 0.62 * Math.exp(-Math.max(0, r - 1) * 2.4) * smoothstep(0.9, 1.15, r)
+      h = Math.max(h, top, apron)
+    }
     mesa = Math.max(mesa, 1 - smoothstep(0.95, 1.3, r))
   }
   const wob = 1 + 0.45 * (fbm(n3, X * 0.35, Y * 0.35, 17, 3) - 0.5)
   for (const c of CONES) {
     const d = (Math.hypot((lon - c.c[1]) * KX, (lat - c.c[0]) * KY) / c.r) * wob
-    if (d < 6) h = Math.max(h, c.h * Math.exp(-Math.pow(d, c.k)))
+    if (d < 6) {
+      let ch = c.h * Math.exp(-Math.pow(d, c.k))
+      if (detail) {
+        // rocky summit domes (Lion's Head's granite-and-sandstone top) and gullied flanks
+        ch += c.h * 0.12 * smoothstep(0.42, 0.18, d) * (0.8 + 0.2 * ridged(n1, X * 6, Y * 6, 6, 3))
+        ch *= 0.9 + 0.14 * ridged(n3, Math.atan2(lat - c.c[0], lon - c.c[1]) * 7, d * 3, 8, 4)
+      }
+      h = Math.max(h, ch)
+    }
   }
   for (const r of RIDGES) {
     const d = (lineKm(lat, lon, r.pts) / r.w) * wob
@@ -146,6 +169,7 @@ export function capeHeight(lat, lon, land, inland) {
   mount = smoothstep(220, 700, h)
   // crags and gullies on the mountains
   h *= 1 + mount * (1 - mesa) * 0.18 * (ridged(n3, X * 1.4, Y * 1.4, 1, 4) - 0.5) // flat summit stays flat
+  if (detail) h += smoothstep(120, 500, h) * (1 - mesa) * 28 * (ridged(n2, X * 5, Y * 5, 12, 4) - 0.5) // crags and boulders
   // rolling lowlands: Cape Flats almost flat, higher inland and in the Karoo
   const flats = Math.exp(-(((lon - 18.62) / 0.16) ** 2 + ((lat + 34.0) / 0.1) ** 2))
   const plateau = plateauBase(lat, lon)
