@@ -1,7 +1,8 @@
 // All sound is synthesised in the browser (no audio files), so it works offline and costs nothing to load.
 // Browsers only allow sound after the first tap/click, so call unlock() from a user action.
 
-export function createAudio() {
+export function createAudio(opts = {}) {
+  const theme = opts.theme || 'space'
   let ctx = null
   let master, musicBus, sfxBus, reverb
   let enabled = true
@@ -52,6 +53,7 @@ export function createAudio() {
   function startMusic() {
     if (musicStarted || !ctx) return
     musicStarted = true
+    if (theme === 'ocean') return startOcean()
     const chords = [
       [130.81, 196.0, 246.94, 329.63], // Cmaj7
       [110.0, 164.81, 246.94, 261.63], // Am(add9)
@@ -106,6 +108,50 @@ export function createAudio() {
     n.connect(bp).connect(ng).connect(musicBus)
     n.start()
     lfo.start()
+    musicBus.gain.setTargetAtTime(enabled ? 1 : 0, ctx.currentTime, 3)
+  }
+
+  // ---- underwater: deep slow chords, the surge of the swell, and the odd stream of bubbles ----
+  function startOcean() {
+    const chords = [[65.41, 98.0, 130.81, 196.0], [55.0, 82.41, 130.81, 164.81], [58.27, 87.31, 116.54, 174.61], [49.0, 73.42, 116.54, 146.83]]
+    const voices = chords[0].map(() => {
+      const o = ctx.createOscillator()
+      o.type = 'sine'
+      const f = ctx.createBiquadFilter()
+      f.type = 'lowpass'
+      f.frequency.value = 500
+      const g = ctx.createGain()
+      g.gain.value = 0.05
+      o.connect(f).connect(g).connect(musicBus)
+      o.start()
+      return { o, g }
+    })
+    let i = 0
+    const step = () => {
+      const now = ctx.currentTime
+      chords[i % chords.length].forEach((fr, k) => { voices[k].o.frequency.setTargetAtTime(fr, now, 2); voices[k].g.gain.setTargetAtTime(0.03 + Math.random() * 0.03, now, 2.5) })
+      i++
+    }
+    step()
+    setInterval(step, 11000)
+    const n = ctx.createBufferSource()
+    n.buffer = noiseBuffer(4)
+    n.loop = true
+    const lp = ctx.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.frequency.value = 320
+    const ng = ctx.createGain()
+    ng.gain.value = 0.05
+    const lfo = ctx.createOscillator()
+    lfo.frequency.value = 0.11 // the swell rolling over the forest
+    const lg = ctx.createGain()
+    lg.gain.value = 0.04
+    lfo.connect(lg).connect(ng.gain)
+    n.connect(lp).connect(ng).connect(musicBus)
+    n.start()
+    lfo.start()
+    const bubbleLoop = () => { if (enabled) sfx.bubbles(0.5); setTimeout(bubbleLoop, 4000 + Math.random() * 7000) }
+    setTimeout(bubbleLoop, 3000)
     musicBus.gain.setTargetAtTime(enabled ? 1 : 0, ctx.currentTime, 3)
   }
 
@@ -184,6 +230,16 @@ export function createAudio() {
       o.stop(t + seconds + 0.1)
       tone(660, { start: seconds * 0.42, dur: 1.2, vol: 0.06, type: 'triangle' }) // soft chime at the overview
       tone(990, { start: seconds * 0.42 + 0.12, dur: 1.2, vol: 0.04, type: 'triangle' })
+    },
+    bubbles(vol = 1) {
+      for (let i = 0; i < 7; i++) {
+        const f = 300 + Math.random() * 500
+        tone(f, { start: i * 0.07 + Math.random() * 0.05, dur: 0.12, vol: 0.06 * vol, slideTo: f * 2.4 })
+      }
+    },
+    seal() {
+      // a short honking bark
+      [0, 0.32].forEach((st) => { tone(420, { type: 'sawtooth', start: st, dur: 0.22, vol: 0.05, slideTo: 300 }); tone(840, { type: 'triangle', start: st, dur: 0.18, vol: 0.03, slideTo: 600 }) })
     },
     sparkle() {
       for (let i = 0; i < 9; i++) tone(1200 + Math.random() * 1800, { start: i * 0.06, dur: 0.4, vol: 0.07 })

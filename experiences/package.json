@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "textures": "node tools/gen-textures.mjs",
-    "recording-script": "node tools/recording-script.mjs"
+    "recording-script": "node tools/recording-script.mjs",
+    "recording-script-kelp": "node tools/recording-script-kelp.mjs"
   },
   "dependencies": {
     "three": "0.170.0"
