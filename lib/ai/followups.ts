@@ -46,7 +46,7 @@ export async function generateCustomerMessage(
   const name = recipient.name || 'Valued Customer'
   const dateStr = recipient.event_date || 'your upcoming date'
   const pkg = recipient.package_name || 'Standard VR Package'
-  const total = recipient.amount_zar ? `R${recipient.amount_zar.toLocaleString()}` : 'R899'
+  const total = recipient.amount_zar ? `R${recipient.amount_zar.toLocaleString()}` : 'R1,499'
   const outstanding = recipient.outstanding_zar ? `R${recipient.outstanding_zar.toLocaleString()}` : total
   const docNum = recipient.doc_number || 'VRG-Q-2026'
   const rawMsg = recipient.customer_message?.trim() || ''

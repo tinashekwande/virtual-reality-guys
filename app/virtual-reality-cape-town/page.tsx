@@ -9,13 +9,13 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'Virtual Reality Cape Town | Mobile VR — We Come To You',
+  title: 'Virtual Reality Cape Town | Mobile VR From R999 — We Come To You',
   description: 'Cape Town\'s top-rated mobile VR entertainment. 100+ games, trained supervisors & spectator screens delivered to your venue. Parties, schools & corporate events. Book today!',
   alternates: {
     canonical: '/virtual-reality-cape-town',
   },
   openGraph: {
-    title: 'Virtual Reality Cape Town | Mobile VR — We Come To You',
+    title: 'Virtual Reality Cape Town | Mobile VR From R999 — We Come To You',
     description: 'Looking for virtual reality in Cape Town? We deliver premium VR gaming setups with supervisors to your home, office, or school.',
     url: 'https://virtualrealityguyz.co.za/virtual-reality-cape-town',
     images: [{ url: '/images/vr-hero.jpg', alt: 'Virtual Reality Cape Town' }],

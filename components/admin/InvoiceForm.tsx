@@ -24,12 +24,14 @@ interface InvoiceFormProps {
 }
 
 const PRESET_PACKAGES = [
-  { description: "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)", price: 999 },
-  { description: "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)", price: 1399 },
-  { description: "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)", price: 1599 },
-  { description: "Additional VR Headset (Per Hour)", price: 150 },
-  { description: "Additional Event Hour", price: 250 },
-  { description: "Travel / Transport Fee (Outside Kraaifontein area)", price: 200 },
+  { description: "Starter VR Package (4 Headsets, 2 Hours, up to 8 players)", price: 999 },
+  { description: "Standard VR Package (5 Headsets, 3 Hours, up to 12 players)", price: 1499 },
+  { description: "Premium VR Package (6 Headsets, 4 Hours, up to 20 players)", price: 1999 },
+  { description: "Additional VR Headset (Per Event)", price: 150 },
+  { description: "Additional Event Hour", price: 350 },
+  { description: "Transport Fee (Up to ~25 km)", price: 200 },
+  { description: "Transport Fee (Outer Areas)", price: 350 },
+  { description: "Transport Fee (Far Areas)", price: 500 },
 ];
 
 export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFormProps) {

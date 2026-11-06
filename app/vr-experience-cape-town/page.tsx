@@ -246,7 +246,7 @@ export default function VrExperienceCapeTownPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground pt-4 border-t border-border/40">
-                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Contact us for a free quote.
+                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (transport is R200 up to about 25 km and R350–R500 further out). Party packages start from R999.
               </p>
             </div>
           </div>

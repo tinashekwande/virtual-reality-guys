@@ -24,11 +24,11 @@ export interface ExtractedRequestData {
 /**
  * Parses unstructured natural-language enquiries into structured business parameters
  * using website package baselines:
- * - Starter: R999 (4 headsets, 2 hours, <= 5 players)
- * - Standard: R1,399 (5 headsets, 3 hours, 6-10 players)
- * - Premium: R1,599 (6 headsets, 4 hours, 11-15+ players)
- * - Corporate: R1,599 (6-8 headsets, 4 hours)
- * - School: R999 (demo) or custom
+ * - Starter: R999 (4 headsets, 2 hours, <= 8 players)
+ * - Standard: R1,499 (5 headsets, 3 hours, 9-12 players)
+ * - Premium: R1,999 (6 headsets, 4 hours, 13-20 players)
+ * - Corporate: from R2,999 (half day, 4 hours) — custom quote
+ * - School: R25-R35 per learner, minimum R2,500 — custom quote
  */
 export async function extractRequestDetails(
   rawMessage: string,
@@ -80,16 +80,16 @@ export async function extractRequestDetails(
   // Default baseline package recommendation
   let recPackage = {
     name: 'Standard Package',
-    price_zar: 1399,
+    price_zar: 1499,
     headset_count: 5,
     duration_hours: 3,
-    reason: 'Ideal for up to 10 players with 5 VR headsets, 3 hours of VR gaming, and dedicated supervision.',
+    reason: 'Ideal for up to 12 players with 5 VR headsets, 3 hours of VR gaming, and dedicated supervision.',
   }
 
   if (eventType.includes('School')) {
     recPackage = {
       name: 'School / Educational VR Experience',
-      price_zar: 999,
+      price_zar: 2500,
       headset_count: 4,
       duration_hours: 2,
       reason: 'Structured educational science & exploration VR stations for students.',
@@ -97,26 +97,26 @@ export async function extractRequestDetails(
   } else if (eventType.includes('Corporate') || eventType.includes('Expo')) {
     recPackage = {
       name: 'Corporate Event VR Package',
-      price_zar: 1599,
+      price_zar: 2999,
       headset_count: 6,
       duration_hours: 4,
       reason: 'High-energy corporate activation with spectator displays and multiplayer leaderboards.',
     }
-  } else if (playerCount <= 5) {
+  } else if (playerCount <= 8) {
     recPackage = {
       name: 'Starter Package',
       price_zar: 999,
       headset_count: 4,
       duration_hours: 2,
-      reason: 'Perfect for intimate gatherings up to 5 players with 4 headsets and 2 hours of VR gaming.',
+      reason: 'Perfect for intimate gatherings up to 8 players with 4 headsets and 2 hours of VR gaming.',
     }
-  } else if (playerCount > 10) {
+  } else if (playerCount > 12) {
     recPackage = {
       name: 'Premium Package',
-      price_zar: 1599,
+      price_zar: 1999,
       headset_count: 6,
       duration_hours: 4,
-      reason: 'Maximum throughput for up to 15 players with 6 headsets, 4 hours of VR gaming, and dedicated supervision.',
+      reason: 'Maximum throughput for up to 20 players with 6 headsets, 4 hours of VR gaming, and dedicated supervision.',
     }
   }
 
@@ -140,11 +140,13 @@ export async function extractRequestDetails(
 Analyze this customer enquiry and return a strict JSON object. We need to know the customer's suburb/area to quote them accordingly (including applicable travel logistics).
 
 OUR OFFICIAL PACKAGES ON THE WEBSITE (BASELINE PRICING INCL. 15% VAT):
-1. Starter Package: R999 (4 VR Headsets, 2 Hours, up to 5 players) - for small birthdays / intimate groups.
-2. Standard Package: R1,399 (5 VR Headsets, 3 Hours, up to 10 players) - our most popular package for birthdays & demos.
-3. Premium Package: R1,599 (6 VR Headsets, 4 Hours, up to 15 players) - for large parties & tournaments.
-4. Corporate Event VR Package: R1,599 (6-8 VR Headsets, 4 Hours, tournament bracket & display mirrors).
-5. School / Educational VR Experience: R999 (baseline for up to 30 students) or R1,599 (larger groups).
+1. Starter Package: R999 (4 VR Headsets, 2 Hours, up to 8 players) - for small birthdays / intimate groups.
+2. Standard Package: R1,499 (5 VR Headsets, 3 Hours, up to 12 players) - our most popular package for birthdays.
+3. Premium Package: R1,999 (6 VR Headsets, 4 Hours, up to 20 players) - for large parties & tournaments.
+4. Corporate Event VR Package: from R2,999 for a half day (4 hours, 6 headsets, 2 staff); full day from R4,999; large public events from R6,500.
+5. School / Educational VR Experience: R25-R35 per learner, minimum R2,500.
+ADD-ONS: extra hour R350, extra headset R150.
+TRANSPORT: free in Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, Buh-Rein Estate; R200 up to ~25 km; R350-R500 further out.
 
 RETURN A STRICT JSON OBJECT WITH THESE EXACT KEYS:
 {
@@ -154,7 +156,7 @@ RETURN A STRICT JSON OBJECT WITH THESE EXACT KEYS:
   "location": "string (extracted suburb/address or empty string)",
   "recommended_package": {
     "name": "string (exact package name chosen from our official packages above)",
-    "price_zar": number (e.g. 499, 899, 1299, 1499),
+    "price_zar": number (e.g. 999, 1499, 1999, 2999),
     "headset_count": number (2, 4, 6, or 8),
     "duration_hours": number (2, 3, or 4),
     "reason": "string (specific explanation referencing their player count, venue/suburb, and event type)"

@@ -177,24 +177,24 @@ export default function ContactPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-foreground">Starter Package</span>
-                  <span className="text-primary font-bold">On quote</span>
+                  <span className="text-primary font-bold">R 999</span>
                 </div>
-                <p className="text-xs text-muted-foreground">2 hours of VR gaming, 4 VR headsets, up to 5 players</p>
+                <p className="text-xs text-muted-foreground">2 hours of VR gaming, 4 VR headsets, up to 8 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Standard Package</span>
-                  <span className="text-primary font-bold">On quote</span>
+                  <span className="text-primary font-bold">R 1,499</span>
                 </div>
-                <p className="text-xs text-muted-foreground">3 hours of VR gaming, 5 VR headsets, up to 10 players</p>
+                <p className="text-xs text-muted-foreground">3 hours of VR gaming, 5 VR headsets, up to 12 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Premium Package</span>
-                  <span className="text-primary font-bold">On quote</span>
+                  <span className="text-primary font-bold">R 1,999</span>
                 </div>
-                <p className="text-xs text-muted-foreground">4 hours of VR gaming, 6 VR headsets, up to 15 players</p>
+                <p className="text-xs text-muted-foreground">4 hours of VR gaming, 6 VR headsets, up to 20 players</p>
               </div>
               <p className="text-xs text-muted-foreground/80 leading-relaxed border-t border-border/20 pt-4">
-                <strong>*Note:</strong> Free delivery/transport to Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, and Buh-Rein Estate. Other areas require transport fees.
+                <strong>*Note:</strong> Transport is free in Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst and Buh-Rein Estate. Venues up to about 25 km away pay R200, and further areas (e.g. Somerset West, Constantia, Fish Hoek, Simon’s Town) pay R350–R500. Add-ons: extra hour R350 · extra headset R150. Schools and corporate events are quoted separately.
               </p>
             </div>
 

@@ -529,7 +529,7 @@ export default function GamePageClient({ game, relatedGames, moreGames }: GamePa
                 Book for Parties & Events
               </h4>
               <p className="text-xs text-muted-foreground">
-                Packages include headsets, game library, TV casting, and full staff supervision. Contact us for a free quote.
+                Party packages start from just <strong className="text-white">R999</strong> for 2 hours with headsets, game library, TV casting, and full staff supervision.
               </p>
               <Link 
                 href="/pricing"
@@ -679,7 +679,7 @@ export default function GamePageClient({ game, relatedGames, moreGames }: GamePa
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold text-white truncate">{game.title}</p>
-            <p className="text-[10px] text-primary truncate">Mobile Setup • Free Quote</p>
+            <p className="text-[10px] text-primary truncate">From R999 • Mobile Setup</p>
           </div>
         </div>
 

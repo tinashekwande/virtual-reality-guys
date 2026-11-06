@@ -85,26 +85,26 @@ function QuotesInvoicesContent() {
         ];
       } else {
         const pkgLower = packageType.toLowerCase();
-        if (pkgLower.includes("starter") || pkgLower.includes("899") || pkgLower.includes("499")) {
+        if (pkgLower.includes("starter")) {
           initialItems = [
-            { id: "1", description: "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)", quantity: 1, unit_price: 899, total: 899 }
+            { id: "1", description: "Starter VR Package (4 Headsets, 2 Hours, up to 8 players)", quantity: 1, unit_price: 999, total: 999 }
           ];
-        } else if (pkgLower.includes("premium") || pkgLower.includes("1499") || pkgLower.includes("1,499") || pkgLower.includes("1299") || pkgLower.includes("1,299")) {
+        } else if (pkgLower.includes("premium") || pkgLower.includes("1999") || pkgLower.includes("1,999")) {
           initialItems = [
-            { id: "1", description: "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)", quantity: 1, unit_price: 1499, total: 1499 }
+            { id: "1", description: "Premium VR Package (6 Headsets, 4 Hours, up to 20 players)", quantity: 1, unit_price: 1999, total: 1999 }
           ];
-        } else if (pkgLower.includes("corporate") || pkgLower.includes("1499") || pkgLower.includes("1,499")) {
+        } else if (pkgLower.includes("corporate")) {
           initialItems = [
-            { id: "1", description: "Corporate Event VR Package (6-8 Headsets, 4 Hours, 3 Staff)", quantity: 1, unit_price: 1499, total: 1499 }
+            { id: "1", description: "Corporate Event VR Package (Half Day, 4 Hours, 6 Headsets, 2 Staff)", quantity: 1, unit_price: 2999, total: 2999 }
           ];
         } else if (pkgLower.includes("school")) {
           initialItems = [
-            { id: "1", description: "School / Educational VR Experience (4 Headsets, 2 Hours)", quantity: 1, unit_price: 899, total: 899 }
+            { id: "1", description: "School / Educational VR Experience (Minimum Booking)", quantity: 1, unit_price: 2500, total: 2500 }
           ];
         } else {
           // Standard Package is our baseline default
           initialItems = [
-            { id: "1", description: "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)", quantity: 1, unit_price: 1299, total: 1299 }
+            { id: "1", description: "Standard VR Package (5 Headsets, 3 Hours, up to 12 players)", quantity: 1, unit_price: 1499, total: 1499 }
           ];
         }
       }
