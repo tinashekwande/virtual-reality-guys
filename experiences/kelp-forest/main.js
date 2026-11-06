@@ -7,7 +7,7 @@ import { buildOcean, floorY } from './ocean.js'
 import { buildKelp } from './kelp.js'
 import { buildLife } from './life.js'
 import { STOPS, QUIZ } from './content.js'
-import { buildCapeOpening } from './cape-opening.js'
+import { buildCapeOpening, leaveCapeOpening } from './cape-opening.js'
 
 const app = createXrApp()
 const { scene, rig } = app
@@ -35,9 +35,7 @@ const opening = buildCapeOpening(app)
 app.onFrame((dt, t) => { if (app.activeScene === opening.scene) opening.update(dt, t) })
 function goUnderwater() {
   app.setScene(scene)
-  app.camera.near = 0.05
-  app.camera.far = 2000
-  app.camera.updateProjectionMatrix()
+  leaveCapeOpening(app)
 }
 
 // ---- sound ----
