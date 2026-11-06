@@ -4,8 +4,38 @@ import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js'
 // The underwater world: green-blue Cape water, sunlight shafts, the rippling surface seen from below
 // (with its bright "Snell's window"), a rocky seafloor with dancing light (caustics) and drifting marine snow.
 
-export const WATER = new THREE.Color(0x1b5652) // cold Atlantic kelp-forest water: green-blue
-export const FOG_DENSITY = 0.052 // you can see about 15-20 m, like a good day at Simon's Town
+export const WATER = new THREE.Color(0x1a6470) // cold Atlantic kelp-forest water: blue-green
+export const FOG_DENSITY = 0.046 // you can see about 15-25 m, like a good day on the Atlantic seaboard
+
+// Underwater, the water you look through is bright cyan towards the surface and deep blue-green below.
+// Three.js fog is one flat colour, so we change it to depend on which way you are looking.
+THREE.ShaderChunk.fog_pars_vertex = '#ifdef USE_FOG\n varying float vFogDepth;\n varying vec3 vFogView;\n#endif'
+THREE.ShaderChunk.fog_vertex = '#ifdef USE_FOG\n vFogDepth = - mvPosition.z;\n vFogView = mvPosition.xyz;\n#endif'
+THREE.ShaderChunk.fog_pars_fragment = `#ifdef USE_FOG
+  uniform vec3 fogColor; varying float vFogDepth; varying vec3 vFogView;
+  #ifdef FOG_EXP2
+    uniform float fogDensity;
+  #else
+    uniform float fogNear; uniform float fogFar;
+  #endif
+#endif`
+export const WATER_GRADIENT = `
+  vec3 waterTint(vec3 base, float y) {
+    vec3 c = mix(base * 0.42, base, smoothstep(-0.75, -0.05, y));
+    return mix(c, base * 1.6 + vec3(0.03, 0.07, 0.08), smoothstep(0.0, 0.85, y));
+  }`
+THREE.ShaderChunk.fog_fragment = `#ifdef USE_FOG
+  #ifdef FOG_EXP2
+    float fogFactor = 1.0 - exp( - fogDensity * fogDensity * vFogDepth * vFogDepth );
+  #else
+    float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );
+  #endif
+  vec3 fogDirW = normalize( transpose( mat3( viewMatrix ) ) * vFogView );
+  float fy = fogDirW.y;
+  vec3 fc = mix( fogColor * 0.42, fogColor, smoothstep( -0.75, -0.05, fy ) );
+  fc = mix( fc, fogColor * 1.6 + vec3( 0.03, 0.07, 0.08 ), smoothstep( 0.0, 0.85, fy ) );
+  gl_FragColor.rgb = mix( gl_FragColor.rgb, fc, fogFactor );
+#endif`
 export const SUN_DIR = new THREE.Vector3(0.25, 1, 0.18).normalize()
 
 // ---------- seafloor shape ----------
@@ -53,22 +83,43 @@ export function withCaustics(material, uTime, key, crust = false) {
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = uTime
     shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying vec3 vCW;')
+      .replace('#include <common>', '#include <common>\nvarying vec3 vCW;' + (crust === 'floor' ? '\nattribute float aReef; varying float vReef;' : ''))
       .replace('#include <begin_vertex>', `#include <begin_vertex>
+        ${crust === 'floor' ? 'vReef = aReef;' : ''}
         vec4 cw = vec4(transformed, 1.0);
         #ifdef USE_INSTANCING
           cw = instanceMatrix * cw;
         #endif
         vCW = (modelMatrix * cw).xyz;`)
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\nvarying vec3 vCW; uniform float uTime;\n${CAUSTICS}\n${NOISE3}`)
+      .replace('#include <common>', `#include <common>\nvarying vec3 vCW; uniform float uTime;\n${crust === 'floor' ? 'varying float vReef;' : ''}\n${CAUSTICS}\n${NOISE3}`)
+      .replace('#include <normal_fragment_maps>', crust ? `#include <normal_fragment_maps>
+        {
+          // bumpy, encrusted surface: perturb the normal with a noise height field
+          float H = vn3(vCW * 5.0) * 0.6 + vn3(vCW * 14.0) * 0.3 + vn3(vCW * 37.0) * 0.1;
+          vec3 dpdx = dFdx(-vViewPosition), dpdy = dFdy(-vViewPosition);
+          float dhx = dFdx(H), dhy = dFdy(H);
+          vec3 r1 = cross(dpdy, normal), r2 = cross(normal, dpdx);
+          float det = dot(dpdx, r1);
+          vec3 grad = sign(det) * (dhx * r1 + dhy * r2);
+          float k = ${crust === 'floor' ? 'vReef * 0.06 + 0.012' : '0.07'};
+          normal = normalize(abs(det) * normal - grad * k);
+        }` : '#include <normal_fragment_maps>')
       .replace('#include <emissivemap_fragment>', crust ? `#include <emissivemap_fragment>
-        // rock crusted with seaweed turf, pink coralline algae and bright sponges
-        float n1 = vn3(vCW * 1.7) * 0.6 + vn3(vCW * 5.3) * 0.4;
-        diffuseColor.rgb *= 0.55 + 0.75 * n1;
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.55, 0.3, 0.36), smoothstep(0.6, 0.75, vn3(vCW * 2.3 + 11.0)) * 0.7);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.8, 0.42, 0.12), smoothstep(0.78, 0.86, vn3(vCW * 3.1 + 5.0)) * 0.8);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.28, 0.34, 0.16), smoothstep(0.5, 0.7, vn3(vCW * 0.9 + 3.0)) * max(normal.y, 0.0));` : '#include <emissivemap_fragment>')
+        {
+          // rock crusted with yellow-green algae turf, pink coralline algae, sponges and dark crevices
+          vec3 base = diffuseColor.rgb;
+          vec3 c = base;
+          float n1 = vn3(vCW * 1.7) * 0.6 + vn3(vCW * 5.3) * 0.4;
+          float fine = vn3(vCW * 23.0);
+          c *= 0.5 + 0.8 * n1;
+          float turf = smoothstep(0.35, 0.6, vn3(vCW * 2.1 + 3.0)) * smoothstep(-0.2, 0.6, normal.y);
+          c = mix(c, mix(vec3(0.2, 0.22, 0.09), vec3(0.38, 0.36, 0.14), fine), turf * 0.8);
+          c = mix(c, vec3(0.55, 0.32, 0.38), smoothstep(0.55, 0.7, vn3(vCW * 2.6 + 11.0)) * 0.65);
+          c = mix(c, vec3(0.6, 0.38, 0.16), smoothstep(0.82, 0.88, vn3(vCW * 3.4 + 5.0)) * 0.5);
+          c *= (0.65 + 0.5 * fine) * mix(0.45, 1.0, smoothstep(0.25, 0.55, vn3(vCW * 0.9 + 2.0)));
+          diffuseColor.rgb = ${crust === 'floor' ? 'mix(base, c, smoothstep(0.15, 0.6, vReef))' : 'c'};
+        }` : '#include <emissivemap_fragment>')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         float cs = caustic(vCW.xz * 0.55 + vCW.y * 0.2, uTime) + 0.6 * caustic(vCW.xz * 1.3 + 7.0, uTime * 1.3);
         float depthK = exp(vCW.y * 0.09); // fainter deeper down
@@ -91,7 +142,7 @@ export function buildOcean(app, clear = []) {
   const sun = new THREE.DirectionalLight(0xd8f4ea, 2.4)
   sun.position.copy(SUN_DIR).multiplyScalar(50)
   scene.add(sun)
-  scene.add(new THREE.HemisphereLight(0x8fd8cc, 0x15221f, 0.85))
+  scene.add(new THREE.HemisphereLight(0x9fe2e8, 0x14262a, 0.8))
 
   // ---- water all around you: brighter above, darker below ----
   const dome = new THREE.Mesh(
@@ -99,9 +150,9 @@ export function buildOcean(app, clear = []) {
     new THREE.ShaderMaterial({
       uniforms: { uWater: { value: WATER } },
       vertexShader: `varying vec3 vD; void main(){ vD = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-      fragmentShader: `uniform vec3 uWater; varying vec3 vD; void main(){ float y = normalize(vD).y;
-        vec3 c = mix(uWater * 0.55, uWater, smoothstep(-0.95, -0.25, y)); // same colour as the fog around the horizon
-        c = mix(c, uWater * 1.45 + vec3(0.01, 0.025, 0.02), smoothstep(0.05, 0.9, y));
+      fragmentShader: `uniform vec3 uWater; varying vec3 vD; ${WATER_GRADIENT}
+      void main(){ float y = normalize(vD).y;
+        vec3 c = waterTint(uWater, y); // exactly the colour of the fog in that direction
         gl_FragColor = vec4(c, 1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
@@ -117,27 +168,29 @@ export function buildOcean(app, clear = []) {
     uniforms: { uTime, uWater: { value: WATER }, uDens: { value: FOG_DENSITY } },
     vertexShader: `varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
     fragmentShader: `uniform float uTime; uniform vec3 uWater; uniform float uDens; varying vec3 vW;
-      float wave(vec2 p){ return sin(p.x * 0.9 + uTime * 1.1) * 0.5 + sin(p.y * 1.3 - uTime * 0.8) * 0.4 + sin((p.x + p.y) * 2.3 + uTime * 1.7) * 0.25 + sin((p.x - p.y) * 4.1 - uTime * 2.1) * 0.12; }
+      ${WATER_GRADIENT}
+      float wave(vec2 p){ return sin(dot(p, vec2(0.83, 0.56)) * 0.9 + uTime * 1.1) * 0.5 + sin(dot(p, vec2(-0.31, 0.95)) * 1.37 - uTime * 0.8) * 0.4 + sin(dot(p, vec2(0.97, -0.24)) * 2.31 + uTime * 1.7) * 0.25 + sin(dot(p, vec2(-0.66, -0.75)) * 3.73 - uTime * 2.1) * 0.15 + sin(dot(p, vec2(0.12, -0.99)) * 5.9 + uTime * 2.6) * 0.07; }
       void main(){
         vec3 d = vW - cameraPosition; float dist = length(d); d /= dist;
         vec2 p = vW.xz;
         vec2 g = vec2(wave(p + vec2(0.05, 0.0)) - wave(p - vec2(0.05, 0.0)), wave(p + vec2(0.0, 0.05)) - wave(p - vec2(0.0, 0.05))) * 4.0;
         float up = clamp(d.y + dot(g, d.xz) * 0.12, 0.0, 1.0);
         // Snell's window: looking steeply up you see the bright sky; at a shallow angle the surface acts like a mirror
-        float window = smoothstep(0.55, 0.8, up);
+        float window = smoothstep(0.62, 0.86, up) * (0.75 + 0.25 * sin(wave(p * 0.6) * 2.0));
         float ripple = 0.5 + 0.5 * sin(wave(p * 2.3) * 2.5 + wave(p * 5.1));
-        vec3 sky = mix(vec3(0.42, 0.66, 0.66), vec3(0.72, 0.9, 0.86), ripple) * 0.85;
+        vec3 sky = mix(vec3(0.35, 0.62, 0.68), vec3(0.66, 0.86, 0.86), ripple) * 0.75;
         vec3 mirror = uWater * mix(0.7, 1.05, ripple);
         vec3 col = mix(mirror, sky, window);
         col += vec3(1.0, 0.98, 0.9) * pow(max(up, 0.0), 60.0) * 0.9 * ripple; // the Sun wobbling through the waves
         float fogF = 1.0 - exp(-pow(dist * uDens * 0.7, 2.0));
-        gl_FragColor = vec4(mix(col, uWater * 1.2, fogF), 1.0);
+        gl_FragColor = vec4(mix(col, waterTint(uWater, d.y), fogF), 1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
       }`,
-    side: THREE.DoubleSide, fog: false,
+    side: THREE.DoubleSide, fog: false, depthWrite: false,
   })
   const surface = new THREE.Mesh(new THREE.PlaneGeometry(600, 600, 1, 1), surfMat)
+  surface.renderOrder = -5 // nothing is above the surface, so it never needs to hide anything
   surface.rotation.x = Math.PI / 2
   scene.add(surface)
 
@@ -160,8 +213,11 @@ export function buildOcean(app, clear = []) {
     colors.set([c.r, c.g, c.b], i * 3)
   }
   floorGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+  const reefAttr = new Float32Array(fp.count)
+  for (let i = 0; i < fp.count; i++) reefAttr[i] = Math.min(1, reefiness(fp.getX(i), fp.getZ(i)) * 1.8)
+  floorGeo.setAttribute('aReef', new THREE.BufferAttribute(reefAttr, 1))
   floorGeo.computeVertexNormals()
-  const floorMat = withCaustics(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 }), uTime, 'floor')
+  const floorMat = withCaustics(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 }), uTime, 'floor', 'floor')
   scene.add(new THREE.Mesh(floorGeo, floorMat))
 
   // ---- boulders on the reef ----
@@ -213,9 +269,10 @@ export function buildOcean(app, clear = []) {
       ctx.fillStyle = g
       ctx.fillRect(0, 0, 64, 256)
       const id = ctx.getImageData(0, 0, 64, 256)
+      const streak = Array.from({ length: 64 }, () => 0.55 + Math.random() * 0.45)
       for (let y = 0; y < 256; y++) for (let x = 0; x < 64; x++) {
         const k = Math.sin((x / 63) * Math.PI)
-        id.data[(y * 64 + x) * 4 + 3] *= k * k
+        id.data[(y * 64 + x) * 4 + 3] *= k * k * streak[x] // fine streaks inside each shaft, like dust in sunlight
       }
       ctx.putImageData(id, 0, 0)
       return new THREE.CanvasTexture(cv)
@@ -223,10 +280,10 @@ export function buildOcean(app, clear = []) {
     const shafts = []
     const geo = new THREE.PlaneGeometry(1, 1)
     geo.translate(0, -0.5, 0)
-    for (let i = 0; i < 26; i++) {
-      const mat = new THREE.MeshBasicMaterial({ map: tex, color: 0xcdfff0, transparent: true, opacity: 0.07, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false })
+    for (let i = 0; i < 52; i++) {
+      const mat = new THREE.MeshBasicMaterial({ map: tex, color: 0xd6fff4, transparent: true, opacity: 0.07, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false })
       const s = new THREE.Mesh(geo, mat)
-      s.userData = { ox: (Math.random() - 0.5) * 50, oz: (Math.random() - 0.5) * 50, w: 0.8 + Math.random() * 2.6, len: 14 + Math.random() * 10, ph: Math.random() * 10 }
+      s.userData = { ox: (Math.random() - 0.5) * 50, oz: (Math.random() - 0.5) * 50, w: 0.3 + Math.pow(Math.random(), 2) * 3.2, len: 18 + Math.random() * 16, ph: Math.random() * 10 }
       s.scale.set(s.userData.w, s.userData.len, 1)
       scene.add(s)
       shafts.push(s)
@@ -243,8 +300,74 @@ export function buildOcean(app, clear = []) {
         r.crossVectors(SUN_DIR, n).normalize()
         mtx.makeBasis(r, SUN_DIR, n)
         s.quaternion.setFromRotationMatrix(mtx)
-        s.material.opacity = 0.05 + 0.06 * (0.5 + 0.5 * Math.sin(t * 0.7 + u.ph)) * (0.5 + 0.5 * Math.sin(t * 1.9 + u.ph * 2))
+        // shafts are brightest near the surface and when you look towards the light
+        const look = Math.max(0, n.dot(SUN_DIR) * -1 + 0.4)
+        s.material.opacity = (0.045 + 0.09 * (0.5 + 0.5 * Math.sin(t * 0.6 + u.ph)) * (0.5 + 0.5 * Math.sin(t * 1.7 + u.ph * 2))) * (0.7 + look)
       }
+    })
+  }
+
+  // ---- the Sun's glow seen through the surface ----
+  {
+    const c = document.createElement('canvas')
+    c.width = c.height = 256
+    const ctx = c.getContext('2d')
+    const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128)
+    g.addColorStop(0, 'rgba(255,255,240,1)')
+    g.addColorStop(0.12, 'rgba(230,255,240,0.75)')
+    g.addColorStop(0.4, 'rgba(150,230,220,0.22)')
+    g.addColorStop(1, 'rgba(100,200,200,0)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, 256, 256)
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), blending: THREE.AdditiveBlending, depthWrite: false, fog: false, transparent: true, opacity: 0.9 }))
+    glow.scale.setScalar(26)
+    scene.add(glow)
+    updaters.push((dt, t) => {
+      glow.position.copy(rig.position).addScaledVector(SUN_DIR, 30)
+      glow.position.y = -0.3
+      glow.material.opacity = 0.75 + 0.15 * Math.sin(t * 1.3) * Math.sin(t * 0.7)
+    })
+  }
+
+  // ---- bubbles: your breath rising past you now and then ----
+  {
+    const N = 60
+    const pos = new Float32Array(N * 3)
+    const vel = new Float32Array(N)
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+    const c = document.createElement('canvas')
+    c.width = c.height = 64
+    const ctx = c.getContext('2d')
+    ctx.strokeStyle = 'rgba(230,255,255,0.9)'
+    ctx.lineWidth = 4
+    ctx.beginPath(); ctx.arc(32, 32, 24, 0, Math.PI * 2); ctx.stroke()
+    ctx.fillStyle = 'rgba(255,255,255,0.8)'
+    ctx.beginPath(); ctx.arc(24, 22, 6, 0, Math.PI * 2); ctx.fill()
+    const mat = new THREE.PointsMaterial({ map: new THREE.CanvasTexture(c), size: 0.035, transparent: true, depthWrite: false, opacity: 0.85 })
+    const bubbles = new THREE.Points(g, mat)
+    bubbles.frustumCulled = false
+    scene.add(bubbles)
+    let next = 3, alive = 0
+    updaters.push((dt, t) => {
+      next -= dt
+      if (next < 0) {
+        next = 6 + Math.random() * 6
+        const base = rig.position.clone().add(new THREE.Vector3(0.25, 1.2, 0.35))
+        for (let i = 0; i < N; i++) {
+          pos.set([base.x + (Math.random() - 0.5) * 0.15, base.y - Math.random() * 0.4, base.z + (Math.random() - 0.5) * 0.15], i * 3)
+          vel[i] = 0.5 + Math.random() * 0.6
+        }
+        alive = 7
+      }
+      if (alive <= 0) { bubbles.visible = false; return }
+      alive -= dt
+      bubbles.visible = true
+      for (let i = 0; i < N; i++) {
+        pos[i * 3] += Math.sin(t * 6 + i) * 0.004
+        pos[i * 3 + 1] += vel[i] * dt
+      }
+      g.attributes.position.needsUpdate = true
     })
   }
 

@@ -42,12 +42,18 @@ export function fin(outline, { at = [0, 0, 0], rot = [0, 0, 0], thick = 0.004 } 
 }
 
 /** Merge parts and paint vertex colours with fn(x, y, z) -> [r, g, b] (0..1). */
-export function paint(parts, fn) {
+export function paint(parts, fn, uvL = 0) {
   const g = mergeGeometries(parts.map((p) => (p.index ? p.toNonIndexed() : p)), false)
   const pos = g.attributes.position
   const col = new Float32Array(pos.count * 3)
   for (let i = 0; i < pos.count; i++) col.set(fn(pos.getX(i), pos.getY(i), pos.getZ(i)), i * 3)
   g.setAttribute('color', new THREE.BufferAttribute(col, 3))
+  if (uvL) {
+    // side-on texture projection: u runs tail -> nose, v runs belly -> back (both sides share it, like a real fish)
+    const uv = new Float32Array(pos.count * 2)
+    for (let i = 0; i < pos.count; i++) uv.set([(pos.getX(i) + uvL / 2) / uvL, pos.getY(i) / (uvL * 0.5) + 0.5], i * 2)
+    g.setAttribute('uv', new THREE.BufferAttribute(uv, 2))
+  }
   return g
 }
 

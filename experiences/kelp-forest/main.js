@@ -22,9 +22,9 @@ const at = Object.fromEntries(STOPS.map((s) => [s.id, { x: s.x, y: placeFor(s).p
 // ---- the world ----
 const clear = STOPS.flatMap((s) => [{ x: s.x, z: 0, r: 3.5 }, { x: s.x + 5, z: 0, r: s.floor ? 3.5 : 2.5 }])
 const ocean = buildOcean(app, clear)
-buildKelp(scene, ocean.uTime, clear)
+const kelp = buildKelp(scene, ocean.uTime, clear)
 const life = buildLife(scene, at, ocean.uTime)
-app.onFrame((dt, t) => { ocean.update(dt, t); life.update(dt, t) })
+app.onFrame((dt, t) => { ocean.update(dt, t); life.update(dt, t); kelp.update(app.camera) })
 document.getElementById('loading')?.classList.add('done')
 
 // ---- sound ----

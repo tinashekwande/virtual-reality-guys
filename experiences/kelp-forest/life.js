@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { body, fin, paint, swimMaterial, lerp3, sstep, vnoise3 } from './bodies.js'
-import { floorY, withCaustics } from './ocean.js'
+import { floorY, withCaustics, reefiness as reefinessAt } from './ocean.js'
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
+const mergeTwo = (a, b) => mergeGeometries([a, b], false)
 
 // The animals of the Great African Seaforest.
 
@@ -30,20 +32,77 @@ function sealGeometry() {
   })
 }
 
-// ======================= fish (Hottentot seabream) =======================
-function fishGeometry() {
-  const L = 0.32
-  const b = body(L, [[0, 0.015], [0.12, 0.05], [0.4, 0.17], [0.65, 0.18], [0.85, 0.12], [1, 0.02]], { sy: 1.1, sz: 0.42, segs: 16, radial: 10 })
+// ======================= fish =======================
+// Painted skins for Cape reef fish: a back-to-belly colour gradient, scales, a lateral line, the species'
+// own markings and a glossy eye. The texture is projected from the side, so both sides match.
+const FISH = {
+  strepie: { back: [96, 102, 92], belly: [214, 214, 198], extra: 'stripes' }, // Sarpa salpa: silver with golden stripes
+  hottentot: { back: [62, 68, 84], belly: [186, 176, 156], extra: 'bronze' }, // Hottentot seabream
+  roman: { back: [178, 46, 30], belly: [236, 140, 104], extra: 'roman' }, // red roman
+  galjoen: { back: [34, 36, 40], belly: [110, 106, 98], extra: 'bars' }, // galjoen, South Africa's national fish
+}
+function fishTexture(kind) {
+  const f = FISH[kind]
+  const c = document.createElement('canvas')
+  c.width = 512
+  c.height = 256
+  const ctx = c.getContext('2d')
+  const g = ctx.createLinearGradient(0, 0, 0, 256)
+  g.addColorStop(0, `rgb(${f.back})`)
+  g.addColorStop(0.55, `rgb(${f.back.map((v, i) => Math.round((v + f.belly[i]) / 2))})`)
+  g.addColorStop(1, `rgb(${f.belly})`)
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, 512, 256)
+  if (f.extra === 'stripes') {
+    ctx.strokeStyle = 'rgba(232,190,70,0.85)'
+    ctx.lineWidth = 6
+    for (let y = 40; y < 200; y += 22) { ctx.beginPath(); ctx.moveTo(0, y + 6); ctx.bezierCurveTo(170, y - 6, 330, y - 4, 512, y + 10); ctx.stroke() }
+  }
+  if (f.extra === 'bronze') { ctx.fillStyle = 'rgba(170,130,70,0.25)'; ctx.fillRect(0, 60, 512, 90) }
+  if (f.extra === 'roman') {
+    ctx.fillStyle = 'rgba(250,245,240,0.9)'
+    ctx.beginPath(); ctx.ellipse(250, 30, 34, 26, 0, 0, Math.PI * 2); ctx.fill() // pale saddle on the back
+    ctx.strokeStyle = 'rgba(90,150,230,0.8)'
+    ctx.lineWidth = 4
+    for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.moveTo(400, 110 + k * 14); ctx.lineTo(480, 104 + k * 12); ctx.stroke() } // blue lines on the face
+  }
+  if (f.extra === 'bars') {
+    ctx.fillStyle = 'rgba(15,15,18,0.45)'
+    for (let x = 90; x < 420; x += 55) ctx.fillRect(x, 0, 22, 200)
+  }
+  // scales: rows of small arcs
+  ctx.strokeStyle = 'rgba(255,255,255,0.13)'
+  ctx.lineWidth = 1.2
+  for (let y = 8; y < 256; y += 9) for (let x = (y / 9) % 2 ? 0 : 7; x < 440; x += 14) { ctx.beginPath(); ctx.arc(x, y, 7, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke() }
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)'
+  for (let y = 12; y < 256; y += 9) for (let x = (y / 9) % 2 ? 4 : 11; x < 440; x += 14) { ctx.beginPath(); ctx.arc(x, y, 7, 0.25 * Math.PI, 0.75 * Math.PI); ctx.stroke() }
+  // lateral line and gill cover
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)'
+  ctx.lineWidth = 2
+  ctx.beginPath(); ctx.moveTo(30, 120); ctx.bezierCurveTo(200, 95, 330, 92, 410, 112); ctx.stroke()
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)'
+  ctx.lineWidth = 3
+  ctx.beginPath(); ctx.arc(470, 140, 80, 0.75 * Math.PI, 1.3 * Math.PI); ctx.stroke()
+  // eye
+  ctx.fillStyle = 'rgb(205,170,80)'; ctx.beginPath(); ctx.arc(452, 108, 13, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = 'rgb(8,8,10)'; ctx.beginPath(); ctx.arc(454, 108, 8, 0, Math.PI * 2); ctx.fill()
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.arc(450, 104, 2.5, 0, Math.PI * 2); ctx.fill()
+  const t = new THREE.CanvasTexture(c)
+  t.colorSpace = THREE.SRGBColorSpace
+  t.anisotropy = 4
+  return t
+}
+function fishGeometry(L = 0.32, deep = 1.1) {
+  const b = body(L, [[0, 0.015], [0.1, 0.045], [0.35, 0.16], [0.6, 0.18], [0.82, 0.13], [0.95, 0.06], [1, 0.015]], { sy: deep, sz: 0.4, segs: 22, radial: 14 })
   const parts = [
     b,
-    fin([[0, 0], [-0.05, 0.05], [-0.08, 0.06], [-0.06, 0], [-0.08, -0.06], [-0.05, -0.05]], { at: [-0.14, 0, 0], thick: 0.003 }),
-    fin([[0, 0], [0.04, 0.035], [0.12, 0.03], [0.14, 0]], { at: [-0.04, 0.045, 0], thick: 0.003 }),
+    fin([[0, 0], [-0.05, 0.055], [-0.085, 0.07], [-0.065, 0.005], [-0.085, -0.07], [-0.05, -0.055]].map(([x, y]) => [x * L / 0.32, y * L / 0.32]), { at: [-0.44 * L, 0, 0], thick: 0.003 }),
+    fin([[0, 0], [0.03, 0.04], [0.09, 0.045], [0.16, 0.035], [0.19, 0]].map(([x, y]) => [x * L / 0.32, y * L / 0.32]), { at: [-0.16 * L, 0.15 * L * deep, 0], thick: 0.003 }),
+    fin([[0, 0], [0.03, -0.025], [0.08, -0.02], [0.1, 0]].map(([x, y]) => [x * L / 0.32, y * L / 0.32]), { at: [-0.12 * L, -0.15 * L * deep, 0], thick: 0.003 }),
+    fin([[0, 0], [-0.03, 0.02], [-0.07, 0.015], [-0.05, -0.01]].map(([x, y]) => [x * L / 0.32, y * L / 0.32]), { at: [0.22 * L, -0.02, 0.022 * L / 0.32], rot: [-0.6, 0, 0], thick: 0.002 }),
+    fin([[0, 0], [-0.03, 0.02], [-0.07, 0.015], [-0.05, -0.01]].map(([x, y]) => [x * L / 0.32, y * L / 0.32]), { at: [0.22 * L, -0.02, -0.022 * L / 0.32], rot: [0.6, 0, 0], thick: 0.002 }),
   ]
-  return paint(parts, (x, y, z) => {
-    let c = lerp3([0.62, 0.58, 0.48], [0.28, 0.25, 0.2], sstep(-0.02, 0.05, y))
-    if (x > 0.09 && x < 0.11 && Math.abs(Math.abs(z) - 0.012) < 0.01 && y > 0.005 && y < 0.02) c = [0.02, 0.02, 0.02]
-    return c
-  })
+  return paint(parts, () => [1, 1, 1], L)
 }
 
 // ======================= sharks =======================
@@ -284,8 +343,8 @@ export function buildLife(scene, at, uTime) {
 
   // ---- fish schools ----
   const fishGeo = fishGeometry()
-  function school(center, count, radius, speed) {
-    const mat = swimMaterial(0.32, { amp: 0.12, k: 4, instanced: true })
+  function school(center, count, radius, speed, kind = 'hottentot') {
+    const mat = swimMaterial(0.32, { amp: 0.12, k: 4, instanced: true, roughness: 0.35, mat: { map: fishTexture(kind), metalness: 0.25 } })
     const phases = new Float32Array(count).map(() => Math.random() * 6.28)
     const g = fishGeo.clone()
     g.setAttribute('aPhase', new THREE.InstancedBufferAttribute(phases, 1))
@@ -312,9 +371,40 @@ export function buildLife(scene, at, uTime) {
     })
     return im
   }
-  school(V(at.forest.x + 7, -5, 3), 70, 2.2, 0.5)
-  school(V(at.reef.x + 10, floorY(at.reef.x + 10, 0) + 2.6, -6), 60, 1.6, -0.45)
-  school(V(at.surface.x + 9, -3, -4), 50, 2, 0.4)
+  school(V(at.forest.x + 7, -5, 3), 70, 2.2, 0.5, 'strepie')
+  school(V(at.reef.x + 10, floorY(at.reef.x + 10, 0) + 2.6, -6), 60, 1.6, -0.45, 'hottentot')
+  school(V(at.surface.x + 9, -3, -4), 50, 2, 0.4, 'strepie')
+
+  // single bigger reef fish cruising between the rocks: red romans and galjoen
+  const loners = []
+  const romanGeo = fishGeometry(0.42, 1.2), galGeo = fishGeometry(0.5, 1.35)
+  for (let i = 0; i < 8; i++) {
+    const kind = i < 5 ? 'roman' : 'galjoen'
+    const mat = swimMaterial(kind === 'roman' ? 0.42 : 0.5, { amp: 0.1, k: 3.5, roughness: 0.35, mat: { map: fishTexture(kind), metalness: 0.2 } })
+    const mesh = new THREE.Mesh(kind === 'roman' ? romanGeo : galGeo, mat)
+    scene.add(mesh)
+    const cx = at.reef.x + 2 + Math.random() * 28, cz = (Math.random() - 0.5) * 10
+    const pts = []
+    for (let k = 0; k < 5; k++) {
+      const x = cx + (Math.random() - 0.5) * 7, z = cz + (Math.random() - 0.5) * 7
+      pts.push(V(x, floorY(x, z) + 0.6 + Math.random() * 1.2, z))
+    }
+    loners.push({ mesh, mat, path: new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.5), u: Math.random(), speed: 0.35 + Math.random() * 0.25 })
+  }
+  {
+    const m = new THREE.Matrix4(), up = V(0, 1, 0)
+    U.push((dt, t) => {
+      for (const f of loners) {
+        f.u = (f.u + (f.speed * dt) / f.path.getLength()) % 1
+        f.mesh.position.copy(f.path.getPointAt(f.u))
+        const d = f.path.getTangentAt(f.u)
+        const side = new THREE.Vector3().crossVectors(up, d).normalize()
+        m.makeBasis(d, new THREE.Vector3().crossVectors(d, side).normalize(), side.negate())
+        f.mesh.quaternion.setFromRotationMatrix(m)
+        f.mat.userData.u.uPhase.value = t * 6 + f.speed
+      }
+    })
+  }
 
   // ---- Cape fur seals ----
   const sealGeo = sealGeometry()
@@ -361,15 +451,67 @@ export function buildLife(scene, at, uTime) {
   // ---- rocky reef life ----
   const reef = V(at.reef.x + 4.2, 0, 0)
   const lit = (c) => new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7, ...c })
-  const urchins = scatter(scene, urchinGeometry(), lit({ roughness: 0.5 }), 120, reef, 3.6, () => ({ scale: 1.3 + Math.random() * 0.6, lift: 0.04 }))
+  const urchins = scatter(scene, urchinGeometry(), lit({ roughness: 0.5 }), 55, reef, 4, () => ({ scale: 1.3 + Math.random() * 0.6, lift: 0.04 }))
   const anemoneColors = [0xb8495e, 0xc77a8c, 0x7aa36e, 0xd9d2c0, 0xb85a3e]
-  scatter(scene, anemoneGeometry(), lit({ emissive: 0x220a10 }), 80, reef, 4, () => ({ scale: 1.8 + Math.random() * 1.6, color: new THREE.Color(anemoneColors[Math.floor(Math.random() * 5)]) }))
+  scatter(scene, anemoneGeometry(), lit({ emissive: 0x16080a }), 45, reef, 4.5, () => ({ scale: 1.4 + Math.random() * 1.4, color: new THREE.Color(anemoneColors[Math.floor(Math.random() * 5)]) }))
   const starColors = [0xc0602c, 0xa83a30, 0x6e4a7a, 0xc0903a, 0x4a6a96]
-  scatter(scene, starGeometry(), lit({}), 40, reef, 4, () => ({ scale: 1.3 + Math.random() * 0.9, lift: 0.01, tilt: 0.3, color: new THREE.Color(starColors[Math.floor(Math.random() * 5)]) }))
-  scatter(scene, blob(0.1, 0.12), lit({ roughness: 0.95 }), 55, reef, 5, () => ({ scale: 0.8 + Math.random() * 1.6, color: new THREE.Color([0xb8742e, 0xc8a24a, 0x8e4a5a, 0x7a5a96, 0x9a8a6a][Math.floor(Math.random() * 5)]) }))
+  scatter(scene, starGeometry(), lit({}), 18, reef, 4.5, () => ({ scale: 1.1 + Math.random() * 0.8, lift: 0.01, tilt: 0.3, color: new THREE.Color(starColors[Math.floor(Math.random() * 5)]) }))
+  scatter(scene, blob(0.1, 0.12), lit({ roughness: 0.95 }), 30, reef, 5, () => ({ scale: 0.6 + Math.random() * 1.3, color: new THREE.Color([0x9a6a3a, 0xa8924a, 0x7a4a52, 0x6a5a7a, 0x8a806a][Math.floor(Math.random() * 5)]) }))
   const abalone = scatter(scene, blob(0.07, 0.02), lit({ roughness: 0.6 }), 20, reef, 3, () => ({ scale: 1.3 + Math.random() * 0.6, lift: -0.01, color: new THREE.Color(0x5f6a4a) }))
   abalone.scale.set(1, 0.6, 1)
   animals.targets.urchins = [urchins]
+
+  // seaweed turf: little bushy red, brown and green algae covering the reef
+  {
+    const tex = (() => {
+      const c = document.createElement('canvas')
+      c.width = c.height = 128
+      const ctx = c.getContext('2d')
+      const branch = (x, y, ang, len, w, d) => {
+        if (d > 4 || len < 4) return
+        const x2 = x + Math.sin(ang) * len, y2 = y - Math.cos(ang) * len
+        ctx.lineWidth = w
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x2, y2); ctx.stroke()
+        branch(x2, y2, ang - 0.4 - Math.random() * 0.3, len * 0.72, w * 0.7, d + 1)
+        branch(x2, y2, ang + 0.4 + Math.random() * 0.3, len * 0.72, w * 0.7, d + 1)
+      }
+      ctx.strokeStyle = 'white'
+      ctx.lineCap = 'round'
+      for (let i = 0; i < 6; i++) branch(40 + Math.random() * 48, 128, (Math.random() - 0.5) * 0.6, 30 + Math.random() * 16, 4, 0)
+      return new THREE.CanvasTexture(c)
+    })()
+    const geo = new THREE.PlaneGeometry(0.3, 0.3)
+    geo.translate(0, 0.15, 0)
+    const g2 = geo.clone().rotateY(Math.PI / 2)
+    const tuft = mergeTwo(geo, g2)
+    // light the little bushes as if they were round, not flat cards seen edge-on
+    const nrm = tuft.attributes.normal
+    for (let i = 0; i < nrm.count; i++) nrm.setXYZ(i, 0, 1, 0)
+    // a reversed copy so both sides are front faces with the same upward normal (no dark back faces)
+    const back = tuft.clone()
+    const idx = back.index.array
+    for (let i = 0; i < idx.length; i += 3) { const t = idx[i]; idx[i] = idx[i + 2]; idx[i + 2] = t }
+    const tuftBoth = mergeTwo(tuft, back)
+    const mat = new THREE.MeshStandardMaterial({ map: tex, alphaTest: 0.4, roughness: 0.85, emissive: 0x1a1810 })
+    const cols = [0x8a2e2e, 0x6e4a2a, 0x7a7a2c, 0x9a5a3a, 0x5a6a2e, 0xa04050]
+    const N = 3600
+    const im = new THREE.InstancedMesh(tuftBoth, mat, N)
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), v = new THREE.Vector3()
+    let n = 0, tries = 0
+    while (n < N && tries++ < 40000) {
+      const x = at.reef.x - 6 + Math.random() * 60, z = (Math.random() - 0.5) * 26
+      if (reefinessAt(x, z) < 0.35) continue
+      v.set(x, floorY(x, z) - 0.02, z)
+      q.setFromEuler(new THREE.Euler((Math.random() - 0.5) * 0.4, Math.random() * 6.28, (Math.random() - 0.5) * 0.4))
+      sc.set(0.5 + Math.random() * 0.9, 0.35 + Math.random() * 0.7, 0.5 + Math.random() * 0.9)
+      m.compose(v, q, sc)
+      im.setMatrixAt(n, m)
+      im.setColorAt(n, new THREE.Color(cols[Math.floor(Math.random() * cols.length)]).multiplyScalar(0.8 + Math.random() * 0.5))
+      n++
+    }
+    im.count = n
+    scene.add(im)
+  }
 
   // ---- octopus in its den ----
   const octo = new THREE.Group()
