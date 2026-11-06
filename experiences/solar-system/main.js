@@ -5,6 +5,8 @@ import { createAudio } from '../shared/audio.js'
 import { createNarration } from '../shared/narration.js'
 import { buildScene, placeFor, posOf, SPEC, EYE, OVERVIEW } from './scene.js'
 import { STOPS, QUIZ } from './content.js'
+import { buildRingDive } from './ring-dive.js'
+import { buildCape } from './cape.js'
 
 const app = createXrApp()
 const { scene, rig } = app
@@ -19,7 +21,20 @@ manager.onProgress = (_url, loaded, total) => {
 manager.onLoad = () => loadingEl && loadingEl.classList.add('done')
 
 const world = buildScene(app, manager)
-app.onFrame((dt, t) => world.update(dt, t))
+const mainScene = app.scene
+app.onFrame((dt, t) => { if (app.activeScene === mainScene) world.update(dt, t) })
+
+// close-up scenes, built on first use
+let dive = null
+app.onFrame((dt, t) => { if (dive && app.activeScene === dive.scene) dive.update(dt, t, rig) })
+let cape = null
+const getCape = () => (cape ||= buildCape({ earthMap: world.bodies.earth.material.map, skyTex: world.skyTexture, renderer: app.renderer }))
+let altShown = 0
+app.onFrame((dt, t) => {
+  if (!cape || app.activeScene !== cape.scene) return
+  cape.update(rig, app.camera, dt, t)
+  if (cape.mode === 'down' && t - altShown > 0.4) { altShown = t; drawDescent() }
+})
 
 // ---- sound + narration ----
 const audio = createAudio()
@@ -248,6 +263,98 @@ function soundButton() {
   return { id: 'sound', label: audio.enabled ? 'Sound: on' : 'Sound: off' }
 }
 
+// ---- inside Saturn's rings ----
+function enterRingDive() {
+  if (!dive) dive = buildRingDive({ saturnMap: world.bodies.saturn.material.map, ringTex: world.satRingTex, skyTex: world.skyTexture })
+  state.screen = 'ringdive'
+  narration.stop()
+  audio.sfx.whoosh()
+  app.blink(() => {
+    app.setScene(dive.scene)
+    app.placeNow(dive.start)
+    panel.show({
+      title: "Inside Saturn's rings!",
+      body: [
+        'The rings are made of billions of chunks of ice and rock, from tiny grains to pieces as big as a house.',
+        'That giant ball beside you is Saturn. Look all around you!',
+      ],
+      footer: 'The rings are huge but very thin: often only about 10 metres thick.',
+      buttons: [{ id: 'leavedive', label: 'Back to Saturn', primary: true }],
+      accent: '#fde68a',
+    })
+    narration.play('ringdive')
+  })
+}
+function leaveRingDive() {
+  narration.stop()
+  audio.sfx.whoosh()
+  app.blink(() => {
+    app.setScene(mainScene)
+    app.placeNow(placeFor('saturn'))
+    state.screen = 'stop'
+    drawStop()
+  })
+}
+
+// ---- down to Cape Town ----
+const fmtKm = (a) => (a >= 100 ? Math.round(a / 10) * 10 : Math.round(a)).toLocaleString('en-ZA')
+function drawDescent() {
+  const a = cape.altitude()
+  panel.show({
+    title: 'Flying down to Cape Town',
+    body: [`Height above the ground: ${fmtKm(a)} km`, a > 400 ? 'Look down: that is Africa below you!' : a > 60 ? 'Find the tip of Africa: that is the Cape.' : 'Almost there... look ahead for Table Mountain.'],
+    buttons: [{ id: 'capeskip', label: 'Skip ahead' }],
+    accent: '#60a5fa',
+  })
+}
+async function enterCape() {
+  const c = getCape()
+  state.screen = 'cape'
+  narration.stop()
+  panel.show({ title: 'Getting ready...', body: 'Loading the map of the Cape.', accent: '#60a5fa' })
+  await c.load()
+  audio.sfx.whoosh()
+  app.blink(() => {
+    app.setScene(c.scene)
+    app.placeNow(c.start)
+    world.setPadGlass(true)
+    app.camera.far = 400000
+    app.camera.updateProjectionMatrix()
+    c.descend(() => {
+      panel.show({
+        title: 'Cape Town from 7 km up!',
+        body: [
+          "Straight ahead is Table Mountain, the flat-topped mountain, with Lion's Head beside it. The city of Cape Town sits at its feet.",
+          'To the right is False Bay, and far behind are the mountains of the Winelands.',
+        ],
+        footer: 'See the cloud spilling over Table Mountain? Capetonians call it the tablecloth.',
+        buttons: [{ id: 'leavecape', label: 'Back to space', primary: true }],
+        accent: '#60a5fa',
+      })
+      narration.play('cape')
+    })
+    drawDescent()
+    audio.sfx.cruise(24)
+  })
+}
+function leaveCape() {
+  narration.stop()
+  panel.show({ title: 'Back to space!', body: 'Hold on, we are flying up.', accent: '#60a5fa' })
+  audio.sfx.cruise(13)
+  cape.ascend(() => {
+    app.blink(() => {
+      app.setScene(mainScene)
+      world.setPadGlass(false)
+      app.camera.far = 2000
+      app.camera.updateProjectionMatrix()
+      app.placeNow(placeFor('earth'))
+      cape.reset()
+      state.screen = 'stop'
+      drawStop()
+    })
+  })
+}
+
 function showIntro() {
   state.screen = 'intro'
   panel.show({
@@ -278,6 +385,8 @@ function drawStop() {
     footerColor: found ? s.accent : '#8fa6c9',
     buttons: [
       ...(i > 0 ? [{ id: 'back', label: 'Back' }] : []),
+      ...(s.id === 'saturn' ? [{ id: 'ringdive', label: 'Dive into rings' }] : []),
+      ...(s.id === 'earth' ? [{ id: 'cape', label: 'Fly to Cape Town' }] : []),
       { id: 'next', label: i === STOPS.length - 1 ? 'Take the quiz' : 'Next planet', primary: true },
     ],
     accent: s.accent,
@@ -289,6 +398,7 @@ function showStop(i) {
   resetEarth()
   if (state.travel !== 'fly') world.arrangeMoons(STOPS[i].id, 0.8)
   travelTo(placeFor(STOPS[i].id), STOPS[i].id, STOPS[i].name, () => {
+    if (STOPS[i].id === 'earth') getCape().load() // start loading the Cape map in the background
     state.screen = 'stop'
     state.stop = i
     drawStop()
@@ -360,7 +470,15 @@ app.onPress((id, _panel, point) => {
     return showIntro()
   }
   if (state.screen === 'intro' && id === 'start') return showStop(0)
+  if (state.screen === 'ringdive' && id === 'leavedive') return leaveRingDive()
+  if (state.screen === 'cape') {
+    if (id === 'capeskip' && cape) { cape.skip(); return }
+    if (id === 'leavecape' && cape && cape.mode === 'hover') return leaveCape()
+    return
+  }
   if (state.screen === 'stop') {
+    if (id === 'ringdive') return enterRingDive()
+    if (id === 'cape') return enterCape()
     if (id === 'next') return state.stop === STOPS.length - 1 ? showQuiz(0) : showStop(state.stop + 1)
     if (id === 'back') return showStop(state.stop - 1)
   }
@@ -386,4 +504,4 @@ showIntro()
 const q = new URLSearchParams(location.search)
 if (q.has('stop')) showStop(Math.max(0, Math.min(STOPS.length - 1, Number(q.get('stop')) || 0)))
 if (q.has('quiz')) showQuiz(0)
-window.__vrg = { showStop, showQuiz, showResult, discover, state, world, capePin, app, panel }
+window.__vrg = { showStop, showQuiz, showResult, discover, state, world, capePin, app, panel, enterRingDive, leaveRingDive, enterCape, leaveCape, getCape }

@@ -6,6 +6,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { feature } from 'topojson-client'
 import { makeSimplex, fbm, ridged, craters, clamp01, smoothstep, lerp, mixc, hex, ramp, mulberry32 } from './noise.mjs'
+import { capeHeight, capeColor, extraLand } from './cape-model.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const OUT = join(here, '..', 'public', 'textures', 'solar')
@@ -18,7 +19,7 @@ const DEG = Math.PI / 180
 // ---- output ----
 function save(name, w, h, data, channels = 3, quality = 3) {
   const header = Buffer.from(`${channels === 3 ? 'P6' : 'P5'}\n${w} ${h}\n255\n`)
-  const tmp = join(TMP, name + (channels === 3 ? '.ppm' : '.pgm'))
+  const tmp = join(TMP, name.replace(/[\/.]/g, '_') + (channels === 3 ? '.ppm' : '.pgm'))
   writeFileSync(tmp, Buffer.concat([header, Buffer.from(data.buffer)]))
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', tmp, '-q:v', String(quality), join(OUT, name + '.jpg')])
   rmSync(tmp)
@@ -34,6 +35,19 @@ function each(w, h, fn) {
       const u = (x + 0.5) / w
       const phi = u * 2 * Math.PI
       fn(x, y, -Math.cos(phi) * st, ct, Math.sin(phi) * st, lat, -180 + u * 360)
+    }
+  }
+}
+/** Like each(), but for a lon/lat window of the globe (same sphere-point layout). */
+function eachRegion(w, h, lon0, lon1, lat0, lat1, fn) {
+  for (let y = 0; y < h; y++) {
+    const lat = lat1 - ((y + 0.5) / h) * (lat1 - lat0)
+    const theta = (90 - lat) * DEG
+    const st = Math.sin(theta), ct = Math.cos(theta)
+    for (let x = 0; x < w; x++) {
+      const lon = lon0 + ((x + 0.5) / w) * (lon1 - lon0)
+      const phi = ((lon + 180) / 360) * 2 * Math.PI
+      fn(x, y, -Math.cos(phi) * st, ct, Math.sin(phi) * st, lat, lon)
     }
   }
 }
@@ -67,9 +81,9 @@ function blur(src, w, h, r, passes = 2) {
 const jobs = {}
 
 // ======================= EARTH =======================
-jobs.earth = () => {
-  const W = 2048, H = 1024
-  const topo = JSON.parse(readFileSync(join(here, '..', 'node_modules', 'world-atlas', 'land-50m.json'), 'utf8'))
+jobs.earth = () => paintEarth({ W: 2048, H: 1024 })
+
+function landMask(topo, W, H, lon0, lon1, lat0, lat1, full) {
   const land = feature(topo, topo.objects.land)
   // even-odd scanline fill of every ring
   const rings = []
@@ -102,9 +116,9 @@ jobs.earth = () => {
     }
     let minLat = 90, maxLat = -90
     for (const [, la] of ring) { if (la < minLat) minLat = la; if (la > maxLat) maxLat = la }
-    const y0 = Math.max(0, Math.floor(((90 - maxLat) / 180) * H) - 1), y1 = Math.min(H - 1, Math.ceil(((90 - minLat) / 180) * H) + 1)
+    const y0 = Math.max(0, Math.floor(((lat1 - maxLat) / (lat1 - lat0)) * H) - 1), y1 = Math.min(H - 1, Math.ceil(((lat1 - minLat) / (lat1 - lat0)) * H) + 1)
     for (let y = y0; y <= y1; y++) {
-      const lat = 90 - ((y + 0.5) / H) * 180
+      const lat = lat1 - ((y + 0.5) / H) * (lat1 - lat0)
       const xs = []
       for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
         const [x1, la1] = ring[j], [x2, la2] = ring[i]
@@ -112,11 +126,20 @@ jobs.earth = () => {
       }
       xs.sort((a, b) => a - b)
       for (let k = 0; k + 1 < xs.length; k += 2) {
-        const a = Math.round(((xs[k] + 180) / 360) * W), b = Math.round(((xs[k + 1] + 180) / 360) * W) - 1
-        for (let x = a; x <= b; x++) bits[y * W + (((x % W) + W) % W)] ^= 1
+        // unwrapped rings can sit a whole turn (360 degrees) away from the window: shift the span back
+        const shift = full ? 0 : 360 * Math.round(((xs[k] + xs[k + 1]) / 2 - (lon0 + lon1) / 2) / 360)
+        const a = Math.round(((xs[k] - shift - lon0) / (lon1 - lon0)) * W), b = Math.round(((xs[k + 1] - shift - lon0) / (lon1 - lon0)) * W) - 1
+        if (full) { for (let x = a; x <= b; x++) bits[y * W + (((x % W) + W) % W)] ^= 1 }
+        else { for (let x = Math.max(0, a); x <= Math.min(W - 1, b); x++) bits[y * W + x] ^= 1 }
       }
     }
   }
+  return bits
+}
+
+function paintEarth({ W, H, lon0 = -180, lon1 = 180, lat0 = -90, lat1 = 90, topoFile = 'land-50m.json', name = 'earth', full = true }) {
+  const topo = JSON.parse(readFileSync(join(here, '..', 'node_modules', 'world-atlas', topoFile), 'utf8'))
+  const bits = landMask(topo, W, H, lon0, lon1, lat0, lat1, full)
   const mask = Float32Array.from(bits)
   const soft = blur(mask, W, H, 1, 1)
   const coast = blur(mask, W, H, 10, 3) // >0 near land, used for shallow seas and coastal cities
@@ -134,7 +157,13 @@ jobs.earth = () => {
     { w: 4, pts: [[37, 12], [39, 8], [38, 4]] }, // Ethiopian highlands
     { w: 2.5, pts: [[36, 0], [35, -6], [34, -11]] }, // East African highlands
     { w: 2, pts: [[27, -31], [29.3, -29.3], [31, -26]] }, // Drakensberg
-    { w: 1.6, pts: [[19, -33.8], [21, -33.5], [24, -33.2]] }, // Cape Fold mountains (home!)
+    // Cape Fold Belt (home!)
+    { w: 0.22, h: 0.5, pts: [[19.0, -32.0], [19.15, -32.35], [19.25, -32.7]] }, // Cederberg
+    { w: 0.18, h: 0.5, pts: [[19.0, -33.0], [19.15, -33.2], [19.5, -33.4], [19.85, -33.3]] }, // Winterhoek, Hex River
+    { w: 0.16, h: 0.45, pts: [[19.9, -33.85], [20.8, -33.9], [21.6, -33.95]] }, // Langeberg
+    { w: 0.16, h: 0.5, pts: [[21.5, -33.35], [22.3, -33.35], [23.0, -33.42]] }, // Swartberg
+    { w: 0.14, h: 0.45, pts: [[22.0, -33.92], [22.8, -33.86], [23.4, -33.8], [24.3, -33.9]] }, // Outeniqua, Tsitsikamma
+    { w: 0.14, h: 0.5, pts: [[18.85, -34.15], [19.0, -34.0], [19.1, -33.8], [19.15, -33.6]] }, // Hottentots Holland, Drakenstein
     { w: 2.5, pts: [[146, -38], [150, -32], [148, -24], [145, -16]] }, // Great Dividing Range
     { w: 1.8, pts: [[59, 51], [60, 58], [62, 66]] }, // Urals
     { w: 2.5, pts: [[7, 60], [12, 63], [16, 67], [20, 69]] }, // Scandinavia
@@ -145,6 +174,7 @@ jobs.earth = () => {
     [-15, 35, 15, 32], [35, 58, 14, 32], [68, 75, 23, 30], [90, 115, 38, 47], [77, 90, 36.5, 41.5],
     [118, 142, -31, -19], [12, 25, -28, -17], [-117, -103, 26, 37], [-72, -68, -27, -18], [50, 63, 26, 36],
     [53, 66, 38, 45], [-68, -63, -50, -38],
+    [19.6, 25.5, -33.6, -30.6], [16.3, 19.3, -31.8, -28.0], [19.4, 20.4, -32.9, -31.9], // Karoo, Namaqualand, Tankwa
   ]
   function rangeBoost(lon, lat) {
     let best = 0
@@ -178,7 +208,7 @@ jobs.earth = () => {
     rain: hex(0x1f4a1f), forest: hex(0x2f5d2a), temperate: hex(0x587a3a), savanna: hex(0x9a8c55), dry: hex(0xb79e6c),
     desert: hex(0xd2b07a), desert2: hex(0xc08a55), tundra: hex(0x7b7458), boreal: hex(0x2d4a2e), rock: hex(0x7a6a58), snow: hex(0xf2f5f8), ice: hex(0xe8eef4),
   }
-  each(W, H, (x, y, px, py, pz, lat, lon) => {
+  eachRegion(W, H, lon0, lon1, lat0, lat1, (x, y, px, py, pz, lat, lon) => {
     const i = y * W + x
     const m = soft[i]
     const alat0 = Math.abs(lat)
@@ -236,7 +266,8 @@ jobs.earth = () => {
     c += alat < 8 ? 0.08 : alat < 30 ? -0.07 * smoothstep(10, 22, alat) : alat < 68 ? 0.07 * smoothstep(35, 50, alat) : 0.02
     cloud[i] = Math.round(255 * Math.pow(smoothstep(0.47, 0.76, c), 1.35))
   })
-  save('earth', W, H, col, 3, 2)
+  save(name, W, H, col, 3, 2)
+  if (!full) return
   save('earth_night', W, H, night, 1, 4)
   save('earth_rough', W / 2, H / 2, downsample(rough, W, H), 1, 5)
   save('earth_bump', W, H, bump, 1, 4)
@@ -246,6 +277,94 @@ function downsample(a, w, h) {
   const o = new Uint8Array((w / 2) * (h / 2))
   for (let y = 0; y < h / 2; y++) for (let x = 0; x < w / 2; x++) o[y * (w / 2) + x] = (a[2 * y * w + 2 * x] + a[2 * y * w + 2 * x + 1] + a[(2 * y + 1) * w + 2 * x] + a[(2 * y + 1) * w + 2 * x + 1]) >> 2
   return o
+}
+
+
+// ======================= CAPE TOWN FLYOVER =======================
+// Region (southern Africa around the Cape) and a detailed patch of the Cape Peninsula and Winelands.
+const CAPE = { lon0: 17.8, lon1: 19.4, lat0: -34.45, lat1: -33.5 }
+const REGION = { lon0: 12, lon1: 26, lat0: -36, lat1: -28 }
+const PEN = { lon0: 18.30, lon1: 18.56, lat0: -34.20, lat1: -33.88 } // Table Mountain, the City Bowl and the northern Peninsula in fine detail
+jobs.cape = () => {
+  const topo = JSON.parse(readFileSync(join(here, '..', 'node_modules', 'world-atlas', 'land-10m.json'), 'utf8'))
+  mkdirSync(join(here, '..', 'public', 'textures', 'cape'), { recursive: true })
+  const out = (n) => '../cape/' + n
+  function window(W, H, b, opts) {
+    const { colour = true, normals = true, fine = 1, name, meshGrid = null } = opts
+    const bits = landMask(topo, W, H, b.lon0, b.lon1, b.lat0, b.lat1, false)
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      if (extraLand(b.lat1 - ((y + 0.5) / H) * (b.lat1 - b.lat0), b.lon0 + ((x + 0.5) / W) * (b.lon1 - b.lon0))) bits[y * W + x] = 1
+    }
+    const land = blur(Float32Array.from(bits), W, H, 1, 1)
+    // distances measured in kilometres, so every map (region, detail) agrees on the colour of the sea
+    const kmPerPx = ((b.lon1 - b.lon0) * 92.3) / W
+    const coast = blur(Float32Array.from(bits), W, H, Math.max(2, Math.round(9 / kmPerPx)), 3)
+    const shore = blur(Float32Array.from(bits), W, H, Math.max(1, Math.round(0.25 / kmPerPx)), 2)
+    const at = (arr, x, y) => arr[Math.min(H - 1, Math.max(0, y)) * W + Math.min(W - 1, Math.max(0, x))]
+    // heights at this resolution
+    const hgt = new Float32Array(W * H)
+    for (let y = 0; y < H; y++) {
+      const lat = b.lat1 - ((y + 0.5) / H) * (b.lat1 - b.lat0)
+      for (let x = 0; x < W; x++) {
+        const lon = b.lon0 + ((x + 0.5) / W) * (b.lon1 - b.lon0)
+        const i = y * W + x
+        hgt[i] = capeHeight(lat, lon, land[i], clamp01((coast[i] - 0.5) * 2))
+      }
+    }
+    const kmX = ((b.lon1 - b.lon0) * 92.3) / W * 1000, kmY = ((b.lat1 - b.lat0) * 110.9) / H * 1000 // metres per pixel
+    if (colour) {
+      const col = rgbBuf(W, H)
+      for (let y = 0; y < H; y++) {
+        const lat = b.lat1 - ((y + 0.5) / H) * (b.lat1 - b.lat0)
+        for (let x = 0; x < W; x++) {
+          const lon = b.lon0 + ((x + 0.5) / W) * (b.lon1 - b.lon0)
+          const i = y * W + x
+          const dzx = (at(hgt, x + 1, y) - at(hgt, x - 1, y)) / (2 * kmX), dzy = (at(hgt, x, y + 1) - at(hgt, x, y - 1)) / (2 * kmY)
+          const slope = Math.hypot(dzx, dzy)
+          const nearShore = 1 - Math.abs(shore[i] - 0.5) * 2
+          put(col, i, capeColor(lat, lon, land[i], hgt[i], slope, coast[i], bits[i] ? nearShore : 1 - Math.min(1, Math.abs(shore[i] - 0.5) * 2.2), fine))
+        }
+      }
+      save(out(name), W, H, col, 3, W > 3000 ? 4 : 3)
+    }
+    if (normals) {
+      // tangent-space normal map (x east, y north, z up), with heights exaggerated like the 3D mesh
+      const EX = 1.5
+      const nrm = rgbBuf(W, H)
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+        const dzx = ((at(hgt, x + 1, y) - at(hgt, x - 1, y)) * EX) / (2 * kmX)
+        const dzy = -((at(hgt, x, y + 1) - at(hgt, x, y - 1)) * EX) / (2 * kmY) // image y runs south
+        const l = Math.hypot(dzx, dzy, 1)
+        put(nrm, y * W + x, [(-dzx / l * 0.5 + 0.5) * 255, (-dzy / l * 0.5 + 0.5) * 255, (1 / l * 0.5 + 0.5) * 255])
+      }
+      save(out(name + '_n'), W, H, nrm, 3, 3)
+    }
+    if (meshGrid) {
+      const [GW, GH] = meshGrid
+      // soften heights over one grid cell, so steep coasts don't turn into saw-teeth on the coarser 3D mesh
+      const hs = blur(hgt, W, H, Math.max(1, Math.round(W / GW / 2)), 1)
+      const data = new Int16Array(GW * GH)
+      for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++) {
+        const x = Math.round((gx / (GW - 1)) * (W - 1)), y = Math.round((gy / (GH - 1)) * (H - 1))
+        data[gy * GW + gx] = Math.round(hs[y * W + x] > 3 ? hs[y * W + x] : -1)
+      }
+      writeFileSync(join(here, '..', 'public', 'textures', 'cape', name + '_h.bin'), Buffer.from(data.buffer))
+      if (opts.noRough) return
+      // roughness: satin sea, matt land
+      const R = new Uint8Array(W * H)
+      for (let i = 0; i < W * H; i++) R[i] = Math.round(lerp(135, 240, land[i]))
+      save(out(name + '_rough'), W / 2, H / 2, downsample(R, W, H), 1, 5)
+      // alpha: the detailed map only covers land and the sea near the shore; the open sea comes from the region map
+      const near = blur(Float32Array.from(bits), W, H, Math.round(W / 60), 2)
+      const A = new Uint8Array(W * H)
+      for (let i = 0; i < W * H; i++) A[i] = Math.round(255 * smoothstep(0.0, 0.12, near[i]))
+      save(out(name + '_a'), W / 2, H / 2, downsample(A, W, H), 1, 4)
+    }
+  }
+  window(2048, 1170, REGION, { name: 'region', fine: 0.25 })
+  window(3072, 4200, PEN, { name: 'pen', colour: false, normals: false, meshGrid: [241, 321], noRough: true })
+  window(4096, 2432, CAPE, { name: 'detail', normals: false, meshGrid: [321, 241] })
+  window(2048, 1216, CAPE, { name: 'detail', colour: false })
 }
 
 // ======================= ROCKY WORLDS =======================
