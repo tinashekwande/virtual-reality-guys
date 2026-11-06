@@ -523,13 +523,13 @@ export default function GamePageClient({ game, relatedGames, moreGames }: GamePa
             {/* Quick Pricing Card */}
             <div className="bg-gradient-to-br from-secondary/40 to-primary/10 border border-primary/30 rounded-3xl p-6 space-y-3">
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
-                Turnkey Event Pricing
+                Turnkey Event Packages
               </span>
               <h4 className="text-lg font-bold font-tech text-white">
                 Book for Parties & Events
               </h4>
               <p className="text-xs text-muted-foreground">
-                Pricing starts from just <strong className="text-white">R899</strong> for 2-hour starter packages with headsets, game library, TV casting, and full staff supervision.
+                Packages include headsets, game library, TV casting, and full staff supervision. Contact us for a free quote.
               </p>
               <Link 
                 href="/pricing"
@@ -679,7 +679,7 @@ export default function GamePageClient({ game, relatedGames, moreGames }: GamePa
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold text-white truncate">{game.title}</p>
-            <p className="text-[10px] text-primary truncate">From R899 • Mobile Setup</p>
+            <p className="text-[10px] text-primary truncate">Mobile Setup • Free Quote</p>
           </div>
         </div>
 

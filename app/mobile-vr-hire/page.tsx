@@ -10,7 +10,7 @@ import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
   title: 'Mobile VR Hire Cape Town | Rent VR Equipment for Events',
-  description: 'Hire premium mobile VR setups in Cape Town from R899. Includes headsets, spectator screens, trained supervisors, 100+ games, delivery, setup & cleanup. Book today!',
+  description: 'Hire premium mobile VR setups in Cape Town. Includes headsets, spectator screens, trained supervisors, 100+ games, delivery, setup & cleanup. Book today!',
   alternates: {
     canonical: '/mobile-vr-hire',
   },
@@ -49,22 +49,16 @@ export default function MobileVRHirePage() {
         {
           "@type": "Offer",
           "name": "Starter Package",
-          "price": "899",
-          "priceCurrency": "ZAR",
           "description": "4 VR headsets, 2 hours of VR gaming, up to 5 players"
         },
         {
           "@type": "Offer",
           "name": "Standard Package",
-          "price": "1299",
-          "priceCurrency": "ZAR",
           "description": "5 VR headsets, 3 hours of VR gaming, up to 10 players"
         },
         {
           "@type": "Offer",
           "name": "Premium Package",
-          "price": "1499",
-          "priceCurrency": "ZAR",
           "description": "6 VR headsets, 4 hours of VR gaming, up to 15 players"
         }
       ]
@@ -88,7 +82,7 @@ export default function MobileVRHirePage() {
         "name": "How much does mobile VR hire cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile VR hire packages start from R899 for 4 headsets (Starter), R1,299 for 5 headsets (Standard), and R1,499 for 6 headsets (Premium). All packages include professional setup, trained supervisors, and cleanup."
+          "text": "We offer Starter (4 headsets), Standard (5 headsets) and Premium (6 headsets) packages. Pricing depends on your package, event size and location, so contact us for a free quote. All packages include professional setup, trained supervisors, and cleanup."
         }
       },
       {
@@ -182,14 +176,14 @@ export default function MobileVRHirePage() {
             Mobile VR <span className="text-primary">Hire</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Hire a complete virtual reality setup for your next event — headsets, spectator screens, trained supervisors, and 100+ games delivered directly to your venue in Cape Town. From just R899.
+            Hire a complete virtual reality setup for your next event — headsets, spectator screens, trained supervisors, and 100+ games delivered directly to your venue in Cape Town.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <CyberButton href="#booking" size="lg" variant="primary">
               Get a Free Quote <ArrowRight className="ml-1.5 h-4 w-4" />
             </CyberButton>
             <CyberButton href="#packages" size="lg" variant="secondary">
-              View Packages & Pricing
+              View Packages
             </CyberButton>
           </div>
           <div className="flex flex-wrap justify-center gap-6 pt-4 text-sm text-muted-foreground">
@@ -298,13 +292,13 @@ export default function MobileVRHirePage() {
         </div>
       </section>
 
-      {/* Packages & Pricing */}
+      {/* Packages */}
       <section id="packages" className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-bold">VR Hire Packages & Pricing</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold">VR Hire Packages</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Transparent pricing with no hidden fees. Every package includes delivery, setup, supervision, and cleanup across Cape Town.
+              No hidden fees. Contact us for a quote. Every package includes delivery, setup, supervision, and cleanup across Cape Town.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -314,8 +308,7 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Starter</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R899</span>
-                  <span className="text-muted-foreground">/event</span>
+                  <span className="text-xl font-bold">Contact us for a quote</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>2 hours of VR gaming</span>
@@ -344,8 +337,7 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Standard</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R1,299</span>
-                  <span className="text-muted-foreground">/event</span>
+                  <span className="text-xl font-bold">Contact us for a quote</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>3 hours of VR gaming</span>
@@ -372,8 +364,7 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Premium</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R1,499</span>
-                  <span className="text-muted-foreground">/event</span>
+                  <span className="text-xl font-bold">Contact us for a quote</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>4 hours of VR gaming</span>
@@ -509,7 +500,7 @@ export default function MobileVRHirePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does mobile VR hire cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile VR hire packages start from R899 for 4 headsets (Starter), R1,299 for 5 headsets (Standard), and R1,499 for 6 headsets (Premium). All packages include professional setup, trained supervisors, and cleanup. Custom packages are available for larger events.
+                We offer Starter (4 headsets), Standard (5 headsets) and Premium (6 headsets) packages. Pricing depends on your package, event size and location, so contact us for a free quote. All packages include professional setup, trained supervisors, and cleanup. Custom packages are available for larger events.
               </p>
             </div>
 

@@ -8,13 +8,13 @@ import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
-  title: 'VR Gaming Cape Town | Mobile Setup From R499 — No Arcade Needed',
-  description: 'Skip the arcade. We deliver VR gaming setups with 100+ games, spectator screens & supervisors directly to your Cape Town venue. Parties, events & team building from R499.',
+  title: 'VR Gaming Cape Town | Mobile Setup — No Arcade Needed',
+  description: 'Skip the arcade. We deliver VR gaming setups with 100+ games, spectator screens & supervisors directly to your Cape Town venue. Parties, events & team building.',
   alternates: {
     canonical: '/vr-gaming-near-me',
   },
   openGraph: {
-    title: 'VR Gaming Cape Town | Mobile Setup From R499 — No Arcade Needed',
+    title: 'VR Gaming Cape Town | Mobile Setup — No Arcade Needed',
     description: 'Looking for VR gaming in Cape Town? We deliver premium mobile virtual reality setups to your door across all suburbs. No arcade needed!',
     url: 'https://virtualrealityguyz.co.za/vr-gaming-near-me',
     images: [{ url: '/images/vr-hero.jpg', alt: 'VR Gaming Cape Town' }],
@@ -118,7 +118,7 @@ export default function VrGamingNearMePage() {
         "name": "How much does VR gaming cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Packages start from R899 for a Starter session with 4 headsets."
+          "text": "Our Starter session uses 4 headsets. Contact us for a free quote."
         }
       },
       {
@@ -335,7 +335,7 @@ export default function VrGamingNearMePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does VR gaming cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Packages start from R899 for a Starter session with 4 headsets.
+                Our Starter session uses 4 headsets. Contact us for a free quote.
               </p>
             </div>
 

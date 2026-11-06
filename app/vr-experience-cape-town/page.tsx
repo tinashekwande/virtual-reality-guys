@@ -9,7 +9,7 @@ import BookingForm from "@/components/BookingForm"
 
 export const metadata: Metadata = {
   title: 'VR Experiences Cape Town | 100+ Games Delivered To Your Venue',
-  description: 'Book an immersive VR experience in Cape Town from R499. Action, racing, horror, sports & educational VR — delivered with trained supervisors to any venue. All ages welcome!',
+  description: 'Book an immersive VR experience in Cape Town. Action, racing, horror, sports & educational VR — delivered with trained supervisors to any venue. All ages welcome!',
   alternates: {
     canonical: '/vr-experience-cape-town',
   },
@@ -49,13 +49,7 @@ export default function VrExperienceCapeTownPage() {
       "@type": "Place",
       "name": area
     })),
-    "description": "Discover immersive VR experiences in Cape Town. We bring premium virtual reality using Meta Quest equipment directly to your venue for an unforgettable event.",
-    "offers": {
-      "@type": "Offer",
-      "price": "899",
-      "priceCurrency": "ZAR",
-      "description": "Packages starting from R899"
-    }
+    "description": "Discover immersive VR experiences in Cape Town. We bring premium virtual reality using Meta Quest equipment directly to your venue for an unforgettable event."
   };
 
   const breadcrumbJsonLd = {
@@ -252,7 +246,7 @@ export default function VrExperienceCapeTownPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground pt-4 border-t border-border/40">
-                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Packages starting from R899.
+                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (a small travel fee may apply depending on distance). Contact us for a free quote.
               </p>
             </div>
           </div>
