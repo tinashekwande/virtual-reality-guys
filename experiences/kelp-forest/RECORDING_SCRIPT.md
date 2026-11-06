@@ -6,7 +6,7 @@ names are listed in `clips.json` there.
 
 | # | File | Say this |
 |---|------|----------|
-| 1 | `intro.mp3` | Welcome, ocean explorer! We are going to dive into a giant kelp forest near Cape Town. Point at a button and squeeze the trigger, or pinch your fingers, to choose it. |
+| 1 | `intro.mp3` | Welcome, ocean explorer! You are in a helicopter, high above Cape Town. Look around. Can you find Table Mountain, Lion's Head, and the big white stadium? When you are ready, we will fly along the coast and dive into a giant kelp forest. Point at a button and squeeze the trigger, or pinch your fingers, to choose it. |
 | 2 | `surface.mp3` | Welcome to the Great African Seaforest! This underwater forest grows along the coast of Cape Town and up the west coast of Africa. Look up: you can see the sunlight shining through the waves. |
 | 3 | `secret-surface.mp3` | The water here is cold, often only 10 to 15 °C, because a cold ocean current flows up from the south. Kelp loves cold water. |
 | 4 | `forest.mp3` | These tall towers are sea bamboo, a giant kelp. Kelp is not a plant: it is a kind of seaweed, called algae. Each one grips the rock with a "holdfast". A bulb full of gas at the top floats it up towards the sunlight. |

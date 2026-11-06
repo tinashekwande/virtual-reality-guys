@@ -7,6 +7,7 @@ import { buildOcean, floorY } from './ocean.js'
 import { buildKelp } from './kelp.js'
 import { buildLife } from './life.js'
 import { STOPS, QUIZ } from './content.js'
+import { buildCapeOpening } from './cape-opening.js'
 
 const app = createXrApp()
 const { scene, rig } = app
@@ -24,8 +25,20 @@ const clear = STOPS.flatMap((s) => [{ x: s.x, z: 0, r: 3.5 }, { x: s.x + 5, z: 0
 const ocean = buildOcean(app, clear)
 const kelp = buildKelp(scene, ocean.uTime, clear)
 const life = buildLife(scene, at, ocean.uTime)
-app.onFrame((dt, t) => { ocean.update(dt, t); life.update(dt, t); kelp.update(app.camera) })
-document.getElementById('loading')?.classList.add('done')
+app.onFrame((dt, t) => {
+  if (app.activeScene !== scene) return
+  ocean.update(dt, t); life.update(dt, t); kelp.update(app.camera)
+})
+
+// ---- the opening: a helicopter over Cape Town ----
+const opening = buildCapeOpening(app)
+app.onFrame((dt, t) => { if (app.activeScene === opening.scene) opening.update(dt, t) })
+function goUnderwater() {
+  app.setScene(scene)
+  app.camera.near = 0.05
+  app.camera.far = 2000
+  app.camera.updateProjectionMatrix()
+}
 
 // ---- sound ----
 const audio = createAudio({ theme: 'ocean' })
@@ -99,7 +112,7 @@ function travelTo(place, then) {
   if (state.travel === 'glide' && far) {
     const via = rig.position.clone().lerp(place.position, 0.5).add(new THREE.Vector3(0, 1.4, 0))
     audio.sfx.cruise(5.2)
-    app.fly(place, via, { out: 2.4, hold: 0.1, in: 2.7, then })
+    app.fly(place, via, { out: 2.4, hold: 0.1, in: 2.7, lift: 1.2, then })
   } else {
     audio.sfx.whoosh()
     app.teleport(place, then)
@@ -111,9 +124,9 @@ function showIntro() {
   state.screen = 'intro'
   panel.show({
     title: 'Dive into the Great African Seaforest',
-    body: ['Welcome, ocean explorer! We are going to dive into a giant kelp forest near Cape Town.', 'Point at a button and squeeze the trigger (or pinch your fingers) to choose it.'],
+    body: ['Welcome, ocean explorer! You are in a helicopter high above Cape Town. Look around: can you find Table Mountain, Lion\'s Head and the big white stadium?', 'When you are ready, we will fly along the coast and dive into a giant kelp forest. Point at a button and squeeze the trigger (or pinch your fingers) to choose it.'],
     footer: 'Feeling dizzy while gliding? Choose "Travel: jump".',
-    buttons: [{ id: 'start', label: 'Start', primary: true }, soundButton(), { id: 'travel', label: state.travel === 'glide' ? 'Travel: glide' : 'Travel: jump' }],
+    buttons: [{ id: 'start', label: 'Dive in!', primary: true }, soundButton(), { id: 'travel', label: state.travel === 'glide' ? 'Travel: glide' : 'Travel: jump' }],
     accent: '#2dd4bf',
   })
   narration.play('intro')
@@ -179,7 +192,7 @@ app.onPress((id, _p, point) => {
   if (app.isMoving()) return
   if (id === 'sound') { audio.setEnabled(!audio.enabled); narration.setEnabled(audio.enabled); return showIntro() }
   if (id === 'travel') { state.travel = state.travel === 'glide' ? 'jump' : 'glide'; return showIntro() }
-  if (state.screen === 'intro' && id === 'start') return showStop(0)
+  if (state.screen === 'intro' && id === 'start') return dive()
   if (state.screen === 'stop') {
     if (id === 'next') return state.stop === STOPS.length - 1 ? showQuiz(0) : showStop(state.stop + 1)
     if (id === 'back') return showStop(state.stop - 1)
@@ -195,8 +208,32 @@ app.onPress((id, _p, point) => {
   if (state.screen === 'result' && id === 'again') { state.discovered.clear(); return showStop(0) }
 })
 
-app.placeNow(START)
-showIntro()
+// fly down the coast and splash into the sea (or, for "jump", fade straight in)
+function dive() {
+  state.screen = 'dive'
+  narration.stop()
+  panel.hide()
+  const land = () => {
+    goUnderwater()
+    app.placeNow(START)
+    audio.sfx.bubbles()
+    opening.clearSplash()
+    showStop(0)
+  }
+  if (state.travel === 'glide') {
+    audio.sfx.cruise(32)
+    opening.fly(() => { audio.sfx.whoosh(); land() })
+  } else app.teleport(START, () => { goUnderwater(); app.placeNow(START); showStop(0) })
+}
+
 const q = new URLSearchParams(location.search)
-if (q.has('stop')) showStop(Math.max(0, Math.min(STOPS.length - 1, Number(q.get('stop')) || 0)))
-window.__vrg = { showStop, showQuiz, showResult, discover, state, app, panel, life, placeFor }
+opening.ready.then(() => document.getElementById('loading')?.classList.add('done'))
+if (q.has('stop')) {
+  goUnderwater()
+  app.placeNow(START)
+  showStop(Math.max(0, Math.min(STOPS.length - 1, Number(q.get('stop')) || 0)))
+} else {
+  opening.enter()
+  showIntro()
+}
+window.__vrg = { showStop, showQuiz, showResult, discover, state, app, panel, life, placeFor, opening, dive }
