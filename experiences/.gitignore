@@ -1,1 +1,4 @@
 tools/.tmp/
+tools/*.onnx
+tools/voices-*.bin
+tools/lines.json
