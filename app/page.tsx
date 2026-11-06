@@ -48,14 +48,14 @@ import TiltCard from "@/components/motion/TiltCard";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'VR Cape Town From R499 | Mobile Gaming Delivered To Your Venue',
-  description: 'Cape Town\'s mobile VR entertainment specialists. We deliver headsets, spectator screens & trained supervisors to your party, school, or corporate event. Packages from R499. Book now!',
+  title: 'VR Cape Town | Mobile Gaming Delivered To Your Venue',
+  description: 'Cape Town\'s mobile VR entertainment specialists. We deliver headsets, spectator screens & trained supervisors to your party, school, or corporate event. Get a free quote today!',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town From R499',
-    description: 'Premium mobile VR gaming delivered to your venue in Cape Town. Parties, schools, corporate events & festivals. 100+ games, trained supervisors. From R499.',
+    title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town',
+    description: 'Premium mobile VR gaming delivered to your venue in Cape Town. Parties, schools, corporate events & festivals. 100+ games, trained supervisors.',
     url: 'https://virtualrealityguyz.co.za',
     images: [{ url: '/images/logo.png', alt: 'Virtual Reality Guys Logo' }],
   }
@@ -137,9 +137,7 @@ export default async function Home() {
             "@type": "Service",
             "name": "Starter Package",
             "description": "4 VR headsets, 2 hours of VR gaming, professional setup & supervision, 30+ game selection. Suitable for up to 5 players."
-          },
-          "price": "899",
-          "priceCurrency": "ZAR"
+          }
         },
         {
           "@type": "Offer",
@@ -147,9 +145,7 @@ export default async function Home() {
             "@type": "Service",
             "name": "Standard Package",
             "description": "5 VR headsets, 3 hours of VR gaming, professional setup & supervision, 60+ game selection, multiplayer tournaments. Suitable for up to 10 players."
-          },
-          "price": "1299",
-          "priceCurrency": "ZAR"
+          }
         },
         {
           "@type": "Offer",
@@ -157,9 +153,7 @@ export default async function Home() {
             "@type": "Service",
             "name": "Premium Package",
             "description": "6 VR headsets, 4 hours of VR gaming, professional setup & supervision, 100+ game selection, custom tournament brackets, photo & video package. Suitable for up to 15 players."
-          },
-          "price": "1499",
-          "priceCurrency": "ZAR"
+          }
         }
       ]
     }
@@ -195,7 +189,7 @@ export default async function Home() {
         "name": "How much does a VR experience cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile packages start from just R899 for the Starter package. Standard is R1,299 and Premium is R1,499. Custom packages are available for large events."
+          "text": "Pricing depends on your package, event size and location. Contact us for a free, no-obligation quote. Custom packages are available for large events."
         }
       },
       {
@@ -482,7 +476,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <p className="text-primary font-semibold tracking-wide uppercase mb-4">
-              Pricing
+              Packages
             </p>
             <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
               Choose Your VR Package
@@ -496,7 +490,6 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <PricingCard
               title="Starter"
-              price="899"
               duration="2 hours"
               players="Up to 5 players"
               features={[
@@ -509,7 +502,6 @@ export default async function Home() {
             />
             <PricingCard
               title="Standard"
-              price="1299"
               duration="3 hours"
               players="Up to 10 players"
               featured
@@ -524,7 +516,6 @@ export default async function Home() {
             />
             <PricingCard
               title="Premium"
-              price="1499"
               duration="4 hours"
               players="Up to 15 players"
               features={[
@@ -659,7 +650,7 @@ export default async function Home() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does a VR experience cost?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile packages start from just R899 for the Starter package. Standard is R1,299 and Premium is R1,499. Custom packages are available for large events.
+                Pricing depends on your package, event size and location. Contact us for a free, no-obligation quote. Custom packages are available for large events.
               </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
@@ -793,14 +784,12 @@ function FeatureCard({
 
 function PricingCard({
   title,
-  price,
   duration,
   players,
   features,
   featured = false,
 }: {
   title: string;
-  price: string;
   duration: string;
   players: string;
   features: string[];
@@ -823,10 +812,7 @@ function PricingCard({
           )}
           <h3 className="text-2xl font-bold mb-2">{title}</h3>
           <div className="mb-6">
-            <span className="text-4xl font-bold">R {price}</span>
-            <span className={featured ? "text-primary-foreground/70" : "text-muted-foreground"}>
-              /event
-            </span>
+            <span className="text-2xl font-bold">Contact us for a quote</span>
           </div>
           <div className={`flex items-center gap-2 mb-2 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
             <Clock className="h-4 w-4" />

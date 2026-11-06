@@ -5,7 +5,7 @@ import VRCatalogueClient from "@/components/VRCatalogueClient"
 
 export const metadata: Metadata = {
   title: 'VR Games Cape Town | 100+ Games For Parties, Schools & Events',
-  description: 'Browse our full VR games catalogue — action, horror, racing, sports, rhythm & educational experiences. Available at your Cape Town event from R499 with trained supervisors.',
+  description: 'Browse our full VR games catalogue — action, horror, racing, sports, rhythm & educational experiences. Available at your Cape Town event with trained supervisors.',
   alternates: {
     canonical: '/vr-games-catalogue',
   },
