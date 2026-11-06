@@ -122,7 +122,7 @@ function showIntro() {
   state.screen = 'intro'
   panel.show({
     title: 'Dive into the Great African Seaforest',
-    body: ['Welcome, ocean explorer! You are in a helicopter high above Cape Town. Look around: can you find Table Mountain, Lion\'s Head and the big white stadium?', 'When you are ready, we will fly along the coast and dive into a giant kelp forest. Point at a button and squeeze the trigger (or pinch your fingers) to choose it.'],
+    body: ['You are in a helicopter above Cape Town! Can you find Table Mountain, Lion\'s Head and the stadium?', 'Then choose "Dive in!" to fly down the coast and splash into a kelp forest.'],
     footer: 'Feeling dizzy while gliding? Choose "Travel: jump".',
     buttons: [{ id: 'start', label: 'Dive in!', primary: true }, soundButton(), { id: 'travel', label: state.travel === 'glide' ? 'Travel: glide' : 'Travel: jump' }],
     accent: '#2dd4bf',
