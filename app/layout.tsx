@@ -6,6 +6,7 @@ import MobileActionBar from '@/components/MobileActionBar'
 import AtmosphericBackground from '@/components/motion/AtmosphericBackground'
 import PageTransition from '@/components/motion/PageTransition'
 import './globals.css'
+import { HERO_PHOTO_URL } from '@/lib/contact'
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -64,10 +65,8 @@ export const metadata: Metadata = {
     siteName: 'Virtual Reality Guys',
     images: [
       {
-        url: '/images/vr-hero.jpg',
-        width: 1024,
-        height: 682,
-        alt: 'Mobile VR gaming at an event in Cape Town',
+        url: HERO_PHOTO_URL,
+        alt: 'Kids playing VR at a birthday party in Cape Town',
       },
     ],
     locale: 'en_ZA',
@@ -77,7 +76,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Virtual Reality Guys | Mobile VR Gaming Experiences for Events',
     description: 'Bring the future of gaming to your event! VR Guys provides immersive mobile VR experiences in Cape Town.',
-    images: ['/images/vr-hero.jpg'],
+    images: [HERO_PHOTO_URL],
   },
   robots: {
     index: true,

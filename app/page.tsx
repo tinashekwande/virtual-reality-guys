@@ -45,7 +45,7 @@ import ScrollReveal from "@/components/motion/ScrollReveal";
 import MotionButton from "@/components/motion/MotionButton";
 import TiltCard from "@/components/motion/TiltCard";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
-import { WHATSAPP_URL, GOOGLE_REVIEWS_URL, PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
+import { WHATSAPP_URL, GOOGLE_REVIEWS_URL, PHONE_DISPLAY, PHONE_TEL, HERO_PHOTO_URL } from "@/lib/contact";
 
 import type { Metadata } from 'next';
 
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town From R999',
     description: 'Premium mobile VR gaming delivered to your venue in Cape Town. Parties, schools, corporate events & festivals. 100+ games, trained supervisors.',
     url: 'https://virtualrealityguyz.co.za',
-    images: [{ url: '/images/vr-hero.jpg', width: 1024, height: 682, alt: 'Mobile VR gaming at an event in Cape Town' }],
+    images: [{ url: HERO_PHOTO_URL, alt: 'Kids playing VR at a birthday party in Cape Town' }],
   }
 }
 
@@ -112,7 +112,7 @@ export default async function Home() {
   const { media, categories, team } = await fetchPublicData();
   // Party photos first: they sell the experience best
   const isParty = (m: Media) => /party|birthday/i.test(((m as any).categories?.name ?? "") + " " + (m.title ?? ""));
-  const photos = media.filter((m) => m.type !== "video");
+  const photos = media.filter((m) => m.type !== "video" && m.file_url !== HERO_PHOTO_URL);
   const recentPhotos = [...photos.filter(isParty), ...photos.filter((m) => !isParty(m))].slice(0, 4);
 
   const jsonLd = {
@@ -281,10 +281,11 @@ export default async function Home() {
               {/* Background Image */}
               <div className="absolute inset-0 z-0">
                 <Image
-                  src="/images/vr-hero.jpg"
-                  alt="Mobile VR Gaming Experience Cape Town"
+                  src={HERO_PHOTO_URL}
+                  alt="Kids playing VR at a birthday party in Cape Town"
                   fill
-                  className="object-cover opacity-70 scale-105"
+                  sizes="100vw"
+                  className="object-cover object-center opacity-60 scale-105"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background" />
@@ -591,7 +592,7 @@ export default async function Home() {
           </div>
 
           <GallerySection
-            media={media.filter((m) => !recentPhotos.some((r) => r.id === m.id))}
+            media={media.filter((m) => m.file_url !== HERO_PHOTO_URL && !recentPhotos.some((r) => r.id === m.id))}
             categories={categories}
             preview={true}
           />

@@ -6,3 +6,7 @@ export const WHATSAPP_URL =
   encodeURIComponent("Hi VR Guys! I'd like to check availability for an event.")
 
 export const GOOGLE_REVIEWS_URL = "https://share.google/H4n0ieB80TKFBp6IS"
+
+/** Hero / link-preview photo: one of our own event photos (Stratham's birthday party) */
+export const HERO_PHOTO_URL =
+  "https://qbsfrsznhbivjymgcydg.supabase.co/storage/v1/object/public/gallery/1789917535191-soxluywgco.jpeg"
