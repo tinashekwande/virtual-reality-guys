@@ -3,6 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { ArrowRight, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import MobileNav from "@/components/MobileNav"
@@ -16,11 +17,15 @@ import {
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  // On the homepage the nav sits on top of the hero photo until you scroll
+  const overHero = pathname === "/" && !scrolled;
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -28,7 +33,9 @@ export default function Header() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        overHero
+          ? "bg-gradient-to-b from-black/55 to-transparent border-b border-transparent"
+          : scrolled
           ? "bg-background/90 backdrop-blur-xl border-b border-border/80 shadow-lg shadow-black/20"
           : "bg-background/60 backdrop-blur-md border-b border-border/40"
       }`}

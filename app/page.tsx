@@ -273,9 +273,9 @@ export default async function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <HeroParallax
-          className="w-full min-h-screen flex items-center justify-center"
+          className="w-full min-h-screen flex items-center justify-center pt-20"
           backgroundChildren={
             <>
               {/* Background Image */}
@@ -285,7 +285,8 @@ export default async function Home() {
                   alt="Kids playing VR at a birthday party in Cape Town"
                   fill
                   sizes="100vw"
-                  className="object-cover object-center opacity-60 scale-105"
+                  quality={95}
+                  className="object-cover object-[center_35%] opacity-60"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background" />
