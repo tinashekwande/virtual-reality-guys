@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Media, Category, TeamMember } from "@/types";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CyberButton } from "@/components/ui/cyber-button";
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town From R999',
     description: 'Premium mobile VR gaming delivered to your venue in Cape Town. Parties, schools, corporate events & festivals. 100+ games, trained supervisors.',
     url: 'https://virtualrealityguyz.co.za',
-    images: [{ url: HERO_PHOTO_URL, alt: 'Kids playing VR at a birthday party in Cape Town' }],
+    images: [{ url: '/images/hero-party-desktop.jpg', width: 1672, height: 941, alt: 'Kids playing VR at a birthday party in Cape Town' }],
   }
 }
 
@@ -107,6 +107,17 @@ async function fetchPublicData() {
     return { media: [], categories: [], team: [] };
   }
 }
+
+const HERO_DESKTOP_PHOTO = "/images/hero-party-desktop.jpg";
+const heroImageCommon = {
+  alt: "Kids playing VR at a birthday party in Cape Town",
+  fill: true,
+  sizes: "100vw",
+  quality: 95,
+  priority: true,
+};
+const heroDesktopSrcSet = getImageProps({ ...heroImageCommon, src: HERO_DESKTOP_PHOTO }).props.srcSet;
+const { props: heroMobileProps } = getImageProps({ ...heroImageCommon, src: HERO_PHOTO_URL });
 
 export default async function Home() {
   const { media, categories, team } = await fetchPublicData();
@@ -280,15 +291,14 @@ export default async function Home() {
             <>
               {/* Background Image */}
               <div className="absolute inset-0 z-0">
-                <Image
-                  src={HERO_PHOTO_URL}
-                  alt="Kids playing VR at a birthday party in Cape Town"
-                  fill
-                  sizes="100vw"
-                  quality={95}
-                  className="object-cover object-[center_35%] opacity-60"
-                  priority
-                />
+                {/* Art direction: portrait party photo on phones, wide version from tablet up */}
+                <picture>
+                  <source media="(min-width: 768px)" srcSet={heroDesktopSrcSet} sizes="100vw" />
+                  <img
+                    {...heroMobileProps}
+                    className="object-cover object-[center_35%] md:object-center opacity-60"
+                  />
+                </picture>
                 <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background" />
               </div>
 
