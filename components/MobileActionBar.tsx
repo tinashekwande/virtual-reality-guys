@@ -14,7 +14,7 @@ export default function MobileActionBar() {
   const pathname = usePathname()
   if (pathname === "/admin" || pathname?.startsWith("/admin/") || pathname?.startsWith("/experiences")) return null
 
-  const bookHref = pathname === "/" ? "#contact" : "/contact"
+  const bookHref = pathname === "/" || pathname === "/index" ? "/#contact" : "/contact"
 
   return (
     <>

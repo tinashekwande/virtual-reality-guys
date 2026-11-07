@@ -3,7 +3,6 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
 import { ArrowRight, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import MobileNav from "@/components/MobileNav"
@@ -15,11 +14,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export default function Header() {
+/**
+ * @param transparentOnTop Fade the nav into the page's hero photo until the
+ *   visitor scrolls. Passed explicitly by the page rather than worked out from
+ *   the URL, because cached homepage renders don't always report "/".
+ */
+export default function Header({ transparentOnTop = false }: { transparentOnTop?: boolean } = {}) {
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
-  // On the homepage the nav sits on top of the hero photo until you scroll
-  const overHero = pathname === "/" && !scrolled;
+  const overHero = transparentOnTop && !scrolled;
 
   useEffect(() => {
     const handleScroll = () => {
