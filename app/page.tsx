@@ -334,7 +334,7 @@ export default async function Home() {
                     href={WHATSAPP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl border border-[#25D366]/60 bg-[#25D366]/10 px-8 h-14 sm:h-16 text-base sm:text-lg font-bold text-white hover:bg-[#25D366]/20 transition-all"
+                    className="hidden sm:inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl border border-[#25D366]/60 bg-[#25D366]/10 px-8 h-14 sm:h-16 text-base sm:text-lg font-bold text-white hover:bg-[#25D366]/20 transition-all"
                   >
                     <WhatsAppIcon className="h-5 w-5 text-[#25D366]" /> WhatsApp Us
                   </a>
@@ -742,7 +742,7 @@ export default async function Home() {
       {/* Contact Section */}
       <section id="contact" className="py-24 sm:py-32 bg-background/30 backdrop-blur-md border-t border-border/40 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
             <div className="space-y-8">
               <div className="space-y-4">
                 <p className="text-primary font-semibold tracking-wide uppercase">
@@ -761,7 +761,7 @@ export default async function Home() {
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 rounded-2xl border border-[#25D366]/50 bg-[#25D366]/10 p-5 hover:bg-[#25D366]/15 transition-colors"
+                className="hidden lg:flex items-center gap-4 rounded-2xl border border-[#25D366]/50 bg-[#25D366]/10 p-5 hover:bg-[#25D366]/15 transition-colors"
               >
                 <div className="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
                   <WhatsAppIcon className="h-6 w-6 text-white" />
@@ -772,7 +772,7 @@ export default async function Home() {
                 </div>
               </a>
 
-              <div className="space-y-6">
+              <div className="hidden lg:block space-y-6">
                 <a href={`tel:${PHONE_TEL}`} className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                     <Phone className="h-5 w-5 text-primary" />
