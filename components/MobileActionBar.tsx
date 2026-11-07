@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { CyberButton } from "@/components/ui/cyber-button"
 import { usePathname } from "next/navigation"
 import { CalendarCheck } from "lucide-react"
 import WhatsAppIcon from "@/components/WhatsAppIcon"
@@ -22,20 +22,26 @@ export default function MobileActionBar() {
       <div className="h-20 md:hidden" aria-hidden="true" />
       <div className="fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-white/10 bg-background/90 backdrop-blur-lg px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <div className="grid grid-cols-2 gap-3">
-          <a
+          <CyberButton
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#25D366] font-bold text-black"
+            variant="whatsapp"
+            size="full"
+            wrapperClassName="w-full"
+            className="h-12 px-3 text-sm"
           >
-            <WhatsAppIcon className="h-5 w-5" /> WhatsApp
-          </a>
-          <Link
+            <WhatsAppIcon className="h-5 w-5 text-[#25D366]" /> WhatsApp
+          </CyberButton>
+          <CyberButton
             href={bookHref}
-            className="flex h-12 items-center justify-center gap-2 rounded-xl bg-primary font-bold text-primary-foreground"
+            variant="primary"
+            size="full"
+            wrapperClassName="w-full"
+            className="h-12 px-3 text-sm"
           >
             <CalendarCheck className="h-5 w-5" /> Check Date
-          </Link>
+          </CyberButton>
         </div>
       </div>
     </>

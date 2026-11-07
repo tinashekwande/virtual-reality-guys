@@ -301,21 +301,6 @@ export default async function Home() {
           contentChildren={
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
               <div className="space-y-7 sm:space-y-8">
-                <a
-                  href={GOOGLE_REVIEWS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-white/15 bg-black/40 backdrop-blur px-4 py-2 text-sm hover:border-white/30 transition-colors"
-                >
-                  <span className="flex items-center gap-1 text-amber-400" aria-hidden="true">
-                    {[0, 1, 2, 3, 4].map((i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </span>
-                  <span className="font-semibold text-white">5.0 on Google</span>
-                  <span className="hidden sm:inline text-white/40">·</span>
-                  <span className="text-white/80">Party packages from <strong className="text-white">R999</strong> incl. VAT</span>
-                </a>
                 <h1 className="text-[2.6rem] leading-[1.05] sm:text-6xl lg:text-7xl font-bold tracking-tight text-balance">
                   Mobile VR Gaming, <span className="text-primary">Delivered</span> to Your Event
                 </h1>
@@ -324,20 +309,25 @@ export default async function Home() {
                   headsets, 100+ games and trained supervisors, then pack it all away.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                  <Link
+                  <CyberButton
                     href="#contact"
-                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl bg-primary px-8 h-14 sm:h-16 text-base sm:text-lg font-bold text-primary-foreground shadow-lg shadow-primary/30 hover:bg-primary/90 hover:shadow-primary/50 transition-all"
+                    size="lg"
+                    variant="primary"
+                    wrapperClassName="w-full sm:w-auto"
+                    className="w-full sm:w-auto"
                   >
                     Check Your Date <ArrowRight className="h-5 w-5" />
-                  </Link>
-                  <a
+                  </CyberButton>
+                  <CyberButton
                     href={WHATSAPP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hidden sm:inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl border border-[#25D366]/60 bg-[#25D366]/10 px-8 h-14 sm:h-16 text-base sm:text-lg font-bold text-white hover:bg-[#25D366]/20 transition-all"
+                    size="lg"
+                    variant="whatsapp"
+                    wrapperClassName="hidden sm:inline-block"
                   >
                     <WhatsAppIcon className="h-5 w-5 text-[#25D366]" /> WhatsApp Us
-                  </a>
+                  </CyberButton>
                 </div>
                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 pt-2 text-sm sm:text-base text-white/75">
                   <div className="flex items-center gap-2">

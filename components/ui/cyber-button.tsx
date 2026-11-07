@@ -7,13 +7,22 @@ import { cn } from "@/lib/utils"
 export interface CyberButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode
-  variant?: "primary" | "secondary"
+  variant?: "primary" | "secondary" | "whatsapp"
   size?: "sm" | "default" | "lg" | "xl" | "full"
   href?: string
   target?: string
   rel?: string
   className?: string
+  /** Classes for the outer <a>/<button>, e.g. "w-full" when the button should stretch */
+  wrapperClassName?: string
   glowIntensity?: "normal" | "high"
+}
+
+// Plate glow and arc colours per variant (RGB 0..1)
+const VARIANT_COLORS: Record<NonNullable<CyberButtonProps["variant"]>, { glow: [number, number, number]; arc: [number, number, number]; core: [number, number, number] }> = {
+  primary: { glow: [0.0, 0.82, 1.0], arc: [0.0, 0.82, 1.0], core: [0.7, 0.95, 1.0] },
+  secondary: { glow: [0.0, 0.45, 0.8], arc: [0.0, 0.55, 0.85], core: [0.7, 0.95, 1.0] },
+  whatsapp: { glow: [0.15, 0.83, 0.4], arc: [0.15, 0.83, 0.4], core: [0.75, 1.0, 0.82] },
 }
 
 export function CyberButton({
@@ -24,6 +33,7 @@ export function CyberButton({
   target,
   rel,
   className,
+  wrapperClassName,
   glowIntensity = "normal",
   disabled,
   onClick,
@@ -62,7 +72,7 @@ export function CyberButton({
     if (!canvas || !container) return
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const isPrimary = variant === "primary"
+    const colors = VARIANT_COLORS[variant]
 
     let gl: WebGLRenderingContext | null = null
     try {
@@ -98,7 +108,9 @@ export function CyberButton({
       uniform float u_time;
       uniform float u_arcs;
       uniform float u_flash;
-      uniform float u_is_primary;
+      uniform vec3 u_glow;
+      uniform vec3 u_arc;
+      uniform vec3 u_core;
 
       float hash(vec2 p){
         return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -151,7 +163,7 @@ export function CyberButton({
         vec3 plateCol = bgDeep + vec3(0.008, 0.02, 0.04) * fbm(p * 8.0);
         
         // Inner edge glow (cyan #00d2ff or secondary cyan-blue)
-        vec3 glowCol = (u_is_primary > 0.5) ? vec3(0.0, 0.82, 1.0) : vec3(0.0, 0.45, 0.8);
+        vec3 glowCol = u_glow;
         plateCol += glowCol * 0.35 * exp(d * 12.0) * (0.25 + hover * 0.65);
         
         vec3 col = plateCol * plate;
@@ -167,8 +179,8 @@ export function CyberButton({
           float seg = 0.3 + 0.7 * smoothstep(0.35, 0.75, noise(vec2(a * 1.8 + fi * 7.7, t * (0.9 + fi * 0.13) + fi * 19.0)));
           float g = 0.0038 / (abs(d + off) + 0.005);
           
-          vec3 arcColorBase = (u_is_primary > 0.5) ? vec3(0.0, 0.82, 1.0) : vec3(0.0, 0.55, 0.85);
-          vec3 arcCore = vec3(0.7, 0.95, 1.0);
+          vec3 arcColorBase = u_arc;
+          vec3 arcCore = u_core;
           arcCol += (arcColorBase * g + arcCore * g * g * 0.5) * w * seg;
         }
 
@@ -178,7 +190,7 @@ export function CyberButton({
 
         // Click flash shockwave
         float ring = 0.006 / (abs(d) + 0.006);
-        col += vec3(0.75, 0.95, 1.0) * ring * u_flash * 1.4 * outerMask;
+        col += u_core * ring * u_flash * 1.4 * outerMask;
         col += glowCol * u_flash * 0.25 * outerMask;
 
         // Seamless alpha transparency
@@ -239,7 +251,9 @@ export function CyberButton({
     const uTime = gl.getUniformLocation(program, "u_time")
     const uArcs = gl.getUniformLocation(program, "u_arcs")
     const uFlash = gl.getUniformLocation(program, "u_flash")
-    const uIsPrimary = gl.getUniformLocation(program, "u_is_primary")
+    const uGlow = gl.getUniformLocation(program, "u_glow")
+    const uArc = gl.getUniformLocation(program, "u_arc")
+    const uCore = gl.getUniformLocation(program, "u_core")
 
     const resize = () => {
       if (!canvas || !container || !gl) return
@@ -284,7 +298,9 @@ export function CyberButton({
         gl.uniform1f(uTime, reducedMotion ? 2.5 : state.crawl)
         gl.uniform1f(uArcs, state.arcs)
         gl.uniform1f(uFlash, state.flash)
-        gl.uniform1f(uIsPrimary, isPrimary ? 1.0 : 0.0)
+        gl.uniform3f(uGlow, ...colors.glow)
+        gl.uniform3f(uArc, ...colors.arc)
+        gl.uniform3f(uCore, ...colors.core)
 
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT)
@@ -322,6 +338,7 @@ export function CyberButton({
 
   const handleMouseDown = () => {
     setIsPressed(true)
+    animStateRef.current.flash = 1.0
   }
 
   const handleMouseUp = () => {
@@ -336,7 +353,11 @@ export function CyberButton({
   }
 
   const dropShadowStyle =
-    variant === "primary"
+    variant === "whatsapp"
+      ? isHovered
+        ? "drop-shadow(0 0 20px rgba(37, 211, 102, 0.55)) drop-shadow(0 0 40px rgba(37, 211, 102, 0.2))"
+        : "drop-shadow(0 0 12px rgba(37, 211, 102, 0.35))"
+      : variant === "primary"
       ? isHovered
         ? "drop-shadow(0 0 20px rgba(0, 210, 255, 0.6)) drop-shadow(0 0 40px rgba(0, 210, 255, 0.25))"
         : "drop-shadow(0 0 14px rgba(0, 210, 255, 0.35))"
@@ -345,7 +366,9 @@ export function CyberButton({
       : "drop-shadow(0 0 8px rgba(0, 162, 232, 0.2))"
 
   const textShadowStyle =
-    variant === "primary"
+    variant === "whatsapp"
+      ? "0 0 10px rgba(37, 211, 102, 0.7), 0 1px 4px rgba(0, 0, 0, 0.9)"
+      : variant === "primary"
       ? "0 0 12px rgba(0, 210, 255, 0.75), 0 1px 4px rgba(0, 0, 0, 0.9)"
       : "0 0 8px rgba(0, 162, 232, 0.5), 0 1px 4px rgba(0, 0, 0, 0.9)"
 
@@ -387,7 +410,9 @@ export function CyberButton({
           aria-hidden="true"
           className={cn(
             "absolute inset-0 rounded-[inherit] transition-all duration-300 pointer-events-none",
-            variant === "primary"
+            variant === "whatsapp"
+              ? "bg-gradient-to-br from-[#06210f] via-[#040817] to-[#082a14] border-2 border-[#25D366]/70 shadow-[0_0_20px_rgba(37,211,102,0.35)] group-hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] group-hover:border-[#25D366]"
+              : variant === "primary"
               ? "bg-gradient-to-br from-[#06112e] via-[#040817] to-[#08173d] border-2 border-primary/70 shadow-[0_0_20px_rgba(0,210,255,0.4)] group-hover:shadow-[0_0_30px_rgba(0,210,255,0.7)] group-hover:border-primary"
               : "bg-gradient-to-br from-[#081430] via-[#040817] to-[#060e24] border border-border/80 shadow-[0_0_12px_rgba(0,162,232,0.2)] group-hover:shadow-[0_0_20px_rgba(0,162,232,0.4)] group-hover:border-accent"
           )}
@@ -398,7 +423,7 @@ export function CyberButton({
       <span
         className={cn(
           "relative z-10 pointer-events-none inline-flex items-center justify-center gap-2.5 font-bold transition-all duration-200",
-          variant === "primary" ? "text-[#e0f7f8] group-hover:text-white" : "text-slate-100 group-hover:text-white"
+          variant === "primary" ? "text-[#e0f7f8] group-hover:text-white" : variant === "whatsapp" ? "text-[#e6fff0] group-hover:text-white" : "text-slate-100 group-hover:text-white"
         )}
         style={{
           textShadow: textShadowStyle,
@@ -416,7 +441,7 @@ export function CyberButton({
         href={href}
         target={target}
         rel={rel}
-        className="inline-block no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl"
+        className={cn("inline-block no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl", wrapperClassName)}
       >
         {buttonContent}
       </Link>
@@ -429,7 +454,7 @@ export function CyberButton({
       type={props.type || "button"}
       disabled={disabled}
       onClick={handleClick}
-      className="inline-block bg-transparent p-0 border-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl cursor-pointer"
+      className={cn("inline-block bg-transparent p-0 border-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl cursor-pointer", wrapperClassName)}
       {...props}
     >
       {buttonContent}
