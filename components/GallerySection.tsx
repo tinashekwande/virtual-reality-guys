@@ -26,7 +26,11 @@ export default function GallerySection({ media, categories, preview = false }: P
     )
   }
 
-  const displayMedia = preview ? media.slice(0, 6) : media
+  // Homepage preview: lead with party shots, they sell the experience best
+  const isParty = (m: Media) => /party|birthday/i.test(((m as any).categories?.name ?? "") + " " + (m.title ?? ""))
+  const displayMedia = preview
+    ? [...media.filter(isParty), ...media.filter((m) => !isParty(m))].slice(0, 6)
+    : media
 
   const filtered = activeCategory === "all"
     ? displayMedia
@@ -52,9 +56,9 @@ export default function GallerySection({ media, categories, preview = false }: P
       )}
 
       {/* Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className={preview ? "grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" : "grid md:grid-cols-2 lg:grid-cols-3 gap-4"}>
         {filtered.map((item, i) => (
-          <ScrollReveal key={item.id} variant="clip-reveal" delay={i * 80} className={`${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
+          <ScrollReveal key={item.id} variant={preview ? "fade-up" : "clip-reveal"} delay={preview ? 0 : i * 80} className={preview ? (i === 0 ? "col-span-2 lg:col-span-1" : "") : `${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}>
             <TiltCard maxTilt={5} scale={1.02} className="h-full">
               <div
                 className="relative group overflow-hidden rounded-2xl h-full border border-border/40 hover:border-primary/50 transition-colors"
@@ -62,7 +66,7 @@ export default function GallerySection({ media, categories, preview = false }: P
                 {item.type === "video" ? (
                   <video
                     src={item.file_url}
-                    className="w-full h-full min-h-[200px] object-cover transition-transform duration-500 group-hover:scale-108"
+                    className={`w-full object-cover transition-transform duration-500 group-hover:scale-108 ${preview ? "aspect-[4/3] h-auto" : "h-full min-h-[200px]"}`}
                     muted
                     loop
                     playsInline
@@ -76,7 +80,7 @@ export default function GallerySection({ media, categories, preview = false }: P
                     width={i === 0 ? 800 : 400}
                     height={i === 0 ? 600 : 300}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className={`object-cover w-full h-full transition-transform duration-500 group-hover:scale-108 ${i === 0 ? "min-h-[300px] lg:min-h-[500px]" : "min-h-[200px]"}`}
+                    className={`object-cover w-full transition-transform duration-500 group-hover:scale-108 ${preview ? "aspect-[4/3] h-auto" : `h-full ${i === 0 ? "min-h-[300px] lg:min-h-[500px]" : "min-h-[200px]"}`}`}
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4 md:p-6">
