@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { ArrowRight, Gamepad2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -12,10 +12,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 function BookingFormInner() {
   const searchParams = useSearchParams()
   const gameParam = searchParams?.get("game") || ""
+  const packageParam = (searchParams?.get("package") || "").toLowerCase()
+  const typeParam = (searchParams?.get("type") || "").toLowerCase()
+  const validTypes = ["birthday", "school", "corporate", "festival", "contact"]
+  const validPackages = ["starter", "standard", "premium", "custom"]
 
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = useState("")
-  const [formType, setFormType] = useState(gameParam ? "birthday" : "contact")
+  const [formType, setFormType] = useState(
+    validTypes.includes(typeParam) ? typeParam : gameParam || packageParam ? "birthday" : "contact"
+  )
+  const [pkg, setPkg] = useState(validPackages.includes(packageParam) ? packageParam : "")
+
+  // Keep the form in sync when a "Book Starter/Standard/Premium" button changes the URL
+  useEffect(() => {
+    if (validPackages.includes(packageParam)) {
+      setPkg(packageParam)
+      setFormType("birthday")
+    }
+  }, [packageParam])
+  useEffect(() => {
+    if (validTypes.includes(typeParam)) setFormType(typeParam)
+  }, [typeParam])
+
+  const isQuoteType = formType === "school" || formType === "corporate" || formType === "festival"
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -30,6 +50,8 @@ function BookingFormInner() {
       event_date: fd.get("event_date"),
       event_time: fd.get("event_time"),
       message: fd.get("message"),
+      guests: fd.get("guests"),
+      package: !isQuoteType && pkg ? pkg : undefined,
       form_type: gameParam ? "game_booking" : formType,
       game_title: gameParam || undefined,
     }
@@ -78,17 +100,17 @@ function BookingFormInner() {
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm font-medium">Name</label>
-            <Input id="name" name="name" placeholder="Your name" className="bg-background" required />
+            <Input id="name" name="name" autoComplete="name" placeholder="Your name" className="bg-background" required />
           </div>
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">Email</label>
-            <Input id="email" name="email" type="email" placeholder="your@email.com" className="bg-background" required />
+            <label htmlFor="phone" className="text-sm font-medium">Phone / WhatsApp</label>
+            <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="071 000 0000" className="bg-background" required />
           </div>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label htmlFor="phone" className="text-sm font-medium">Phone</label>
-            <Input id="phone" name="phone" type="tel" placeholder="+27 71 000 0000" className="bg-background" />
+            <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <Input id="email" name="email" type="email" autoComplete="email" placeholder="your@email.com" className="bg-background" required />
           </div>
           <div className="space-y-2">
             <label htmlFor="suburb" className="text-sm font-medium">Suburb / Area</label>
@@ -132,9 +154,36 @@ function BookingFormInner() {
             />
           </div>
         </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {!isQuoteType && (
+            <div className="space-y-2">
+              <label htmlFor="package" className="text-sm font-medium">Package</label>
+              <Select value={pkg || "unsure"} onValueChange={(v) => setPkg(v === "unsure" ? "" : v)}>
+                <SelectTrigger id="package" className="bg-background" aria-label="Package">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unsure">Not sure yet</SelectItem>
+                  <SelectItem value="starter">Starter · R999 (up to 8 players)</SelectItem>
+                  <SelectItem value="standard">Standard · R1,499 (up to 12 players)</SelectItem>
+                  <SelectItem value="premium">Premium · R1,999 (up to 20 players)</SelectItem>
+                  <SelectItem value="custom">Custom / bigger group</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <div className={`space-y-2 ${isQuoteType ? "sm:col-span-2" : ""}`}>
+            <label htmlFor="guests" className="text-sm font-medium">
+              {isQuoteType ? "Number of attendees" : "Number of players"}
+            </label>
+            <Input id="guests" name="guests" type="number" inputMode="numeric" min={1} placeholder={isQuoteType ? "e.g. 120" : "e.g. 10"} className="bg-background" />
+          </div>
+        </div>
         <div className="space-y-2">
-          <label htmlFor="message" className="text-sm font-medium">Tell us about your event</label>
-          <Textarea id="message" name="message" placeholder="Number of guests, venue location, special requirements..." rows={4} className="bg-background" required />
+          <label htmlFor="message" className="text-sm font-medium">
+            Anything else? <span className="text-muted-foreground font-normal">(optional)</span>
+          </label>
+          <Textarea id="message" name="message" placeholder="Venue, ages, special requests..." rows={3} className="bg-background" />
         </div>
         {status === "error" && (
           <p className="text-sm text-destructive">{errorMsg}</p>
@@ -148,11 +197,14 @@ function BookingFormInner() {
             "Sending…"
           ) : (
             <>
-              <span>Book Your VR Experience</span>
+              <span>{isQuoteType ? "Request a Quote" : "Check Availability"}</span>
               <ArrowRight className="ml-2 h-5 w-5" />
             </>
           )}
         </CyberButton>
+        <p className="text-xs text-muted-foreground text-center">
+          No payment now. We reply within 24 hours, and a 50% deposit secures your date.
+        </p>
       </form>
     </div>
   )

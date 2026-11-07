@@ -48,11 +48,20 @@ export const maxDuration = 30
 // Public endpoint — receives form submissions from the website
 export async function POST(request: Request) {
   const body = await request.json()
-  const { name, email, phone, suburb, message, event_date, event_time, form_type = 'contact', game_title, game_id } = body
+  const { name, email, phone, suburb, event_date, event_time, form_type = 'contact', game_title, game_id, package: pkg, guests } = body
 
-  if (!name || !email || !message) {
-    return NextResponse.json({ error: 'Name, email and message are required' }, { status: 400 })
+  if (!name || !email) {
+    return NextResponse.json({ error: 'Name and email are required' }, { status: 400 })
   }
+
+  // The website form now treats the message as optional and collects package
+  // and group size separately; fold those into the message so every view
+  // (portal, owner email) shows them without a schema change.
+  const detailLines: string[] = []
+  if (pkg) detailLines.push(`Package: ${String(pkg).charAt(0).toUpperCase()}${String(pkg).slice(1)}`)
+  if (guests) detailLines.push(`Group size: ${guests}`)
+  const userMessage = typeof body.message === 'string' ? body.message.trim() : ''
+  const message = [detailLines.join('\n'), userMessage].filter(Boolean).join('\n\n') || '(No message — see event details)'
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {

@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
-import { Orbitron, Mina } from 'next/font/google'
+import { Orbitron, Manrope } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import ChatbotLoader from '@/components/chatbot/ChatbotLoader'
+import MobileActionBar from '@/components/MobileActionBar'
 import AtmosphericBackground from '@/components/motion/AtmosphericBackground'
 import PageTransition from '@/components/motion/PageTransition'
 import './globals.css'
+import { HERO_PHOTO_URL } from '@/lib/contact'
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -12,10 +14,10 @@ const orbitron = Orbitron({
   display: "swap",
 });
 
-const mina = Mina({
-  weight: ['400', '700'],
+// Orbitron stays for headings; Manrope keeps body copy easy to read
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-mina",
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -63,10 +65,8 @@ export const metadata: Metadata = {
     siteName: 'Virtual Reality Guys',
     images: [
       {
-        url: '/images/logo.png',
-        width: 1200,
-        height: 630,
-        alt: 'Virtual Reality Guys Logo',
+        url: HERO_PHOTO_URL,
+        alt: 'Kids playing VR at a birthday party in Cape Town',
       },
     ],
     locale: 'en_ZA',
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Virtual Reality Guys | Mobile VR Gaming Experiences for Events',
     description: 'Bring the future of gaming to your event! VR Guys provides immersive mobile VR experiences in Cape Town.',
-    images: ['/images/logo.png'],
+    images: [HERO_PHOTO_URL],
   },
   robots: {
     index: true,
@@ -145,7 +145,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
-      <body className={`${mina.className} ${orbitron.variable} antialiased relative overflow-x-hidden`}>
+      <body className={`${manrope.className} ${manrope.variable} ${orbitron.variable} antialiased relative overflow-x-hidden`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
@@ -156,6 +156,7 @@ export default function RootLayout({
         />
         <AtmosphericBackground />
         <PageTransition>{children}</PageTransition>
+        <MobileActionBar />
         <ChatbotLoader />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

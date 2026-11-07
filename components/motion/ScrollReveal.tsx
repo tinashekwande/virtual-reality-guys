@@ -23,9 +23,9 @@ interface ScrollRevealProps {
 export default function ScrollReveal({
   children,
   variant = "fade-up",
-  duration = 700,
+  duration = 500,
   delay = 0,
-  threshold = 0.15,
+  threshold = 0,
   className = "",
   once = true,
 }: ScrollRevealProps) {
@@ -48,16 +48,24 @@ export default function ScrollReveal({
       return;
     }
 
+    // Anything already above the fold (or scrolled past) shows immediately
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      setIsVisible(true);
+      if (once) return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        // Reveal slightly before the element enters the screen so fast
+        // scrolling never lands on an empty section.
+        if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
           setIsVisible(true);
           if (once) observer.unobserve(entry.target);
         } else if (!once) {
           setIsVisible(false);
         }
       },
-      { threshold }
+      { threshold, rootMargin: "0px 0px 25% 0px" }
     );
 
     observer.observe(el);
@@ -90,37 +98,37 @@ export default function ScrollReveal({
       case "fade-up":
         return {
           opacity: 0,
-          transform: "translateY(28px)",
+          transform: "translateY(16px)",
           transition: `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         };
       case "fade-down":
         return {
           opacity: 0,
-          transform: "translateY(-28px)",
+          transform: "translateY(-16px)",
           transition: `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         };
       case "fade-left":
         return {
           opacity: 0,
-          transform: "translateX(28px)",
+          transform: "translateX(16px)",
           transition: `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         };
       case "fade-right":
         return {
           opacity: 0,
-          transform: "translateX(-28px)",
+          transform: "translateX(-16px)",
           transition: `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         };
       case "zoom-in":
         return {
           opacity: 0,
-          transform: "scale(0.94)",
+          transform: "scale(0.97)",
           transition: `all ${duration}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         };
       case "clip-reveal":
         return {
-          opacity: 0.2,
-          clipPath: "inset(8% 8% 8% 8% round 1rem)",
+          opacity: 0.4,
+          clipPath: "inset(4% 4% 4% 4% round 1rem)",
           transform: "scale(1.03)",
           transition: `all ${duration + 200}ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms`,
         };
