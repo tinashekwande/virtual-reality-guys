@@ -4,6 +4,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    // 95 is used for the full-screen hero photo so it isn't compressed twice
+    qualities: [75, 95],
     remotePatterns: [
       {
         protocol: 'https',
