@@ -212,7 +212,7 @@ export default function SchoolVRPage() {
       "url": "https://virtualrealityguyz.co.za",
       "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
-      "email": "virtualrealityguyz@gmail.com",
+      "email": "bookings@virtualrealityguyz.co.za",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Cape Town",
@@ -1336,10 +1336,10 @@ export default function SchoolVRPage() {
                   </a>{" "}
                   or email{" "}
                   <a
-                    href="mailto:virtualrealityguyz@gmail.com"
+                    href="mailto:bookings@virtualrealityguyz.co.za"
                     className="text-primary font-semibold hover:underline"
                   >
-                    virtualrealityguyz@gmail.com
+                    bookings@virtualrealityguyz.co.za
                   </a>
                   .
                 </p>

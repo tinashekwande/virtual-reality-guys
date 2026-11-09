@@ -142,6 +142,20 @@ const SUBJECT_CATEGORIES: SubjectCategory[] = [
     imageAlt: "Immersive 3D solar system and planetary astronomy VR environment for learners",
     items: [
       {
+        title: "Journey through the Solar System (Built In-House)",
+        status: "Available Experience",
+        grades: "Grades 4–7",
+        curriculumFocus: "Sun, 8 Planets, Moons, Asteroid Belt & Descent to Cape Town",
+        description:
+          "Our in-house narrated WebXR experience where learners fly past the Sun, all eight planets, their moons, and the asteroid belt, dive through Saturn's rings, descend from orbit to Cape Town, and complete a 5-question interactive quiz.",
+        whatLearnersExplore: [
+          "Interactive tap-to-discover planet facts, Saturn ring dive, and whole-solar-system fly-throughs",
+          "Descent from space onto the Cape Peninsula followed by a built-in 5-question curriculum quiz",
+        ],
+        catalogueHref: "/experiences/solar-system/index.html",
+        subjectName: "Space & Astronomy",
+      },
+      {
         title: "Cosmic XR & Titans of Space PLUS",
         status: "Available Experience",
         grades: "Grades 4–12",
@@ -300,6 +314,20 @@ const SUBJECT_CATEGORIES: SubjectCategory[] = [
     image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Immersive geological formations, mountain topography and ecosystems in educational VR",
     items: [
+      {
+        title: "Dive into the Great African Seaforest — Cape Town Kelp Forest (Built In-House)",
+        status: "Available Experience",
+        grades: "Grades 4–7",
+        curriculumFocus: "South African Marine Ecosystems, Food Webs & Biodiversity",
+        description:
+          "Our in-house narrated WebXR experience opening with a helicopter flight over Cape Town before diving into the Great African Seaforest to explore sea bamboo, Cape fur seals, reefs, an octopus, shysharks, and a sevengill shark.",
+        whatLearnersExplore: [
+          "Indigenous Cape Town kelp forest biodiversity, predator-prey relationships, and marine habitats",
+          "Interactive discovery points with voice narration and a 5-question comprehension quiz",
+        ],
+        catalogueHref: "/experiences/kelp-forest/index.html",
+        subjectName: "Geography & Earth Sciences",
+      },
       {
         title: "Google Earth VR & National Geographic Explore VR",
         status: "Available Experience",
