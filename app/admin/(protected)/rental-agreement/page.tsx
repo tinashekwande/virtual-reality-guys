@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, Suspense } from "react"
+import { useConfirm } from "@/components/admin/confirm-provider"
 import { useSearchParams } from "next/navigation"
 import {
   FileSignature,
@@ -47,7 +48,7 @@ import type { Invoice, FormRequest, RentalAgreementRecord, RentalAgreementStatus
 const DEFAULT_BLANK_AGREEMENT: RentalAgreementData = {
   companyName: "Virtual Reality Guyz (Pty) Ltd",
   website: "virtualrealityguyz.co.za",
-  email: "virtualrealityguyz@gmail.com",
+  email: "bookings@virtualrealityguyz.co.za",
   phone: "+27 71 780 0323",
   businessAddress: "Cape Town, Western Cape, South Africa",
   regNumber: "2024/VRG/ZA",
@@ -230,6 +231,7 @@ const DEFAULT_BLANK_AGREEMENT: RentalAgreementData = {
 }
 
 function RentalAgreementContent() {
+  const confirm = useConfirm()
   const searchParams = useSearchParams()
   const [agreement, setAgreement] = useState<RentalAgreementData>(DEFAULT_BLANK_AGREEMENT)
   const [viewMode, setViewMode] = useState<"preview" | "edit" | "records">("preview")
@@ -598,7 +600,7 @@ function RentalAgreementContent() {
   }
 
   const handleDeleteAgreement = async (id: string, agreementNumber: string) => {
-    if (!confirm(`Are you sure you want to delete agreement ${agreementNumber} from the database?`)) {
+    if (!(await confirm({ title: "Delete agreement?", description: `Agreement ${agreementNumber} will be permanently deleted.`, confirmLabel: "Delete" }))) {
       return
     }
 

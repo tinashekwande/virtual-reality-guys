@@ -44,7 +44,7 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
   const [eventDate, setEventDate] = useState("")
   const [eventTime, setEventTime] = useState("14:00")
   const [eventType, setEventType] = useState("birthday")
-  const [guestsCount, setGuestsCount] = useState("6-10")
+  const [guestsCount, setGuestsCount] = useState("9-12")
   const [notes, setNotes] = useState("")
 
   useEffect(() => {
@@ -357,9 +357,9 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1-5">Up to 5 Players (Starter)</SelectItem>
-                      <SelectItem value="6-10">6 - 10 Players (Standard)</SelectItem>
-                      <SelectItem value="11-20">11 - 20 Players (Premium)</SelectItem>
+                      <SelectItem value="1-8">Up to 8 Players (Starter)</SelectItem>
+                      <SelectItem value="9-12">9 - 12 Players (Standard)</SelectItem>
+                      <SelectItem value="13-20">13 - 20 Players (Premium)</SelectItem>
                       <SelectItem value="20+">20+ Players (Large Event)</SelectItem>
                     </SelectContent>
                   </Select>

@@ -2,6 +2,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Save, Sparkles, Upload } from "lucide-react"
@@ -72,11 +73,11 @@ export default function NewBlogPostPage() {
         setFeaturedImage(data.url)
       } else {
         const err = await res.json()
-        alert(err.error || "Failed to upload image")
+        toast.error(err.error || "Failed to upload image")
       }
     } catch (err) {
       console.error(err)
-      alert("Error uploading image")
+      toast.error("Error uploading image")
     } finally {
       setUploadingImage(false)
     }

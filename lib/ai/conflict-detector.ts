@@ -67,7 +67,7 @@ export async function detectAllConflicts(targetDate?: string): Promise<AiConflic
       invQuery,
       evtQuery,
       admin.from('equipment').select('*'),
-      perQuery.then((r) => r).catch(() => ({ data: [] })),
+      Promise.resolve(perQuery).catch(() => ({ data: [] })),
     ])
 
     const invList = (invoices || []) as Invoice[]

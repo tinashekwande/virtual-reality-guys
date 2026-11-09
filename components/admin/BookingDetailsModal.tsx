@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Calendar, Clock, User, Mail, Phone, MapPin, DollarSign, AlertTriangle,
-  CheckCircle2, XCircle, FileText, Edit3, Trash2, ArrowRight, Shield, Tag, Receipt
+  CheckCircle2, XCircle, FileText, Edit3, Trash2, ArrowRight, Shield, Tag, Receipt, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { AiEventPlannerModal } from "@/components/admin/ai/AiEventPlannerModal";
 import { AiMessageGeneratorModal } from "@/components/admin/ai/AiMessageGeneratorModal";
+import { useConfirm } from "@/components/admin/confirm-provider";
 
 export interface PlannerEvent {
   id: string;
@@ -101,6 +102,7 @@ interface BookingDetailsModalProps {
 }
 
 export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }: BookingDetailsModalProps) {
+  const confirm = useConfirm();
   const router = useRouter();
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
@@ -222,7 +224,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this booking record?")) return;
+    if (!(await confirm({ title: "Delete booking?", description: "This booking record will be permanently deleted.", confirmLabel: "Delete" }))) return;
     setUpdating(true);
     try {
       const endpoint = isInvoice ? `/api/invoices/${event.id}` : `/api/requests/${event.id}`;

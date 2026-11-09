@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import { toast } from "sonner"
 import { Pencil, Trash2, Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -67,7 +68,7 @@ export default function GalleryAdminPage() {
     const fd = new FormData(e.currentTarget)
     const categoryId = fd.get("category_id") as string
     if (!categoryId) {
-      alert("Category is required")
+      toast.error("Category is required")
       return
     }
     await fetch(`/api/media/${editItem.id}`, {

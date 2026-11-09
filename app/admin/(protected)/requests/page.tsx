@@ -2,49 +2,26 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Trash2, Eye, Receipt, FileText, Sparkles, MessageSquare, Flame, MapPin, Gamepad2, Clock } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Trash2, Eye, FileText, Sparkles, MessageSquare, Flame, MapPin, Gamepad2, Clock, LayoutGrid, List as ListIcon, Mail, ArrowDownLeft, ArrowUpRight } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { ConfirmDialog } from "@/components/admin/confirm-dialog"
 import { AiMessageGeneratorModal } from "@/components/admin/ai/AiMessageGeneratorModal"
+import { RequestsBoard } from "@/components/admin/RequestsBoard"
+import { TableSkeleton } from "@/components/admin/skeletons"
 import { calculateLeadScore } from "@/lib/ai/lead-scoring"
 import { extractTimeFromText } from "@/lib/time-utils"
+import { extractEventDate, extractRequestSuburb, extractBookedGame } from "@/lib/requests/parse"
 import { toast } from "sonner"
 import type { FormRequest, RequestStatus } from "@/types"
-
-function extractEventDate(message: string): string {
-  if (!message) return ""
-  const explicitMatch = message.match(/\[Event Date:\s*([^\]]+)\]/i)
-  if (explicitMatch) return explicitMatch[1].trim()
-  const isoMatch = message.match(/\b(20\d{2}[-/](?:0[1-9]|1[0-2])[-/](?:0[1-9]|[12]\d|3[01]))\b/)
-  if (isoMatch) return isoMatch[1].replace(/\//g, "-")
-  return ""
-}
-
-function extractRequestSuburb(r: FormRequest): string {
-  if (r.suburb && r.suburb.trim()) return r.suburb.trim()
-  if (!r.message) return ""
-  const explicitMatch = r.message.match(/\[Suburb:\s*([^\]]+)\]/i)
-  if (explicitMatch) return explicitMatch[1].trim()
-  const locMatch = r.message.match(/(?:suburb|location|area|venue)\s*[:\-]\s*([A-Za-z\s]+?)(?:[,\.\n]|$)/i)
-  if (locMatch && locMatch[1].trim().length > 2) return locMatch[1].trim()
-  return ""
-}
-
-function extractBookedGame(message: string): string {
-  if (!message) return ""
-  const explicitMatch = message.match(/\[Booked Game:\s*([^\]]+)\]/i)
-  if (explicitMatch) return explicitMatch[1].trim()
-  return ""
-}
 
 const STATUS_OPTIONS: { value: RequestStatus; label: string }[] = [
   { value: "new", label: "New Request" },
   { value: "in_progress", label: "Pending Confirmation" },
   { value: "archived", label: "Booking Confirmed" },
   { value: "completed", label: "Event Completed" },
+  { value: "cancelled" as RequestStatus, label: "Lost / Cancelled" },
 ]
 
 const STATUS_BADGE: Record<string, string> = {
@@ -57,6 +34,7 @@ const STATUS_BADGE: Record<string, string> = {
   confirmed: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
   completed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
   event_completed: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+  cancelled: "bg-zinc-500/10 text-zinc-400 border-zinc-500/30",
 }
 
 function getStatusLabel(status: string): string {
@@ -74,6 +52,8 @@ function getStatusLabel(status: string): string {
     case "completed":
     case "event_completed":
       return "Event Completed"
+    case "cancelled":
+      return "Lost / Cancelled"
     default:
       return status.replace(/_/g, " ")
   }
@@ -90,6 +70,37 @@ export default function RequestsAdminPage() {
   const [extracting, setExtracting] = useState(false)
   const [extractedData, setExtractedData] = useState<any>(null)
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false)
+  const [view, setView] = useState<"board" | "list">("board")
+  const [comms, setComms] = useState<any[]>([])
+  const [commsLoading, setCommsLoading] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("requests-view")
+      if (saved === "board" || saved === "list") setView(saved)
+    } catch {}
+  }, [])
+
+  const changeView = (v: "board" | "list") => {
+    setView(v)
+    try { localStorage.setItem("requests-view", v) } catch {}
+  }
+
+  const loadComms = async (requestId: string) => {
+    setCommsLoading(true)
+    setComms([])
+    try {
+      const res = await fetch(`/api/marketing/communications?request_id=${requestId}&limit=50`)
+      if (res.ok) {
+        const d = await res.json()
+        setComms(d.communications || [])
+      }
+    } catch {
+      // communications are a nice-to-have; ignore failures
+    } finally {
+      setCommsLoading(false)
+    }
+  }
 
   const handleCreateInvoice = (
     r: FormRequest,
@@ -114,20 +125,20 @@ export default function RequestsAdminPage() {
         const count = numMatch ? parseInt(numMatch[1], 10) : 8
 
         if (msg.includes("corporate") || msg.includes("team") || msg.includes("company") || (r.form_type || "").toLowerCase().includes("corporate")) {
-          pkg = "Corporate Event VR Package (6-8 Headsets, 4 Hours)"
-          price = 1499
+          pkg = "Corporate Event VR Package (Half Day, 4 Hours, 6 Headsets, 2 Staff)"
+          price = 2999
         } else if (msg.includes("school") || (r.form_type || "").toLowerCase().includes("school")) {
-          pkg = "School / Educational VR Experience (4 Headsets, 2 Hours)"
-          price = 899
-        } else if (count <= 5) {
-          pkg = "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)"
-          price = 899
-        } else if (count > 10) {
-          pkg = "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)"
-          price = 1499
+          pkg = "School / Educational VR Experience (Minimum Booking)"
+          price = 2500
+        } else if (count <= 8) {
+          pkg = "Starter VR Package (4 Headsets, 2 Hours, up to 8 players)"
+          price = 999
+        } else if (count > 12) {
+          pkg = "Premium VR Package (6 Headsets, 4 Hours, up to 20 players)"
+          price = 1999
         } else {
-          pkg = "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)"
-          price = 1299
+          pkg = "Standard VR Package (5 Headsets, 3 Hours, up to 12 players)"
+          price = 1499
         }
       }
     }
@@ -178,6 +189,7 @@ export default function RequestsAdminPage() {
     setIsMessageModalOpen(false)
     setSelected(r)
     setExtractedData(null)
+    loadComms(r.id)
   }
 
   const handleCloseSheet = () => {
@@ -258,15 +270,31 @@ export default function RequestsAdminPage() {
             AI lead scoring, automatic package recommendation, and 1-click quote drafting
           </p>
         </div>
-        {/* Filters */}
+        {/* Filters + view toggle */}
         <div className="flex flex-wrap items-center gap-3">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-36 text-xs"><SelectValue placeholder="All statuses" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="inline-flex rounded-lg border border-border bg-card p-0.5">
+            <button
+              onClick={() => changeView("board")}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${view === "board" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <LayoutGrid className="w-3.5 h-3.5" /> Board
+            </button>
+            <button
+              onClick={() => changeView("list")}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${view === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              <ListIcon className="w-3.5 h-3.5" /> List
+            </button>
+          </div>
+          {view === "list" && (
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-36 text-xs"><SelectValue placeholder="All statuses" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
           <Select value={filterType} onValueChange={setFilterType}>
             <SelectTrigger className="w-36 text-xs"><SelectValue placeholder="All types" /></SelectTrigger>
             <SelectContent>
@@ -277,10 +305,26 @@ export default function RequestsAdminPage() {
         </div>
       </div>
 
-      {/* Table */}
+      {view === "board" && (
+        loading ? (
+          <TableSkeleton rows={5} cols={5} />
+        ) : requests.length === 0 ? (
+          <div className="bg-card border border-dashed border-border rounded-xl py-16 text-center text-muted-foreground text-sm">No customer submissions found</div>
+        ) : (
+          <RequestsBoard
+            requests={requests}
+            onOpen={handleOpenRequest}
+            onStatusChange={handleStatusChange}
+            onDraftQuote={(r) => handleCreateInvoice(r, "quote")}
+          />
+        )
+      )}
+
+      {/* List / table view */}
+      {view === "list" && (
       <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
         {loading ? (
-          <div className="py-20 text-center text-muted-foreground text-xs">Loading requests pipeline…</div>
+          <div className="p-3"><TableSkeleton rows={6} cols={5} /></div>
         ) : requests.length === 0 ? (
           <div className="py-20 text-center text-muted-foreground text-xs">No customer submissions found</div>
         ) : (
@@ -382,6 +426,7 @@ export default function RequestsAdminPage() {
           </div>
         )}
       </div>
+      )}
 
       {/* Detail Sheet */}
       <Sheet open={!!selected} onOpenChange={v => !v && handleCloseSheet()}>
@@ -495,6 +540,41 @@ export default function RequestsAdminPage() {
                   <p className="leading-relaxed whitespace-pre-wrap bg-secondary/40 border border-border/60 rounded-xl p-3 text-foreground font-sans">
                     {selected.message}
                   </p>
+                </div>
+
+                {/* Email / communication history */}
+                <div className="space-y-1.5">
+                  <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                    <Mail className="h-3 w-3" /> Email history
+                    {comms.length > 0 && <span className="text-[9px] bg-muted rounded-full px-1.5 py-0.5 text-muted-foreground">{comms.length}</span>}
+                  </p>
+                  {commsLoading ? (
+                    <p className="text-[11px] text-muted-foreground italic px-1 py-2">Loading emails…</p>
+                  ) : comms.length === 0 ? (
+                    <p className="text-[11px] text-muted-foreground italic bg-secondary/20 border border-border/40 rounded-xl p-3">
+                      No emails logged yet. When you (or Claude) reply, it appears here.
+                    </p>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {comms.map((c) => (
+                        <details key={c.id} className="bg-secondary/30 border border-border/50 rounded-xl overflow-hidden">
+                          <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer list-none">
+                            {c.direction === "inbound"
+                              ? <ArrowDownLeft className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
+                              : <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" />}
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-[11px] font-semibold text-foreground truncate">{c.subject || "(no subject)"}</span>
+                              <span className="block text-[9px] text-muted-foreground">
+                                {c.sent_by}{c.sent_by ? " · " : ""}{new Date(c.created_at).toLocaleString()}
+                              </span>
+                            </span>
+                            <span className={`text-[8px] uppercase px-1.5 py-0.5 rounded-full border flex-shrink-0 ${c.status === "sent" ? "text-emerald-400 border-emerald-500/30" : c.status === "failed" ? "text-red-400 border-red-500/30" : "text-muted-foreground border-border"}`}>{c.status}</span>
+                          </summary>
+                          <pre className="px-3 pb-3 pt-1 whitespace-pre-wrap text-[11px] text-muted-foreground font-sans leading-relaxed">{c.body}</pre>
+                        </details>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* AI Extract Button & Results */}

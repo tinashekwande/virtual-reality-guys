@@ -7,22 +7,25 @@ import { useState, useEffect } from "react"
 import {
   LayoutDashboard, Image as ImageIcon, FolderOpen,
   Users, ClipboardList, LogOut, Headset, Menu, X, ShieldCheck,
-  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot, FileSignature
+  BookOpen, Receipt, Calendar, DollarSign, Glasses, Bot, FileSignature, Megaphone, CalendarCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
 import { PersistentAiAssistant } from "@/components/admin/ai/PersistentAiAssistant"
+import { ConfirmProvider } from "@/components/admin/confirm-provider"
 import { UniversalAiSearch } from "@/components/admin/ai/UniversalAiSearch"
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/today", label: "Today", icon: CalendarCheck },
   { href: "/admin/planner", label: "Booking Planner", icon: Calendar },
   { href: "/admin/quotes-invoices", label: "Quotes & Invoices", icon: Receipt },
   { href: "/admin/rental-agreement", label: "Rental Agreement", icon: FileSignature },
   { href: "/admin/accounting", label: "Accounts & Financials", icon: DollarSign },
   { href: "/admin/equipment", label: "Equipment & Fleet", icon: Glasses },
   { href: "/admin/requests", label: "Requests", icon: ClipboardList },
+  { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
   { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/admin/categories", label: "Categories", icon: FolderOpen },
@@ -265,7 +268,7 @@ export default function ProtectedAdminLayout({ children }: { children: React.Rea
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-6 print:h-auto print:overflow-visible print:p-0 print:m-0 print:block">
-          {children}
+          <ConfirmProvider>{children}</ConfirmProvider>
         </main>
         <div className="print:hidden">
           <PersistentAiAssistant />

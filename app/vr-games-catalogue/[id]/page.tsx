@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
   }
 
   const title = `${game.title} VR Experience Cape Town | Book for Events & Parties`
-  const description = `${game.shortDesc} Available on Meta Quest 3 for birthday parties, school events, and corporate team building in Cape Town from R899.`
+  const description = `${game.shortDesc} Available on Meta Quest 3 for birthday parties, school events, and corporate team building in Cape Town.`
   const imageUrl = game.image.startsWith("http")
     ? game.image
     : `https://virtualrealityguyz.co.za${game.image}`
@@ -142,8 +142,6 @@ export default async function GameDetailPage({ params }: GamePageProps) {
     },
     offers: {
       "@type": "Offer",
-      price: "899.00",
-      priceCurrency: "ZAR",
       availability: "https://schema.org/InStock",
       description: "Mobile VR party setup brought to your venue in Cape Town with Meta Quest 3 headsets, TV casting, and supervision.",
       seller: {

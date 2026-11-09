@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useConfirm } from "@/components/admin/confirm-provider"
 import {
   DollarSign, TrendingUp, TrendingDown, Wallet, Calendar, Plus, Search,
   Download, Filter, ArrowUpRight, ArrowDownRight, PieChart, BarChart3,
   Receipt, Flag, Edit, Trash2, CheckCircle2, AlertCircle, Save, X, Sparkles,
-  ExternalLink, RotateCcw
+  ExternalLink, RotateCcw, Paperclip, Banknote, Users, CalendarDays
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,16 +16,27 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { EventItem, ExpenseItem, ExpenseCategory, Invoice } from "@/types";
+import { EventItem, ExpenseItem, ExpenseCategory, Invoice, PaymentItem } from "@/types";
+import PaymentsDialog from "@/components/admin/accounts/PaymentsDialog";
+import PayoutsTab from "@/components/admin/accounts/PayoutsTab";
+import ReconcileTab from "@/components/admin/accounts/ReconcileTab";
+import MonthlyTab from "@/components/admin/accounts/MonthlyTab";
+import {
+  summarisePayments, totalExpenses, expenseIssues, payeeTotals, depreciationToDate,
+  todayStr, DEFAULT_ASSET_LIFE_MONTHS,
+} from "@/lib/accounts/calc";
 
 export default function AccountingPage() {
+  const confirm = useConfirm();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
+  const [payments, setPayments] = useState<PaymentItem[]>([]);
+  const [paymentsInvoice, setPaymentsInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Active View Tab
-  const [activeTab, setActiveTab] = useState<"ledger" | "expenses">("ledger");
+  const [activeTab, setActiveTab] = useState<"ledger" | "expenses" | "payouts" | "monthly" | "reconcile">("ledger");
 
   // Ledger Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,8 +54,15 @@ export default function AccountingPage() {
   const [expenseCategory, setExpenseCategory] = useState<ExpenseCategory>("Staff Wages");
   const [expenseAmount, setExpenseAmount] = useState<number | "">("");
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split("T")[0]);
-  const [expenseTargetId, setExpenseTargetId] = useState<string>("general");
+  const [expenseTargetId, setExpenseTargetId] = useState<string>("");
   const [expenseNotes, setExpenseNotes] = useState("");
+  const [expenseKind, setExpenseKind] = useState<"running" | "asset">("running");
+  const [expenseLife, setExpenseLife] = useState<number | "">(DEFAULT_ASSET_LIFE_MONTHS);
+  const [expenseReceipt, setExpenseReceipt] = useState<string | null>(null);
+  const [uploadingReceipt, setUploadingReceipt] = useState(false);
+  const [expensePayee, setExpensePayee] = useState("");
+  const [expensePayStatus, setExpensePayStatus] = useState<"paid" | "owed">("paid");
+  const [attentionOnly, setAttentionOnly] = useState(false);
   const [submittingExpense, setSubmittingExpense] = useState(false);
   const [deletingExpenseId, setDeletingExpenseId] = useState<string | null>(null);
 
@@ -51,15 +70,17 @@ export default function AccountingPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [invRes, evtRes, expRes] = await Promise.all([
+      const [invRes, evtRes, expRes, payRes] = await Promise.all([
         fetch("/api/invoices").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/events").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/expenses").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch("/api/payments").then((r) => (r.ok ? r.json() : [])).catch(() => []),
       ]);
 
       setInvoices(Array.isArray(invRes) ? invRes : []);
       setEvents(Array.isArray(evtRes) ? evtRes : []);
       setExpenses(Array.isArray(expRes) ? expRes : []);
+      setPayments(Array.isArray(payRes) ? payRes : []);
     } catch (err: any) {
       toast.error("Failed to load accounting data.");
     } finally {
@@ -84,24 +105,31 @@ export default function AccountingPage() {
       expenses: number;
       netProfit: number;
       margin: number;
+      balance: number;
+      overdue: boolean;
       raw: any;
     }> = [];
 
     // 1. Process Client Invoices
     invoices.forEach((inv) => {
+      const pay = summarisePayments(inv, payments);
       let rev = 0;
-      if (inv.status === "paid") {
+      if (inv.type === "quote") {
+        rev = 0; // quotes are not income
+      } else if (payments.length > 0) {
+        // Money actually received (from the payments log)
+        rev = pay.received;
+      } else if (inv.status === "paid") {
+        // Payments log not set up yet: fall back to the invoice status
         rev = Number(inv.total) || 0;
       } else if (inv.status === "deposit_paid") {
         const pct = (inv.deposit_percentage || 50) / 100;
         rev = (Number(inv.total) || 0) * pct;
-      } else if (inv.status === "pending" || inv.status === "sent") {
-        rev = Number(inv.total) || 0;
       }
 
       // Find expenses linked to this invoice
       const linkedExpenses = expenses.filter((e) => e.invoice_id === inv.id);
-      const expSum = linkedExpenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+      const expSum = totalExpenses(linkedExpenses).costs;
       const net = rev - expSum;
       const margin = rev > 0 ? (net / rev) * 100 : 0;
 
@@ -116,6 +144,8 @@ export default function AccountingPage() {
         expenses: expSum,
         netProfit: net,
         margin,
+        balance: pay.balance,
+        overdue: pay.overdue,
         raw: inv,
       });
     });
@@ -125,7 +155,7 @@ export default function AccountingPage() {
       const rev = Number(evt.total_revenue) || 0;
       const linkedExpenses = expenses.filter((e) => e.event_id === evt.id);
       const expSum = linkedExpenses.length > 0
-        ? linkedExpenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0)
+        ? totalExpenses(linkedExpenses).costs
         : Number(evt.total_expenses) || 0;
 
       const net = rev - expSum;
@@ -142,13 +172,15 @@ export default function AccountingPage() {
         expenses: expSum,
         netProfit: net,
         margin,
+        balance: 0,
+        overdue: false,
         raw: evt,
       });
     });
 
     // Sort by Date Descending
     return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [invoices, events, expenses]);
+  }, [invoices, events, expenses, payments]);
 
   // Apply Date Range & Search Filters to Ledger
   const filteredLedger = useMemo(() => {
@@ -187,9 +219,7 @@ export default function AccountingPage() {
 
   // Total General Unlinked Overhead Expenses
   const totalGeneralExpenses = useMemo(() => {
-    return expenses
-      .filter((e) => !e.event_id && !e.invoice_id)
-      .reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+    return totalExpenses(expenses.filter((e) => !e.event_id && !e.invoice_id)).costs;
   }, [expenses]);
 
   // Key Financial KPIs
@@ -208,10 +238,37 @@ export default function AccountingPage() {
     };
   }, [filteredLedger, totalGeneralExpenses, dateRange]);
 
+  // Money owed to us, owed to the team, and entries that need a second look
+  const owedToUs = useMemo(() => {
+    let total = 0;
+    let overdue = 0;
+    invoices.forEach((inv) => {
+      const s = summarisePayments(inv, payments);
+      total += s.balance;
+      if (s.overdue) overdue += s.balance;
+    });
+    return { total, overdue };
+  }, [invoices, payments]);
+  const owedToTeam = useMemo(() => payeeTotals(expenses).reduce((a, p) => a + p.owed, 0), [expenses]);
+  const attentionCount = useMemo(() => expenses.filter((e) => expenseIssues(e).length > 0).length, [expenses]);
+  const expenseTotals = useMemo(() => totalExpenses(expenses), [expenses]);
+  // Cash view: everything received minus everything actually paid out (equipment at full price).
+  // Costs typed straight onto an event with no matching expense entries are included so nothing is hidden.
+  const cashPosition = useMemo(() => {
+    const cashIn = ledgerItems.reduce((a, i) => a + i.revenue, 0);
+    const legacyEventCosts = events.reduce((a, evt) => {
+      const hasLinked = expenses.some((e) => e.event_id === evt.id);
+      return a + (hasLinked ? 0 : Number(evt.total_expenses) || 0);
+    }, 0);
+    return { cashIn, cashOut: expenseTotals.cashOut + legacyEventCosts, balance: cashIn - expenseTotals.cashOut - legacyEventCosts };
+  }, [ledgerItems, events, expenses, expenseTotals]);
+  const knownPayees = useMemo(() => payeeTotals(expenses).map((p) => p.payee), [expenses]);
+
   // Expense Categories Breakdown
   const expenseByCategory = useMemo(() => {
     const cats: Record<string, number> = {};
     expenses.forEach((e) => {
+      if (e.kind === "asset") return; // equipment bought to keep is shown separately
       const cat = e.category || "Other";
       cats[cat] = (cats[cat] || 0) + (Number(e.amount) || 0);
     });
@@ -223,6 +280,9 @@ export default function AccountingPage() {
     return expenses
       .filter((exp) => {
         if (expenseCategoryFilter !== "all" && exp.category !== expenseCategoryFilter) {
+          return false;
+        }
+        if (attentionOnly && expenseIssues(exp).length === 0) {
           return false;
         }
         if (expenseSearch.trim()) {
@@ -242,7 +302,7 @@ export default function AccountingPage() {
         return true;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [expenses, expenseCategoryFilter, expenseSearch, events, invoices]);
+  }, [expenses, expenseCategoryFilter, expenseSearch, attentionOnly, events, invoices]);
 
   // Helper to determine where an expense is linked
   const getExpenseLinkDetails = (exp: ExpenseItem) => {
@@ -260,10 +320,10 @@ export default function AccountingPage() {
         kind: "invoice" as const,
       };
     }
-    return {
-      label: "General Overhead (Unlinked)",
-      kind: "general" as const,
-    };
+    if (exp.is_overhead) {
+      return { label: "General business overhead", kind: "general" as const };
+    }
+    return { label: "Not linked yet: choose a booking or overhead", kind: "unlinked" as const };
   };
 
   // Open Create Expense Modal
@@ -273,9 +333,20 @@ export default function AccountingPage() {
     setExpenseCategory("Staff Wages");
     setExpenseAmount("");
     setExpenseDate(new Date().toISOString().split("T")[0]);
-    setExpenseTargetId(targetId || "general");
+    setExpenseTargetId(targetId || "");
     setExpenseNotes("");
+    setExpenseKind("running");
+    setExpenseLife(DEFAULT_ASSET_LIFE_MONTHS);
+    setExpenseReceipt(null);
+    setExpensePayee("");
+    setExpensePayStatus("paid");
     setIsExpenseModalOpen(true);
+  };
+
+  // Open the form ready to log a staff payout
+  const handleOpenCreatePayout = () => {
+    handleOpenCreateExpense();
+    setExpenseCategory("Staff Wages");
   };
 
   // Open Edit Expense Modal
@@ -286,7 +357,8 @@ export default function AccountingPage() {
     setExpenseAmount(exp.amount !== undefined ? exp.amount : "");
     setExpenseDate(exp.date ? exp.date.split("T")[0] : new Date().toISOString().split("T")[0]);
 
-    let target = "general";
+    // Older unlinked entries must be reviewed: pick a booking or confirm overhead
+    let target = exp.is_overhead ? "general" : "";
     if (exp.event_id) {
       target = `event:${exp.event_id}`;
     } else if (exp.invoice_id) {
@@ -294,14 +366,31 @@ export default function AccountingPage() {
     }
     setExpenseTargetId(target);
     setExpenseNotes(exp.notes || "");
+    setExpenseKind(exp.kind === "asset" ? "asset" : "running");
+    setExpenseLife(exp.useful_life_months || DEFAULT_ASSET_LIFE_MONTHS);
+    setExpenseReceipt(exp.receipt_path || null);
+    setExpensePayee(exp.payee || "");
+    setExpensePayStatus(exp.payment_status === "owed" ? "owed" : "paid");
     setIsExpenseModalOpen(true);
   };
 
   // Handle Create or Update Expense
   const handleSaveExpense = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!expenseTitle.trim() || !expenseAmount) {
-      toast.error("Please provide an expense title and valid amount.");
+    if (!expenseTitle.trim() || !expenseAmount || Number(expenseAmount) <= 0) {
+      toast.error("Please provide an expense title and an amount above zero.");
+      return;
+    }
+    if (/^[\d\s.,R]+$/.test(expenseTitle.trim())) {
+      toast.error('The title looks like just a number. Say what it was for, e.g. "Batteries" or "Fuel to Durbanville".');
+      return;
+    }
+    if (!expenseTargetId) {
+      toast.error("Choose which booking or event this belongs to, or pick General business overhead.");
+      return;
+    }
+    if (expenseKind === "asset" && (!expenseLife || Number(expenseLife) < 1)) {
+      toast.error("Enter how many months this equipment should last.");
       return;
     }
 
@@ -313,6 +402,13 @@ export default function AccountingPage() {
         amount: Number(expenseAmount),
         date: expenseDate,
         notes: expenseNotes.trim(),
+        kind: expenseKind,
+        useful_life_months: expenseKind === "asset" ? Number(expenseLife) : null,
+        receipt_path: expenseReceipt,
+        is_overhead: expenseTargetId === "general",
+        payee: expenseCategory === "Staff Wages" ? expensePayee.trim() || null : null,
+        payment_status: expenseCategory === "Staff Wages" ? expensePayStatus : "paid",
+        paid_on: expenseCategory === "Staff Wages" && expensePayStatus === "paid" ? expenseDate : null,
       };
 
       if (expenseTargetId === "general") {
@@ -364,9 +460,39 @@ export default function AccountingPage() {
     }
   };
 
+  // Upload a receipt photo / PDF and keep its storage path on the form
+  const handleReceiptFile = async (file: File | undefined) => {
+    if (!file) return;
+    setUploadingReceipt(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/expenses/receipt", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      setExpenseReceipt(data.path);
+      toast.success("Receipt attached.");
+    } catch (err: any) {
+      toast.error(err.message || "Upload failed.");
+    } finally {
+      setUploadingReceipt(false);
+    }
+  };
+
+  const viewReceipt = async (path: string) => {
+    try {
+      const res = await fetch(`/api/expenses/receipt?path=${encodeURIComponent(path)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not open the receipt.");
+      window.open(data.url, "_blank", "noopener");
+    } catch (err: any) {
+      toast.error(err.message || "Could not open the receipt.");
+    }
+  };
+
   // Handle Delete Expense
   const handleDeleteExpense = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this expense? This action cannot be undone.")) return;
+    if (!(await confirm({ title: "Delete expense?", description: "This action cannot be undone.", confirmLabel: "Delete" }))) return;
     setDeletingExpenseId(id);
     try {
       const res = await fetch(`/api/expenses/${id}`, { method: "DELETE" });
@@ -479,8 +605,8 @@ export default function AccountingPage() {
         <div className="bg-card/70 backdrop-blur-md p-5 rounded-2xl border border-emerald-500/20 shadow-lg relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Revenue</p>
-              <h3 className="text-2xl font-bold font-mono text-emerald-400 pt-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{payments.length > 0 ? "Cash Received" : "Total Revenue"}</p>
+              <h3 className="text-2xl font-bold font-sans tabular-nums text-emerald-400 pt-1">
                 R {kpis.totalRevenue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -488,8 +614,8 @@ export default function AccountingPage() {
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-emerald-400/80 pt-2 flex items-center gap-1 font-mono">
-            <ArrowUpRight className="h-3 w-3" /> Gross sales from events & invoices
+          <p className="text-[10px] text-emerald-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
+            <ArrowUpRight className="h-3 w-3" /> {payments.length > 0 ? "Money actually received" : "Gross sales from events & invoices"}
           </p>
         </div>
 
@@ -497,8 +623,8 @@ export default function AccountingPage() {
         <div className="bg-card/70 backdrop-blur-md p-5 rounded-2xl border border-rose-500/20 shadow-lg relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Total Expenses</p>
-              <h3 className="text-2xl font-bold font-mono text-rose-400 pt-1">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Costs</p>
+              <h3 className="text-2xl font-bold font-sans tabular-nums text-rose-400 pt-1">
                 R {kpis.totalExpenses.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -506,8 +632,8 @@ export default function AccountingPage() {
               <TrendingDown className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-rose-400/80 pt-2 flex items-center gap-1 font-mono">
-            <ArrowDownRight className="h-3 w-3" /> Operational & event costs incurred
+          <p className="text-[10px] text-rose-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
+            <ArrowDownRight className="h-3 w-3" /> Running costs + equipment used so far
           </p>
         </div>
 
@@ -516,7 +642,7 @@ export default function AccountingPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Net Profit</p>
-              <h3 className={`text-2xl font-bold font-mono pt-1 ${kpis.netProfit >= 0 ? "text-purple-400" : "text-rose-400"}`}>
+              <h3 className={`text-2xl font-bold font-sans tabular-nums pt-1 ${kpis.netProfit >= 0 ? "text-purple-400" : "text-rose-400"}`}>
                 R {kpis.netProfit.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
               </h3>
             </div>
@@ -524,8 +650,8 @@ export default function AccountingPage() {
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-purple-400/80 pt-2 flex items-center gap-1 font-mono">
-            <Sparkles className="h-3 w-3 text-purple-400" /> Revenue minus all expenses
+          <p className="text-[10px] text-purple-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
+            <Sparkles className="h-3 w-3 text-purple-400" /> Received minus costs
           </p>
         </div>
 
@@ -534,7 +660,7 @@ export default function AccountingPage() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Profit Margin</p>
-              <h3 className="text-2xl font-bold font-mono text-cyan-400 pt-1">
+              <h3 className="text-2xl font-bold font-sans tabular-nums text-cyan-400 pt-1">
                 {kpis.profitMargin.toFixed(1)}%
               </h3>
             </div>
@@ -542,10 +668,41 @@ export default function AccountingPage() {
               <PieChart className="h-5 w-5" />
             </div>
           </div>
-          <p className="text-[10px] text-cyan-400/80 pt-2 flex items-center gap-1 font-mono">
+          <p className="text-[10px] text-cyan-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
             <BarChart3 className="h-3 w-3" /> Net margin efficiency ratio
           </p>
         </div>
+      </div>
+
+      {/* Money owed, team payouts and equipment at a glance */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+        <button onClick={() => setActiveTab("reconcile")} className="text-left bg-card/70 rounded-xl border border-emerald-500/30 p-3 hover:bg-secondary/40 transition-colors" title="Money received minus everything paid out, equipment at full price. Compare with your bank balance.">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Cash position (vs bank)</p>
+          <p className="font-sans tabular-nums font-bold text-sm text-emerald-300">R {cashPosition.balance.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className="text-[10px] text-muted-foreground">R {cashPosition.cashIn.toLocaleString("en-ZA")} in − R {cashPosition.cashOut.toLocaleString("en-ZA")} out</p>
+        </button>
+        <button onClick={() => setActiveTab("monthly")} className="text-left bg-card/70 rounded-xl border border-amber-500/30 p-3 hover:bg-secondary/40 transition-colors">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Owed to us</p>
+          <p className="font-sans tabular-nums font-bold text-amber-400 text-sm">R {owedToUs.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          {owedToUs.overdue > 0 && <p className="text-[10px] text-rose-400">R {owedToUs.overdue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })} overdue</p>}
+        </button>
+        <button onClick={() => setActiveTab("payouts")} className="text-left bg-card/70 rounded-xl border border-border p-3 hover:bg-secondary/40 transition-colors">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Owed to the team</p>
+          <p className={`font-sans tabular-nums font-bold text-sm ${owedToTeam > 0 ? "text-amber-400" : "text-foreground"}`}>R {owedToTeam.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+        </button>
+        <div className="bg-card/70 rounded-xl border border-border p-3">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Equipment bought</p>
+          <p className="font-sans tabular-nums font-bold text-sm text-cyan-300">R {expenseTotals.assetPurchases.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</p>
+          <p className="text-[10px] text-muted-foreground">R {expenseTotals.depreciation.toLocaleString("en-ZA", { minimumFractionDigits: 2 })} counted as a cost so far</p>
+        </div>
+        <button
+          onClick={() => { setAttentionOnly(true); setActiveTab("expenses"); }}
+          className="text-left bg-card/70 rounded-xl border border-border p-3 hover:bg-secondary/40 transition-colors"
+        >
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Expenses to review</p>
+          <p className={`font-sans tabular-nums font-bold text-sm ${attentionCount > 0 ? "text-amber-400" : "text-emerald-400"}`}>{attentionCount}</p>
+          <p className="text-[10px] text-muted-foreground">missing link, receipt or a clear title</p>
+        </button>
       </div>
 
       {/* Expense Category Distribution Cards */}
@@ -568,7 +725,7 @@ export default function AccountingPage() {
                 title={`Filter expenses by ${cat}`}
               >
                 <p className="text-[10px] text-muted-foreground group-hover:text-foreground font-semibold truncate">{cat}</p>
-                <p className="text-xs font-bold font-mono text-foreground">
+                <p className="text-xs font-bold font-sans tabular-nums text-foreground">
                   R {val.toLocaleString("en-ZA")}
                 </p>
               </div>
@@ -602,17 +759,52 @@ export default function AccountingPage() {
             <Receipt className="h-4 w-4" />
             All Logged Expenses ({expenses.length})
           </button>
+          <button
+            onClick={() => setActiveTab("payouts")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === "payouts"
+                ? "bg-amber-600 text-white shadow-md shadow-amber-600/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Users className="h-4 w-4" />
+            Staff Payouts
+          </button>
+          <button
+            onClick={() => setActiveTab("monthly")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === "monthly"
+                ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <CalendarDays className="h-4 w-4" />
+            Monthly &amp; Owed
+          </button>
+          <button
+            onClick={() => setActiveTab("reconcile")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === "reconcile"
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Banknote className="h-4 w-4" />
+            Check Payments
+          </button>
         </div>
 
         {activeTab === "expenses" ? (
-          <div className="text-xs text-rose-400 font-mono font-semibold flex items-center gap-2">
-            <span>Total Logged Costs:</span>
+          <div className="text-xs text-rose-400 font-sans tabular-nums font-semibold flex items-center gap-2">
+            <span>Total Paid Out:</span>
             <span className="font-bold">
-              R {expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+              R {expenseTotals.cashOut.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
             </span>
           </div>
+        ) : activeTab === "payouts" || activeTab === "monthly" || activeTab === "reconcile" ? (
+          <div />
         ) : (
-          <div className="text-xs text-muted-foreground font-mono">
+          <div className="text-xs text-muted-foreground font-sans tabular-nums">
             Showing <span className="text-foreground font-bold">{filteredLedger.length}</span> entries
           </div>
         )}
@@ -679,7 +871,8 @@ export default function AccountingPage() {
                     <th className="py-3.5 px-4">Category</th>
                     <th className="py-3.5 px-4">Date</th>
                     <th className="py-3.5 px-4">Status</th>
-                    <th className="py-3.5 px-4 text-right">Revenue (R)</th>
+                    <th className="py-3.5 px-4 text-right">{payments.length > 0 ? "Received (R)" : "Revenue (R)"}</th>
+                    <th className="py-3.5 px-4 text-right">Still owed (R)</th>
                     <th className="py-3.5 px-4 text-right">Expenses (R)</th>
                     <th className="py-3.5 px-4 text-right">Net Profit (R)</th>
                     <th className="py-3.5 px-4 text-right">Margin (%)</th>
@@ -688,14 +881,14 @@ export default function AccountingPage() {
                 <tbody className="divide-y divide-border/60">
                   {loading ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-muted-foreground">
+                      <td colSpan={9} className="py-12 text-center text-muted-foreground">
                         <div className="inline-block animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full mb-2" />
                         <p className="text-xs">Loading financial ledger...</p>
                       </td>
                     </tr>
                   ) : filteredLedger.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-muted-foreground">
+                      <td colSpan={9} className="py-12 text-center text-muted-foreground">
                         <AlertCircle className="h-8 w-8 mx-auto opacity-40 mb-2" />
                         <p className="text-sm font-bold">No financial records found</p>
                         <p className="text-xs">Try adjusting your search query or filters.</p>
@@ -720,11 +913,11 @@ export default function AccountingPage() {
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono text-muted-foreground">
+                        <td className="py-3.5 px-4 font-sans tabular-nums text-muted-foreground">
                           {item.category}
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono">
+                        <td className="py-3.5 px-4 font-sans tabular-nums">
                           {item.date}
                         </td>
 
@@ -742,11 +935,31 @@ export default function AccountingPage() {
                           </span>
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-emerald-400">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-emerald-400">
                           R {item.revenue.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-rose-400">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums">
+                          {item.kind === "invoice" && item.raw?.type === "invoice" ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <span className={item.balance > 0 ? (item.overdue ? "font-bold text-rose-400" : "font-bold text-amber-400") : "text-muted-foreground"}>
+                                {item.balance > 0 ? `R ${item.balance.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}` : "-"}
+                                {item.overdue && <span className="ml-1 text-[9px] uppercase">overdue</span>}
+                              </span>
+                              <button
+                                onClick={() => setPaymentsInvoice(item.raw as Invoice)}
+                                title="Record or view payments"
+                                className="p-1 hover:bg-emerald-500/20 text-muted-foreground hover:text-emerald-400 rounded-md transition-colors"
+                              >
+                                <Banknote className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </td>
+
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-rose-400">
                           <div className="flex items-center justify-end gap-1.5">
                             <span>R {item.expenses.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>
                             {item.expenses > 0 && (
@@ -764,13 +977,13 @@ export default function AccountingPage() {
                           </div>
                         </td>
 
-                        <td className={`py-3.5 px-4 text-right font-mono font-bold ${
+                        <td className={`py-3.5 px-4 text-right font-sans tabular-nums font-bold ${
                           item.netProfit >= 0 ? "text-purple-400" : "text-rose-400"
                         }`}>
                           R {item.netProfit.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-cyan-400">
+                        <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-cyan-400">
                           {item.margin.toFixed(1)}%
                         </td>
                       </tr>
@@ -815,13 +1028,24 @@ export default function AccountingPage() {
                 </SelectContent>
               </Select>
 
-              {(expenseSearch || expenseCategoryFilter !== "all") && (
+              <Button
+                size="sm"
+                variant={attentionOnly ? "default" : "outline"}
+                onClick={() => setAttentionOnly((v) => !v)}
+                className="text-xs h-8 rounded-xl whitespace-nowrap"
+                title="Show only expenses missing a link, receipt or a clear title"
+              >
+                Needs review ({attentionCount})
+              </Button>
+
+              {(expenseSearch || expenseCategoryFilter !== "all" || attentionOnly) && (
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => {
                     setExpenseSearch("");
                     setExpenseCategoryFilter("all");
+                    setAttentionOnly(false);
                   }}
                   className="text-xs text-muted-foreground hover:text-foreground h-8"
                 >
@@ -874,13 +1098,31 @@ export default function AccountingPage() {
                       const link = getExpenseLinkDetails(exp);
                       return (
                         <tr key={exp.id} className="hover:bg-secondary/30 transition-colors group">
-                          <td className="py-3.5 px-4 font-mono text-muted-foreground whitespace-nowrap">
+                          <td className="py-3.5 px-4 font-sans tabular-nums text-muted-foreground whitespace-nowrap">
                             {exp.date ? exp.date.split("T")[0] : "—"}
                           </td>
 
                           <td className="py-3.5 px-4">
                             <div>
-                              <p className="font-bold text-foreground">{exp.title}</p>
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <p className="font-bold text-foreground">{exp.title}</p>
+                                {exp.kind === "asset" && (
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-cyan-500/10 text-cyan-300 border-cyan-500/30" title={`Equipment bought to keep: R ${depreciationToDate(exp).toLocaleString("en-ZA")} counted as a cost so far`}>
+                                    Equipment · {exp.useful_life_months || DEFAULT_ASSET_LIFE_MONTHS} mo
+                                  </span>
+                                )}
+                                {exp.category === "Staff Wages" && exp.payment_status === "owed" && (
+                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-amber-500/10 text-amber-400 border-amber-500/30">Owed</span>
+                                )}
+                                {exp.receipt_path && (
+                                  <button type="button" onClick={() => viewReceipt(exp.receipt_path as string)} className="text-muted-foreground hover:text-primary" title="View receipt">
+                                    <Paperclip className="h-3 w-3" />
+                                  </button>
+                                )}
+                              </div>
+                              {expenseIssues(exp).length > 0 && (
+                                <p className="text-[10px] text-amber-400/90 mt-0.5">⚠ {expenseIssues(exp).join(" · ")}</p>
+                              )}
                               {exp.notes && (
                                 <p className="text-[11px] text-muted-foreground/90 leading-tight mt-0.5 whitespace-pre-wrap">
                                   {exp.notes}
@@ -901,7 +1143,9 @@ export default function AccountingPage() {
                                 ? "bg-purple-500/10 text-purple-300 border-purple-500/30"
                                 : link.kind === "invoice"
                                   ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/30"
-                                  : "bg-secondary/40 text-muted-foreground border-border"
+                                  : link.kind === "unlinked"
+                                    ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                                    : "bg-secondary/40 text-muted-foreground border-border"
                             }`}>
                               {link.kind === "event" && <Flag className="h-3 w-3 text-purple-400" />}
                               {link.kind === "invoice" && <Receipt className="h-3 w-3 text-cyan-400" />}
@@ -909,7 +1153,7 @@ export default function AccountingPage() {
                             </span>
                           </td>
 
-                          <td className="py-3.5 px-4 text-right font-mono font-bold text-rose-400 whitespace-nowrap">
+                          <td className="py-3.5 px-4 text-right font-sans tabular-nums font-bold text-rose-400 whitespace-nowrap">
                             R {Number(exp.amount).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                           </td>
 
@@ -949,6 +1193,42 @@ export default function AccountingPage() {
         </div>
       )}
 
+      {/* VIEW 3: STAFF PAYOUTS */}
+      {activeTab === "payouts" && (
+        <PayoutsTab
+          expenses={expenses}
+          invoices={invoices}
+          onChanged={fetchData}
+          onAdd={handleOpenCreatePayout}
+          onEdit={handleOpenEditExpense}
+        />
+      )}
+
+      {/* VIEW 4: MONTHLY SUMMARY + MONEY OWED */}
+      {activeTab === "monthly" && (
+        <MonthlyTab
+          invoices={invoices}
+          payments={payments}
+          expenses={expenses}
+          onOpenPayments={(inv) => setPaymentsInvoice(inv)}
+        />
+      )}
+
+      {activeTab === "reconcile" && (
+        <ReconcileTab invoices={invoices} payments={payments} cashPosition={cashPosition.balance} onChanged={fetchData} />
+      )}
+
+      {/* Payments for one invoice */}
+      <PaymentsDialog
+        invoice={paymentsInvoice}
+        payments={payments}
+        open={!!paymentsInvoice}
+        onClose={() => setPaymentsInvoice(null)}
+        onChanged={async () => {
+          await fetchData();
+        }}
+      />
+
       {/* Log / Edit Expense Dialog Modal */}
       <Dialog open={isExpenseModalOpen} onOpenChange={setIsExpenseModalOpen}>
         <DialogContent className="sm:max-w-md bg-[#040817] border-cyan-900/50 text-slate-100 p-6 space-y-5">
@@ -968,7 +1248,7 @@ export default function AccountingPage() {
                 )}
               </DialogTitle>
               {editingExpense && (
-                <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
+                <span className="text-[10px] font-sans tabular-nums text-cyan-400/80 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-800/40">
                   ID: {editingExpense.id.slice(0, 8)}
                 </span>
               )}
@@ -1020,11 +1300,76 @@ export default function AccountingPage() {
                   value={expenseAmount}
                   onChange={(e) => setExpenseAmount(e.target.value ? Number(e.target.value) : "")}
                   placeholder="e.g. 450.00"
-                  className="bg-slate-950 border-rose-900/60 text-rose-400 font-bold font-mono text-xs rounded-xl"
+                  className="bg-slate-950 border-rose-900/60 text-rose-400 font-bold font-sans tabular-nums text-xs rounded-xl"
                   required
                 />
               </div>
             </div>
+
+            {/* Running cost vs equipment bought to keep */}
+            <div>
+              <label className="text-slate-400 font-semibold mb-1 block">What kind of expense is this? *</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setExpenseKind("running")}
+                  className={`rounded-xl border p-2.5 text-left transition-colors ${expenseKind === "running" ? "border-primary bg-primary/10 text-white" : "border-cyan-900/60 text-slate-400 hover:bg-slate-900"}`}
+                >
+                  <span className="font-semibold block">Running cost</span>
+                  <span className="text-[10px] opacity-80">Used up now: fuel, wages, food, batteries</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setExpenseKind("asset"); setExpenseCategory("Equipment / Maintenance"); }}
+                  className={`rounded-xl border p-2.5 text-left transition-colors ${expenseKind === "asset" ? "border-cyan-400 bg-cyan-500/10 text-white" : "border-cyan-900/60 text-slate-400 hover:bg-slate-900"}`}
+                >
+                  <span className="font-semibold block">Equipment I keep</span>
+                  <span className="text-[10px] opacity-80">Headsets, laptops: cost spread over its life</span>
+                </button>
+              </div>
+              {expenseKind === "asset" && (
+                <div className="mt-2 flex items-center gap-2">
+                  <label className="text-slate-400 whitespace-nowrap">Should last</label>
+                  <Input
+                    type="number" min="1" max="240" value={expenseLife}
+                    onChange={(e) => setExpenseLife(e.target.value ? Number(e.target.value) : "")}
+                    className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl w-24"
+                  />
+                  <span className="text-slate-400">months</span>
+                  {expenseAmount && expenseLife ? (
+                    <span className="text-[10px] text-cyan-300 ml-auto">≈ R {(Number(expenseAmount) / Number(expenseLife)).toFixed(2)} / month</span>
+                  ) : null}
+                </div>
+              )}
+            </div>
+
+            {expenseCategory === "Staff Wages" && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-slate-400 font-semibold mb-1 block">Paid to</label>
+                  <Input
+                    list="known-payees"
+                    value={expensePayee}
+                    onChange={(e) => setExpensePayee(e.target.value)}
+                    placeholder="e.g. George"
+                    className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
+                  />
+                  <datalist id="known-payees">
+                    {knownPayees.map((n) => <option key={n} value={n} />)}
+                  </datalist>
+                </div>
+                <div>
+                  <label className="text-slate-400 font-semibold mb-1 block">Payment</label>
+                  <Select value={expensePayStatus} onValueChange={(v: any) => setExpensePayStatus(v)}>
+                    <SelectTrigger className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="owed">Still owed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -1039,13 +1384,13 @@ export default function AccountingPage() {
               </div>
 
               <div>
-                <label className="text-slate-400 font-semibold mb-1 block">Link to Event / Booking</label>
+                <label className="text-slate-400 font-semibold mb-1 block">Which booking is this for? *</label>
                 <Select value={expenseTargetId} onValueChange={setExpenseTargetId}>
                   <SelectTrigger className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl">
-                    <SelectValue placeholder="General Operational Overhead" />
+                    <SelectValue placeholder="Choose a booking or overhead..." />
                   </SelectTrigger>
                   <SelectContent className="max-h-48 overflow-y-auto">
-                    <SelectItem value="general">General Overhead (Unlinked)</SelectItem>
+                    <SelectItem value="general">General business overhead (not one booking)</SelectItem>
                     {events.map((evt) => (
                       <SelectItem key={evt.id} value={`event:${evt.id}`}>
                         Event: {evt.title}
@@ -1062,12 +1407,32 @@ export default function AccountingPage() {
             </div>
 
             <div>
-              <label className="text-slate-400 font-semibold mb-1 block">Notes / Receipt Ref</label>
+              <label className="text-slate-400 font-semibold mb-1 block">Receipt (photo or PDF)</label>
+              {expenseReceipt ? (
+                <div className="flex items-center justify-between rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2">
+                  <span className="text-emerald-300 flex items-center gap-1.5"><Paperclip className="h-3.5 w-3.5" /> Receipt attached</span>
+                  <span className="flex items-center gap-3">
+                    <button type="button" className="text-cyan-300 hover:underline" onClick={() => viewReceipt(expenseReceipt)}>View</button>
+                    <button type="button" className="text-rose-400 hover:underline" onClick={() => setExpenseReceipt(null)}>Remove</button>
+                  </span>
+                </div>
+              ) : (
+                <label className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-cyan-900/60 py-3 text-slate-400 hover:bg-slate-900 cursor-pointer">
+                  <Paperclip className="h-4 w-4" />
+                  {uploadingReceipt ? "Uploading..." : "Attach a photo of the slip or invoice"}
+                  <input type="file" accept="image/*,application/pdf" capture="environment" className="hidden" disabled={uploadingReceipt}
+                    onChange={(e) => { handleReceiptFile(e.target.files?.[0]); e.target.value = ""; }} />
+                </label>
+              )}
+            </div>
+
+            <div>
+              <label className="text-slate-400 font-semibold mb-1 block">Notes</label>
               <Textarea
                 rows={2}
                 value={expenseNotes}
                 onChange={(e) => setExpenseNotes(e.target.value)}
-                placeholder="Receipt details, petrol slip number, or invoice notes..."
+                placeholder="Anything useful to remember about this expense..."
                 className="bg-slate-950 border-cyan-900/60 text-xs rounded-xl"
               />
             </div>
@@ -1099,7 +1464,7 @@ export default function AccountingPage() {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={submittingExpense}
+                  disabled={submittingExpense || uploadingReceipt}
                   className={`${
                     editingExpense
                       ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/20"

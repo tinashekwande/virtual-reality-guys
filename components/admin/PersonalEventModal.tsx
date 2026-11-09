@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useState, useEffect } from "react";
+import { useConfirm } from "@/components/admin/confirm-provider"
 import {
   X, Calendar, Clock, MapPin, AlignLeft, Palette, Save, Trash2
 } from "lucide-react";
@@ -35,6 +36,7 @@ export default function PersonalEventModal({
   onClose,
   onSuccess,
 }: PersonalEventModalProps) {
+  const confirm = useConfirm();
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -105,7 +107,7 @@ export default function PersonalEventModal({
 
   const handleDelete = async () => {
     if (!event) return;
-    if (!confirm(`Delete "${event.title}"? This cannot be undone.`)) return;
+    if (!(await confirm({ title: "Delete event?", description: `"${event.title}" will be permanently deleted.`, confirmLabel: "Delete" }))) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/personal-calendar?id=${event.id}`, { method: "DELETE" });

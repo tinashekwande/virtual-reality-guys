@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Journey through the Solar System | VR Guys</title>
+<meta name="robots" content="noindex" />
+<style>
+  html, body { margin: 0; height: 100%; background: #02040c; overflow: hidden; font-family: "Trebuchet MS", system-ui, sans-serif; }
+  canvas { display: block; }
+  #hud { position: fixed; top: 14px; left: 16px; right: 16px; color: #cfe3ff; font-size: 14px; pointer-events: none; display: flex; justify-content: space-between; }
+  #hud b { color: #22d3ee; }
+  #enter button { background: #22d3ee !important; color: #04121f !important; font-weight: 700 !important; border: none !important; border-radius: 14px !important; padding: 14px 26px !important; font-size: 17px !important; }
+  #loading { position: fixed; inset: 0; display: grid; place-items: center; background: #02040c; color: #cfe3ff; font-size: 18px; z-index: 5; transition: opacity .6s; }
+  #loading.done { opacity: 0; pointer-events: none; }
+  #loading b { color: #22d3ee; }
+</style>
+  <script type="module" crossorigin src="../assets/solar-system-qsgpHc8I.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/BufferGeometryUtils-BiGSmiIj.js">
+</head>
+<body>
+<div id="hud"><span><b>VR Guys</b> · Journey through the Solar System</span><span>Drag to look · click buttons · on a headset tap "Enter VR"</span></div>
+<div id="enter"></div>
+<div id="loading"><div><b>VR Guys</b> · Loading space... <span>0%</span></div></div>
+</body>
+</html>
