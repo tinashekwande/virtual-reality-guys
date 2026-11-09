@@ -3,7 +3,6 @@ import type { Media, Category, TeamMember } from "@/types";
 import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CyberButton } from "@/components/ui/cyber-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -321,25 +320,20 @@ export default async function Home() {
                   headsets, 100+ games and trained supervisors, then pack it all away.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                  <CyberButton
+                  <Link
                     href="#contact"
-                    size="lg"
-                    variant="primary"
-                    wrapperClassName="w-full sm:w-auto"
-                    className="w-full sm:w-auto"
+                    className="group inline-flex h-14 sm:h-16 w-full sm:w-auto sm:min-w-[220px] items-center justify-center gap-2.5 rounded-xl bg-primary px-8 text-base sm:text-lg font-semibold tracking-wide text-[#040817] transition-colors duration-150 hover:bg-primary/90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
-                    Check Your Date <ArrowRight className="h-5 w-5" />
-                  </CyberButton>
-                  <CyberButton
+                    Book Now <ArrowRight className="h-5 w-5 transition-transform duration-150 group-hover:translate-x-0.5" />
+                  </Link>
+                  <a
                     href={WHATSAPP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    size="lg"
-                    variant="whatsapp"
-                    wrapperClassName="hidden sm:inline-block"
+                    className="hidden sm:inline-flex h-14 sm:h-16 sm:min-w-[220px] items-center justify-center gap-2.5 rounded-xl border border-[#25D366]/50 bg-[#25D366]/10 px-8 text-base sm:text-lg font-semibold tracking-wide text-white transition-colors duration-150 hover:bg-[#25D366]/20 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <WhatsAppIcon className="h-5 w-5 text-[#25D366]" /> WhatsApp Us
-                  </CyberButton>
+                  </a>
                 </div>
                 <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 pt-2 text-sm sm:text-base text-white/75">
                   <div className="flex items-center gap-2">
