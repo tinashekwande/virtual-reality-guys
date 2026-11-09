@@ -152,8 +152,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Email Address</p>
-                  <a href="mailto:virtualrealityguyz@gmail.com" className="font-bold hover:text-primary transition-colors text-lg break-all">
-                    virtualrealityguyz@gmail.com
+                  <a href="mailto:bookings@virtualrealityguyz.co.za" className="font-bold hover:text-primary transition-colors text-lg break-all">
+                    bookings@virtualrealityguyz.co.za
                   </a>
                 </div>
               </div>

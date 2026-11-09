@@ -35,7 +35,7 @@ export default function VrGamingNearMePage() {
     "name": "Virtual Reality Guys",
     "image": "https://virtualrealityguyz.co.za/images/logo.png",
     "telephone": "+27717800323",
-    "email": "virtualrealityguyz@gmail.com",
+    "email": "bookings@virtualrealityguyz.co.za",
     "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",

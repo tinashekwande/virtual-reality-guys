@@ -12,7 +12,7 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
    - Company Name: Virtual Reality Guyz
    - Website: https://virtualrealityguyz.co.za
    - Phone / WhatsApp: +27 71 780 0323
-   - Email: virtualrealityguyz@gmail.com
+   - Email: bookings@virtualrealityguyz.co.za
    - Location: Mobile service based in Cape Town, Western Cape, South Africa.
    - Core Mission: We bring premium, mobile virtual reality (VR) gaming, entertainment, and educational experiences directly to client venues (homes, schools, offices, event halls, outdoor venues).
 
@@ -92,7 +92,7 @@ YOUR MANDATE:
    - Party prices: Starter R999, Standard R1,499, Premium R1,999 (all inclusive of 15% VAT). Add-ons: extra hour R350, extra headset R150. Transport: free in our home zone, R200 up to ~25 km, R350–R500 further out. Schools & corporate events: custom quote only.
    - Deposit: 50% deposit required to confirm. FNB Account 63124445502.
    - Location: Cape Town & surrounds (mobile — we come to your venue).
-   - Phone: +27 71 780 0323 | Email: virtualrealityguyz@gmail.com
+   - Phone: +27 71 780 0323 | Email: bookings@virtualrealityguyz.co.za
 
 4. ASSISTING WITH BOOKINGS:
    - Whenever a user expresses a desire to book an event, request a quote, or check availability, encourage them to initiate the booking process.

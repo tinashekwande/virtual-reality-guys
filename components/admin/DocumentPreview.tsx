@@ -117,7 +117,7 @@ export default function DocumentPreview({ invoice, onClose }: DocumentPreviewPro
             </div>
             <div className="text-xs text-slate-400 space-y-1 pt-1 print:text-slate-700">
               <p>📍 Cape Town & Surrounds, Western Cape</p>
-              <p>📞 +27 71 780 0323 | ✉️ virtualrealityguyz@gmail.com</p>
+              <p>📞 +27 71 780 0323 | ✉️ bookings@virtualrealityguyz.co.za</p>
               <p>🌐 www.virtualrealityguyz.co.za</p>
             </div>
           </div>

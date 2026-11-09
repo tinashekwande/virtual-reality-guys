@@ -37,7 +37,7 @@ export default function VrExperienceCapeTownPage() {
       "name": "Virtual Reality Guys",
       "image": "https://virtualrealityguyz.co.za/images/logo.png",
       "telephone": "+27717800323",
-      "email": "virtualrealityguyz@gmail.com",
+      "email": "bookings@virtualrealityguyz.co.za",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Cape Town",

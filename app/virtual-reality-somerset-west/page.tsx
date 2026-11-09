@@ -37,7 +37,7 @@ export default function VirtualRealitySomersetWestPage() {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
       "telephone": "+27717800323",
-      "email": "virtualrealityguyz@gmail.com",
+      "email": "bookings@virtualrealityguyz.co.za",
       "priceRange": "$$",
       "address": {
         "@type": "PostalAddress",

@@ -152,7 +152,7 @@ export default function VRCataloguePage() {
               Please enable JavaScript in your browser settings and reload the page.
             </p>
             <p className="text-sm text-muted-foreground">
-              Alternatively, contact us at <a href="mailto:info@virtualrealityguyz.co.za" className="text-primary underline">info@virtualrealityguyz.co.za</a> or call <a href="tel:+27717800323" className="text-primary underline">+27 71 780 0323</a> to receive a PDF catalogue.
+              Alternatively, contact us at <a href="mailto:bookings@virtualrealityguyz.co.za" className="text-primary underline">bookings@virtualrealityguyz.co.za</a> or call <a href="tel:+27717800323" className="text-primary underline">+27 71 780 0323</a> to receive a PDF catalogue.
             </p>
           </div>
         </noscript>

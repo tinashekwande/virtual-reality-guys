@@ -31,7 +31,7 @@ export default function CapeTownVRPage() {
     "@id": "https://virtualrealityguyz.co.za/virtual-reality-cape-town#organization",
     "url": "https://virtualrealityguyz.co.za/virtual-reality-cape-town",
     "telephone": "+27717800323",
-    "email": "virtualrealityguyz@gmail.com",
+    "email": "bookings@virtualrealityguyz.co.za",
     "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",

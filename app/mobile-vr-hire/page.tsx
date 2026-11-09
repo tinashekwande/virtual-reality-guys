@@ -31,7 +31,7 @@ export default function MobileVRHirePage() {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
       "telephone": "+27717800323",
-      "email": "virtualrealityguyz@gmail.com",
+      "email": "bookings@virtualrealityguyz.co.za",
       "url": "https://virtualrealityguyz.co.za",
       "address": {
         "@type": "PostalAddress",
