@@ -227,6 +227,7 @@ export default function ContactPage() {
             <div className="space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Explore Our Services</h4>
               <div className="flex flex-wrap gap-2">
+                <Link href="/school-vr-demonstrations" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">School VR &amp; Custom Builds</Link>
                 <Link href="/vr-team-building" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Team Building</Link>
                 <Link href="/kids-parties" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Kids Parties</Link>
                 <Link href="/corporate-events" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Corporate Events</Link>

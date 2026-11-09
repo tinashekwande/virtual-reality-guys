@@ -37,6 +37,8 @@ function formatFormType(type: string): string {
       return '💼 Corporate Event / Team Building'
     case 'school':
       return '🎓 School VR Demonstration'
+    case 'custom_vr_development':
+      return '🔬 Custom Educational VR Development'
     case 'rental':
     case 'rentals':
       return '🕶️ VR Equipment Rental'

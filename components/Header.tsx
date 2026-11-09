@@ -104,8 +104,8 @@ export default function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="focus:bg-secondary cursor-pointer rounded-lg">
                   <Link href="/school-vr-demonstrations" className="w-full px-3 py-2 block">
-                    <p className="font-semibold text-sm">School VR Demos</p>
-                    <p className="text-xs text-muted-foreground">Educational showcases</p>
+                    <p className="font-semibold text-sm">School VR &amp; Education</p>
+                    <p className="text-xs text-muted-foreground">Curriculum VR &amp; custom builds</p>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="focus:bg-secondary cursor-pointer rounded-lg">
