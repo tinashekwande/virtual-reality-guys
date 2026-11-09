@@ -101,7 +101,7 @@ export default function TermsOfServicePage() {
             If you have any questions regarding these Terms of Service, please contact us:
           </p>
           <div className="bg-secondary/20 p-6 rounded-lg border border-border mt-4">
-            <p><strong>Email:</strong> <a href="mailto:virtualrealityguyz@gmail.com" className="text-primary hover:underline">virtualrealityguyz@gmail.com</a></p>
+            <p><strong>Email:</strong> <a href="mailto:bookings@virtualrealityguyz.co.za" className="text-primary hover:underline">bookings@virtualrealityguyz.co.za</a></p>
             <p><strong>Phone:</strong> <a href="tel:+27717800323" className="text-primary hover:underline">+27 71 780 0323</a></p>
             <p><strong>Location:</strong> Cape Town, South Africa</p>
           </div>

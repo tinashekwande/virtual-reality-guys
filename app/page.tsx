@@ -133,7 +133,7 @@ export default async function Home() {
     "@id": "https://virtualrealityguyz.co.za/#organization",
     "url": "https://virtualrealityguyz.co.za",
     "telephone": "+27717800323",
-    "email": "virtualrealityguyz@gmail.com",
+    "email": "bookings@virtualrealityguyz.co.za",
     "priceRange": "$$",
     "aggregateRating": {
       "@type": "AggregateRating",
@@ -778,13 +778,13 @@ export default async function Home() {
                     <p className="font-semibold group-hover:text-primary transition-colors">{PHONE_DISPLAY}</p>
                   </div>
                 </a>
-                <a href="mailto:virtualrealityguyz@gmail.com" className="flex items-center gap-4 group">
+                <a href="mailto:bookings@virtualrealityguyz.co.za" className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Email us</p>
-                    <p className="font-semibold group-hover:text-primary transition-colors break-all">virtualrealityguyz@gmail.com</p>
+                    <p className="font-semibold group-hover:text-primary transition-colors break-all">bookings@virtualrealityguyz.co.za</p>
                   </div>
                 </a>
                 <div className="flex items-center gap-4">

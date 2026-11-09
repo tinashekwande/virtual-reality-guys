@@ -182,7 +182,7 @@ export function createPortalMcpServer() {
       return {
         knowledge_base: COMPANY_KNOWLEDGE_BASE.trim(),
         portal_settings: settings?.business_context ?? null,
-        email_signature: 'The Virtual Reality Guys team\n+27 71 780 0323 (call / WhatsApp)\nvirtualrealityguyz@gmail.com\nhttps://virtualrealityguyz.co.za',
+        email_signature: 'The Virtual Reality Guys team\n+27 71 780 0323 (call / WhatsApp)\nbookings@virtualrealityguyz.co.za\nhttps://virtualrealityguyz.co.za',
       }
     })
   )

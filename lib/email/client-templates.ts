@@ -6,7 +6,7 @@
 const BRAND = {
   name: 'Virtual Reality Guys',
   phone: '+27 71 780 0323',
-  email: 'virtualrealityguyz@gmail.com',
+  email: 'bookings@virtualrealityguyz.co.za',
   site: 'https://virtualrealityguyz.co.za',
   accent: '#06b6d4',
   dark: '#0b0f19',
