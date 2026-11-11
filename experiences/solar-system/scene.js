@@ -1,23 +1,27 @@
 import * as THREE from 'three'
 import { buildComet } from './comet.js'
+import { bakeNebula, buildStars } from './deep-space.js'
 
 // Builds the Solar System: realistic textures (generated at build time, see tools/gen-textures.mjs),
 // glowing atmospheres, an animated Sun, moons, an asteroid belt, stars and the Milky Way.
 // Sizes and distances are chosen to look good in VR, not to scale.
 
 export const EYE = 1.6
-const TEX = new URL('../textures/solar/', import.meta.url).href
+const TEX = new URL('../textures/solar/', location.href).href
 
 export const SPEC = {
   sun: { r: 12, x: 0 },
-  mercury: { a: 25, r: 1.2, x: 34, spin: 0.06, tilt: 0.03, atmo: null },
-  venus: { a: -35, r: 2.2, x: 52, spin: -0.03, tilt: 0.05, atmo: [1.0, 0.85, 0.55, 0.9] },
-  earth: { a: 15, r: 2.4, x: 72, spin: 0.12, tilt: 0.41, atmo: [0.35, 0.6, 1.0, 1.2] },
-  mars: { a: -20, r: 1.6, x: 90, spin: 0.12, tilt: 0.44, atmo: [1.0, 0.55, 0.35, 0.5] },
-  jupiter: { a: 35, r: 7, x: 150, spin: 0.25, tilt: 0.05, atmo: [1.0, 0.85, 0.7, 0.5] },
-  saturn: { a: -25, r: 5.6, x: 195, spin: 0.22, tilt: 0.47, atmo: [1.0, 0.9, 0.7, 0.45] },
-  uranus: { a: 30, r: 3.4, x: 232, spin: 0.15, tilt: 1.7, atmo: [0.6, 0.95, 1.0, 0.8] },
-  neptune: { a: -15, r: 3.3, x: 262, spin: 0.16, tilt: 0.49, atmo: [0.45, 0.6, 1.0, 0.9] },
+  // spin: radians per second. Real rotation rates relative to each other (Earth's day = 150 s here), so
+  // Jupiter and Saturn turn fastest, Mercury and Venus barely move, and Venus and Uranus turn backwards.
+  // Mercury and Venus get a little extra so children can still see they turn.
+  mercury: { a: 25, r: 1.2, x: 34, spin: 0.003, tilt: 0.03, atmo: null },
+  venus: { a: -35, r: 2.2, x: 52, spin: -0.002, tilt: 0.05, atmo: [1.0, 0.85, 0.55, 0.9] },
+  earth: { a: 15, r: 2.4, x: 72, spin: 0.042, tilt: 0.41, atmo: [0.35, 0.6, 1.0, 1.2] },
+  mars: { a: -20, r: 1.6, x: 90, spin: 0.041, tilt: 0.44, atmo: [1.0, 0.55, 0.35, 0.5] },
+  jupiter: { a: 35, r: 7, x: 150, spin: 0.101, tilt: 0.05, atmo: [1.0, 0.85, 0.7, 0.5] },
+  saturn: { a: -25, r: 5.6, x: 195, spin: 0.094, tilt: 0.47, atmo: [1.0, 0.9, 0.7, 0.45] },
+  uranus: { a: 30, r: 3.4, x: 232, spin: -0.058, tilt: 1.7, atmo: [0.6, 0.95, 1.0, 0.8] },
+  neptune: { a: -15, r: 3.3, x: 262, spin: 0.063, tilt: 0.49, atmo: [0.45, 0.6, 1.0, 0.9] },
 }
 
 /** Where a body sits: x = distance from the Sun, a = angle around its orbit (degrees). */
@@ -44,6 +48,8 @@ export function buildScene(app, manager) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping
   renderer.toneMappingExposure = 1.05
   const loader = new THREE.TextureLoader(manager)
+  // photographic planet maps (see textures/solar/real/CREDITS.md)
+  const real = (name, color = true) => tex('real/' + name, color)
   const tex = (name, color = true) => {
     const t = loader.load(TEX + name + '.jpg')
     if (color) t.colorSpace = THREE.SRGBColorSpace
@@ -53,45 +59,26 @@ export function buildScene(app, manager) {
   const updaters = []
   const sunPos = new THREE.Vector3(0, EYE, 0)
 
-  // ---------------- sky ----------------
+  // ---------------- sky: the Milky Way, nebulae and stars ----------------
+  // (painted once at start-up from the Beyond the Void sky shader, then shown on a big sphere around you)
+  const skyTex = bakeNebula(renderer, 4096)
   const sky = new THREE.Mesh(
     new THREE.SphereGeometry(950, 64, 32),
-    new THREE.MeshBasicMaterial({ map: tex('sky'), side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false, color: 0xdddddd }),
+    new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, depthWrite: false, fog: false, toneMapped: false }),
   )
   sky.renderOrder = -10
   scene.add(sky)
   updaters.push(() => sky.position.copy(rig.position)) // sky follows you, so it feels infinitely far
 
-  // twinkling stars of different colours and sizes
+  // twinkling stars in true star colours, clustered along the Milky Way, and bright stars with spikes
   {
-    const n = 3500
-    const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), phase = new Float32Array(n)
-    const palette = [[0.75, 0.82, 1], [1, 1, 1], [1, 0.95, 0.85], [1, 0.82, 0.62], [1, 0.7, 0.55]]
-    for (let i = 0; i < n; i++) {
-      const v = new THREE.Vector3().randomDirection().multiplyScalar(900)
-      pos.set([v.x, v.y, v.z], i * 3)
-      const c = palette[Math.floor(Math.random() * palette.length)]
-      col.set(c, i * 3)
-      size[i] = Math.random() < 0.04 ? 3.2 + Math.random() * 2 : 1.2 + Math.random() * 1.6
-      phase[i] = Math.random() * 100
-    }
-    const g = new THREE.BufferGeometry()
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-    g.setAttribute('color', new THREE.BufferAttribute(col, 3))
-    g.setAttribute('size', new THREE.BufferAttribute(size, 1))
-    g.setAttribute('phase', new THREE.BufferAttribute(phase, 1))
-    const mat = new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 } },
-      vertexShader: `attribute float size; attribute float phase; attribute vec3 color; varying vec3 vC; varying float vA; uniform float uTime;
-        void main(){ vC = color; vA = 0.7 + 0.3 * sin(uTime * (1.5 + fract(phase) * 2.5) + phase);
-          gl_PointSize = size; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-      fragmentShader: `varying vec3 vC; varying float vA; void main(){ vec2 d = gl_PointCoord - 0.5; float a = smoothstep(0.5, 0.0, length(d)); gl_FragColor = vec4(vC * vA, a); }`,
-      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    const { group, uniforms } = buildStars(900, { scale: 0.45 })
+    scene.add(group)
+    updaters.push((dt, t) => {
+      uniforms.uTime.value = t
+      uniforms.uPixelScale.value = renderer.xr.isPresenting ? 1.3 : 1
+      group.position.copy(rig.position)
     })
-    const stars = new THREE.Points(g, mat)
-    stars.frustumCulled = false
-    scene.add(stars)
-    updaters.push((dt, t) => { mat.uniforms.uTime.value = t; stars.position.copy(rig.position) })
   }
 
   // shooting stars every few seconds
@@ -141,7 +128,7 @@ export function buildScene(app, manager) {
   }
 
   // ---------------- lighting ----------------
-  scene.add(new THREE.AmbientLight(0x8090b0, 0.16))
+  scene.add(new THREE.AmbientLight(0x8090b0, 0.05)) // night sides almost black, as in space
   const sunLight = new THREE.PointLight(0xfff4e0, 3.2, 0, 0)
   sunLight.position.copy(sunPos)
   scene.add(sunLight)
@@ -232,7 +219,7 @@ export function buildScene(app, manager) {
   updaters.push((dt, t) => {
     sunMat.uniforms.uTime.value = t
     flameMat.uniforms.uTime.value = t
-    sun.rotation.y += dt * 0.01
+    sun.rotation.y += dt * 0.0017 // the Sun turns once in about 25 days: 25 x slower than Earth
     camera.getWorldPosition(camPos)
     flames.lookAt(camPos)
     // size of the Sun's outline on the flame disc, seen from where you are
@@ -267,30 +254,34 @@ export function buildScene(app, manager) {
   }
   const std = (name, opts = {}) => new THREE.MeshStandardMaterial({ map: tex(name), roughness: 1, metalness: 0, ...opts })
 
-  planet('mercury', std('mercury', { bumpMap: tex('mercury_bump', false), bumpScale: 3 }))
-  planet('venus', std('venus'))
-  // Earth: city lights only on the night side, shiny oceans, moving clouds
-  const earthMat = std('earth', {
-    bumpMap: tex('earth_bump', false), bumpScale: 2.5, roughnessMap: tex('earth_rough', false),
-    emissive: 0xffc47a, emissiveMap: tex('earth_night'), emissiveIntensity: 1.8,
+  // relief from the photo itself (craters, canyons and cloud bands catch the light at the terminator)
+  const photo = (name, bumpScale, opts = {}) => { const map = real(name); return new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale, roughness: 1, metalness: 0, ...opts }) }
+  planet('mercury', photo('mercury', 2.8))
+  planet('venus', photo('venus', 0.6, { color: 0xffe9c4 }))
+  // Earth: mountains in relief, shiny oceans with a sun glint, city lights only on the night side, moving clouds
+  const earthMat = new THREE.MeshStandardMaterial({
+    map: real('earth_day'), normalMap: real('earth_normal', false), normalScale: new THREE.Vector2(1.6, 1.6),
+    roughnessMap: real('earth_rough', false), roughness: 1, metalness: 0,
+    emissive: 0xffc47a, emissiveMap: real('earth_lights'), emissiveIntensity: 2.2,
   })
+  earthGrade(earthMat)
   nightSideOnly(earthMat, sunPos)
   const earth = planet('earth', earthMat)
   const clouds = new THREE.Mesh(
     new THREE.SphereGeometry(SPEC.earth.r * 1.012, 96, 64),
-    new THREE.MeshStandardMaterial({ color: 0xffffff, alphaMap: tex('earth_clouds', false), transparent: true, depthWrite: false, roughness: 1 }),
+    new THREE.MeshStandardMaterial({ color: 0xffffff, alphaMap: real('earth_clouds', false), transparent: true, depthWrite: false, roughness: 1, opacity: 1 }),
   )
   tilts.earth.add(clouds)
-  spinners.push({ mesh: clouds, speed: 0.16, boost: 0 })
-  planet('mars', std('mars', { bumpMap: tex('mars_bump', false), bumpScale: 3 }))
-  planet('jupiter', std('jupiter'))
-  planet('saturn', std('saturn'))
-  planet('uranus', std('uranus'))
-  planet('neptune', std('neptune'))
+  spinners.push({ mesh: clouds, speed: SPEC.earth.spin * 1.12, boost: 0 }) // clouds drift a little faster than the ground
+  planet('mars', photo('mars', 3.2))
+  planet('jupiter', photo('jupiter', 1.2))
+  planet('saturn', photo('saturn', 1.0))
+  planet('uranus', photo('uranus', 0.4))
+  planet('neptune', photo('neptune', 0.6))
 
   // Saturn's rings (with the planet's shadow falling across them) and Uranus's faint rings
   const satRingTex = saturnRingTexture()
-  const satRing = rings(SPEC.saturn.r * 1.24, SPEC.saturn.r * 2.3, satRingTex, bodies.saturn, sunPos, 1)
+  const satRing = saturnRings(SPEC.saturn.r * 1.24, SPEC.saturn.r * 2.3, bodies.saturn, sunPos)
   tilts.saturn.add(satRing)
   tilts.uranus.add(rings(SPEC.uranus.r * 1.6, SPEC.uranus.r * 2.0, faintRingTexture(), bodies.uranus, sunPos, 0.5))
 
@@ -298,15 +289,15 @@ export function buildScene(app, manager) {
   const moonsOf = {}
   const moonMeshes = {}
   const moonMat = (name, bump) => std(name, bump ? { bumpMap: tex(name + '_bump', false), bumpScale: 2 } : {})
-  addMoon('earth', moonMat('moon', true), 0.6, 6.2, 0.05, 0.25, null, 1.2)
-  addMoon('mars', moonMat('rockmoon'), 0.22, 3.0, 0.14, 0.1, [1, 0.75, 0.85])
-  addMoon('mars', moonMat('rockmoon'), 0.15, 4.6, 0.09, -0.2, [1, 0.8, 0.9])
-  addMoon('jupiter', moonMat('io'), 0.55, 10.5, 0.12, 0.05)
-  addMoon('jupiter', moonMat('europa'), 0.48, 13, 0.09, 0.12)
-  addMoon('jupiter', moonMat('ganymede'), 0.8, 16.5, 0.07, -0.08)
-  addMoon('jupiter', moonMat('callisto'), 0.72, 18.5, 0.05, 0.15)
-  addMoon('saturn', moonMat('titan'), 0.7, 14, 0.06, 0.35, null, 2.4)
-  addMoon('neptune', moonMat('triton'), 0.45, 7.5, -0.08, 0.3)
+  addMoon('earth', photo('moon', 2.2), 0.6, 6.2, 0.02, 0.25, null, 1.2) // the real Moon; it always shows us the same face
+  addMoon('mars', moonMat('rockmoon'), 0.22, 3.0, 0.06, 0.1, [1, 0.75, 0.85])
+  addMoon('mars', moonMat('rockmoon'), 0.15, 4.6, 0.035, -0.2, [1, 0.8, 0.9])
+  addMoon('jupiter', moonMat('io'), 0.55, 10.5, 0.05, 0.05)
+  addMoon('jupiter', moonMat('europa'), 0.48, 13, 0.035, 0.12)
+  addMoon('jupiter', moonMat('ganymede'), 0.8, 16.5, 0.025, -0.08)
+  addMoon('jupiter', moonMat('callisto'), 0.72, 18.5, 0.016, 0.15)
+  addMoon('saturn', moonMat('titan'), 0.7, 14, 0.02, 0.35, null, 2.4)
+  addMoon('neptune', moonMat('triton'), 0.45, 7.5, -0.03, 0.3)
   function addMoon(parent, mat, r, dist, speed, incline, squash, startAngle = Math.random() * 6.28) {
     const pivot = new THREE.Group()
     ;(moonsOf[parent] ||= []).push(pivot)
@@ -367,7 +358,7 @@ export function buildScene(app, manager) {
     beltGroup.position.copy(sunPos)
     beltGroup.add(belt)
     scene.add(beltGroup)
-    updaters.push((dt) => (beltGroup.rotation.y += dt * 0.004))
+    updaters.push((dt) => (beltGroup.rotation.y += dt * 0.002))
   }
 
   // faint orbit lines (brighter when you are high above the system)
@@ -437,7 +428,7 @@ export function buildScene(app, manager) {
   })
 
   return {
-    bodies, tilts, sun, sunPos, moonsOf, comet, satRingTex, skyTexture: sky.material.map,
+    bodies, tilts, sun, sunPos, moonsOf, comet, satRingTex, skyTexture: skyTex,
     /** See-through platform, for looking down at the Earth. */
     setPadGlass(on) {
       const { base, rim, glow } = padRef
@@ -700,6 +691,99 @@ function rings(inner, outer, texture, planetMesh, sunPos, brightness) {
   return mesh
 }
 
+/** Colour grading for the Earth photo, as in the prototype: deeper sapphire oceans, warm ochre deserts. */
+function earthGrade(material) {
+  addPatch(material, 'grade', (shader) => {
+    shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+      {
+        vec3 c = diffuseColor.rgb;
+        float ocean = smoothstep(0.0, 0.06, c.b - max(c.r, c.g * 0.9));
+        float arid = clamp((c.r - c.b) * 1.8, 0.0, 1.0) * (1.0 - ocean);
+        vec3 land = mix(c * vec3(0.95, 1.04, 0.88), c * vec3(1.06, 0.86, 0.68), arid * 0.78);
+        diffuseColor.rgb = mix(land, c * vec3(0.68, 0.88, 1.18), ocean);
+      }`)
+  })
+}
+
+// Saturn's rings, after the prototype's ring shader: C, B and A rings made of hundreds of fine ringlets,
+// the Cassini Division, the Encke and Keeler gaps and the thin F ring, with Saturn's shadow across them.
+// ringProfile() is the same layout in JavaScript, used for the ring texture (shadows on Saturn, the ring dive).
+function ringProfile(r) {
+  const s1 = Math.sin(r * 190), s2 = Math.sin(r * 540 + 1.2), s3 = Math.sin(r * 1480 + 2.5)
+  const thread = 0.5 + 0.22 * s1 + 0.15 * s2 + 0.09 * s3
+  const fine = smooth(0.02, 0.98, thread)
+  const warm = [0.72, 0.58, 0.45], mid = [0.56, 0.44, 0.34], dark = [0.38, 0.29, 0.22]
+  const mixc = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
+  if (r < 0.08) return [dark, smooth(0, 0.08, r) * 0.22 * fine]
+  if (r < 0.28) { const cb = 0.5 + 0.5 * Math.sin(r * 120); return [mixc(dark, mid, cb), (0.18 + 0.38 * cb) * fine] }
+  if (r < 0.64) {
+    const bm = 0.65 + 0.35 * Math.sin(r * 75) * Math.cos(r * 160)
+    return [mixc(mid, warm, fine * bm), (0.62 + 0.34 * fine) * bm * smooth(0.004, 0.011, Math.abs(r - 0.39)) * smooth(0.005, 0.013, Math.abs(r - 0.51))]
+  }
+  if (r < 0.72) return [dark, 0.03]
+  if (r < 0.94) return [mixc(mid, warm.map((v) => v * 0.92), fine), (0.5 + 0.38 * fine) * smooth(0.005, 0.014, Math.abs(r - 0.85)) * smooth(0.002, 0.006, Math.abs(r - 0.92))]
+  return [warm, Math.exp(-(((r - 0.975) * 95) ** 2)) * 0.65]
+}
+function smooth(a, b, x) { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
+
+function saturnRings(inner, outer, planetMesh, sunPos) {
+  const geo = new THREE.RingGeometry(inner, outer, 256, 1)
+  const planetPos = new THREE.Vector3()
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { uSunPos: { value: sunPos }, uPlanetPos: { value: planetPos }, uPlanetRadius: { value: planetMesh.geometry.parameters.radius }, uInnerRadius: { value: inner }, uOuterRadius: { value: outer } },
+    vertexShader: `varying vec3 vLocalPos; varying vec3 vWorldPos; varying vec3 vWN;
+      void main(){ vLocalPos = position; vec4 wp = modelMatrix * vec4(position, 1.0); vWorldPos = wp.xyz; vWN = normalize(mat3(modelMatrix) * vec3(0.0, 0.0, 1.0)); gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uSunPos; uniform vec3 uPlanetPos; uniform float uPlanetRadius; uniform float uInnerRadius; uniform float uOuterRadius;
+      varying vec3 vLocalPos; varying vec3 vWorldPos; varying vec3 vWN;
+      void main() {
+        float r = clamp((length(vLocalPos.xy) - uInnerRadius) / (uOuterRadius - uInnerRadius), 0.0, 1.0);
+        // fine ringlets; each set fades out once it is finer than a pixel, so there is no shimmer
+        float fw = max(fwidth(r), 1e-5);
+        float s1 = sin(r * 190.0) * clamp(1.0 - 114.0 * fw, 0.0, 1.0);
+        float s2 = sin(r * 540.0 + 1.2) * clamp(1.0 - 324.0 * fw, 0.0, 1.0);
+        float s3 = sin(r * 1480.0 + 2.5) * clamp(1.0 - 888.0 * fw, 0.0, 1.0);
+        float s4 = sin(r * 3600.0 + 0.7) * clamp(1.0 - 2160.0 * fw, 0.0, 1.0);
+        float s5 = sin(r * 7200.0) * clamp(1.0 - 4320.0 * fw, 0.0, 1.0);
+        float fineGaps = smoothstep(0.02, 0.98, 0.5 + 0.22 * s1 + 0.15 * s2 + 0.09 * s3 + 0.04 * s4 + 0.02 * s5);
+        float env = 0.0;
+        vec3 colWarm = vec3(0.72, 0.58, 0.45), colMid = vec3(0.56, 0.44, 0.34), colDark = vec3(0.38, 0.29, 0.22);
+        vec3 ringColor = colMid;
+        if (r < 0.08) { env = smoothstep(0.0, 0.08, r) * 0.22 * fineGaps; ringColor = colDark; }
+        else if (r < 0.28) { float cB = 0.5 + 0.5 * sin(r * 120.0); env = (0.18 + 0.38 * cB) * fineGaps; ringColor = mix(colDark, colMid, cB); }
+        else if (r < 0.64) {
+          float bM = 0.65 + 0.35 * sin(r * 75.0) * cos(r * 160.0);
+          env = (0.62 + 0.34 * fineGaps) * bM * smoothstep(0.004, 0.011, abs(r - 0.39)) * smoothstep(0.005, 0.013, abs(r - 0.51));
+          ringColor = mix(colMid, colWarm, fineGaps * bM);
+        } else if (r < 0.72) {
+          float inner = smoothstep(0.64, 0.655, r) * smoothstep(0.72, 0.705, r);
+          env = mix(0.45 * fineGaps, smoothstep(0.75, 0.95, sin(r * 450.0)) * 0.18, inner);
+          ringColor = colDark;
+        } else if (r < 0.94) {
+          env = (0.5 + 0.38 * fineGaps) * smoothstep(0.005, 0.014, abs(r - 0.85)) * smoothstep(0.002, 0.006, abs(r - 0.92));
+          ringColor = mix(colMid, colWarm * 0.92, fineGaps);
+        } else { env = exp(-pow((r - 0.975) * 95.0, 2.0)) * 0.65 * (0.6 + 0.4 * s3); ringColor = colWarm; }
+        if (env < 0.015) discard;
+        // Saturn's shadow falling across the rings
+        vec3 toSun = normalize(uSunPos - vWorldPos);
+        vec3 toPlanet = uPlanetPos - vWorldPos;
+        float proj = dot(toPlanet, toSun);
+        float shadow = 1.0;
+        if (proj > 0.0) shadow = mix(0.02, 1.0, smoothstep(uPlanetRadius * 0.96, uPlanetRadius * 1.02, length(vWorldPos + toSun * proj - uPlanetPos)));
+        // ice is brighter lit face-on, and glows a little when the Sun shines through from behind
+        float lit = 0.75 + 0.45 * abs(dot(normalize(vWN), toSun));
+        gl_FragColor = vec4(ringColor * shadow * lit * 1.35, clamp(env, 0.0, 0.92));
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`,
+    transparent: true, side: THREE.DoubleSide, depthWrite: false,
+  })
+  const mesh = new THREE.Mesh(geo, mat)
+  mesh.rotation.x = -Math.PI / 2
+  mesh.onBeforeRender = () => planetMesh.getWorldPosition(planetPos)
+  return mesh
+}
+
 function ringCanvas(fn) {
   const c = document.createElement('canvas')
   c.width = 1024
@@ -715,20 +799,10 @@ function ringCanvas(fn) {
   return t
 }
 export function saturnRingTexture() {
-  const rnd = (i) => { const x = Math.sin(i * 127.1) * 43758.5453; return x - Math.floor(x) }
+  // the same ring layout as the ring shader (see ringProfile), for shadows on Saturn and the ring dive
   return ringCanvas((t) => {
-    let ringlets = 0
-    for (let k = 1; k <= 6; k++) ringlets += Math.sin(t * (40 * k + rnd(k) * 30) + rnd(k + 9) * 6) / k
-    ringlets = 0.5 + 0.18 * ringlets
-    let a, col
-    if (t < 0.22) { a = 0.25 + 0.1 * ringlets; col = [150, 135, 115] } // C ring (faint)
-    else if (t < 0.6) { a = 0.85 + 0.15 * ringlets; col = [232, 214, 178] } // B ring (bright)
-    else if (t < 0.68) { a = 0.08; col = [120, 110, 100] } // Cassini division
-    else if (t < 0.93) { a = 0.65 + 0.15 * ringlets; col = [210, 195, 165] } // A ring
-    else if (t < 0.945) { a = 0.1; col = [150, 140, 125] } // Encke gap
-    else { a = 0.55 * (1 - (t - 0.945) / 0.055); col = [205, 190, 160] }
-    const shade = 0.85 + 0.3 * (ringlets - 0.5)
-    return [col[0] * shade, col[1] * shade, col[2] * shade, a]
+    const [c, a] = ringProfile(t)
+    return [Math.pow(c[0], 1 / 2.2) * 255 * 1.15, Math.pow(c[1], 1 / 2.2) * 255 * 1.15, Math.pow(c[2], 1 / 2.2) * 255 * 1.15, Math.min(0.92, a)]
   })
 }
 function faintRingTexture() {
