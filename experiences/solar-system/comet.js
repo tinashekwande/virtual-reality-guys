@@ -109,11 +109,16 @@ export function buildComet(scene, sunPos) {
   const UP = new THREE.Vector3(0, 1, 0)
   const prev = new THREE.Vector3()
   let first = true
+  let u = 0.35
 
   return {
     root,
     update(dt, t) {
-      const u = (t / CROSSING_SECONDS + 0.35) % 1
+      // Kepler's second law: a comet speeds up as it swings close to the Sun and slows down far away
+      // (speed ~ 1 / sqrt(distance) here); a whole pass still takes about CROSSING_SECONDS
+      const here = TRACK.getPointAt(u)
+      const k = THREE.MathUtils.clamp(Math.sqrt(70 / Math.max(1, here.distanceTo(sunPos))), 0.45, 2.2)
+      u = (u + (Math.min(dt, 0.1) * k) / CROSSING_SECONDS) % 1
       const p = TRACK.getPointAt(u)
       root.position.copy(p)
       if (first) { prev.copy(p); first = false }

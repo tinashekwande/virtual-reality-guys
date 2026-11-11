@@ -11,7 +11,7 @@ const CAPE = { lon0: 17.8, lon1: 19.4, lat0: -34.45, lat1: -33.5 }
 const REGION = { lon0: 12, lon1: 26, lat0: -36, lat1: -28 }
 const PEN = { lon0: 18.30, lon1: 18.56, lat0: -34.20, lat1: -33.88 } // fine detail around Table Mountain
 const EXAG = 1.5 // mountains drawn 1.5x taller so they read well from high up
-const TEX = new URL('../textures/cape/', import.meta.url).href
+const TEX = new URL('../textures/cape/', location.href).href
 
 function dirOf(lat, lon) {
   const th = (90 - lat) * DEG, ph = ((lon + 180) / 360) * Math.PI * 2
