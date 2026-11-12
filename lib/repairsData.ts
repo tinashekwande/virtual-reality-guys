@@ -231,3 +231,50 @@ export function fromPriceZar(r: Repair): number {
 export const repairDevices: RepairDevice[] = [
   "Quest 2", "Quest 3", "Quest 3S", "Quest Pro", "PSVR2", "Valve Index", "Quest 1", "All headsets",
 ]
+
+// ---------------------------------------------------------------------------
+// Device photos — openly licensed images from Wikimedia Commons, served from
+// Wikimedia. Credits are shown on the page (required by CC BY / CC BY-SA).
+// Quest Pro has no free photo on Commons, so those cards keep their icon.
+
+export type RepairPhoto = {
+  src: string
+  alt: string
+  author: string
+  license: string
+  licenseUrl?: string
+  source: string
+}
+
+const thumb = (hashPath: string, file: string) =>
+  `https://upload.wikimedia.org/wikipedia/commons/thumb/${hashPath}/${file}/500px-${file}`
+
+const BY_SA = "https://creativecommons.org/licenses/by-sa/4.0/"
+const BY = "https://creativecommons.org/licenses/by/4.0/"
+
+export const repairPhotos: Record<string, RepairPhoto> = {
+  quest2: { src: thumb("f/f1", "Meta_quest_2_03.jpg"), alt: "Meta Quest 2 headset", author: "Wasiul Bahar", license: "CC BY-SA 4.0", licenseUrl: BY_SA, source: "https://commons.wikimedia.org/wiki/File:Meta_quest_2_03.jpg" },
+  quest2Controller: { src: thumb("9/90", "Budget_Oculus_Touch_Controller_Picture.jpg"), alt: "Quest 2 Touch controllers", author: "AContributor2077", license: "CC BY-SA 4.0", licenseUrl: BY_SA, source: "https://commons.wikimedia.org/wiki/File:Budget_Oculus_Touch_Controller_Picture.jpg" },
+  quest3: { src: thumb("8/85", "Meta_Quest_3_-_3.jpg"), alt: "Meta Quest 3 headset", author: "Kyu3a", license: "CC BY-SA 4.0", licenseUrl: BY_SA, source: "https://commons.wikimedia.org/wiki/File:Meta_Quest_3_-_3.jpg" },
+  quest3Controller: { src: thumb("1/13", "Meta_Quest_3S_controllers.jpg"), alt: "Meta Quest Touch Plus controllers", author: "Jakub T. Jankiewicz", license: "CC BY-SA 4.0", licenseUrl: BY_SA, source: "https://commons.wikimedia.org/wiki/File:Meta_Quest_3S_controllers.jpg" },
+  quest3s: { src: thumb("5/54", "Meta_Quest_3S_left_side.jpg"), alt: "Meta Quest 3S headset", author: "Jakub T. Jankiewicz", license: "CC BY-SA 4.0", licenseUrl: BY_SA, source: "https://commons.wikimedia.org/wiki/File:Meta_Quest_3S_left_side.jpg" },
+  quest1: { src: thumb("e/ec", "Oculus_Quest.jpeg"), alt: "Original Oculus Quest headset", author: "Syced", license: "CC0 (public domain)", source: "https://commons.wikimedia.org/wiki/File:Oculus_Quest.jpeg" },
+  psvr2: { src: thumb("1/16", "PlayStation_VR2.jpg"), alt: "PlayStation VR2 headset", author: "ArlindoPereira", license: "CC BY 4.0", licenseUrl: BY, source: "https://commons.wikimedia.org/wiki/File:PlayStation_VR2.jpg" },
+  psvr2Controller: { src: thumb("7/7e", "PlayStation_VR2_Sense_Controllers.jpg"), alt: "PlayStation VR2 Sense controllers", author: "GeorgeM2011", license: "Public domain", source: "https://commons.wikimedia.org/wiki/File:PlayStation_VR2_Sense_Controllers.jpg" },
+  valveIndex: { src: thumb("c/c5", "Air_Force_officer_using_Valve_Index.jpg"), alt: "Valve Index headset in use", author: "Airman 1st Class Robyn Hunsinger, U.S. Air Force", license: "Public domain", source: "https://commons.wikimedia.org/wiki/File:Air_Force_officer_using_Valve_Index.jpg" },
+  questSet: { src: thumb("2/28", "Meta_Quest_3s_with_controllers.jpg"), alt: "Meta Quest headset with controllers", author: "Loafhouse", license: "CC BY 4.0", licenseUrl: BY, source: "https://commons.wikimedia.org/wiki/File:Meta_Quest_3s_with_controllers.jpg" },
+}
+
+export function photoFor(r: Repair): RepairPhoto | null {
+  const c = r.kind === "Controller"
+  switch (r.device) {
+    case "Quest 2": return c ? repairPhotos.quest2Controller : repairPhotos.quest2
+    case "Quest 3": return c ? repairPhotos.quest3Controller : repairPhotos.quest3
+    case "Quest 3S": return c ? repairPhotos.quest3Controller : repairPhotos.quest3s
+    case "Quest 1": return repairPhotos.quest1
+    case "PSVR2": return c ? repairPhotos.psvr2Controller : repairPhotos.psvr2
+    case "Valve Index": return repairPhotos.valveIndex
+    case "All headsets": return repairPhotos.questSet
+    default: return null // Quest Pro — no free photo available
+  }
+}
