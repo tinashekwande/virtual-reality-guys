@@ -7,6 +7,10 @@ import { buildScene, placeFor, posOf, SPEC, EYE, OVERVIEW } from './scene.js'
 import { STOPS, QUIZ } from './content.js'
 import { buildRingDive } from './ring-dive.js'
 import { buildCape } from './cape.js'
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
 
 const app = createXrApp()
 const { scene, rig } = app
@@ -28,7 +32,7 @@ app.onFrame((dt, t) => { if (app.activeScene === mainScene) world.update(dt, t) 
 let dive = null
 app.onFrame((dt, t) => { if (dive && app.activeScene === dive.scene) dive.update(dt, t, rig) })
 let cape = null
-const getCape = () => (cape ||= buildCape({ earthMap: world.bodies.earth.material.map, skyTex: world.skyTexture, renderer: app.renderer }))
+const getCape = () => (cape ||= buildCape({ earthMap: world.earthMap, skyTex: world.skyTexture, renderer: app.renderer }))
 let altShown = 0
 app.onFrame((dt, t) => {
   if (!cape || app.activeScene !== cape.scene) return
@@ -48,6 +52,68 @@ const panel = new Panel({ width: 1.35 })
 panel.mesh.position.set(0.95, 1.25, -1.6)
 panel.mesh.rotation.y = -0.38
 app.addPanel(panel)
+
+// ---- the planet picker (from Beyond the Void): jump to any planet, in any order, and change the view ----
+const picker = new Panel({ width: 0.95, name: 'picker' })
+picker.mesh.position.set(-1.0, 1.1, -1.45)
+picker.mesh.rotation.y = 0.45
+app.addPanel(picker)
+const view = { bloom: true, labels: true, speed: 1 }
+const SPEEDS = [1, 5, 25, 0]
+function drawPicker() {
+  const go = (id, label) => ({ id: 'go:' + id, label, primary: currentId() === id })
+  picker.show({
+    title: 'Go to',
+    accent: '#a78bfa',
+    rows: [
+      [go('sun', 'Sun'), go('mercury', 'Mercury'), go('venus', 'Venus')],
+      [go('earth', 'Earth'), go('mars', 'Mars'), go('jupiter', 'Jupiter')],
+      [go('saturn', 'Saturn'), go('uranus', 'Uranus'), go('neptune', 'Neptune')],
+      [
+        { id: 'view:tour', label: 'Guided tour' },
+        { id: 'view:bloom', label: view.bloom ? 'Bloom: on' : 'Bloom: off' },
+        { id: 'view:labels', label: view.labels ? 'Labels: on' : 'Labels: off' },
+        { id: 'view:speed', label: view.speed ? `Spin: ${view.speed}x` : 'Spin: paused' },
+      ],
+    ],
+  })
+}
+// only offered out in space, when you are not flying somewhere
+let pickerKey = ''
+app.onFrame(() => {
+  const show = app.activeScene === mainScene && ['intro', 'stop', 'quiz', 'result'].includes(state.screen) && !app.isMoving()
+  const key = show ? currentId() + state.screen : ''
+  if (key === pickerKey) return
+  pickerKey = key
+  if (show) drawPicker()
+  else picker.hide()
+})
+
+// bloom: soft glow around bright things on a flat screen (post-processing). Headsets cannot run
+// post-processing, so there the same button turns up the Sun's glow and the stars instead.
+const composer = new EffectComposer(app.renderer)
+const renderPass = new RenderPass(scene, app.camera)
+composer.addPass(renderPass)
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.68, 0.38, 0.97))
+composer.addPass(new OutputPass())
+window.addEventListener('resize', () => composer.setSize(window.innerWidth, window.innerHeight))
+function applyView() {
+  app.setRender(view.bloom ? (sc, cam) => {
+    renderPass.scene = sc
+    renderPass.camera = cam
+    // the planet shaders already give display colours, so skip the extra tone mapping at the end
+    const tm = app.renderer.toneMapping
+    app.renderer.toneMapping = THREE.NoToneMapping
+    composer.render()
+    app.renderer.toneMapping = tm
+  } : null)
+  world.sunGlow.material.opacity = view.bloom ? 0.75 : 0.45
+  if (world.starUniforms) world.starUniforms.uVRBoost.value = view.bloom && app.renderer.xr.isPresenting ? 1.35 : 1
+  for (const l of world.labels) l.visible = view.labels
+  world.setTimeScale(view.speed)
+}
+app.renderer.xr.addEventListener('sessionstart', applyView)
+app.renderer.xr.addEventListener('sessionend', applyView)
 
 // ---- tapping planets ----
 const state = { travel: 'fly', screen: 'intro', stop: 0, quiz: 0, score: 0, answered: null, discovered: new Set() }
@@ -265,7 +331,7 @@ function soundButton() {
 
 // ---- inside Saturn's rings ----
 function enterRingDive() {
-  if (!dive) dive = buildRingDive({ saturnMap: world.bodies.saturn.material.map, ringTex: world.satRingTex, skyTex: world.skyTexture })
+  if (!dive) dive = buildRingDive({ saturnMap: world.saturnMap, ringTex: world.satRingTex, skyTex: world.skyTexture })
   state.screen = 'ringdive'
   narration.stop()
   audio.sfx.whoosh()
@@ -460,6 +526,20 @@ app.onPress((id, _panel, point) => {
   audio.sfx.click()
   if (id === 'skip') return app.skipFlight()
   if (app.isMoving()) return // ignore double presses while travelling
+  if (id.startsWith('view:')) {
+    const what = id.slice(5)
+    if (what === 'tour') return showStop(0)
+    if (what === 'bloom') view.bloom = !view.bloom
+    if (what === 'labels') view.labels = !view.labels
+    if (what === 'speed') view.speed = SPEEDS[(SPEEDS.indexOf(view.speed) + 1) % SPEEDS.length]
+    applyView()
+    return drawPicker()
+  }
+  if (id.startsWith('go:')) {
+    const i = STOPS.findIndex((x) => x.id === id.slice(3))
+    if (i >= 0 && !(state.screen === 'stop' && state.stop === i)) return showStop(i)
+    return
+  }
   if (id === 'travel') {
     state.travel = state.travel === 'fly' ? 'jump' : 'fly'
     return showIntro()
@@ -498,10 +578,11 @@ app.onPress((id, _panel, point) => {
 
 // start beside the Sun
 app.placeNow(HOME)
+applyView()
 showIntro()
 
 // For teachers and testing: ?stop=4 jumps to a planet, ?quiz=1 jumps to the quiz
 const q = new URLSearchParams(location.search)
 if (q.has('stop')) showStop(Math.max(0, Math.min(STOPS.length - 1, Number(q.get('stop')) || 0)))
 if (q.has('quiz')) showQuiz(0)
-window.__vrg = { showStop, showQuiz, showResult, discover, state, world, capePin, app, panel, enterRingDive, leaveRingDive, enterCape, leaveCape, getCape }
+window.__vrg = { picker, view, applyView, showStop, showQuiz, showResult, discover, state, world, capePin, app, panel, enterRingDive, leaveRingDive, enterCape, leaveCape, getCape }

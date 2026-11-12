@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { buildComet } from './comet.js'
 import { bakeNebula, buildStars } from './deep-space.js'
+import { EarthShader, EarthCloudsShader, AtmosphereHaloShader, PlanetPBRShader } from './planet-shaders.js'
 
 // Builds the Solar System: realistic textures (generated at build time, see tools/gen-textures.mjs),
 // glowing atmospheres, an animated Sun, moons, an asteroid belt, stars and the Milky Way.
@@ -37,7 +38,7 @@ export const OVERVIEW = new THREE.Vector3(-150, 62, 0)
 /** Where to stand for a stop: on the Sun side, looking at the planet. */
 export function placeFor(id) {
   const s = SPEC[id]
-  const dist = s.r * (id === 'sun' ? 2.4 : 3.2) + 4
+  const dist = id === 'sun' ? s.r * 2.4 + 4 : s.r * 2.05 + 1.8 // close in: the planet fills a big part of your view
   const p = posOf(id)
   // always look along +x at the planet, so the view never has to turn between stops
   return { position: new THREE.Vector3(p.x - dist, 0, p.z), yaw: -Math.PI / 2 }
@@ -57,8 +58,10 @@ export function buildScene(app, manager) {
     return t
   }
   const updaters = []
+  let timeScale = 1 // how fast planets spin and moons orbit (0 = paused)
   const sunPos = new THREE.Vector3(0, EYE, 0)
 
+  let starUniforms = null
   // ---------------- sky: the Milky Way, nebulae and stars ----------------
   // (painted once at start-up from the Beyond the Void sky shader, then shown on a big sphere around you)
   const skyTex = bakeNebula(renderer, 4096)
@@ -73,6 +76,7 @@ export function buildScene(app, manager) {
   // twinkling stars in true star colours, clustered along the Milky Way, and bright stars with spikes
   {
     const { group, uniforms } = buildStars(900, { scale: 0.45 })
+    starUniforms = uniforms
     scene.add(group)
     updaters.push((dt, t) => {
       uniforms.uTime.value = t
@@ -243,7 +247,6 @@ export function buildScene(app, manager) {
     const mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r, 96, 64), material)
     mesh.name = id
     tiltGroup.add(mesh)
-    if (s.atmo) tiltGroup.add(atmosphere(s.r, s.atmo, sunPos))
     bodies[id] = mesh
     tilts[id] = tiltGroup
     spinners.push({ mesh, speed: s.spin, boost: 0 })
@@ -254,30 +257,47 @@ export function buildScene(app, manager) {
   }
   const std = (name, opts = {}) => new THREE.MeshStandardMaterial({ map: tex(name), roughness: 1, metalness: 0, ...opts })
 
-  // relief from the photo itself (craters, canyons and cloud bands catch the light at the terminator)
-  const photo = (name, bumpScale, opts = {}) => { const map = real(name); return new THREE.MeshStandardMaterial({ map, bumpMap: map, bumpScale, roughness: 1, metalness: 0, ...opts }) }
-  planet('mercury', photo('mercury', 2.8))
-  planet('venus', photo('venus', 0.6, { color: 0xffe9c4 }))
-  // Earth: mountains in relief, shiny oceans with a sun glint, city lights only on the night side, moving clouds
-  const earthMat = new THREE.MeshStandardMaterial({
-    map: real('earth_day'), normalMap: real('earth_normal', false), normalScale: new THREE.Vector2(1.6, 1.6),
-    roughnessMap: real('earth_rough', false), roughness: 1, metalness: 0,
-    emissive: 0xffc47a, emissiveMap: real('earth_lights'), emissiveIntensity: 2.2,
+  // Planets exactly as in Beyond the Void: the photo maps with the prototype's own shaders and settings
+  // (relief from the photo, pitch-black night side, coloured edge glow), lit by our Sun.
+  const sunUniform = { value: sunPos }
+  const wrap = (t) => { t.wrapS = THREE.RepeatWrapping; return t }
+  const pbr = (name, o = {}) => new THREE.ShaderMaterial({
+    uniforms: {
+      uMap: { value: wrap(real(name)) }, uSunPos: sunUniform, uBumpScale: { value: o.bumpScale ?? 2.0 },
+      uTint: { value: new THREE.Color(o.tint || '#ffffff') }, uLimbColor: { value: new THREE.Color(o.limbColor || '#000000') }, uLimbStrength: { value: o.limbStrength ?? 0 },
+    },
+    vertexShader: PlanetPBRShader.vertexShader, fragmentShader: PlanetPBRShader.fragmentShader,
   })
-  earthGrade(earthMat)
-  nightSideOnly(earthMat, sunPos)
+  planet('mercury', pbr('mercury', { bumpScale: 2.8, tint: '#d8cfc8' }))
+  planet('venus', pbr('venus', { bumpScale: 1.4, tint: '#ffdfa8', limbColor: '#ffbe66', limbStrength: 0.42 }))
+  // Earth: day map, city lights on the night side, shiny oceans, normal-mapped relief, clouds that cast shadows
+  const earthSunDir = { value: new THREE.Vector3(1, 0, 0) }
+  const earthDay = wrap(real('earth_day')), earthClouds = wrap(real('earth_clouds_trans', false))
+  const earthMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uDayTex: { value: earthDay }, uNightTex: { value: wrap(real('earth_lights')) }, uSpecTex: { value: wrap(real('earth_spec', false)) },
+      uNormalMap: { value: wrap(real('earth_normal', false)) }, uCloudTex: { value: earthClouds }, uHasNormal: { value: 1 }, uSunDir: earthSunDir,
+    },
+    vertexShader: EarthShader.vertexShader, fragmentShader: EarthShader.fragmentShader,
+  })
   const earth = planet('earth', earthMat)
   const clouds = new THREE.Mesh(
-    new THREE.SphereGeometry(SPEC.earth.r * 1.012, 96, 64),
-    new THREE.MeshStandardMaterial({ color: 0xffffff, alphaMap: real('earth_clouds', false), transparent: true, depthWrite: false, roughness: 1, opacity: 1 }),
+    new THREE.SphereGeometry(SPEC.earth.r * 1.009, 96, 64),
+    new THREE.ShaderMaterial({ uniforms: { uCloudTex: { value: earthClouds }, uSunDir: earthSunDir }, vertexShader: EarthCloudsShader.vertexShader, fragmentShader: EarthCloudsShader.fragmentShader, transparent: true, depthWrite: false }),
   )
-  tilts.earth.add(clouds)
-  spinners.push({ mesh: clouds, speed: SPEC.earth.spin * 1.12, boost: 0 }) // clouds drift a little faster than the ground
-  planet('mars', photo('mars', 3.2))
-  planet('jupiter', photo('jupiter', 1.2))
-  planet('saturn', photo('saturn', 1.0))
-  planet('uranus', photo('uranus', 0.4))
-  planet('neptune', photo('neptune', 0.6))
+  earth.add(clouds) // the clouds turn with the Earth, so their shadows stay underneath them
+  earth.add(new THREE.Mesh(
+    new THREE.SphereGeometry(SPEC.earth.r * 1.032, 64, 48),
+    new THREE.ShaderMaterial({ uniforms: { uColor: { value: new THREE.Color('#429eff') }, uSunDir: earthSunDir }, vertexShader: AtmosphereHaloShader.vertexShader, fragmentShader: AtmosphereHaloShader.fragmentShader, transparent: true, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false }),
+  ))
+  const earthWP = new THREE.Vector3()
+  updaters.push(() => earthSunDir.value.copy(sunPos).sub(earth.getWorldPosition(earthWP)).normalize())
+  planet('mars', pbr('mars', { bumpScale: 3.2, tint: '#ff9d6e', limbColor: '#e87846', limbStrength: 0.35 }))
+  planet('jupiter', pbr('jupiter', { bumpScale: 1.9, tint: '#f5dfc6', limbColor: '#d4b48c', limbStrength: 0.25 }))
+  // (the prototype's Saturn shader blends in a rocky Mars map; the plain banded Saturn photo looks more real)
+  planet('saturn', pbr('saturn', { bumpScale: 1.0, tint: '#fff4e2', limbColor: '#d9b98a', limbStrength: 0.25 }))
+  planet('uranus', pbr('uranus', { bumpScale: 0.8, tint: '#a8ecff', limbColor: '#6ad8ff', limbStrength: 0.35 }))
+  planet('neptune', pbr('neptune', { bumpScale: 1.1, tint: '#6e9eff', limbColor: '#3d78ff', limbStrength: 0.38 }))
 
   // Saturn's rings (with the planet's shadow falling across them) and Uranus's faint rings
   const satRingTex = saturnRingTexture()
@@ -289,15 +309,15 @@ export function buildScene(app, manager) {
   const moonsOf = {}
   const moonMeshes = {}
   const moonMat = (name, bump) => std(name, bump ? { bumpMap: tex(name + '_bump', false), bumpScale: 2 } : {})
-  addMoon('earth', photo('moon', 2.2), 0.6, 6.2, 0.02, 0.25, null, 1.2) // the real Moon; it always shows us the same face
+  addMoon('earth', pbr('moon', { bumpScale: 3.4, tint: '#e0dcd5' }), 0.6, 9.5, 0.02, 0.25, null, 1.2) // the real Moon; it always shows us the same face
   addMoon('mars', moonMat('rockmoon'), 0.22, 3.0, 0.06, 0.1, [1, 0.75, 0.85])
   addMoon('mars', moonMat('rockmoon'), 0.15, 4.6, 0.035, -0.2, [1, 0.8, 0.9])
-  addMoon('jupiter', moonMat('io'), 0.55, 10.5, 0.05, 0.05)
-  addMoon('jupiter', moonMat('europa'), 0.48, 13, 0.035, 0.12)
-  addMoon('jupiter', moonMat('ganymede'), 0.8, 16.5, 0.025, -0.08)
-  addMoon('jupiter', moonMat('callisto'), 0.72, 18.5, 0.016, 0.15)
-  addMoon('saturn', moonMat('titan'), 0.7, 14, 0.02, 0.35, null, 2.4)
-  addMoon('neptune', moonMat('triton'), 0.45, 7.5, -0.03, 0.3)
+  addMoon('jupiter', moonMat('io'), 0.55, 11, 0.05, 0.05)
+  addMoon('jupiter', moonMat('europa'), 0.48, 14, 0.035, 0.12)
+  addMoon('jupiter', moonMat('ganymede'), 0.8, 20, 0.025, -0.08)
+  addMoon('jupiter', moonMat('callisto'), 0.72, 24, 0.016, 0.15)
+  addMoon('saturn', moonMat('titan'), 0.7, 19, 0.02, 0.35, null, 2.4)
+  addMoon('neptune', moonMat('triton'), 0.45, 11, -0.03, 0.3)
   function addMoon(parent, mat, r, dist, speed, incline, squash, startAngle = Math.random() * 6.28) {
     const pivot = new THREE.Group()
     ;(moonsOf[parent] ||= []).push(pivot)
@@ -321,9 +341,12 @@ export function buildScene(app, manager) {
     const moons = moonMeshes[id] || []
     const planetMesh = bodies[id]
     const ring = id === 'saturn' ? { mesh: satRing, inner: SPEC.saturn.r * 1.24, outer: SPEC.saturn.r * 2.3, texture: satRingTex } : null
-    sunShadows(planetMesh.material, sunPos, moons, ring)
-    shadowMats.push(planetMesh.material)
+    if (planetMesh.material.isMeshStandardMaterial) {
+      sunShadows(planetMesh.material, sunPos, moons, ring)
+      shadowMats.push(planetMesh.material)
+    }
     for (const m of moons) {
+      if (!m.obj.material.isMeshStandardMaterial) continue
       sunShadows(m.obj.material, sunPos, [{ obj: planetMesh, r: SPEC[id].r }, ...moons.filter((x) => x !== m)])
       shadowMats.push(m.obj.material)
     }
@@ -358,7 +381,7 @@ export function buildScene(app, manager) {
     beltGroup.position.copy(sunPos)
     beltGroup.add(belt)
     scene.add(beltGroup)
-    updaters.push((dt) => (beltGroup.rotation.y += dt * 0.002))
+    updaters.push((dt) => (beltGroup.rotation.y += dt * 0.002 * timeScale))
   }
 
   // faint orbit lines (brighter when you are high above the system)
@@ -422,13 +445,13 @@ export function buildScene(app, manager) {
   // ---------------- animation ----------------
   updaters.push((dt) => {
     for (const s of spinners) {
-      s.mesh.rotation.y += (s.speed + s.boost) * dt
+      s.mesh.rotation.y += (s.speed * timeScale + s.boost) * dt
       s.boost *= Math.pow(0.35, dt)
     }
   })
 
   return {
-    bodies, tilts, sun, sunPos, moonsOf, comet, satRingTex, skyTexture: skyTex,
+    bodies, tilts, sun, sunPos, moonsOf, comet, satRingTex, skyTexture: skyTex, earthMap: earthDay, saturnMap: bodies.saturn.material.uniforms.uMap.value, labels, orbitLines: orbitMats, sunGlow: glow, starUniforms,
     /** See-through platform, for looking down at the Earth. */
     setPadGlass(on) {
       const { base, rim, glow } = padRef
@@ -450,6 +473,7 @@ export function buildScene(app, manager) {
       marker.visible = true
     },
     update(dt, t) { for (const u of updaters) u(dt, t) },
+    setTimeScale(k) { timeScale = k },
     /** Make a planet spin faster for a moment (when a child taps it). */
     /** Put a planet's moons beside/behind it so they don't block the view when you arrive. */
     arrangeMoons(id, leadSeconds = 0) {

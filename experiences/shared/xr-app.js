@@ -212,6 +212,7 @@ export function createXrApp({ canvasParent = document.body } = {}) {
 
   const onFrame = []
   const clock = new THREE.Clock()
+  let customRender = null
   renderer.setAnimationLoop(() => {
     const dt = Math.min(clock.getDelta(), 0.1)
     const t = clock.elapsedTime
@@ -267,7 +268,9 @@ export function createXrApp({ canvasParent = document.body } = {}) {
       }
     }
     for (const f of onFrame) f(dt, t)
-    renderer.render(activeScene, camera)
+    // flat screen can use a custom renderer (e.g. bloom post-processing); headsets always render directly
+    if (customRender && !renderer.xr.isPresenting) customRender(activeScene, camera)
+    else renderer.render(activeScene, camera)
   })
 
   window.addEventListener('resize', () => {
@@ -286,6 +289,8 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     rig,
     vrButton,
     isPresenting: () => renderer.xr.isPresenting,
+    /** Render the flat-screen view yourself (fn(scene, camera)), or null for the default. */
+    setRender(fn) { customRender = fn },
     addPanel(panel, parent = rig) {
       panels.push(panel)
       parent.add(panel.mesh)
