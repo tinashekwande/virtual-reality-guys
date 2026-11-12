@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { href: "/school-vr-demonstrations", label: "School VR" },
   { href: "/mobile-vr-hire", label: "Mobile VR Hire" },
   { href: "/vr-games-catalogue", label: "VR Games Catalogue" },
+  { href: "/repairs", label: "VR Repairs" },
   { href: "/blog", label: "Blog" },
   { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Bookings" },

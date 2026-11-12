@@ -111,6 +111,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/repairs" className="hover:text-primary transition-colors">
+                  VR Headset Repairs
+                </Link>
+              </li>
+              <li>
                 <Link href="/gallery" className="hover:text-primary transition-colors">
                   Event Gallery
                 </Link>
