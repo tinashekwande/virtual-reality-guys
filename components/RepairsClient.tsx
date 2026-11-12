@@ -7,9 +7,28 @@ import {
   ShieldCheck, Timer, MessageCircle, Mail, ChevronRight,
 } from "lucide-react"
 import {
-  repairsData, repairDevices, toZar, formatZar, fromPriceZar,
+  repairsData, repairDevices, toZar, formatZar, fromPriceZar, photoFor, repairPhotos,
   type Repair, type RepairVariant,
 } from "@/lib/repairsData"
+
+function RepairImage({ r, className }: { r: Repair; className: string }) {
+  const photo = photoFor(r)
+  const [failed, setFailed] = useState(false)
+  if (!photo || failed) {
+    return (
+      <div className={`${className} flex items-center justify-center bg-gradient-to-br from-primary/15 via-background/40 to-accent/15 text-primary`}>
+        <span className="scale-[1.8]">{kindIcon(r.kind)}</span>
+      </div>
+    )
+  }
+  return (
+    <img
+      src={photo.src} alt={photo.alt} loading="lazy" decoding="async"
+      onError={() => setFailed(true)}
+      className={`${className} object-cover`}
+    />
+  )
+}
 
 const WHATSAPP = "27717800323"
 const EMAIL = "bookings@virtualrealityguyz.co.za"
@@ -189,16 +208,21 @@ export default function RepairsClient() {
                   key={r.id} onClick={() => setSelected(r)}
                   onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), setSelected(r))}
                   tabIndex={0} role="button" aria-label={`${r.title}, from ${formatZar(fromPriceZar(r))}`}
-                  className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl p-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:scale-[1.02] cursor-pointer flex flex-col h-full group focus:outline-none focus-visible:border-primary"
+                  className="bg-card/30 backdrop-blur-sm border border-border/60 hover:border-primary/50 rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:scale-[1.02] cursor-pointer flex flex-col h-full group focus:outline-none focus-visible:border-primary"
                 >
-                  <div className="flex items-start justify-between mb-4">
-                    <span className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/30 text-primary flex items-center justify-center">
-                      {kindIcon(r.kind)}
-                    </span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/60 rounded-full border border-primary/40 text-primary">
+                  <div className="relative h-44 w-full overflow-hidden bg-secondary/20">
+                    <RepairImage r={r} className="w-full h-full transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                    <span className="absolute top-3 left-3 flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 backdrop-blur-md rounded-full border border-primary/40 text-primary">
                       {r.device}
                     </span>
+                    {!r.inStock && (
+                      <span className="absolute top-3 right-3 text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 bg-black/80 rounded-full border border-white/20 text-white">
+                        Sold out
+                      </span>
+                    )}
                   </div>
+                  <div className="p-5 flex flex-col flex-grow">
                   <h3 className="text-base font-bold text-white mb-2 group-hover:text-primary transition-colors">{r.title}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed flex-grow mb-4 line-clamp-3">{r.desc}</p>
                   <div className="flex items-end justify-between pt-4 border-t border-border/40">
@@ -211,6 +235,7 @@ export default function RepairsClient() {
                     <span className={`text-[11px] font-semibold ${r.inStock ? "text-primary" : "text-muted-foreground"}`}>
                       {r.inStock ? (r.variants.length > 1 ? `${r.variants.length} options` : "In stock") : "Out of stock"}
                     </span>
+                  </div>
                   </div>
                 </article>
               ))}
@@ -274,6 +299,23 @@ export default function RepairsClient() {
         <p className="text-center text-[11px] text-muted-foreground mt-6 flex items-center justify-center gap-1">
           <ShieldCheck className="h-3.5 w-3.5" /> Prices in rand (ZAR). Final price confirmed with you before any work begins.
         </p>
+
+        <details className="mt-8 max-w-3xl mx-auto text-[11px] text-muted-foreground">
+          <summary className="cursor-pointer text-center hover:text-foreground">Photo credits</summary>
+          <p className="mt-3 mb-2 text-center">
+            Device photos are from Wikimedia Commons and are used under their licences. Photos show the device type, not the specific unit being repaired.
+          </p>
+          <ul className="space-y-1">
+            {Object.values(repairPhotos).map((p) => (
+              <li key={p.source}>
+                {p.alt}: <a href={p.source} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">photo</a> by {p.author},{" "}
+                {p.licenseUrl
+                  ? <a href={p.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">{p.license}</a>
+                  : p.license}
+              </li>
+            ))}
+          </ul>
+        </details>
       </div>
 
       {/* Detail modal */}
@@ -281,9 +323,12 @@ export default function RepairsClient() {
         <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4" role="dialog" aria-modal="true" aria-label={selected.title}>
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setSelected(null)} />
           <div className="relative w-full sm:max-w-lg max-h-[90vh] overflow-y-auto bg-card border border-border rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl">
-            <button onClick={() => setSelected(null)} aria-label="Close" className="absolute top-4 right-4 p-2 rounded-full hover:bg-secondary text-muted-foreground cursor-pointer">
+            <button onClick={() => setSelected(null)} aria-label="Close" className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/60 hover:bg-secondary text-white cursor-pointer">
               <X className="h-5 w-5" />
             </button>
+            <div className="-mx-6 -mt-6 mb-5 h-52 overflow-hidden rounded-t-3xl">
+              <RepairImage r={selected} className="w-full h-full" />
+            </div>
             <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full border border-primary/40 text-primary">{selected.device}</span>
             <h2 className="text-2xl font-bold text-white mt-3 mb-2 pr-8">{selected.title}</h2>
             <p className="text-sm text-muted-foreground mb-5">{selected.desc}</p>
