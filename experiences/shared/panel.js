@@ -99,7 +99,15 @@ export class Panel {
     // buttons: laid out in a row (or column of up to 4 for quiz answers)
     this.buttons = []
     const list = c.buttons || []
-    if (c.stack) {
+    if (c.rows) {
+      // a grid: each row's buttons share the width (for pickers)
+      const top = c.title ? 150 : 40, gap = 20
+      const bh = Math.min(120, (H - top - 30 - gap * (c.rows.length - 1)) / c.rows.length)
+      c.rows.forEach((row, r) => {
+        const bw = (W - 80 - gap * (row.length - 1)) / row.length
+        row.forEach((b, i) => this.drawButton(b, 40 + i * (bw + gap), top + r * (bh + gap), bw, bh))
+      })
+    } else if (c.stack) {
       const bh = 92
       const gap = 16
       const startY = H - 40 - list.length * (bh + gap) + gap
