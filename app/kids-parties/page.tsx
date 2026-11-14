@@ -7,6 +7,7 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 export const metadata: Metadata = {
   title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
@@ -275,7 +276,7 @@ export default function KidsPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Affordable packages starting from just R999</span>
+                <span>{SHOW_PRICES ? `Affordable packages starting from just ${FROM_PRICE}` : "Affordable packages with free, no-obligation quotes"}</span>
               </p>
             </div>
           </div>

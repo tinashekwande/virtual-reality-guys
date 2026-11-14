@@ -47,15 +47,16 @@ import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { WHATSAPP_URL, GOOGLE_REVIEWS_URL, PHONE_DISPLAY, PHONE_TEL, HERO_PHOTO_URL } from "@/lib/contact";
 
 import type { Metadata } from 'next';
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 export const metadata: Metadata = {
-  title: 'VR Cape Town From R999 | Mobile Gaming Delivered To Your Venue',
-  description: 'Cape Town\'s mobile VR entertainment specialists. We deliver headsets, spectator screens & trained supervisors to your party, school, or corporate event. Party packages from R999. Book now!',
+  title: `VR Cape Town${fromSuffix()} | Mobile Gaming Delivered To Your Venue`,
+  description: `Cape Town's mobile VR entertainment specialists. We deliver headsets, spectator screens & trained supervisors to your party, school, or corporate event. ${SHOW_PRICES ? `Party packages from ${FROM_PRICE}. Book now!` : 'Get a free quote today!'}`,
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Virtual Reality Guys | Mobile VR Gaming Cape Town From R999',
+    title: `Virtual Reality Guys | Mobile VR Gaming Cape Town${fromSuffix()}`,
     description: 'Premium mobile VR gaming delivered to your venue in Cape Town. Parties, schools, corporate events & festivals. 100+ games, trained supervisors.',
     url: 'https://virtualrealityguyz.co.za',
     images: [{ url: '/images/hero-party-desktop.jpg', width: 1672, height: 941, alt: 'Kids playing VR at a birthday party in Cape Town' }],
@@ -179,8 +180,7 @@ export default async function Home() {
             "name": "Starter Package",
             "description": "4 VR headsets, 2 hours of VR gaming, professional setup & supervision, 30+ game selection. Suitable for up to 8 players."
           },
-          "price": "999",
-          "priceCurrency": "ZAR"
+          ...offerPrice(PRICES.starter)
         },
         {
           "@type": "Offer",
@@ -189,8 +189,7 @@ export default async function Home() {
             "name": "Standard Package",
             "description": "5 VR headsets, 3 hours of VR gaming, professional setup & supervision, 60+ game selection, multiplayer tournaments. Suitable for up to 12 players."
           },
-          "price": "1499",
-          "priceCurrency": "ZAR"
+          ...offerPrice(PRICES.standard)
         },
         {
           "@type": "Offer",
@@ -199,8 +198,7 @@ export default async function Home() {
             "name": "Premium Package",
             "description": "6 VR headsets, 4 hours of VR gaming, professional setup & supervision, 100+ game selection, custom tournament brackets, photo & video package. Suitable for up to 20 players."
           },
-          "price": "1999",
-          "priceCurrency": "ZAR"
+          ...offerPrice(PRICES.premium)
         }
       ]
     }
@@ -236,7 +234,7 @@ export default async function Home() {
         "name": "How much does a VR experience cost?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our party packages are Starter R999 (4 headsets, 2 hours, up to 8 players), Standard R1,499 (5 headsets, 3 hours, up to 12 players) and Premium R1,999 (6 headsets, 4 hours, up to 20 players). All include setup, trained supervisors and cleanup. Schools and corporate events are quoted separately."
+          "text": PACKAGES_PRICE_TEXT
         }
       },
       {
@@ -485,13 +483,15 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <p className="text-primary font-semibold tracking-wide uppercase mb-4">
-              Pricing
+              {SHOW_PRICES ? "Pricing" : "Packages"}
             </p>
             <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-balance">
               Choose Your VR Package
             </h2>
             <p className="text-lg text-muted-foreground">
-              Prices include VAT, setup, trained supervisors and pack-up. No hidden extras.
+              {SHOW_PRICES
+                ? "Prices include VAT, setup, trained supervisors and pack-up. No hidden extras."
+                : "Every package includes setup, trained supervisors and pack-up. Tell us about your event for a free, no-obligation quote."}
             </p>
           </div>
 
@@ -499,7 +499,7 @@ export default async function Home() {
             <PricingCard
               title="Starter"
               bestFor="Small parties & get-togethers"
-              price="999"
+              price={SHOW_PRICES ? rand(PRICES.starter) : undefined}
               duration="2 hours"
               players="Up to 8 players"
               features={[
@@ -513,7 +513,7 @@ export default async function Home() {
             <PricingCard
               title="Standard"
               bestFor="Most birthday parties"
-              price="1,499"
+              price={SHOW_PRICES ? rand(PRICES.standard) : undefined}
               duration="3 hours"
               players="Up to 12 players"
               featured
@@ -529,7 +529,7 @@ export default async function Home() {
             <PricingCard
               title="Premium"
               bestFor="Big celebrations & family days"
-              price="1,999"
+              price={SHOW_PRICES ? rand(PRICES.premium) : undefined}
               duration="4 hours"
               players="Up to 20 players"
               features={[
@@ -556,7 +556,7 @@ export default async function Home() {
             </div>
             <div className="flex items-start gap-3 rounded-xl border border-border/60 bg-background/50 p-4">
               <Clock className="h-5 w-5 text-primary shrink-0" />
-              <span><strong className="text-foreground">Add-ons:</strong> <span className="text-muted-foreground">extra hour R350 · extra headset R150</span></span>
+              <span><strong className="text-foreground">Add-ons:</strong> <span className="text-muted-foreground">{SHOW_PRICES ? ADDONS_TEXT : "extra hours and extra headsets available"}</span></span>
             </div>
           </div>
 
@@ -574,7 +574,9 @@ export default async function Home() {
               .
             </p>
             <p className="text-xs text-muted-foreground/80 leading-relaxed">
-              Transport elsewhere: about R200 for venues up to 25 km away, R350–R500 further out (e.g. Somerset West, Stellenbosch, Constantia, City Bowl, Fish Hoek). Tell us your suburb and we&apos;ll confirm.
+              {SHOW_PRICES
+                ? `Transport elsewhere: about ${rand(PRICES.transportNear)} for venues up to 25 km away, ${rand(PRICES.transportFarMin)}–${rand(PRICES.transportFarMax)} further out (e.g. Somerset West, Stellenbosch, Constantia, City Bowl, Fish Hoek). Tell us your suburb and we'll confirm.`
+                : "Outside the free transport area? Tell us your suburb and we'll include transport in your quote."}
             </p>
           </div>
         </div>
@@ -687,7 +689,7 @@ export default async function Home() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does a VR experience cost?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our party packages are Starter R999 (4 headsets, 2 hours, up to 8 players), Standard R1,499 (5 headsets, 3 hours, up to 12 players) and Premium R1,999 (6 headsets, 4 hours, up to 20 players). All include setup, trained supervisors and cleanup. Schools and corporate events are quoted separately.
+                {PACKAGES_PRICE_TEXT}
               </p>
             </div>
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
@@ -842,7 +844,7 @@ function PricingCard({
 }: {
   title: string;
   bestFor: string;
-  price: string;
+  price?: string;
   duration: string;
   players: string;
   features: string[];
@@ -866,10 +868,16 @@ function PricingCard({
           <h3 className="text-2xl font-bold">{title}</h3>
           <p className={`text-sm mb-4 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{bestFor}</p>
           <div className="mb-6">
-            <span className="text-4xl font-bold">R{price}</span>
-            <span className={featured ? "text-primary-foreground/80" : "text-muted-foreground"}>
-              {" "}incl. VAT
-            </span>
+            {price ? (
+              <>
+                <span className="text-4xl font-bold">{price}</span>
+                <span className={featured ? "text-primary-foreground/80" : "text-muted-foreground"}>
+                  {" "}incl. VAT
+                </span>
+              </>
+            ) : (
+              <span className="text-2xl font-bold">Free quote</span>
+            )}
           </div>
           <div className={`flex items-center gap-2 mb-2 ${featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
             <Clock className="h-4 w-4" />

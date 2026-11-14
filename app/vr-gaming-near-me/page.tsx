@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 export const metadata: Metadata = {
-  title: 'VR Gaming Cape Town | Mobile Setup From R999 — No Arcade Needed',
+  title: `VR Gaming Cape Town | Mobile Setup${fromSuffix()} — No Arcade Needed`,
   description: 'Skip the arcade. We deliver VR gaming setups with 100+ games, spectator screens & supervisors directly to your Cape Town venue. Parties, events & team building.',
   alternates: {
     canonical: '/vr-gaming-near-me',
   },
   openGraph: {
-    title: 'VR Gaming Cape Town | Mobile Setup From R999 — No Arcade Needed',
+    title: `VR Gaming Cape Town | Mobile Setup${fromSuffix()} — No Arcade Needed`,
     description: 'Looking for VR gaming in Cape Town? We deliver premium mobile virtual reality setups to your door across all suburbs. No arcade needed!',
     url: 'https://virtualrealityguyz.co.za/vr-gaming-near-me',
     images: [{ url: '/images/vr-hero.jpg', alt: 'VR Gaming Cape Town' }],
@@ -118,7 +119,7 @@ export default function VrGamingNearMePage() {
         "name": "How much does VR gaming cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Packages start from R999 for a Starter session with 4 headsets."
+          "text": SHOW_PRICES ? `Packages start from ${FROM_PRICE} for a Starter session with 4 headsets.` : PACKAGES_PRICE_TEXT
         }
       },
       {
@@ -335,7 +336,7 @@ export default function VrGamingNearMePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does VR gaming cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Packages start from R999 for a Starter session with 4 headsets.
+                {SHOW_PRICES ? `Packages start from ${FROM_PRICE} for a Starter session with 4 headsets.` : PACKAGES_PRICE_TEXT}
               </p>
             </div>
 
