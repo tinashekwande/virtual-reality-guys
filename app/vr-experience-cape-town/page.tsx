@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 export const metadata: Metadata = {
   title: 'VR Experiences Cape Town | 100+ Games Delivered To Your Venue',
@@ -246,7 +247,7 @@ export default function VrExperienceCapeTownPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground pt-4 border-t border-border/40">
-                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town (transport is R200 up to about 25 km and R350–R500 further out). Party packages start from R999.
+                We also travel to Somerset West, the City Bowl, Southern Suburbs, and the rest of Cape Town{SHOW_PRICES ? ` (transport is ${rand(PRICES.transportNear)} up to about 25 km and ${rand(PRICES.transportFarMin)}–${rand(PRICES.transportFarMax)} further out). Party packages start from ${FROM_PRICE}.` : ". Tell us your suburb and we'll send a free quote."}
               </p>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 function BookingFormInner() {
   const searchParams = useSearchParams()
@@ -164,9 +165,9 @@ function BookingFormInner() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="unsure">Not sure yet</SelectItem>
-                  <SelectItem value="starter">Starter · R999 (up to 8 players)</SelectItem>
-                  <SelectItem value="standard">Standard · R1,499 (up to 12 players)</SelectItem>
-                  <SelectItem value="premium">Premium · R1,999 (up to 20 players)</SelectItem>
+                  <SelectItem value="starter">Starter{SHOW_PRICES ? ` · ${rand(PRICES.starter)}` : ""} (up to 8 players)</SelectItem>
+                  <SelectItem value="standard">Standard{SHOW_PRICES ? ` · ${rand(PRICES.standard)}` : ""} (up to 12 players)</SelectItem>
+                  <SelectItem value="premium">Premium{SHOW_PRICES ? ` · ${rand(PRICES.premium)}` : ""} (up to 20 players)</SelectItem>
                   <SelectItem value="custom">Custom / bigger group</SelectItem>
                 </SelectContent>
               </Select>

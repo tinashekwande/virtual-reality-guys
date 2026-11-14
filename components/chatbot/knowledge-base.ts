@@ -3,6 +3,8 @@
  * Used by Gemini AI System Prompt to accurately answer user questions.
  */
 
+import { CHATBOT_PRICE_RULE } from "@/lib/pricing"
+
 export const COMPANY_KNOWLEDGE_BASE = `
 ==============================================================================
 VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
@@ -104,4 +106,5 @@ YOUR MANDATE:
 
 KNOWLEDGE BASE CONTEXT:
 ${COMPANY_KNOWLEDGE_BASE}
+${CHATBOT_PRICE_RULE}
 `;

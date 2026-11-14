@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 export const metadata: Metadata = {
   title: 'VR Birthday Parties Cape Town | Unforgettable Gaming Celebrations',
@@ -171,7 +172,7 @@ export default function VrBirthdayPartiesPage() {
               <PartyPopper className="h-10 w-10 text-primary mb-4" />
               <h3 className="text-xl font-bold mb-2">Choose Your Package</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Flexible mobile VR packages starting from just R999. Options include 4 to 6 headsets, spectator displays, and tournament coordination.
+                Flexible mobile VR packages{SHOW_PRICES ? ` starting from just ${FROM_PRICE}` : ""}. Options include 4 to 6 headsets, spectator displays, and tournament coordination.
               </p>
             </div>
 
@@ -301,7 +302,7 @@ export default function VrBirthdayPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Packages starting from just R999</span>
+                <span>{SHOW_PRICES ? `Packages starting from just ${FROM_PRICE}` : "Free, no-obligation quotes"}</span>
               </p>
             </div>
           </div>
