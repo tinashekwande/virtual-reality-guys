@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, Suspense } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { ArrowRight, Gamepad2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CyberButton } from "@/components/ui/cyber-button"
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 function BookingFormInner() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const gameParam = searchParams?.get("game") || ""
   const packageParam = (searchParams?.get("package") || "").toLowerCase()
@@ -66,6 +67,13 @@ function BookingFormInner() {
     if (res.ok) {
       setStatus("success")
       ;(e.target as HTMLFormElement).reset()
+      if (typeof window !== "undefined" && Array.isArray((window as any).dataLayer)) {
+        ;(window as any).dataLayer.push({
+          event: "form_submission_success",
+          form_type: body.form_type,
+        })
+      }
+      router.push("/thank-you")
     } else {
       const d = await res.json()
       setErrorMsg(d.error ?? "Something went wrong")

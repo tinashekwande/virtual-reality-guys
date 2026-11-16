@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import {
   ArrowRight,
   BookOpen,
@@ -34,6 +35,7 @@ interface SchoolVrEnquiryFormProps {
 }
 
 export default function SchoolVrEnquiryForm({ defaultMode = "demo" }: SchoolVrEnquiryFormProps) {
+  const router = useRouter()
   const [mode, setMode] = useState<EnquiryMode>(defaultMode)
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -183,6 +185,13 @@ export default function SchoolVrEnquiryForm({ defaultMode = "demo" }: SchoolVrEn
         setPrefilledTopic("")
         setPrefilledSubject("")
         ;(e.target as HTMLFormElement).reset()
+        if (typeof window !== "undefined" && Array.isArray((window as any).dataLayer)) {
+          ;(window as any).dataLayer.push({
+            event: "form_submission_success",
+            form_type: mode === "demo" ? "school" : "custom_vr_development",
+          })
+        }
+        router.push("/thank-you")
       } else {
         const d = await res.json().catch(() => ({}))
         setErrorMsg(d.error ?? "We could not submit your enquiry right now. Please try again.")

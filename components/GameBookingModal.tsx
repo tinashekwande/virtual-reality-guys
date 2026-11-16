@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { createPortal } from "react-dom"
 import Image from "next/image"
 import { 
@@ -32,6 +33,7 @@ interface GameBookingModalProps {
 }
 
 export default function GameBookingModal({ game, isOpen, onClose }: GameBookingModalProps) {
+  const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -105,6 +107,15 @@ export default function GameBookingModal({ game, isOpen, onClose }: GameBookingM
       }
 
       setStatus("success")
+      if (typeof window !== "undefined" && Array.isArray((window as any).dataLayer)) {
+        ;(window as any).dataLayer.push({
+          event: "form_submission_success",
+          form_type: "game_booking",
+          game_title: game.title,
+        })
+      }
+      onClose()
+      router.push("/thank-you")
     } catch (err: any) {
       console.error("Booking error:", err)
       setErrorMsg(err.message || "Failed to submit booking. Please try WhatsApp or calling us directly.")
