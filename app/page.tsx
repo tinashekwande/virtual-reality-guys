@@ -311,7 +311,7 @@ export default async function Home() {
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
               <div className="space-y-7 sm:space-y-8">
                 <h1 className="text-[2.6rem] leading-[1.05] sm:text-6xl lg:text-7xl font-bold tracking-tight text-balance">
-                  Mobile VR Gaming, <span className="text-primary">Delivered</span> to Your Event
+                  VR Gaming, <span className="text-primary">Delivered</span> to Your Event
                 </h1>
                 <p className="text-lg sm:text-2xl text-white/80 max-w-3xl mx-auto text-balance">
                   Birthday parties, schools and team building across Cape Town. We bring the
