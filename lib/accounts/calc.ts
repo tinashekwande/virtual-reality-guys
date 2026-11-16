@@ -1,4 +1,4 @@
-import type { ExpenseItem, Invoice, PaymentItem } from '@/types'
+import type { EventItem, ExpenseItem, Invoice, PaymentItem } from '@/types'
 
 const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100
 const num = (v: unknown) => Number(v) || 0
@@ -26,7 +26,8 @@ export function summarisePayments(inv: Invoice, payments: PaymentItem[], today =
   const received = round2(payments.filter((p) => p.invoice_id === inv.id).reduce((a, p) => a + num(p.amount), 0))
   const depositRequired = round2((total * num(inv.deposit_percentage ?? 50)) / 100)
 
-  if (inv.type === 'quote' || inv.status === 'cancelled') {
+  // Quotes, cancelled and draft invoices are not owed (a draft has not been sent to the client yet)
+  if (inv.type === 'quote' || inv.status === 'cancelled' || inv.status === 'draft') {
     return { total, received, balance: 0, depositRequired, depositMet: false, state: 'n/a', overdue: false }
   }
 
@@ -49,6 +50,186 @@ export function statusFromPayments(inv: Invoice, summary: PaymentSummary): Invoi
   if (summary.state === 'deposit_paid') return 'deposit_paid'
   // Nothing (or less than the deposit) received: keep it as sent/pending rather than moving it backwards
   return inv.status === 'paid' || inv.status === 'deposit_paid' ? 'sent' : null
+}
+
+export interface InvoiceMoneyTotals {
+  /** Money actually received against invoices (from the payments log) */
+  received: number
+  /** Still owed on sent / pending / deposit-paid invoices */
+  outstanding: number
+  /** Part of `outstanding` that is past its due date */
+  overdue: number
+  /** Invoices with money still owed */
+  unpaidCount: number
+}
+
+/**
+ * One source of truth for invoice money. Every screen and AI tool should use this
+ * instead of adding up invoice totals by status.
+ */
+export function invoiceMoneyTotals(invoices: Invoice[], payments: PaymentItem[], today = todayStr()): InvoiceMoneyTotals {
+  let received = 0
+  let outstanding = 0
+  let overdue = 0
+  let unpaidCount = 0
+  for (const inv of invoices) {
+    if (inv.type === 'quote') continue
+    const s = summarisePayments(inv, payments, today)
+    received += s.received
+    outstanding += s.balance
+    if (s.overdue) overdue += s.balance
+    if (s.balance > 0.005) unpaidCount += 1
+  }
+  return { received: round2(received), outstanding: round2(outstanding), overdue: round2(overdue), unpaidCount }
+}
+
+// ---------------------------------------------------------------- ledger
+
+export interface LedgerRow {
+  id: string
+  kind: 'invoice' | 'event'
+  title: string
+  date: string
+  category: string
+  status: string
+  revenue: number
+  expenses: number
+  netProfit: number
+  margin: number
+  balance: number
+  overdue: boolean
+  raw: any
+}
+
+/**
+ * Per-booking revenue, costs and profit. Invoice revenue is money received (payments log);
+ * standalone events use their recorded revenue. Costs are running costs plus depreciation.
+ */
+export function buildLedger(
+  invoices: Invoice[],
+  events: EventItem[],
+  expenses: ExpenseItem[],
+  payments: PaymentItem[],
+  today = todayStr()
+): LedgerRow[] {
+  const rows: LedgerRow[] = []
+
+  for (const inv of invoices) {
+    const pay = summarisePayments(inv, payments, today)
+    let rev = 0
+    if (inv.type === 'quote') rev = 0
+    else if (payments.length > 0) rev = pay.received
+    else if (inv.status === 'paid') rev = num(inv.total) // payments log not set up yet
+    else if (inv.status === 'deposit_paid') rev = round2((num(inv.total) * num(inv.deposit_percentage ?? 50)) / 100)
+
+    const expSum = totalExpenses(expenses.filter((e) => e.invoice_id === inv.id), today).costs
+    const net = round2(rev - expSum)
+    rows.push({
+      id: inv.id,
+      kind: 'invoice',
+      title: `${inv.type === 'quote' ? 'Quote' : 'Invoice'}: ${inv.client_name}`,
+      date: inv.event_date || inv.issue_date || inv.created_at?.split('T')[0] || '',
+      category: inv.items?.[0]?.description || 'Client Booking',
+      status: inv.status,
+      revenue: rev,
+      expenses: expSum,
+      netProfit: net,
+      margin: rev > 0 ? (net / rev) * 100 : 0,
+      balance: pay.balance,
+      overdue: pay.overdue,
+      raw: inv,
+    })
+  }
+
+  for (const evt of events) {
+    const rev = num(evt.total_revenue)
+    const linked = expenses.filter((e) => e.event_id === evt.id)
+    const expSum = linked.length > 0 ? totalExpenses(linked, today).costs : num(evt.total_expenses)
+    const net = round2(rev - expSum)
+    rows.push({
+      id: evt.id,
+      kind: 'event',
+      title: evt.title || 'Standalone Event',
+      date: evt.event_date || evt.created_at?.split('T')[0] || '',
+      category: evt.event_type || 'Corporate Activation',
+      status: evt.status || 'scheduled',
+      revenue: rev,
+      expenses: expSum,
+      netProfit: net,
+      margin: rev > 0 ? (net / rev) * 100 : 0,
+      balance: 0,
+      overdue: false,
+      raw: evt,
+    })
+  }
+
+  return rows.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+}
+
+/** Costs not tied to any booking (overheads). */
+export function generalExpenses(expenses: ExpenseItem[], today = todayStr()): number {
+  return totalExpenses(expenses.filter((e) => !e.event_id && !e.invoice_id), today).costs
+}
+
+/**
+ * Overhead costs (not tied to a booking) that fall inside a period [from, to] (YYYY-MM-DD, inclusive).
+ * Running costs count by their date; equipment counts only the depreciation that accrued inside the period.
+ * Pass nulls for all time.
+ */
+export function overheadCostsInPeriod(expenses: ExpenseItem[], from: string | null, to: string | null, today = todayStr()): number {
+  const general = expenses.filter((e) => !e.event_id && !e.invoice_id)
+  if (!from && !to) return totalExpenses(general, today).costs
+  const start = from || '0000-01-01'
+  const end = to && to < today ? to : today
+  let running = 0
+  let dep = 0
+  for (const e of general) {
+    if (isAsset(e)) {
+      if (start > end) continue
+      dep += depreciationToDate(e, end) - depreciationToDate(e, start)
+    } else {
+      const d = (e.date || '').split('T')[0]
+      if (d && d >= start && (!to || d <= to)) running += num(e.amount)
+    }
+  }
+  return round2(running + dep)
+}
+
+export interface OverallTotals {
+  revenue: number
+  expenses: number
+  netProfit: number
+  profitMargin: number
+  outstanding: number
+  overdue: number
+  unpaidCount: number
+  /** Everything paid out, equipment at full price */
+  cashOut: number
+}
+
+/** All-time headline numbers, computed exactly the way the Accounts page computes them. */
+export function overallTotals(
+  invoices: Invoice[],
+  events: EventItem[],
+  expenses: ExpenseItem[],
+  payments: PaymentItem[],
+  today = todayStr()
+): OverallTotals {
+  const ledger = buildLedger(invoices, events, expenses, payments, today)
+  const revenue = round2(ledger.reduce((a, r) => a + r.revenue, 0))
+  const exp = round2(ledger.reduce((a, r) => a + r.expenses, 0) + generalExpenses(expenses, today))
+  const netProfit = round2(revenue - exp)
+  const money = invoiceMoneyTotals(invoices, payments, today)
+  return {
+    revenue,
+    expenses: exp,
+    netProfit,
+    profitMargin: revenue > 0 ? Number(((netProfit / revenue) * 100).toFixed(1)) : 0,
+    outstanding: money.outstanding,
+    overdue: money.overdue,
+    unpaidCount: money.unpaidCount,
+    cashOut: totalExpenses(expenses, today).cashOut,
+  }
 }
 
 // ---------------------------------------------------------------- assets

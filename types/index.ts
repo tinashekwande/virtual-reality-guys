@@ -156,6 +156,8 @@ export interface PaymentItem {
   reference?: string | null
   received_by?: string | null
   notes?: string | null
+  /** manual = entered by hand; backfill = one-off import; status_* = recorded automatically when the invoice status was set */
+  source?: 'manual' | 'backfill' | 'status_deposit' | 'status_paid'
   created_at?: string
 }
 

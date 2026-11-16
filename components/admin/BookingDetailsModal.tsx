@@ -20,6 +20,8 @@ import { useConfirm } from "@/components/admin/confirm-provider";
 
 export interface PlannerEvent {
   id: string;
+  /** Money actually received (payments log), for invoices */
+  amount_received?: number;
   source: "invoice" | "request" | "event";
   title: string;
   client_name: string;
