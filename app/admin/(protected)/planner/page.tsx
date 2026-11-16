@@ -16,7 +16,8 @@ import BookingDetailsModal, { PlannerEvent } from "@/components/admin/BookingDet
 import NewBookingModal from "@/components/admin/NewBookingModal";
 import PersonalEventModal from "@/components/admin/PersonalEventModal";
 import CalendarImportModal from "@/components/admin/CalendarImportModal";
-import { Invoice, FormRequest } from "@/types";
+import { Invoice, FormRequest, PaymentItem } from "@/types";
+import { summarisePayments } from "@/lib/accounts/calc";
 import {
   PersonalCalendarEvent, CalendarMode, CalendarSubscription
 } from "@/types/personal-calendar";
@@ -84,11 +85,13 @@ export default function BookingPlannerPage() {
   const fetchPlannerData = useCallback(async () => {
     setLoading(true);
     try {
-      const [invoicesRes, requestsRes, eventsRes] = await Promise.all([
+      const [invoicesRes, requestsRes, eventsRes, paymentsRes] = await Promise.all([
         fetch("/api/invoices").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/requests").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/events").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch("/api/payments").then((r) => (r.ok ? r.json() : [])).catch(() => []),
       ]);
+      const payments: PaymentItem[] = Array.isArray(paymentsRes) ? paymentsRes : [];
 
       const rawEvents: PlannerEvent[] = [];
 
@@ -106,6 +109,7 @@ export default function BookingPlannerPage() {
             end_time: inv.end_time,
             event_type: inv.type, status: inv.status,
             total_amount: Number(inv.total) || 0,
+            amount_received: inv.type === "quote" ? 0 : summarisePayments(inv, payments).received,
             deposit_percentage: inv.deposit_percentage,
             notes_or_message: inv.notes, items: inv.items, raw_data: inv,
           });
@@ -333,14 +337,12 @@ export default function BookingPlannerPage() {
   const upcomingEventsCount = events.filter((e) => e.date >= todayStr).length;
   const pendingRequestsCount = events.filter((e) => e.status === "new" || e.status === "draft").length;
   const currentMonthPrefix = todayStr.substring(0, 7);
+  // Money received this month: invoices from the payments log, standalone events once completed
   const monthlyRevenue = events
-    .filter((e) => e.date.startsWith(currentMonthPrefix) && (e.status === "paid" || e.status === "completed" || e.status === "deposit_paid"))
+    .filter((e) => e.date.startsWith(currentMonthPrefix))
     .reduce((acc, curr) => {
-      if (curr.status === "paid" || curr.status === "completed") return acc + (curr.total_amount || 0);
-      if (curr.status === "deposit_paid") {
-        const pct = curr.deposit_percentage !== undefined && Number(curr.deposit_percentage) > 0 ? Number(curr.deposit_percentage) : 50;
-        return acc + (((curr.total_amount || 0) * pct) / 100);
-      }
+      if (curr.source === "invoice") return acc + (curr.amount_received || 0);
+      if (curr.source === "event" && (curr.status === "paid" || curr.status === "completed")) return acc + (curr.total_amount || 0);
       return acc;
     }, 0);
 

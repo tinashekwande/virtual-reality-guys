@@ -16,7 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Invoice, InvoiceType, InvoiceStatus, InvoiceItem } from "@/types";
+import { Invoice, InvoiceType, InvoiceStatus, InvoiceItem, PaymentItem } from "@/types";
+import { invoiceMoneyTotals } from "@/lib/accounts/calc";
 import InvoiceForm from "@/components/admin/InvoiceForm";
 import DocumentPreview from "@/components/admin/DocumentPreview";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ function QuotesInvoicesContent() {
   const confirm = useConfirm();
   const searchParams = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
@@ -33,8 +35,20 @@ function QuotesInvoicesContent() {
   const [viewMode, setViewMode] = useState<"list" | "create" | "edit" | "preview">("list");
   const [selectedInvoice, setSelectedInvoice] = useState<Partial<Invoice> | null>(null);
 
+  // Payments log drives the money totals (status changes record payments automatically)
+  const fetchPayments = async () => {
+    try {
+      const res = await fetch("/api/payments");
+      const data = res.ok ? await res.json() : [];
+      setPayments(Array.isArray(data) ? data : []);
+    } catch {
+      setPayments([]);
+    }
+  };
+
   const fetchInvoices = async () => {
     setLoading(true);
+    fetchPayments();
     try {
       const res = await fetch("/api/invoices");
       if (!res.ok) {
@@ -227,14 +241,15 @@ function QuotesInvoicesContent() {
       const updated = await res.json().catch(() => null);
       toast.success(
         newStatus === "paid"
-          ? "Invoice marked as FULLY PAID (100% added to verified revenue! 💰)"
+          ? "Invoice marked as fully paid. The balance was logged as a payment in Accounts."
           : newStatus === "deposit_paid"
-          ? "Invoice marked as DEPOSIT PAID (Deposit portion added to verified revenue! 💵)"
-          : "Invoice marked as PENDING (Unpaid pipeline)"
+          ? "Invoice marked as deposit paid. The deposit was logged as a payment in Accounts."
+          : `Invoice marked as ${newStatus.replace(/_/g, " ")}.`
       );
       setInvoices((prev) =>
         prev.map((inv) => (inv.id === id ? (updated && updated.id ? { ...inv, ...updated } : { ...inv, status: newStatus }) : inv))
       );
+      fetchPayments();
     } catch (err: any) {
       toast.error(err.message || "Failed to update status.");
     }
@@ -260,29 +275,10 @@ function QuotesInvoicesContent() {
   const totalQuotesCount = invoices.filter((i) => i.type === "quote").length;
   const totalInvoicesCount = invoices.filter((i) => i.type === "invoice").length;
   
-  const totalPaidRevenue = invoices
-    .filter((i) => i.type === "invoice")
-    .reduce((acc, curr) => {
-      if (curr.status === "paid") {
-        return acc + (Number(curr.total) || 0);
-      }
-      if (curr.status === "deposit_paid") {
-        const pct = curr.deposit_percentage !== undefined && Number(curr.deposit_percentage) > 0 ? Number(curr.deposit_percentage) : 50;
-        return acc + ((Number(curr.total || 0) * pct) / 100);
-      }
-      return acc;
-    }, 0);
-
-  const totalPendingAmount = invoices
-    .filter((i) => i.type === "invoice" && i.status !== "paid" && i.status !== "cancelled")
-    .reduce((acc, curr) => {
-      if (curr.status === "deposit_paid") {
-        const pct = curr.deposit_percentage !== undefined && Number(curr.deposit_percentage) > 0 ? Number(curr.deposit_percentage) : 50;
-        const depAmount = ((Number(curr.total || 0) * pct) / 100);
-        return acc + Math.max(0, (Number(curr.total || 0) - depAmount));
-      }
-      return acc + (Number(curr.total) || 0);
-    }, 0);
+  // Money actually received and still owed, from the payments log (same numbers as Accounts)
+  const moneyTotals = invoiceMoneyTotals(invoices, payments);
+  const totalPaidRevenue = moneyTotals.received;
+  const totalPendingAmount = moneyTotals.outstanding;
 
   if (viewMode === "create" || viewMode === "edit") {
     return (

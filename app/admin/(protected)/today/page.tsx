@@ -208,7 +208,12 @@ export default function TodayPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-sm font-bold text-foreground">{zar(i.total)}</span>
+                        <span className="text-right">
+                          <span className="block text-sm font-bold text-foreground">{zar(i.balance ?? i.total)}</span>
+                          {i.balance !== undefined && Number(i.balance) < Number(i.total) - 0.005 && (
+                            <span className="block text-[10px] text-muted-foreground">due of {zar(i.total)}</span>
+                          )}
+                        </span>
                         {wa && <a href={wa} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" aria-label="WhatsApp reminder"><MessageCircle className="w-4 h-4" /></a>}
                       </div>
                     </div>

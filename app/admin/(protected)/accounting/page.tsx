@@ -23,7 +23,7 @@ import ReconcileTab from "@/components/admin/accounts/ReconcileTab";
 import MonthlyTab from "@/components/admin/accounts/MonthlyTab";
 import {
   summarisePayments, totalExpenses, expenseIssues, payeeTotals, depreciationToDate,
-  todayStr, DEFAULT_ASSET_LIFE_MONTHS,
+  todayStr, DEFAULT_ASSET_LIFE_MONTHS, buildLedger, overheadCostsInPeriod,
 } from "@/lib/accounts/calc";
 
 export default function AccountingPage() {
@@ -92,118 +92,52 @@ export default function AccountingPage() {
     fetchData();
   }, [fetchData]);
 
-  // Combine Invoices and Standalone Events into a Unified Financial Ledger
-  const ledgerItems = useMemo(() => {
-    const items: Array<{
-      id: string;
-      kind: "invoice" | "event";
-      title: string;
-      date: string;
-      category: string;
-      status: string;
-      revenue: number;
-      expenses: number;
-      netProfit: number;
-      margin: number;
-      balance: number;
-      overdue: boolean;
-      raw: any;
-    }> = [];
+  // Combine Invoices and Standalone Events into a Unified Financial Ledger (shared with the AI/MCP tools)
+  const ledgerItems = useMemo(
+    () => buildLedger(invoices, events, expenses, payments),
+    [invoices, events, expenses, payments]
+  );
 
-    // 1. Process Client Invoices
-    invoices.forEach((inv) => {
-      const pay = summarisePayments(inv, payments);
-      let rev = 0;
-      if (inv.type === "quote") {
-        rev = 0; // quotes are not income
-      } else if (payments.length > 0) {
-        // Money actually received (from the payments log)
-        rev = pay.received;
-      } else if (inv.status === "paid") {
-        // Payments log not set up yet: fall back to the invoice status
-        rev = Number(inv.total) || 0;
-      } else if (inv.status === "deposit_paid") {
-        const pct = (inv.deposit_percentage || 50) / 100;
-        rev = (Number(inv.total) || 0) * pct;
-      }
+  // Selected period as inclusive YYYY-MM-DD bounds (null = all time)
+  const rangeBounds = useMemo((): { from: string | null; to: string | null } => {
+    const now = new Date();
+    const ymd = (d: Date) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    if (dateRange === "this_month") {
+      return { from: ymd(new Date(now.getFullYear(), now.getMonth(), 1)), to: ymd(new Date(now.getFullYear(), now.getMonth() + 1, 0)) };
+    }
+    if (dateRange === "last_month") {
+      return { from: ymd(new Date(now.getFullYear(), now.getMonth() - 1, 1)), to: ymd(new Date(now.getFullYear(), now.getMonth(), 0)) };
+    }
+    if (dateRange === "quarter") {
+      return { from: ymd(new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())), to: null };
+    }
+    if (dateRange === "year") {
+      return { from: `${now.getFullYear()}-01-01`, to: `${now.getFullYear()}-12-31` };
+    }
+    return { from: null, to: null };
+  }, [dateRange]);
 
-      // Find expenses linked to this invoice
-      const linkedExpenses = expenses.filter((e) => e.invoice_id === inv.id);
-      const expSum = totalExpenses(linkedExpenses).costs;
-      const net = rev - expSum;
-      const margin = rev > 0 ? (net / rev) * 100 : 0;
-
-      items.push({
-        id: inv.id,
-        kind: "invoice",
-        title: `${inv.type === "quote" ? "Quote" : "Invoice"}: ${inv.client_name}`,
-        date: inv.event_date || inv.issue_date || inv.created_at?.split("T")[0] || "",
-        category: inv.items?.[0]?.description || "Client Booking",
-        status: inv.status,
-        revenue: rev,
-        expenses: expSum,
-        netProfit: net,
-        margin,
-        balance: pay.balance,
-        overdue: pay.overdue,
-        raw: inv,
-      });
-    });
-
-    // 2. Process Standalone Events
-    events.forEach((evt) => {
-      const rev = Number(evt.total_revenue) || 0;
-      const linkedExpenses = expenses.filter((e) => e.event_id === evt.id);
-      const expSum = linkedExpenses.length > 0
-        ? totalExpenses(linkedExpenses).costs
-        : Number(evt.total_expenses) || 0;
-
-      const net = rev - expSum;
-      const margin = rev > 0 ? (net / rev) * 100 : 0;
-
-      items.push({
-        id: evt.id,
-        kind: "event",
-        title: evt.title || "Standalone Event",
-        date: evt.event_date || evt.created_at?.split("T")[0] || "",
-        category: evt.event_type || "Corporate Activation",
-        status: evt.status || "scheduled",
-        revenue: rev,
-        expenses: expSum,
-        netProfit: net,
-        margin,
-        balance: 0,
-        overdue: false,
-        raw: evt,
-      });
-    });
-
-    // Sort by Date Descending
-    return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [invoices, events, expenses, payments]);
+  // Is a YYYY-MM-DD date inside the selected date range?
+  const inDateRange = useCallback(
+    (date: string) => {
+      if (!rangeBounds.from && !rangeBounds.to) return true;
+      const d = (date || "").split("T")[0];
+      if (!d) return false;
+      if (rangeBounds.from && d < rangeBounds.from) return false;
+      if (rangeBounds.to && d > rangeBounds.to) return false;
+      return true;
+    },
+    [rangeBounds]
+  );
 
   // Apply Date Range & Search Filters to Ledger
   const filteredLedger = useMemo(() => {
-    const now = new Date();
     return ledgerItems.filter((item) => {
       if (entryFilter === "invoices" && item.kind !== "invoice") return false;
       if (entryFilter === "events" && item.kind !== "event") return false;
 
-      if (dateRange !== "all" && item.date) {
-        const itemDate = new Date(item.date);
-        if (dateRange === "this_month") {
-          if (itemDate.getMonth() !== now.getMonth() || itemDate.getFullYear() !== now.getFullYear()) return false;
-        } else if (dateRange === "last_month") {
-          const prevMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
-          const prevYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
-          if (itemDate.getMonth() !== prevMonth || itemDate.getFullYear() !== prevYear) return false;
-        } else if (dateRange === "quarter") {
-          const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-          if (itemDate < threeMonthsAgo) return false;
-        } else if (dateRange === "year") {
-          if (itemDate.getFullYear() !== now.getFullYear()) return false;
-        }
-      }
+      if (dateRange !== "all" && item.date && !inDateRange(item.date)) return false;
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
@@ -215,18 +149,21 @@ export default function AccountingPage() {
 
       return true;
     });
-  }, [ledgerItems, entryFilter, dateRange, searchQuery]);
+  }, [ledgerItems, entryFilter, dateRange, searchQuery, inDateRange]);
 
   // Total General Unlinked Overhead Expenses
-  const totalGeneralExpenses = useMemo(() => {
-    return totalExpenses(expenses.filter((e) => !e.event_id && !e.invoice_id)).costs;
-  }, [expenses]);
+  // Overheads count in the selected period by their own date
+  const totalGeneralExpenses = useMemo(
+    () => overheadCostsInPeriod(expenses, rangeBounds.from, rangeBounds.to),
+    [expenses, rangeBounds]
+  );
 
   // Key Financial KPIs
   const kpis = useMemo(() => {
     const totalRevenue = filteredLedger.reduce((acc, curr) => acc + curr.revenue, 0);
     const ledgerExpenses = filteredLedger.reduce((acc, curr) => acc + curr.expenses, 0);
-    const totalExpenses = ledgerExpenses + (dateRange === "all" ? totalGeneralExpenses : 0);
+    // Overheads belong to the whole business, so leave them out only when looking at events or invoices on their own
+    const totalExpenses = ledgerExpenses + (entryFilter === "all" && !searchQuery.trim() ? totalGeneralExpenses : 0);
     const netProfit = totalRevenue - totalExpenses;
     const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
 
@@ -236,7 +173,7 @@ export default function AccountingPage() {
       netProfit,
       profitMargin,
     };
-  }, [filteredLedger, totalGeneralExpenses, dateRange]);
+  }, [filteredLedger, totalGeneralExpenses, entryFilter, searchQuery]);
 
   // Money owed to us, owed to the team, and entries that need a second look
   const owedToUs = useMemo(() => {

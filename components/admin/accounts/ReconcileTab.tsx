@@ -8,7 +8,9 @@ import { Check, Pencil, Trash2, X } from "lucide-react";
 import type { Invoice, PaymentItem } from "@/types";
 
 const money = (n: number) => `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}`;
-const isUnverified = (p: PaymentItem) => /please verify/i.test(p.notes || "");
+// Backfilled or auto-recorded (from an invoice status change) and not yet checked against the bank statement
+const isUnverified = (p: PaymentItem) =>
+  p.source === "status_paid" || p.source === "status_deposit" || /please verify|check the date/i.test(p.notes || "");
 
 interface Props {
   invoices: Invoice[];
