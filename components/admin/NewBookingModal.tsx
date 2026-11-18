@@ -226,7 +226,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="quote">Quote Booking</SelectItem>
-                    <SelectItem value="invoice">Tax Invoice Booking</SelectItem>
+                    <SelectItem value="invoice">Invoice Booking</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -316,7 +316,7 @@ export default function NewBookingModal({ isOpen, selectedDate, onClose, onSucce
               </div>
 
               <div>
-                <label className="text-slate-400 font-semibold mb-1 block">Price (R, Incl. 15% VAT)</label>
+                <label className="text-slate-400 font-semibold mb-1 block">Price (R)</label>
                 <Input
                   type="number"
                   min="0"

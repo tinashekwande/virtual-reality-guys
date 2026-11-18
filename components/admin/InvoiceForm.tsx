@@ -390,7 +390,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="quote">Quote</SelectItem>
-                      <SelectItem value="invoice">Tax Invoice</SelectItem>
+                      <SelectItem value="invoice">Invoice</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -548,7 +548,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
               <div className="hidden sm:grid grid-cols-12 gap-3 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-tech">
                 <div className="col-span-6">Item Description</div>
                 <div className="col-span-2 text-center">Qty</div>
-                <div className="col-span-3 text-right">Price (Incl. 15% VAT)</div>
+                <div className="col-span-3 text-right">Price (R)</div>
                 <div className="col-span-1"></div>
               </div>
 
@@ -632,7 +632,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
 
               <div className="space-y-4 text-xs">
                 <div className="flex justify-between items-center text-muted-foreground">
-                  <span>Subtotal (Incl. VAT):</span>
+                  <span>Subtotal:</span>
                   <span className="font-semibold text-foreground text-sm font-mono">
                     R {subtotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                   </span>
@@ -658,21 +658,6 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                     onChange={(e) => setDiscount(Number(e.target.value))}
                     className="rounded-xl border-border bg-secondary/50 text-right font-mono text-xs text-emerald-400"
                   />
-                </div>
-
-                <div className="border-t border-border/60 pt-3 space-y-2 text-xs">
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Net (Excl. 15% VAT):</span>
-                    <span className="font-mono">
-                      R {(grandTotal - (grandTotal * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-cyan-400 font-medium">
-                    <span>VAT (15% Included):</span>
-                    <span className="font-mono">
-                      R {((grandTotal * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="border-t border-border pt-4 flex justify-between items-center">

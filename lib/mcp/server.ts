@@ -27,7 +27,7 @@ import { scheduleFollowUpsForInvoice, reconcileFollowUpsForInvoice } from '@/lib
 
 export const MCP_ACTOR = 'Claude (MCP)'
 
-const INSTRUCTIONS = `You are connected to the Virtual Reality Guys (VR Guyz) admin portal — a mobile VR entertainment business in Cape Town, South Africa. Currency is ZAR (R). All prices include 15% VAT.
+const INSTRUCTIONS = `You are connected to the Virtual Reality Guys (VR Guyz) admin portal — a mobile VR entertainment business in Cape Town, South Africa. Currency is ZAR (R). Virtual Reality Guys is NOT registered for VAT: no VAT is charged, so never add VAT or write "incl. VAT" / "Tax Invoice" in quotes, invoices or client emails.
 
 Before writing to any client, call get_business_knowledge for packages, pricing, payment terms, coverage areas and tone.
 
@@ -101,7 +101,7 @@ const AD_PLATFORMS = [
 const lineItem = z.object({
   description: z.string(),
   quantity: z.number().positive().default(1),
-  unit_price: z.number().nonnegative().describe('Price per unit in ZAR, VAT inclusive'),
+  unit_price: z.number().nonnegative().describe('Price per unit in ZAR (no VAT; not a VAT vendor)'),
 })
 
 function computeTotals(items: { description: string; quantity: number; unit_price: number }[], discount = 0, transport = 0) {

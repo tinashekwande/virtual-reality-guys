@@ -248,7 +248,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
         <SheetHeader className="border-b border-cyan-900/40 pb-4 text-left">
           <div className="flex items-center justify-between gap-3">
             <span className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              {isInvoice ? (event.raw_data.type === "quote" ? "Official Quote" : "Tax Invoice") : "Customer Request"}
+              {isInvoice ? (event.raw_data.type === "quote" ? "Official Quote" : "Invoice") : "Customer Request"}
             </span>
 
             <span className="text-xs font-mono text-slate-400">
@@ -428,7 +428,7 @@ export default function BookingDetailsModal({ event, isOpen, onClose, onUpdate }
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs rounded-xl py-4 flex items-center justify-center gap-2"
               >
                 <Receipt className="h-3.5 w-3.5" />
-                Create Tax Invoice
+                Create Invoice
               </Button>
               <Button
                 onClick={() => handleCreateInvoice("quote")}

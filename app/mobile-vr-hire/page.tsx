@@ -314,7 +314,7 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Starter</h3>
                 <div className="mb-4">
-                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.starter)} <span className="text-sm font-normal text-muted-foreground">incl. VAT</span></> : "Contact us for a quote"}</span>
+                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.starter)}</> : "Contact us for a quote"}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>2 hours of VR gaming</span>
@@ -343,7 +343,7 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Standard</h3>
                 <div className="mb-4">
-                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.standard)} <span className="text-sm font-normal text-muted-foreground">incl. VAT</span></> : "Contact us for a quote"}</span>
+                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.standard)}</> : "Contact us for a quote"}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>3 hours of VR gaming</span>
@@ -370,7 +370,7 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Premium</h3>
                 <div className="mb-4">
-                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.premium)} <span className="text-sm font-normal text-muted-foreground">incl. VAT</span></> : "Contact us for a quote"}</span>
+                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.premium)}</> : "Contact us for a quote"}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>4 hours of VR gaming</span>

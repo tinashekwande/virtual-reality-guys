@@ -490,7 +490,7 @@ export default async function Home() {
             </h2>
             <p className="text-lg text-muted-foreground">
               {SHOW_PRICES
-                ? "Prices include VAT, setup, trained supervisors and pack-up. No hidden extras."
+                ? "Prices include setup, trained supervisors and pack-up. No hidden extras."
                 : "Every package includes setup, trained supervisors and pack-up. Tell us about your event for a free, no-obligation quote."}
             </p>
           </div>
@@ -871,9 +871,6 @@ function PricingCard({
             {price ? (
               <>
                 <span className="text-4xl font-bold">{price}</span>
-                <span className={featured ? "text-primary-foreground/80" : "text-muted-foreground"}>
-                  {" "}incl. VAT
-                </span>
               </>
             ) : (
               <span className="text-2xl font-bold">Free quote</span>

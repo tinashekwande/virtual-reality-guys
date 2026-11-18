@@ -75,7 +75,7 @@ export function calculateEventReadiness(
     if (inv.doc_number) {
       score += 15
       items.push({
-        label: 'Tax Invoice / Quote Generated',
+        label: 'Invoice / Quote Generated',
         passed: true,
         critical: false,
         detail: `Document #${inv.doc_number} generated.`,

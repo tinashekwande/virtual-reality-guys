@@ -185,7 +185,7 @@ export async function getMasterSystemInstruction(): Promise<string> {
   const packagesList = ctx.packages
     .map(
       (p) =>
-        `- ${p.name}: R${p.price} (Incl. 15% VAT) | ${p.headsets} VR Headsets, ${p.hours} Hours, ${p.staff} Staff, up to ${p.players} players`
+        `- ${p.name}: R${p.price} | ${p.headsets} VR Headsets, ${p.hours} Hours, ${p.staff} Staff, up to ${p.players} players`
     )
     .join('\n')
 
@@ -201,7 +201,7 @@ COMPANY OVERVIEW & RULES:
 - Hardware Inventory: Standard fleet of 8 Meta Quest VR Headsets (Kiwi Elite Straps, silicone hygiene covers), 55" 4K Spectator TV Displays, Wi-Fi 6 Dedicated Routers, High-Capacity Power Docks.
 - Target Audiences: Birthday parties (ages 8+), School demonstrations & workshops, Corporate team building & activations, Brand expos, Festivals & community pop-ups.
 
-CURRENT PACKAGE PRICING (INCL. 15% VAT):
+CURRENT PACKAGE PRICING (NOT REGISTERED FOR VAT — NO VAT CHARGED, NEVER MENTION VAT):
 ${packagesList}
 
 YOUR CAPABILITIES & PRINCIPLES:

@@ -25,14 +25,14 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
      - Northern Suburbs (Durbanville, Bellville, Brackenfell, Parow, Century City)
      - Helderberg & Winelands (Somerset West, Stellenbosch, Paarl, Strand, Gordon's Bay)
 
-3. PACKAGES & PRICING (ALL PRICES ARE INCLUSIVE OF 15% VAT):
-   - Starter Package: R999.00 (Incl. VAT)
+3. PACKAGES & PRICING (VIRTUAL REALITY GUYS IS NOT REGISTERED FOR VAT — NO VAT IS CHARGED; NEVER MENTION OR ADD VAT):
+   - Starter Package: R999.00
      - Includes: 4 VR Headsets, 2 Hours of VR gaming, suitable for up to 8 players, 1 Trained VR Supervisor, 30+ Games Selection.
      - Best For: Small birthday parties and intimate gatherings (up to 8 players).
-   - Standard Package: R1,499.00 (Incl. VAT) — MOST POPULAR
+   - Standard Package: R1,499.00 — MOST POPULAR
      - Includes: 5 VR Headsets, 3 Hours of VR gaming, suitable for up to 12 players, 2 Trained VR Supervisors, 60+ Games Selection, Multiplayer Tournaments.
      - Best For: Birthday parties, family fun days, medium events (up to 12 players).
-   - Premium Package: R1,999.00 (Incl. VAT)
+   - Premium Package: R1,999.00
      - Includes: 6 VR Headsets, 4 Hours of VR gaming, suitable for up to 20 players, 2 Trained VR Supervisors, 100+ Games Selection, Custom Tournament Brackets, Photo & Video Package.
      - Best For: Large birthday celebrations and bigger groups (up to 20 players).
    - Add-ons: Extra hour R350. Extra headset R150 per event.
@@ -91,7 +91,7 @@ YOUR MANDATE:
 
 3. KNOWLEDGE ACCURACY:
    - Always refer to the provided Knowledge Base.
-   - Party prices: Starter R999, Standard R1,499, Premium R1,999 (all inclusive of 15% VAT). Add-ons: extra hour R350, extra headset R150. Transport: free in our home zone, R200 up to ~25 km, R350–R500 further out. Schools & corporate events: custom quote only.
+   - Party prices: Starter R999, Standard R1,499, Premium R1,999 (no VAT charged — not a VAT vendor). Add-ons: extra hour R350, extra headset R150. Transport: free in our home zone, R200 up to ~25 km, R350–R500 further out. Schools & corporate events: custom quote only.
    - Deposit: 50% deposit required to confirm. FNB Account 63124445502.
    - Location: Cape Town & surrounds (mobile — we come to your venue).
    - Phone: +27 71 780 0323 | Email: bookings@virtualrealityguyz.co.za

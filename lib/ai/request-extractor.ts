@@ -139,7 +139,7 @@ export async function extractRequestDetails(
     const prompt = `You are the chief booking specialist for Virtual Reality Guys in Cape Town.
 Analyze this customer enquiry and return a strict JSON object. We need to know the customer's suburb/area to quote them accordingly (including applicable travel logistics).
 
-OUR OFFICIAL PACKAGES ON THE WEBSITE (BASELINE PRICING INCL. 15% VAT):
+OUR OFFICIAL PACKAGES ON THE WEBSITE (BASELINE PRICING; NOT REGISTERED FOR VAT, NO VAT CHARGED):
 1. Starter Package: R999 (4 VR Headsets, 2 Hours, up to 8 players) - for small birthdays / intimate groups.
 2. Standard Package: R1,499 (5 VR Headsets, 3 Hours, up to 12 players) - our most popular package for birthdays.
 3. Premium Package: R1,999 (6 VR Headsets, 4 Hours, up to 20 players) - for large parties & tournaments.
@@ -219,6 +219,6 @@ Sender Phone: "${senderPhone || ''}"`
     recommended_package: recPackage,
     intent_level: 'High',
     missing_fields: missingFields,
-    suggested_reply: `Hi ${senderName || 'there'}! 👋\n\nThank you for reaching out to Virtual Reality Guys! We would love to bring our mobile VR experience to your event.\n\nBased on your group of approximately ${playerCount} players, we recommend our **${recPackage.name} (R${recPackage.price_zar} Incl. VAT)** which includes ${recPackage.headset_count} VR Headsets, dedicated supervisors, and 60+ games.\n\nCould you please confirm:\n${missingFields.map((f, i) => `${i + 1}. ${f}`).join('\n')}\n\nLooking forward to hearing from you!`,
+    suggested_reply: `Hi ${senderName || 'there'}! 👋\n\nThank you for reaching out to Virtual Reality Guys! We would love to bring our mobile VR experience to your event.\n\nBased on your group of approximately ${playerCount} players, we recommend our **${recPackage.name} (R${recPackage.price_zar})** which includes ${recPackage.headset_count} VR Headsets, dedicated supervisors, and 60+ games.\n\nCould you please confirm:\n${missingFields.map((f, i) => `${i + 1}. ${f}`).join('\n')}\n\nLooking forward to hearing from you!`,
   }
 }
