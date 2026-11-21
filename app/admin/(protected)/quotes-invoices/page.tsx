@@ -138,7 +138,7 @@ function QuotesInvoicesContent() {
         request_id: requestId || undefined,
         notes: notes
           ? `${requestId ? `[REQUEST: ${requestId}]\n` : ""}Client Request Notes:\n${notes}`
-          : (requestId ? `[REQUEST: ${requestId}]\n` : "") + "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time.",
+          : (requestId ? `[REQUEST: ${requestId}]\n` : "") + "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 15-20 minutes prior to event start time.",
         items: initialItems,
         subtotal: initialItems[0].total,
         total: initialItems[0].total,

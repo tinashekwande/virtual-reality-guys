@@ -102,7 +102,7 @@ export function buildAcknowledgementEmail(params: AcknowledgementParams): { subj
     <ul style="margin:0 0 14px;padding-left:20px;font-size:14px;line-height:1.7;color:#374151">
       <li>We'll confirm your date is available and recommend the best package for your group.</li>
       <li>We'll send you a quote — a 50% deposit secures your booking.</li>
-      <li>On the day, we arrive 30–45 minutes early to set everything up. You just enjoy it!</li>
+      <li>On the day, we arrive 15–20 minutes early to set everything up. You just enjoy it!</li>
     </ul>
     <p style="margin:0;font-size:15px;line-height:1.6;color:#374151">Talk soon,<br><strong>The Virtual Reality Guys team</strong></p>`
 
@@ -115,7 +115,7 @@ Need us sooner? WhatsApp or call ${BRAND.phone}.
 What happens next:
 1. We'll confirm your date is available and recommend the best package for your group.
 2. We'll send you a quote — a 50% deposit secures your booking.
-3. On the day, we arrive 30-45 minutes early to set up. You just enjoy it!
+3. On the day, we arrive 15-20 minutes early to set up. You just enjoy it!
 
 Talk soon,
 The Virtual Reality Guys team

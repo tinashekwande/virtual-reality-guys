@@ -80,7 +80,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
   );
   const [notes, setNotes] = useState<string>(
     initialData?.notes ||
-      "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time."
+      "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 15-20 minutes prior to event start time."
   );
 
   // Update doc number prefix when type changes if unchanged

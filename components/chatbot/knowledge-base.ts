@@ -53,7 +53,7 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
    - Space Needed: Approximately 2m x 2m clear space per headset station.
    - Power: Access to standard 220V wall power outlets for charging stations and display mirrors.
    - Environment: Indoor setup is preferred. Outdoor setup is completely fine provided it is under full shade (e.g. marquee, covered patio, gazebo) to protect equipment from direct sunlight and rain.
-   - Setup Time: We arrive approximately 30-45 minutes before the event start time to set up and calibrate digital boundaries.
+   - Setup Time: We arrive approximately 15-20 minutes before the event start time to set up and calibrate digital boundaries.
 
 6. SAFETY, AGE SUITABILITY & HYGIENE:
    - Recommended Ages: Ages 8 and up. Younger children (6-7) can participate with parental guidance and supervisor assistance.

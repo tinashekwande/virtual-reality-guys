@@ -134,7 +134,7 @@ Virtual Reality Guys Team
         break
 
       case 'booking_confirmation':
-        body = `Hi ${name} 🎉\n\nGreat news! Your mobile VR booking for **${dateStr}** is officially confirmed! Our team will arrive 30-45 minutes before start time to set up the equipment and calibrate the safety boundaries.\n\n📍 We look forward to delivering an unforgettable immersive experience!\n\nSee you soon,\n**Virtual Reality Guys Team**\n📞 +27 71 780 0323`
+        body = `Hi ${name} 🎉\n\nGreat news! Your mobile VR booking for **${dateStr}** is officially confirmed! Our team will arrive 15-20 minutes before start time to set up the equipment and calibrate the safety boundaries.\n\n📍 We look forward to delivering an unforgettable immersive experience!\n\nSee you soon,\n**Virtual Reality Guys Team**\n📞 +27 71 780 0323`
         break
 
       case 'day_before_reminder':

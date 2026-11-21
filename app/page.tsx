@@ -422,7 +422,7 @@ export default async function Home() {
                 A Full VR Arcade That Comes to You
               </h2>
               <p className="text-lg text-muted-foreground">
-                Birthday party, school day, team building or festival: we arrive 30 to 45 minutes
+                Birthday party, school day, team building or festival: we arrive 15 to 20 minutes
                 early, set up safe play zones, run every session and pack everything away.
               </p>
             </div>
@@ -662,7 +662,7 @@ export default async function Home() {
             <StepCard
               number="2"
               title="Lock It In"
-              description="Pay a 50% deposit to secure the date. On the day we arrive 30 to 45 minutes early to set up and map safe play zones."
+              description="Pay a 50% deposit to secure the date. On the day we arrive 15 to 20 minutes early to set up and map safe play zones."
               icon={<Truck className="h-6 w-6" />}
             />
             <StepCard
