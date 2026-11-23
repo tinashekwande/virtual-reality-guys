@@ -1,4 +1,4 @@
-import type { EventItem, ExpenseItem, Invoice, PaymentItem } from '@/types'
+import type { EquipmentSale, EventItem, ExpenseItem, Invoice, PaymentItem } from '@/types'
 
 const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100
 const num = (v: unknown) => Number(v) || 0
@@ -196,6 +196,7 @@ export function overheadCostsInPeriod(expenses: ExpenseItem[], from: string | nu
 }
 
 export interface OverallTotals {
+  /** Booking revenue (payments received + standalone event takings). Excludes equipment sales. */
   revenue: number
   expenses: number
   netProfit: number
@@ -205,6 +206,10 @@ export interface OverallTotals {
   unpaidCount: number
   /** Everything paid out, equipment at full price */
   cashOut: number
+  /** Cash received from selling equipment */
+  equipmentSalesCash: number
+  /** Sale price minus book value of equipment sold (included in netProfit) */
+  equipmentSalesGain: number
 }
 
 /** All-time headline numbers, computed exactly the way the Accounts page computes them. */
@@ -213,12 +218,14 @@ export function overallTotals(
   events: EventItem[],
   expenses: ExpenseItem[],
   payments: PaymentItem[],
-  today = todayStr()
+  today = todayStr(),
+  sales: EquipmentSale[] = []
 ): OverallTotals {
   const ledger = buildLedger(invoices, events, expenses, payments, today)
   const revenue = round2(ledger.reduce((a, r) => a + r.revenue, 0))
   const exp = round2(ledger.reduce((a, r) => a + r.expenses, 0) + generalExpenses(expenses, today))
-  const netProfit = round2(revenue - exp)
+  const saleTotals = equipmentSalesTotals(sales, expenses)
+  const netProfit = round2(revenue - exp + saleTotals.gain)
   const money = invoiceMoneyTotals(invoices, payments, today)
   return {
     revenue,
@@ -229,6 +236,8 @@ export function overallTotals(
     overdue: money.overdue,
     unpaidCount: money.unpaidCount,
     cashOut: totalExpenses(expenses, today).cashOut,
+    equipmentSalesCash: saleTotals.cash,
+    equipmentSalesGain: saleTotals.gain,
   }
 }
 
@@ -249,7 +258,9 @@ export const DEFAULT_ASSET_LIFE_MONTHS = 36
 export function depreciationToDate(e: ExpenseItem, today = todayStr()): number {
   if (!isAsset(e)) return 0
   const life = num(e.useful_life_months) || DEFAULT_ASSET_LIFE_MONTHS
-  const elapsed = Math.min(life, monthsBetween(e.date, today))
+  const disposed = (e.disposed_on || '').split('T')[0]
+  const end = disposed && disposed < today ? disposed : today
+  const elapsed = Math.min(life, monthsBetween(e.date, end))
   return round2((num(e.amount) * elapsed) / life)
 }
 
@@ -287,6 +298,61 @@ export function totalExpenses(expenses: ExpenseItem[], today = todayStr()): Expe
   }
 }
 
+// ---------------------------------------------------------------- equipment sales
+
+export interface SaleValuation {
+  /** What the item was still worth on the books when it was sold */
+  bookValue: number
+  /** sale price minus book value: a profit (or a loss when negative) */
+  gain: number
+  /** Where the book value came from */
+  basis: 'purchase record' | 'original cost' | 'already expensed' | 'unknown'
+}
+
+/**
+ * Book value of a sold item and the profit or loss on the sale.
+ * - Linked to an equipment purchase (asset): cost minus depreciation up to the sale date.
+ * - Linked to a running-cost purchase: it was already counted as a cost in full, so book value is 0.
+ * - Not linked, original cost entered: that cost (it was never counted as a cost).
+ * - Nothing known: book value 0, so the whole sale price counts as profit. Flag it in the UI.
+ */
+export function valueSale(sale: EquipmentSale, expenses: ExpenseItem[]): SaleValuation {
+  const price = num(sale.sale_price)
+  const purchase = sale.asset_expense_id ? expenses.find((e) => e.id === sale.asset_expense_id) : undefined
+  if (purchase) {
+    if (!isAsset(purchase)) return { bookValue: 0, gain: round2(price), basis: 'already expensed' }
+    const soldOn = (sale.sold_on || '').split('T')[0]
+    const book = round2(Math.max(0, num(purchase.amount) - depreciationToDate({ ...purchase, disposed_on: soldOn }, soldOn)))
+    return { bookValue: book, gain: round2(price - book), basis: 'purchase record' }
+  }
+  if (sale.original_cost !== null && sale.original_cost !== undefined && sale.original_cost !== ('' as any)) {
+    const cost = num(sale.original_cost)
+    return { bookValue: round2(cost), gain: round2(price - cost), basis: 'original cost' }
+  }
+  return { bookValue: 0, gain: round2(price), basis: 'unknown' }
+}
+
+/** Cash received and profit/loss from equipment sales, optionally inside [from, to] (YYYY-MM-DD, inclusive). */
+export function equipmentSalesTotals(
+  sales: EquipmentSale[],
+  expenses: ExpenseItem[],
+  from: string | null = null,
+  to: string | null = null
+): { cash: number; gain: number; count: number } {
+  let cash = 0
+  let gain = 0
+  let count = 0
+  for (const s of sales) {
+    const d = (s.sold_on || '').split('T')[0]
+    if (from && d < from) continue
+    if (to && d > to) continue
+    cash += num(s.sale_price)
+    gain += valueSale(s, expenses).gain
+    count += 1
+  }
+  return { cash: round2(cash), gain: round2(gain), count }
+}
+
 // ---------------------------------------------------------------- data quality
 
 export interface ExpenseIssue {
@@ -315,6 +381,10 @@ export interface MonthRow {
   net: number
   assetPurchases: number
   paymentsCount: number
+  /** Cash received from selling equipment */
+  equipmentSales: number
+  /** Profit (or loss) on equipment sold; included in net */
+  equipmentSaleGain: number
 }
 
 const monthKey = (d: string) => d.split('T')[0].slice(0, 7)
@@ -326,12 +396,12 @@ function addMonths(key: string, n: number): string {
 }
 
 /** Month-by-month cash received, costs and profit. Cash is measured by when payments were received, not when invoices were issued. */
-export function monthlyRollup(payments: PaymentItem[], expenses: ExpenseItem[], today = todayStr()): MonthRow[] {
+export function monthlyRollup(payments: PaymentItem[], expenses: ExpenseItem[], today = todayStr(), sales: EquipmentSale[] = []): MonthRow[] {
   const rows = new Map<string, MonthRow>()
   const get = (k: string) => {
     let r = rows.get(k)
     if (!r) {
-      r = { month: k, received: 0, runningCosts: 0, depreciation: 0, net: 0, assetPurchases: 0, paymentsCount: 0 }
+      r = { month: k, received: 0, runningCosts: 0, depreciation: 0, net: 0, assetPurchases: 0, paymentsCount: 0, equipmentSales: 0, equipmentSaleGain: 0 }
       rows.set(k, r)
     }
     return r
@@ -352,9 +422,13 @@ export function monthlyRollup(payments: PaymentItem[], expenses: ExpenseItem[], 
       get(k).assetPurchases += num(e.amount)
       const life = num(e.useful_life_months) || DEFAULT_ASSET_LIFE_MONTHS
       const monthly = num(e.amount) / life
+      // Sold equipment stops depreciating: no wear is charged from the month it was sold
+      // (the sale's profit/loss already settles the rest), so totals agree with the all-time figures
+      const soldKey = e.disposed_on ? monthKey(e.disposed_on) : null
       for (let i = 0; i < life; i++) {
         const mk = addMonths(k, i)
         if (mk > nowKey) break
+        if (soldKey && mk >= soldKey && soldKey > k) break
         get(mk).depreciation += monthly
       }
     } else {
@@ -362,12 +436,29 @@ export function monthlyRollup(payments: PaymentItem[], expenses: ExpenseItem[], 
     }
   }
 
+  for (const s of sales) {
+    if (!s.sold_on) continue
+    const r = get(monthKey(s.sold_on))
+    r.equipmentSales += num(s.sale_price)
+    r.equipmentSaleGain += valueSale(s, expenses).gain
+  }
+
   return [...rows.values()]
     .map((r) => {
       const received = round2(r.received)
       const runningCosts = round2(r.runningCosts)
       const depreciation = round2(r.depreciation)
-      return { ...r, received, runningCosts, depreciation, assetPurchases: round2(r.assetPurchases), net: round2(received - runningCosts - depreciation) }
+      const equipmentSaleGain = round2(r.equipmentSaleGain)
+      return {
+        ...r,
+        received,
+        runningCosts,
+        depreciation,
+        assetPurchases: round2(r.assetPurchases),
+        equipmentSales: round2(r.equipmentSales),
+        equipmentSaleGain,
+        net: round2(received - runningCosts - depreciation + equipmentSaleGain),
+      }
     })
     .sort((a, b) => (a.month < b.month ? 1 : -1))
 }

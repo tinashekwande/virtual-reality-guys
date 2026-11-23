@@ -16,6 +16,8 @@ import * as marketing from '@/lib/marketing/service'
 import { getConfiguredEmailProvider } from '@/lib/email/sender'
 import { scheduleFollowUpsForInvoice, reconcileFollowUpsForInvoice } from '@/lib/followups/scheduler'
 import { getPricingBaseline } from '@/lib/pricing-catalog'
+import { recordEquipmentSale } from '@/lib/accounts/equipment-sales'
+import { valueSale } from '@/lib/accounts/calc'
 
 /**
  * Virtual Reality Guys — Admin Portal MCP server.
@@ -671,7 +673,8 @@ export function createPortalMcpServer() {
     'create_expense',
     {
       title: 'Record expense',
-      description: 'Record a business expense (fuel, wages, ad spend, etc.), optionally linked to an event or invoice.',
+      description:
+        'Record a business expense (fuel, wages, ad spend, etc.), optionally linked to an event or invoice. Use kind "asset" for equipment bought to keep (e.g. a headset): its cost is spread over useful_life_months instead of counted all at once.',
       inputSchema: {
         title: z.string(),
         amount: z.number().nonnegative(),
@@ -680,13 +683,76 @@ export function createPortalMcpServer() {
         notes: z.string().optional(),
         event_id: z.string().uuid().optional(),
         invoice_id: z.string().uuid().optional(),
+        kind: z.enum(['running', 'asset']).default('running'),
+        useful_life_months: z.number().int().min(1).max(240).optional().describe('Assets only; default 36'),
+        is_overhead: z.boolean().optional().describe('General business cost not tied to a booking'),
       },
       annotations: WRITE,
     },
     run(async (a) => {
-      const data = unwrap(await createAdminClient().from('expenses').insert({ ...a, event_id: a.event_id || null, invoice_id: a.invoice_id || null }).select().single(), 'Create expense') as any
+      const row = {
+        ...a,
+        event_id: a.event_id || null,
+        invoice_id: a.invoice_id || null,
+        useful_life_months: a.kind === 'asset' ? a.useful_life_months || 36 : null,
+        is_overhead: a.is_overhead ?? false,
+      }
+      const data = unwrap(await createAdminClient().from('expenses').insert(row).select().single(), 'Create expense') as any
       await marketing.logAudit(actor, 'create_expense', 'finance', `${data.title} R${data.amount}`, { id: data.id, category: data.category })
       return data
+    })
+  )
+
+  server.registerTool(
+    'list_equipment_sales',
+    {
+      title: 'List equipment sales',
+      description: 'Equipment sold (e.g. used headsets), newest first, with the book value and profit or loss on each sale.',
+      inputSchema: {},
+      annotations: READ,
+    },
+    run(async () => {
+      const admin = createAdminClient()
+      const [{ data: sales }, { data: expenses }] = await Promise.all([
+        admin.from('equipment_sales').select('*').order('sold_on', { ascending: false }),
+        admin.from('expenses').select('*').eq('kind', 'asset'),
+      ])
+      const rows = (sales || []).map((s: any) => ({ ...s, ...valueSale(s, (expenses || []) as any) }))
+      return {
+        count: rows.length,
+        cash_received_zar: rows.reduce((a: number, r: any) => a + Number(r.sale_price || 0), 0),
+        profit_or_loss_zar: rows.reduce((a: number, r: any) => a + r.gain, 0),
+        sales: rows,
+      }
+    })
+  )
+
+  server.registerTool(
+    'record_equipment_sale',
+    {
+      title: 'Record equipment sale',
+      description:
+        'Record money received from selling equipment (e.g. a used headset). Kept apart from booking revenue; only the profit or loss counts towards net profit. ' +
+        'Link equipment_id (the fleet item, which gets retired) and asset_expense_id (the purchase expense, which stops depreciating) when known. ' +
+        'If there is no purchase record, pass original_cost if known; otherwise the whole price counts as profit.',
+      inputSchema: {
+        title: z.string().optional().describe('What was sold; defaults to the fleet item name'),
+        sale_price: z.number().positive(),
+        sold_on: z.string().default(today()).describe('YYYY-MM-DD'),
+        buyer: z.string().optional(),
+        method: z.enum(['EFT', 'Cash', 'Card', 'Other']).default('EFT'),
+        equipment_id: z.string().uuid().optional(),
+        asset_expense_id: z.string().uuid().optional(),
+        original_cost: z.number().nonnegative().optional(),
+        notes: z.string().optional(),
+      },
+      annotations: WRITE,
+    },
+    run(async (a) => {
+      const result = await recordEquipmentSale(createAdminClient(), a)
+      if (result.error) throw new Error(result.error)
+      await marketing.logAudit(actor, 'record_equipment_sale', 'finance', `${result.sale.title} R${result.sale.sale_price}`, { id: result.sale.id })
+      return result.sale
     })
   )
 

@@ -6,7 +6,7 @@ import {
   DollarSign, TrendingUp, TrendingDown, Wallet, Calendar, Plus, Search,
   Download, Filter, ArrowUpRight, ArrowDownRight, PieChart, BarChart3,
   Receipt, Flag, Edit, Trash2, CheckCircle2, AlertCircle, Save, X, Sparkles,
-  ExternalLink, RotateCcw, Paperclip, Banknote, Users, CalendarDays
+  ExternalLink, RotateCcw, Paperclip, Banknote, Users, CalendarDays, Tag
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,14 +16,16 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { EventItem, ExpenseItem, ExpenseCategory, Invoice, PaymentItem } from "@/types";
+import { EquipmentSale, EventItem, ExpenseItem, ExpenseCategory, Invoice, PaymentItem } from "@/types";
+import type { EquipmentItem } from "@/types/ai";
 import PaymentsDialog from "@/components/admin/accounts/PaymentsDialog";
 import PayoutsTab from "@/components/admin/accounts/PayoutsTab";
 import ReconcileTab from "@/components/admin/accounts/ReconcileTab";
 import MonthlyTab from "@/components/admin/accounts/MonthlyTab";
+import EquipmentSalesTab from "@/components/admin/accounts/EquipmentSalesTab";
 import {
   summarisePayments, totalExpenses, expenseIssues, payeeTotals, depreciationToDate,
-  todayStr, DEFAULT_ASSET_LIFE_MONTHS, buildLedger, overheadCostsInPeriod,
+  todayStr, DEFAULT_ASSET_LIFE_MONTHS, buildLedger, overheadCostsInPeriod, equipmentSalesTotals,
 } from "@/lib/accounts/calc";
 
 export default function AccountingPage() {
@@ -32,11 +34,13 @@ export default function AccountingPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
+  const [sales, setSales] = useState<EquipmentSale[]>([]);
+  const [equipment, setEquipment] = useState<EquipmentItem[]>([]);
   const [paymentsInvoice, setPaymentsInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Active View Tab
-  const [activeTab, setActiveTab] = useState<"ledger" | "expenses" | "payouts" | "monthly" | "reconcile">("ledger");
+  const [activeTab, setActiveTab] = useState<"ledger" | "expenses" | "payouts" | "monthly" | "reconcile" | "sales">("ledger");
 
   // Ledger Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,17 +74,22 @@ export default function AccountingPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [invRes, evtRes, expRes, payRes] = await Promise.all([
+      const [invRes, evtRes, expRes, payRes, saleRes, eqRes] = await Promise.all([
         fetch("/api/invoices").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/events").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/expenses").then((r) => (r.ok ? r.json() : [])).catch(() => []),
         fetch("/api/payments").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch("/api/equipment-sales").then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch("/api/equipment").then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
       ]);
 
       setInvoices(Array.isArray(invRes) ? invRes : []);
       setEvents(Array.isArray(evtRes) ? evtRes : []);
       setExpenses(Array.isArray(expRes) ? expRes : []);
       setPayments(Array.isArray(payRes) ? payRes : []);
+      setSales(Array.isArray(saleRes) ? saleRes : []);
+      const eqList = (eqRes as { equipment?: EquipmentItem[] })?.equipment;
+      setEquipment(Array.isArray(eqList) ? eqList : []);
     } catch (err: any) {
       toast.error("Failed to load accounting data.");
     } finally {
@@ -158,13 +167,22 @@ export default function AccountingPage() {
     [expenses, rangeBounds]
   );
 
+  // Equipment sold inside the selected period
+  const salesInRange = useMemo(
+    () => equipmentSalesTotals(sales, expenses, rangeBounds.from, rangeBounds.to),
+    [sales, expenses, rangeBounds]
+  );
+  const salesAllTime = useMemo(() => equipmentSalesTotals(sales, expenses), [sales, expenses]);
+
   // Key Financial KPIs
   const kpis = useMemo(() => {
     const totalRevenue = filteredLedger.reduce((acc, curr) => acc + curr.revenue, 0);
     const ledgerExpenses = filteredLedger.reduce((acc, curr) => acc + curr.expenses, 0);
     // Overheads belong to the whole business, so leave them out only when looking at events or invoices on their own
     const totalExpenses = ledgerExpenses + (entryFilter === "all" && !searchQuery.trim() ? totalGeneralExpenses : 0);
-    const netProfit = totalRevenue - totalExpenses;
+    // Profit or loss on equipment sold belongs to the whole business, like overheads
+    const saleGain = entryFilter === "all" && !searchQuery.trim() ? salesInRange.gain : 0;
+    const netProfit = totalRevenue - totalExpenses + saleGain;
     const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
 
     return {
@@ -172,8 +190,9 @@ export default function AccountingPage() {
       totalExpenses,
       netProfit,
       profitMargin,
+      saleGain,
     };
-  }, [filteredLedger, totalGeneralExpenses, entryFilter, searchQuery]);
+  }, [filteredLedger, totalGeneralExpenses, entryFilter, searchQuery, salesInRange]);
 
   // Money owed to us, owed to the team, and entries that need a second look
   const owedToUs = useMemo(() => {
@@ -197,8 +216,9 @@ export default function AccountingPage() {
       const hasLinked = expenses.some((e) => e.event_id === evt.id);
       return a + (hasLinked ? 0 : Number(evt.total_expenses) || 0);
     }, 0);
-    return { cashIn, cashOut: expenseTotals.cashOut + legacyEventCosts, balance: cashIn - expenseTotals.cashOut - legacyEventCosts };
-  }, [ledgerItems, events, expenses, expenseTotals]);
+    const totalIn = cashIn + salesAllTime.cash; // includes cash from equipment sold
+    return { cashIn: totalIn, cashOut: expenseTotals.cashOut + legacyEventCosts, balance: totalIn - expenseTotals.cashOut - legacyEventCosts };
+  }, [ledgerItems, events, expenses, expenseTotals, salesAllTime]);
   const knownPayees = useMemo(() => payeeTotals(expenses).map((p) => p.payee), [expenses]);
 
   // Expense Categories Breakdown
@@ -588,7 +608,7 @@ export default function AccountingPage() {
             </div>
           </div>
           <p className="text-[10px] text-purple-400/80 pt-2 flex items-center gap-1 font-sans tabular-nums">
-            <Sparkles className="h-3 w-3 text-purple-400" /> Received minus costs
+            <Sparkles className="h-3 w-3 text-purple-400" /> {kpis.saleGain ? `Received minus costs, incl. R ${kpis.saleGain.toLocaleString("en-ZA")} on equipment sold` : "Received minus costs"}
           </p>
         </div>
 
@@ -673,7 +693,7 @@ export default function AccountingPage() {
 
       {/* Navigation Tabs: Financial Ledger vs Logged Expenses */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setActiveTab("ledger")}
             className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
@@ -729,6 +749,17 @@ export default function AccountingPage() {
             <Banknote className="h-4 w-4" />
             Check Payments
           </button>
+          <button
+            onClick={() => setActiveTab("sales")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              activeTab === "sales"
+                ? "bg-cyan-600 text-white shadow-md shadow-cyan-600/20"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+            }`}
+          >
+            <Tag className="h-4 w-4" />
+            Equipment Sales ({sales.length})
+          </button>
         </div>
 
         {activeTab === "expenses" ? (
@@ -738,7 +769,7 @@ export default function AccountingPage() {
               R {expenseTotals.cashOut.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
             </span>
           </div>
-        ) : activeTab === "payouts" || activeTab === "monthly" || activeTab === "reconcile" ? (
+        ) : activeTab === "payouts" || activeTab === "monthly" || activeTab === "reconcile" || activeTab === "sales" ? (
           <div />
         ) : (
           <div className="text-xs text-muted-foreground font-sans tabular-nums">
@@ -1147,8 +1178,13 @@ export default function AccountingPage() {
           invoices={invoices}
           payments={payments}
           expenses={expenses}
+          sales={sales}
           onOpenPayments={(inv) => setPaymentsInvoice(inv)}
         />
+      )}
+
+      {activeTab === "sales" && (
+        <EquipmentSalesTab sales={sales} expenses={expenses} equipment={equipment} onChanged={fetchData} />
       )}
 
       {activeTab === "reconcile" && (

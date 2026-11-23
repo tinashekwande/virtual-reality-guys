@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 import { Download, CalendarDays, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { monthlyRollup, summarisePayments, toCsv, totalExpenses, depreciationToDate, todayStr } from "@/lib/accounts/calc";
-import type { ExpenseItem, Invoice, PaymentItem } from "@/types";
+import { monthlyRollup, summarisePayments, toCsv, totalExpenses, depreciationToDate, todayStr, equipmentSalesTotals } from "@/lib/accounts/calc";
+import type { EquipmentSale, ExpenseItem, Invoice, PaymentItem } from "@/types";
 
 const rand = (n: number) => `R ${n.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -28,14 +28,17 @@ interface Props {
   invoices: Invoice[];
   payments: PaymentItem[];
   expenses: ExpenseItem[];
+  sales?: EquipmentSale[];
   onOpenPayments: (inv: Invoice) => void;
 }
 
-export default function MonthlyTab({ invoices, payments, expenses, onOpenPayments }: Props) {
+export default function MonthlyTab({ invoices, payments, expenses, sales = [], onOpenPayments }: Props) {
   const today = todayStr();
-  const months = useMemo(() => monthlyRollup(payments, expenses, today), [payments, expenses, today]);
+  const months = useMemo(() => monthlyRollup(payments, expenses, today, sales), [payments, expenses, today, sales]);
+  const saleTotals = useMemo(() => equipmentSalesTotals(sales, expenses), [sales, expenses]);
   const totals = useMemo(() => totalExpenses(expenses, today), [expenses, today]);
   const received = payments.reduce((a, p) => a + Number(p.amount || 0), 0);
+  const profit = received - totals.costs + saleTotals.gain;
 
   const owing = useMemo(
     () =>
@@ -58,8 +61,8 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
     download(
       `VR_Guys_Monthly_Summary_${today}.csv`,
       toCsv(
-        ["Month", "Cash received", "Running costs", "Equipment cost spread (depreciation)", "Net profit", "Equipment bought (cash out)", "Payments received (count)"],
-        months.map((m) => [m.month, m.received, m.runningCosts, m.depreciation, m.net, m.assetPurchases, m.paymentsCount])
+        ["Month", "Cash received", "Running costs", "Equipment cost spread (depreciation)", "Equipment sold (cash in)", "Profit/loss on equipment sold", "Net profit", "Equipment bought (cash out)", "Payments received (count)"],
+        months.map((m) => [m.month, m.received, m.runningCosts, m.depreciation, m.equipmentSales, m.equipmentSaleGain, m.net, m.assetPurchases, m.paymentsCount])
       )
     );
     toast.success("Monthly summary exported.");
@@ -111,7 +114,8 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
         </div>
         <div className="bg-card/70 p-4 rounded-2xl border border-purple-500/30">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Profit</p>
-          <p className={`text-xl font-bold font-sans tabular-nums pt-1 ${received - totals.costs >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(received - totals.costs)}</p>
+          <p className={`text-xl font-bold font-sans tabular-nums pt-1 ${profit >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(profit)}</p>
+          {saleTotals.count > 0 && <p className="text-[10px] text-muted-foreground pt-1">incl. {rand(saleTotals.gain)} on equipment sold</p>}
         </div>
       </div>
 
@@ -137,11 +141,12 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
                 <th className="py-3 px-4 text-right">Equipment used</th>
                 <th className="py-3 px-4 text-right">Profit</th>
                 <th className="py-3 px-4 text-right">Equipment bought</th>
+                <th className="py-3 px-4 text-right">Equipment sold</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
               {months.length === 0 ? (
-                <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">No payments or expenses recorded yet.</td></tr>
+                <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">No payments or expenses recorded yet.</td></tr>
               ) : (
                 months.map((m) => (
                   <tr key={m.month} className="hover:bg-secondary/30">
@@ -151,6 +156,7 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
                     <td className="py-3 px-4 text-right font-sans tabular-nums text-rose-300">{rand(m.depreciation)}</td>
                     <td className={`py-3 px-4 text-right font-sans tabular-nums font-bold ${m.net >= 0 ? "text-purple-400" : "text-rose-400"}`}>{rand(m.net)}</td>
                     <td className="py-3 px-4 text-right font-sans tabular-nums text-muted-foreground">{m.assetPurchases > 0 ? rand(m.assetPurchases) : "-"}</td>
+                    <td className="py-3 px-4 text-right font-sans tabular-nums text-muted-foreground" title={m.equipmentSales > 0 ? `Profit/loss on the sale: ${rand(m.equipmentSaleGain)} (in Profit)` : undefined}>{m.equipmentSales > 0 ? rand(m.equipmentSales) : "-"}</td>
                   </tr>
                 ))
               )}
@@ -158,7 +164,7 @@ export default function MonthlyTab({ invoices, payments, expenses, onOpenPayment
           </table>
         </div>
         <p className="px-4 py-3 text-[10px] text-muted-foreground border-t border-border">
-          Cash is counted in the month the payment was received. Equipment you bought to keep ({rand(totals.assetPurchases)} so far) is spread over its life instead of counted all at once.
+          Cash is counted in the month the payment was received. Equipment you bought to keep ({rand(totals.assetPurchases)} so far) is spread over its life instead of counted all at once. When equipment is sold, only the profit or loss on the sale counts towards Profit.
         </p>
       </div>
 
