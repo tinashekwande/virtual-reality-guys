@@ -141,8 +141,28 @@ export interface ExpenseItem {
   payee?: string | null
   payment_status?: ExpensePaymentStatus
   paid_on?: string | null
+  /** Equipment that was sold: stops depreciating from this date (YYYY-MM-DD) */
+  disposed_on?: string | null
   created_at: string
   updated_at?: string
+}
+
+/** Money received from selling equipment (kept apart from booking revenue) */
+export interface EquipmentSale {
+  id: string
+  title: string
+  sale_price: number
+  sold_on: string
+  buyer?: string | null
+  method: PaymentMethod
+  /** The fleet item that was sold */
+  equipment_id?: string | null
+  /** The expense entry for when it was bought (gives the book value) */
+  asset_expense_id?: string | null
+  /** What it cost, when there is no purchase expense on record */
+  original_cost?: number | null
+  notes?: string | null
+  created_at?: string
 }
 
 export type PaymentMethod = 'EFT' | 'Cash' | 'Card' | 'Other'

@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { Invoice, EventItem, FormRequest, TeamMember, ExpenseItem, PaymentItem } from '@/types'
+import { Invoice, EventItem, FormRequest, TeamMember, ExpenseItem, PaymentItem, EquipmentSale } from '@/types'
 import { invoiceMoneyTotals, overallTotals, summarisePayments, totalExpenses } from '@/lib/accounts/calc'
 import { EquipmentItem, EquipmentLog, AiAction, FollowUpItem } from '@/types/ai'
 
@@ -129,11 +129,12 @@ export async function getCustomerHistoryTool(args: { query: string }) {
 // 5. Get Revenue Summary — the same numbers as the Accounts page (All time)
 export async function getRevenueSummaryTool(args: { period?: 'all' | 'this_month' | 'last_month' | 'year' }) {
   const admin = createAdminClient()
-  const [{ data: invoices }, { data: events }, { data: expenses }, { data: payments }] = await Promise.all([
+  const [{ data: invoices }, { data: events }, { data: expenses }, { data: payments }, { data: sales }] = await Promise.all([
     admin.from('invoices').select('*'),
     admin.from('events').select('*'),
     admin.from('expenses').select('*'),
     admin.from('payments').select('*'),
+    admin.from('equipment_sales').select('*'), // empty if the table is not set up yet
   ])
 
   const invList = (invoices || []) as Invoice[]
@@ -141,7 +142,7 @@ export async function getRevenueSummaryTool(args: { period?: 'all' | 'this_month
   const expList = (expenses || []) as ExpenseItem[]
   const payList = (payments || []) as PaymentItem[]
 
-  const totals = overallTotals(invList, evtList, expList, payList)
+  const totals = overallTotals(invList, evtList, expList, payList, undefined, (sales || []) as EquipmentSale[])
   const exp = totalExpenses(expList)
 
   return {
@@ -157,9 +158,12 @@ export async function getRevenueSummaryTool(args: { period?: 'all' | 'this_month
     // Cash view: everything paid out, equipment at full purchase price
     cash_paid_out_zar: exp.cashOut,
     equipment_purchases_zar: exp.assetPurchases,
+    // Selling equipment: cash in, and the profit/loss on it (already inside net_profit_zar)
+    equipment_sales_cash_zar: totals.equipmentSalesCash,
+    equipment_sales_profit_zar: totals.equipmentSalesGain,
     invoice_count: invList.length,
     event_count: evtList.length,
-    note: 'Revenue = payments received. Expenses = running costs + equipment depreciation. Matches the Accounts page (All time).',
+    note: 'Revenue = booking payments received. Expenses = running costs + equipment depreciation. Net profit also includes profit/loss on equipment sold. Matches the Accounts page (All time).',
   }
 }
 
