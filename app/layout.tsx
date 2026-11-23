@@ -147,16 +147,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth bg-background" suppressHydrationWarning>
       <head>
-        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-TH738M36" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
 `,
           }}
         />
+        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-TH738M36" />
       </head>
       <body className={`${manrope.className} ${manrope.variable} ${orbitron.variable} antialiased relative overflow-x-hidden`}>
         <script
