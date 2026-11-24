@@ -13,6 +13,7 @@ export default defineConfig({
         launcher: resolve(import.meta.dirname, 'index.html'),
         'solar-system': resolve(import.meta.dirname, 'solar-system/index.html'),
         'kelp-forest': resolve(import.meta.dirname, 'kelp-forest/index.html'),
+        results: resolve(import.meta.dirname, 'results.html'),
       },
     },
   },

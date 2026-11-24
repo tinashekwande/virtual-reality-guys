@@ -81,6 +81,9 @@ export function createXrApp({ canvasParent = document.body } = {}) {
   const targets = [] // 3D objects you can point at and select (e.g. planets)
   const listeners = []
   const hoverListeners = []
+  const holdListeners = []
+  const holds = new Map() // source (controller or 'mouse') -> { id, t0, fired, ray() }
+  const HOLD_SECONDS = 1.6
   let hoveredTarget = null
   const tmpMat = new THREE.Matrix4()
   const controllers = []
@@ -134,12 +137,17 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     c.add(ray)
     const dot = new THREE.Mesh(new THREE.SphereGeometry(0.012), new THREE.MeshBasicMaterial({ color: 0xffffff }))
     c.add(dot)
-    c.addEventListener('selectstart', () => {
+    const ctrlRay = () => {
       tmpMat.identity().extractRotation(c.matrixWorld)
-      const dir = new THREE.Vector3(0, 0, -1).applyMatrix4(tmpMat)
-      const org = new THREE.Vector3().setFromMatrixPosition(c.matrixWorld)
+      return [new THREE.Vector3().setFromMatrixPosition(c.matrixWorld), new THREE.Vector3(0, 0, -1).applyMatrix4(tmpMat)]
+    }
+    c.addEventListener('selectstart', () => {
+      const [org, dir] = ctrlRay()
+      const r = pick(org, dir)
+      if (r && r.id) holds.set(c, { id: r.id, t0: performance.now(), fired: false, ray: ctrlRay })
       press(org, dir)
     })
+    c.addEventListener('selectend', () => holds.delete(c))
     c.addEventListener('connected', (e) => {
       c.visible = !!e.data
     })
@@ -160,6 +168,15 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     const ray = screenRay(e)
     updateHover(ray.origin.clone(), ray.direction.clone())
   })
+  let mouseRay = null
+  dom.addEventListener('pointerdown', (e) => {
+    if (renderer.xr.isPresenting) return
+    const ray = screenRay(e)
+    mouseRay = [ray.origin.clone(), ray.direction.clone()]
+    const r = pick(...mouseRay)
+    if (r && r.id) holds.set('mouse', { id: r.id, t0: performance.now(), fired: false, ray: () => mouseRay })
+  })
+  window.addEventListener('pointerup', () => holds.delete('mouse'))
   dom.addEventListener('click', (e) => {
     if (renderer.xr.isPresenting || moved > 6) return
     const ray = screenRay(e)
@@ -267,6 +284,13 @@ export function createXrApp({ canvasParent = document.body } = {}) {
         if (ray) ray.scale.z = r ? Math.max(0.1, r.distance / 3) : 1
       }
     }
+    // long presses (e.g. holding the hidden badge for teacher mode)
+    for (const h of holds.values()) {
+      if (h.fired || performance.now() - h.t0 < HOLD_SECONDS * 1000) continue
+      h.fired = true
+      const r = pick(...h.ray())
+      if (r && r.id === h.id) for (const l of holdListeners) l(h.id)
+    }
     for (const f of onFrame) f(dt, t)
     // flat screen can use a custom renderer (e.g. bloom post-processing); headsets always render directly
     if (customRender && !renderer.xr.isPresenting) customRender(activeScene, camera)
@@ -297,6 +321,10 @@ export function createXrApp({ canvasParent = document.body } = {}) {
     },
     onPress(fn) {
       listeners.push(fn)
+    },
+    /** fn(id) when a button or target is held down for about 1.6 s (trigger, pinch or mouse). */
+    onHold(fn) {
+      holdListeners.push(fn)
     },
     onHoverTarget(fn) {
       hoverListeners.push(fn)

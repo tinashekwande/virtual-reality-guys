@@ -29,7 +29,12 @@ export class Panel {
     this.content = null
   }
 
-  /** content: { title, body, buttons: [{ id, label, primary }], footer, accent } */
+  /**
+   * content: { title, body, buttons: [{ id, label, primary, state, size }], footer, footerColor, accent,
+   *            stack (answers in a column), rows (grid), rowsTop, logo (small badge text), hidden: [{ id, x, y, w, h }],
+   *            buttonRows: [[...], [...]] (rows of buttons along the bottom),
+   *            extra: { h, draw(ctx, box) } for a picture strip of height h just above the footer }
+   */
   show(content) {
     this.content = content
     this.hover = null
@@ -43,6 +48,7 @@ export class Panel {
   }
 
   setHover(id) {
+    if (id && this.buttons.find((b) => b.id === id && b.hidden)) id = null
     if (this.hover === id) return
     this.hover = id
     this.draw()
@@ -73,39 +79,84 @@ export class Panel {
     ctx.strokeStyle = accent
     ctx.stroke()
 
+    // small hidden badge (e.g. hold it for teacher mode): drawn quietly in the top-right corner
+    const titleW = c.logo ? W - 112 - 150 : W - 112
+    if (c.logo) {
+      ctx.font = `bold 26px ${FONT}`
+      ctx.fillStyle = 'rgba(143,166,201,0.55)'
+      ctx.textAlign = 'right'
+      ctx.fillText(c.logo, W - 50, 44)
+      ctx.textAlign = 'left'
+    }
+
     // title
     ctx.fillStyle = accent
     ctx.font = `bold 62px ${FONT}`
     ctx.textBaseline = 'top'
     let y = 52
-    y = wrap(ctx, c.title || '', 56, y, W - 112, 70, 2)
+    y = wrap(ctx, c.title || '', 56, y, titleW, 70, 2)
 
-    // body
+    // body: shrinks the text a little if it would run into the footer or the buttons
+    const list = c.buttons || []
+    const bRows = c.buttonRows ? c.buttonRows.filter((r) => r.length) : null
+    const btnTop = c.rows ? H : bRows ? H - 40 - bRows.length * 100 - (bRows.length - 1) * 18 : c.stack ? H - 40 - list.length * 108 + 16 : list.length ? H - 160 : H - 30
+    const footerLines = c.footer ? 3 : 0
+    let footerTop = btnTop - 20 - footerLines * 38
+    const bodyLines = Array.isArray(c.body) ? c.body : c.body ? [c.body] : []
+    const bodyTop = y + 14
+    let fs = 38
+    const measure = (size) => {
+      ctx.font = `${size}px ${FONT}`
+      let yy = bodyTop
+      for (const line of bodyLines) yy = wrap(ctx, line, 56, yy, W - 112, size * 1.32, 7, true) + 12
+      return yy
+    }
+    if (c.footer) {
+      ctx.font = `32px ${FONT}`
+      footerTop = btnTop - 22 - countLines(ctx, c.footer, W - 112, 3) * 38
+    }
+    const extraH = c.extra ? c.extra.h || 0 : 0
+    const limit = footerTop - extraH - 4
+    while (fs > 28 && measure(fs) > limit) fs -= 2
+    this.overflow = measure(fs) > limit
     ctx.fillStyle = '#e8f1ff'
-    ctx.font = `38px ${FONT}`
-    const bodyLines = Array.isArray(c.body) ? c.body : [c.body || '']
-    y += 14
+    ctx.font = `${fs}px ${FONT}`
+    y = bodyTop
     for (const line of bodyLines) {
-      y = wrap(ctx, line, 56, y, W - 112, 50, 6) + 12
+      y = wrap(ctx, line, 56, y, W - 112, fs * 1.32, 7) + 12
+    }
+
+    // custom drawing (pictures, counters) in the space under the text
+    if (c.extra) {
+      ctx.save()
+      c.extra.draw(ctx, { x: 56, y: footerTop - extraH - 2, w: W - 112, h: extraH - 6 })
+      ctx.restore()
     }
 
     // footer note
     if (c.footer) {
       ctx.fillStyle = c.footerColor || '#8fa6c9'
       ctx.font = `${c.footerColor ? 'bold ' : ''}32px ${FONT}`
-      wrap(ctx, c.footer, 56, H - 330, W - 112, 38, 3)
+      wrap(ctx, c.footer, 56, footerTop, W - 112, 38, 3)
     }
 
     // buttons: laid out in a row (or column of up to 4 for quiz answers)
     this.buttons = []
-    const list = c.buttons || []
     if (c.rows) {
       // a grid: each row's buttons share the width (for pickers)
-      const top = c.title ? 150 : 40, gap = 20
+      const top = c.rowsTop ?? (c.title ? 150 : 40), gap = c.rowGap ?? 20
       const bh = Math.min(120, (H - top - 30 - gap * (c.rows.length - 1)) / c.rows.length)
       c.rows.forEach((row, r) => {
         const bw = (W - 80 - gap * (row.length - 1)) / row.length
         row.forEach((b, i) => this.drawButton(b, 40 + i * (bw + gap), top + r * (bh + gap), bw, bh))
+      })
+    } else if (bRows) {
+      // several rows of buttons along the bottom (e.g. extra activities above, Back / Next below)
+      bRows.forEach((row, r) => {
+        const bh = 100, gap = 24
+        const bw = (W - 112 - gap * (row.length - 1)) / row.length
+        const yy = btnTop + r * (bh + 18)
+        row.forEach((b, i) => this.drawButton(b, 56 + i * (bw + gap), yy, bw, bh))
       })
     } else if (c.stack) {
       const bh = 92
@@ -118,6 +169,8 @@ export class Panel {
       const bw = (W - 112 - gap * (list.length - 1)) / list.length
       list.forEach((b, i) => this.drawButton(b, 56 + i * (bw + gap), H - 40 - bh, bw, bh))
     }
+    // invisible hot spots (no highlight), e.g. the badge you hold down for teacher mode
+    for (const h of c.hidden || []) this.buttons.push({ ...h, hidden: true })
     this.texture.needsUpdate = true
   }
 
@@ -134,7 +187,7 @@ export class Panel {
     ctx.strokeStyle = hovered ? '#ffffff' : 'rgba(255,255,255,0.35)'
     ctx.stroke()
     ctx.fillStyle = b.primary && !b.state ? '#04121f' : '#ffffff'
-    ctx.font = `bold 42px ${FONT}`
+    ctx.font = `bold ${b.size || (h < 90 ? 36 : 42)}px ${FONT}`
     ctx.textBaseline = 'middle'
     ctx.textAlign = 'center'
     ctx.fillText(b.label, x + w / 2, y + h / 2 + 2, w - 24)
@@ -154,15 +207,19 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath()
 }
 
-/** Draw wrapped text; returns the y below the last line. */
-function wrap(ctx, text, x, y, maxW, lineH, maxLines) {
+function countLines(ctx, text, maxW, maxLines) {
+  return Math.max(1, Math.round((wrap(ctx, text, 0, 0, maxW, 1, maxLines, true))))
+}
+
+/** Draw wrapped text; returns the y below the last line. dry = measure only. */
+function wrap(ctx, text, x, y, maxW, lineH, maxLines, dry = false) {
   const words = String(text).split(' ')
   let line = ''
   let n = 0
   for (const w of words) {
     const test = line ? line + ' ' + w : w
     if (ctx.measureText(test).width > maxW && line) {
-      ctx.fillText(line, x, y)
+      if (!dry) ctx.fillText(line, x, y)
       y += lineH
       line = w
       n++
@@ -170,7 +227,7 @@ function wrap(ctx, text, x, y, maxW, lineH, maxLines) {
     } else line = test
   }
   if (line && n < maxLines) {
-    ctx.fillText(line, x, y)
+    if (!dry) ctx.fillText(line, x, y)
     y += lineH
   }
   return y

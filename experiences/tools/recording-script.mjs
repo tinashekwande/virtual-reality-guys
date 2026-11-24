@@ -1,19 +1,6 @@
 // Writes RECORDING_SCRIPT.md: every narration line, in order, with the file name to save it as.
 import { writeFileSync } from 'node:fs'
-import { STOPS, QUIZ } from '../solar-system/content.js'
-
-const lines = [
-  ['intro', 'Welcome, space explorer! Today we will visit the Sun and all eight planets. Point at a button and squeeze the trigger, or pinch your fingers, to choose it.'],
-]
-for (const s of STOPS) {
-  lines.push([s.id, s.text.join(' ')])
-  lines.push(['secret-' + s.id, s.secret])
-}
-lines.push(['quiz', `Great flying! Now let's see what you remember. ${QUIZ[0].q}`])
-QUIZ.slice(1).forEach((q, i) => lines.push(['q' + (i + 2), q.q]))
-lines.push(['result-perfect', 'Perfect score! You are a real space expert!'])
-lines.push(['result-good', 'Great job, explorer! You learned a lot today.'])
-lines.push(['result-try', 'Good try! Fly the tour again to learn even more.'])
+import { NARRATION as lines } from '../solar-system/content.js'
 
 let md = `# Journey through the Solar System: narration recording script
 
