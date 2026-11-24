@@ -13,6 +13,10 @@ k = Kokoro(os.path.join(D, 'kokoro-v1.0.int8.onnx'), os.path.join(D, 'voices-v1.
 def clean(t):
     t = re.sub(r'(\d) (\d{3})', r'\1,\2', t)          # 5 500 -> 5,500
     t = t.replace('°C', ' degrees Celsius')
+    t = t.replace('km/h', 'kilometres per hour')
+    t = re.sub(r'(\d) km\b', r'\1 kilometres', t)
+    t = t.replace('%', ' percent')
+    t = t.replace('(99.8 percent)', '')
     t = t.replace('1/', '1 out of ')
     t = t.replace('...', ', ')
     t = t.replace('"', '').replace("'My Octopus Teacher'", 'My Octopus Teacher')

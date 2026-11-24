@@ -19,6 +19,8 @@ export const SPEC = {
   venus: { a: -35, r: 2.2, x: 52, spin: -0.002, tilt: 0.05, atmo: [1.0, 0.85, 0.55, 0.9] },
   earth: { a: 15, r: 2.4, x: 72, spin: 0.042, tilt: 0.41, atmo: [0.35, 0.6, 1.0, 1.2] },
   mars: { a: -20, r: 1.6, x: 90, spin: 0.041, tilt: 0.44, atmo: [1.0, 0.55, 0.35, 0.5] },
+  // the asteroid belt stop: you stand in the belt beside Ceres, the dwarf planet (it spins once in 9 hours)
+  belt: { a: 8, r: 0.9, x: 105, spin: 0.11, tilt: 0.07, atmo: null, label: 'Ceres' },
   jupiter: { a: 35, r: 7, x: 150, spin: 0.101, tilt: 0.05, atmo: [1.0, 0.85, 0.7, 0.5] },
   saturn: { a: -25, r: 5.6, x: 195, spin: 0.094, tilt: 0.47, atmo: [1.0, 0.9, 0.7, 0.45] },
   uranus: { a: 30, r: 3.4, x: 232, spin: -0.058, tilt: 1.7, atmo: [0.6, 0.95, 1.0, 0.8] },
@@ -34,11 +36,16 @@ export function posOf(id) {
 
 /** High viewpoint above and behind the Sun where the whole solar system is spread out ahead of you. */
 export const OVERVIEW = new THREE.Vector3(-150, 62, 0)
+/** Where you watch the planets move out to their real distances. */
+export const SCALE_VIEW = { position: new THREE.Vector3(-62, 34, 0), yaw: -Math.PI / 2 }
+
+/** Real average distances from the Sun in astronomical units (1 AU = Sun to Earth), from NASA. */
+export const TRUE_AU = { mercury: 0.387, venus: 0.723, earth: 1, mars: 1.524, belt: 2.77, jupiter: 5.2, saturn: 9.58, uranus: 19.2, neptune: 30.07 }
 
 /** Where to stand for a stop: on the Sun side, looking at the planet. */
 export function placeFor(id) {
   const s = SPEC[id]
-  const dist = id === 'sun' ? s.r * 2.4 + 4 : s.r * 2.05 + 1.8 // close in: the planet fills a big part of your view
+  const dist = id === 'sun' ? s.r * 2.4 + 4 : id === 'belt' ? 4.2 : s.r * 2.05 + 1.8 // close in: the planet fills a big part of your view
   const p = posOf(id)
   // always look along +x at the planet, so the view never has to turn between stops
   return { position: new THREE.Vector3(p.x - dist, 0, p.z), yaw: -Math.PI / 2 }
@@ -216,6 +223,7 @@ export function buildScene(app, manager) {
   const flames = new THREE.Mesh(new THREE.PlaneGeometry(SPEC.sun.r * 4.4, SPEC.sun.r * 4.4), flameMat)
   flames.position.copy(sunPos)
   scene.add(flames)
+  let sunR = SPEC.sun.r, glowK = 1 // change when the planets move to their real distances
   const glow = sprite(glowTexture([255, 150, 60], [255, 70, 0], 0.35), 130, sunPos)
   glow.material.opacity = 0.75
   scene.add(glow)
@@ -227,9 +235,10 @@ export function buildScene(app, manager) {
     camera.getWorldPosition(camPos)
     flames.lookAt(camPos)
     // size of the Sun's outline on the flame disc, seen from where you are
-    const D = Math.max(camPos.distanceTo(sunPos), SPEC.sun.r * 1.05)
-    flameMat.uniforms.uDisc.value = (SPEC.sun.r * D) / Math.sqrt(D * D - SPEC.sun.r * SPEC.sun.r)
-    glow.scale.setScalar(130 * (1 + 0.025 * Math.sin(t * 0.7)))
+    const D = Math.max(camPos.distanceTo(sunPos), sunR * 1.05)
+    flameMat.uniforms.uDisc.value = (sunR * D) / Math.sqrt(D * D - sunR * sunR)
+    flameMat.uniforms.uHalf.value = sunR * 2.2
+    glow.scale.setScalar(130 * glowK * (1 + 0.025 * Math.sin(t * 0.7)))
   })
 
   // ---------------- planets ----------------
@@ -244,13 +253,13 @@ export function buildScene(app, manager) {
     tiltGroup.rotation.z = s.tilt * 0.8
     tiltGroup.rotation.x = s.tilt * 0.6
     scene.add(tiltGroup)
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r, 96, 64), material)
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(s.r, id === 'belt' ? 48 : 96, id === 'belt' ? 32 : 64), material)
     mesh.name = id
     tiltGroup.add(mesh)
     bodies[id] = mesh
     tilts[id] = tiltGroup
     spinners.push({ mesh, speed: s.spin, boost: 0 })
-    const lab = label(id, s)
+    const lab = label(s.label || id, s, id)
     labels.push(lab)
     scene.add(lab)
     return mesh
@@ -298,12 +307,15 @@ export function buildScene(app, manager) {
   planet('saturn', pbr('saturn', { bumpScale: 1.0, tint: '#fff4e2', limbColor: '#d9b98a', limbStrength: 0.25 }))
   planet('uranus', pbr('uranus', { bumpScale: 0.8, tint: '#a8ecff', limbColor: '#6ad8ff', limbStrength: 0.35 }))
   planet('neptune', pbr('neptune', { bumpScale: 1.1, tint: '#6e9eff', limbColor: '#3d78ff', limbStrength: 0.38 }))
+  // Ceres, the dwarf planet in the asteroid belt: dark grey and cratered
+  planet('belt', pbr('moon', { bumpScale: 3.6, tint: '#a09a92' }))
 
   // Saturn's rings (with the planet's shadow falling across them) and Uranus's faint rings
   const satRingTex = saturnRingTexture()
   const satRing = saturnRings(SPEC.saturn.r * 1.24, SPEC.saturn.r * 2.3, bodies.saturn, sunPos)
   tilts.saturn.add(satRing)
-  tilts.uranus.add(rings(SPEC.uranus.r * 1.6, SPEC.uranus.r * 2.0, faintRingTexture(), bodies.uranus, sunPos, 0.5))
+  const uraRing = rings(SPEC.uranus.r * 1.6, SPEC.uranus.r * 2.0, faintRingTexture(), bodies.uranus, sunPos, 0.5)
+  tilts.uranus.add(uraRing)
 
   // ---------------- moons ----------------
   const moonsOf = {}
@@ -354,6 +366,7 @@ export function buildScene(app, manager) {
   updaters.push(() => { for (const m of shadowMats) m.userData.updateShadows() })
 
   // ---------------- asteroid belt between Mars and Jupiter ----------------
+  let beltGroup
   {
     const geo = new THREE.IcosahedronGeometry(1, 1)
     const p = geo.attributes.position
@@ -377,7 +390,7 @@ export function buildScene(app, manager) {
       belt.setMatrixAt(i, m)
       belt.setColorAt(i, new THREE.Color().setHSL(0.07 + Math.random() * 0.04, 0.15 + Math.random() * 0.15, 0.3 + Math.random() * 0.25))
     }
-    const beltGroup = new THREE.Group()
+    beltGroup = new THREE.Group()
     beltGroup.position.copy(sunPos)
     beltGroup.add(belt)
     scene.add(beltGroup)
@@ -386,14 +399,16 @@ export function buildScene(app, manager) {
 
   // faint orbit lines (brighter when you are high above the system)
   const orbitMats = []
+  const orbitLines = {}
   for (const [id, s] of Object.entries(SPEC)) {
-    if (id === 'sun') continue
+    if (id === 'sun' || id === 'belt') continue
     const pts = []
     for (let i = 0; i <= 256; i++) { const a = (i / 256) * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * s.x, 0, Math.sin(a) * s.x)) }
     const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x7fb4ff, transparent: true, opacity: 0.12, depthWrite: false }))
     orbitMats.push(line.material)
     line.position.copy(sunPos)
     scene.add(line)
+    orbitLines[id] = line
   }
 
   // ---------------- your observation platform ----------------
@@ -473,6 +488,40 @@ export function buildScene(app, manager) {
       marker.visible = true
     },
     update(dt, t) { for (const u of updaters) u(dt, t) },
+    /**
+     * Move the planets between the tour layout (k = 0) and their real relative distances from the Sun (k = 1),
+     * with Neptune staying where it is. Sizes shrink a little (they are still far bigger than real).
+     */
+    setLayout(k) {
+      const AU = SPEC.neptune.x / TRUE_AU.neptune
+      const size = 1 - 0.55 * k
+      for (const id of Object.keys(TRUE_AU)) {
+        const s = SPEC[id]
+        const d = s.x + (TRUE_AU[id] * AU - s.x) * k
+        const a = (s.a * Math.PI) / 180
+        const p = new THREE.Vector3(Math.cos(a) * d, EYE, Math.sin(a) * d)
+        tilts[id].position.copy(p)
+        tilts[id].scale.setScalar(size)
+        for (const pv of moonsOf[id] || []) { pv.position.copy(p); pv.scale.setScalar(size) }
+        if (orbitLines[id]) orbitLines[id].scale.setScalar(d / s.x)
+        const lab = labels.find((l) => l.userData.id === id)
+        lab.position.copy(p).add(new THREE.Vector3(0, s.r * size * (id === 'saturn' ? 1.5 : 1.25) + 0.6, 0))
+        // the inner planets bunch up close to the Sun, so only Earth keeps its name there
+        if (['mercury', 'venus', 'mars', 'belt'].includes(id)) lab.material.opacity = 1 - Math.min(1, Math.max(0, (k - 0.25) / 0.35))
+      }
+      beltGroup.scale.setScalar(1 + ((TRUE_AU.belt * AU) / 105 - 1) * k)
+      const sunK = 1 - 0.86 * k
+      sunR = SPEC.sun.r * sunK
+      glowK = 1 - 0.6 * k
+      sun.scale.setScalar(sunK)
+      flames.scale.setScalar(sunK)
+      satRing.material.uniforms.uPlanetRadius.value = SPEC.saturn.r * size
+      uraRing.material.uniforms.uR.value = SPEC.uranus.r * size
+    },
+    /** Tint planet names (e.g. warm for the rocky inner planets, cool for the giants). null = normal. */
+    tintLabels(colours) {
+      for (const l of labels) l.material.color.set((colours && colours[l.userData.id]) || '#ffffff')
+    },
     setTimeScale(k) { timeScale = k },
     /** Make a planet spin faster for a moment (when a child taps it). */
     /** Put a planet's moons beside/behind it so they don't block the view when you arrive. */
@@ -546,7 +595,7 @@ function gridTexture() {
   return t
 }
 
-function label(id, s) {
+function label(text, s, id) {
   const c = document.createElement('canvas')
   c.width = 512
   c.height = 128
@@ -557,13 +606,14 @@ function label(id, s) {
   ctx.shadowColor = 'rgba(0,0,0,0.9)'
   ctx.shadowBlur = 12
   ctx.fillStyle = 'rgba(220,240,255,0.92)'
-  ctx.fillText(id[0].toUpperCase() + id.slice(1), 256, 64)
+  ctx.fillText(text[0].toUpperCase() + text.slice(1), 256, 64)
   const t = new THREE.CanvasTexture(c)
   t.colorSpace = THREE.SRGBColorSpace
   const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }))
   const w = Math.max(2.4, s.r * 1.1)
   spr.scale.set(w, w / 4, 1)
   spr.userData.w = w
+  spr.userData.id = id
   spr.position.copy(posOf(id)).add(new THREE.Vector3(0, s.r * (id === 'saturn' ? 1.5 : 1.25) + 0.6, 0))
   return spr
 }

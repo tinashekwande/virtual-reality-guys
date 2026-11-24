@@ -27,8 +27,24 @@ Handoff notes so a new Claude Code session can carry on where the claude.ai conv
 - `narration.js`: plays the MP3s listed in `public/audio/<experience>/clips.json`.
 
 ## Solar system (`solar-system/`)
-- Guided tour of 9 stops (Sun → Neptune), each with narration. Next and Back buttons, tap-to-discover, a quiz, a Saturn ring dive and a descent to Cape Town on Earth.
-- A left-hand "Go to" picker jumps to any planet in any order. It also has toggles for the guided tour, bloom, labels, and spin speed (1x, 5x, 25x or paused).
+- Pitched to schools as a CAPS lesson (Natural Sciences and Technology, Gr 4–7, "Planet Earth and Beyond"). Facts were checked against science.nasa.gov (Nov 2026); keep them NASA-checked, South African spelling, moon counts as "more than ...".
+- **Realism rule (Tinashe):** nothing may look less real than what is there. New features reuse the real shaders (Earth, Sun, planets) rather than simpler stand-ins.
+- Guided tour of 10 stops: Sun → Mars, **the Asteroid Belt** (Ceres, `SPEC.belt`, plus a hologram grouping the rocky inner and giant outer planets), Jupiter → Neptune. Each stop has narration and a tap-to-discover secret.
+- All text lives in `content.js`: `STOPS`, the 8-question `QUIZ` (key, options, answer, why), `DAYNIGHT`, `MOMENTS`, and `NARRATION` (every clip; panel `text` can be shorter than the narrated `say`).
+- Wow moments:
+  - Sun: "How big is the Sun?" glides close and lines up 109 Earths across its face, at true angular sizes (`moments.js`).
+  - Earth: "How do days and years work?" (`daynight.js`, its own scene). Part 1: Earth spins on its 23.4° axis with a Cape Town clock. Part 2: a zoom-out to one orbit with a day counter and Cape Town seasons. Plus "Fly to Cape Town" (`cape.js`).
+  - Jupiter: the Great Red Spot turned towards you, with Earth at the same scale (GRS centre measured on the texture: lat -26, lon -90.4).
+  - Saturn: the ring dive.
+  - Neptune: "Look back at the Sun" (`neptune-view.js`): the Sun as a bright point, with a panel comparing it to the Sun seen from Earth.
+  - Picker: "Show real distances" calls `world.setLayout(k)`, which animates the planets to their real AU distances (Neptune stays put) and back.
+- Quiz: answers are shuffled and each one shows a "why". Results (learner number 1–40, score, per-question correct, secrets, time) are saved to localStorage (`results-store.js`).
+  - The teacher page is `experiences/results.html` (+ `results-page.js`): class summary, % correct per question, sessions, CSV export and import (to merge headsets), and clear class.
+  - Each headset has its own localStorage. A shared class view would need a server (e.g. the portal's Supabase).
+- Teacher mode: hold the faint "VR GUYS" badge on the welcome, learner or result panel for 1.6 s (`app.onHold`), or use `?teacher=1`. It sets the start stop and turns learner numbers on or off; the settings are kept in localStorage.
+- Test hooks: `?stop=N`, `?quiz=1`, `?daynight=1`, `?neptune=1`, `?scale=1`; `window.__vrg.press(id)` presses a button by id.
+- Panels: `panel.js` shrinks body text to fit, and sets `panel.overflow` if it still doesn't fit. Check that it stays false. It also supports `buttonRows`, `extra` (a canvas picture strip) and `hidden` hot spots.
+- A left-hand "Go to" picker jumps to any stop in any order. It also has toggles for the guided tour, bloom, labels and spin speed (1x, 5x, 25x or paused), plus "Show real distances".
 - The look comes from Tinashe's "Beyond the Void" prototype (on his Desktop, in "Schools Experiences"). The Sun is our own and should stay.
   - `planet-shaders.js`: the prototype's planet shaders, copied as they are. Each ends with a pow 2.2 + colorspace step so it displays the same as in the prototype.
   - `deep-space.js`: the Milky Way and nebula sky, baked once into a 4K texture at start-up, plus true-colour stars and spiked "hero" stars.
@@ -56,4 +72,6 @@ Handoff notes so a new Claude Code session can carry on where the claude.ai conv
 - **Following the eye in VR:** never call `camera.getWorldPosition()` inside `onBeforeRender` in VR. It rebuilds the eye camera's matrix and drops you at the origin. Read `cam.matrixWorld` instead.
 - **Texture paths:** load them relative to `location.href`, not `import.meta.url`. Vite rewrites the latter in dev.
 - **Near and far planes:** the helicopter scene uses near 1 m and far 60 km. Underwater uses 0.05 m and 2000 m.
-- **Testing without a headset:** use headless Playwright with `--use-gl=swiftshader`. For VR, inject IWER (`npm i iwer`), call `installRuntime({ forceInstall: true })`, then request a session yourself.
+- **Testing without a headset:** use headless Playwright with `--use-gl=swiftshader`. For VR, inject IWER (`npm i iwer`; `addInitScript` its `build/iwer.min.js`, then `new IWER.XRDevice(IWER.metaQuest2).installRuntime({ forceInstall: true })`), click "Enter VR", aim `device.controllers.right` / `device.hands.right` (position + quaternion in rig space) and use `updateButtonValue('trigger', 1)` / `updatePinchValue(1)`.
+- **Timers and swiftshader:** the frame `dt` is capped at 0.1 s, so time-critical things (like long presses) use `performance.now()`.
+- **Narration:** `node tools/narration-lines.mjs > tools/lines.json`, then `python3 tools/tts-kokoro.py full af_heart solar-system public/audio/solar-system` (about 7 minutes on CPU).

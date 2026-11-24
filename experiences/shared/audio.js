@@ -245,6 +245,47 @@ export function createAudio(opts = {}) {
       for (let i = 0; i < 9; i++) tone(1200 + Math.random() * 1800, { start: i * 0.06, dur: 0.4, vol: 0.07 })
       tone(523.25, { dur: 0.8, vol: 0.08, type: 'triangle' })
     },
+    /** Short counting blip; pitch rises with n (0..1). */
+    tick(n = 0) { tone(600 + 900 * n, { dur: 0.06, vol: 0.05, type: 'triangle' }) },
+    /** Deep, warm swell: for big reveals like the size of the Sun. */
+    swell(seconds = 3) {
+      tone(55, { type: 'sine', dur: seconds, vol: 0.16, attack: seconds * 0.4 })
+      tone(82.4, { type: 'triangle', dur: seconds, vol: 0.06, attack: seconds * 0.5 })
+      tone(110, { type: 'sine', start: 0.2, dur: seconds, vol: 0.06, attack: seconds * 0.5 })
+    },
+    /** Filtered noise: a low storm rumble ('rumble') or a thin, cold wind ('wind'). */
+    noise(kind = 'rumble', seconds = 6) {
+      if (!ctx || !enabled) return
+      const t = ctx.currentTime
+      const n = ctx.createBufferSource()
+      n.buffer = noiseBuffer(2)
+      n.loop = true
+      const f = ctx.createBiquadFilter()
+      f.type = kind === 'wind' ? 'bandpass' : 'lowpass'
+      f.Q.value = kind === 'wind' ? 6 : 1
+      f.frequency.setValueAtTime(kind === 'wind' ? 700 : 140, t)
+      for (let k = 1; k <= 4; k++) f.frequency.linearRampToValueAtTime((kind === 'wind' ? 500 : 110) + Math.random() * (kind === 'wind' ? 900 : 90), t + (seconds * k) / 4)
+      const g = ctx.createGain()
+      g.gain.setValueAtTime(0, t)
+      g.gain.linearRampToValueAtTime(kind === 'wind' ? 0.12 : 0.3, t + 1.2)
+      g.gain.setValueAtTime(kind === 'wind' ? 0.12 : 0.3, t + seconds - 1.5)
+      g.gain.linearRampToValueAtTime(0, t + seconds)
+      n.connect(f).connect(g).connect(sfxBus)
+      n.start(t)
+      n.stop(t + seconds + 0.1)
+    },
+    /** Rising, spreading shimmer (rate < 0 falls instead). */
+    sweep(seconds = 5, up = true) {
+      const a = up ? 220 : 880, b = up ? 880 : 220
+      tone(a, { type: 'sine', dur: seconds, vol: 0.08, attack: 0.6, slideTo: b })
+      tone(a * 1.5, { type: 'triangle', dur: seconds, vol: 0.04, attack: 0.8, slideTo: b * 1.5 })
+      for (let i = 0; i < 10; i++) tone(1400 + Math.random() * 1800, { start: (i / 10) * seconds, dur: 0.5, vol: 0.035 })
+    },
+    /** Sunrise (bright rising pair) or sunset (soft falling pair). */
+    dawn(rise = true) {
+      const f = rise ? [523.25, 783.99] : [659.25, 440]
+      f.forEach((x, i) => tone(x, { start: i * 0.18, dur: 0.9, vol: 0.06, type: 'sine' }))
+    },
     correct() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, { start: i * 0.09, dur: 0.5, vol: 0.13, type: 'triangle' })) },
     wrong() { tone(311, { dur: 0.25, vol: 0.12, type: 'triangle' }); tone(233, { start: 0.18, dur: 0.4, vol: 0.12, type: 'triangle' }) },
     fanfare() {
