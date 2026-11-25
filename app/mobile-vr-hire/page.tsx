@@ -7,6 +7,11 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { ServiceHighlights, ServiceGames, EventPhotoStrip, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Mobile VR Hire Cape Town | Rent VR Equipment for Events',
@@ -201,6 +206,15 @@ export default function MobileVRHirePage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ games", label: "Action, racing, learning & more" },
+          { icon: "users", value: "4–6 headsets", label: "Plus a spectator screen" },
+          { icon: "clock", value: "Setup in 45 min", label: "Delivered to your venue" },
+          { icon: "star", value: "5★ on Google", label: "Real client reviews" },
+        ]}
+      />
+
       {/* What's Included Section */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -263,6 +277,14 @@ export default function MobileVRHirePage() {
           </div>
         </div>
       </section>
+
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Inside the headset"
+        title="What comes in the box: 60+ games"
+        subtitle="Every hire includes our full game library. Here are a few of the titles guests line up for, from family favourites to adrenaline rushes."
+        gameIds={["beat-saber", "gorilla-tag", "richies-plank", "population-one", "z-race", "ocean-rift", "escape-room", "pistol-whip"]}
+      />
 
       {/* How It Works */}
       <section className="py-20 border-t border-border/30">
@@ -492,6 +514,10 @@ export default function MobileVRHirePage() {
           </div>
         </div>
       </section>
+
+      <EventPhotoStrip categories={[GALLERY.public, GALLERY.kids, GALLERY.schools]} />
+
+      <ServiceReviews prefer={["service", "birthday", "school"]} title="Why Cape Town keeps hiring us" />
 
       {/* FAQs */}
       <section className="py-20 border-t border-border/30">

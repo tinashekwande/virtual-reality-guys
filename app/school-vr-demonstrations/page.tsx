@@ -7,6 +7,11 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Educational VR School Demonstrations Cape Town | Mobile Setup',
@@ -147,6 +152,15 @@ export default function SchoolVRPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "school", value: "30+ educational titles", label: "Science, history & space" },
+          { icon: "users", value: "Whole-class rotations", label: "Every learner participates" },
+          { icon: "shield", value: "Supervised & safe", label: "Guardian boundaries on" },
+          { icon: "star", value: "5★ from schools", label: "Real Google reviews" },
+        ]}
+      />
+
       {/* Core values */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -180,6 +194,16 @@ export default function SchoolVRPage() {
         </div>
       </section>
 
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Learning in VR"
+        title="Field trips without leaving the classroom"
+        subtitle="Walk on the Moon with Apollo 11, explore inside a human cell, tour ancient Rome and step into Anne Frank’s house, all curriculum-friendly and fully supervised."
+        gameIds={["titans-of-space", "apollo-11-vr", "human-anatomy-vr", "natgeo-explore", "cellverse", "anne-frank-vr", "colosseum-vr", "mission-iss"]}
+        catalogueCategory="Educational & Learning Experiences"
+        catalogueLabel="See all educational experiences"
+      />
+
       {/* Detailed Section */}
       <section className="py-20 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -209,6 +233,8 @@ export default function SchoolVRPage() {
               </ul>
             </div>
 
+            <EventPhotoCollage categories={[GALLERY.schools]} includeVideo />
+
 
 
           </div>
@@ -228,6 +254,18 @@ export default function SchoolVRPage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney
+        title="How a school VR day works"
+        steps={[
+          { title: "Plan with us", text: "Tell us the grade, class sizes and topic. We match experiences to your curriculum and schedule." },
+          { title: "We set up at school", text: "We arrive early to set up in a hall or classroom with safe play zones and a projector/TV feed." },
+          { title: "Learners explore", text: "Supervisors rotate learners through guided experiences while classmates watch and discuss on screen." },
+          { title: "Wrap up", text: "We pack up and share the list of experiences used so teachers can follow up in class." },
+        ]}
+      />
+
+      <ServiceReviews prefer={["school", "service"]} title="What schools and parents say" />
 
       {/* FAQs */}
       <section className="py-20 bg-background/50 border-y border-border/30">

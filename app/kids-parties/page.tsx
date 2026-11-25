@@ -7,6 +7,11 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'VR Kids Parties Cape Town | Epic Gaming & Party Ideas',
@@ -147,6 +152,15 @@ export default function KidsPartiesPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ kid-friendly games", label: "Age-appropriate picks" },
+          { icon: "users", value: "Up to 15 players", label: "Everyone gets a turn" },
+          { icon: "clock", value: "2–4 hour sessions", label: "We stay the whole party" },
+          { icon: "star", value: "5★ from parents", label: "Real Google reviews" },
+        ]}
+      />
+
       {/* Core propositions */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -180,6 +194,14 @@ export default function KidsPartiesPage() {
         </div>
       </section>
 
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Kids’ favourites"
+        title="The games kids beg to play again"
+        subtitle="Tag in the treetops, slice beats with lightsabers, race cars and swim with whales. Every game is age-appropriate and supervised."
+        gameIds={["gorilla-tag", "beat-saber", "z-race", "ocean-rift", "rollercoasters-coastal", "cooking-games", "motion-soccer-pro", "spatial-web-shooter"]}
+      />
+
       {/* Feature section */}
       <section className="py-20 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -209,6 +231,8 @@ export default function KidsPartiesPage() {
               </ul>
             </div>
 
+            <EventPhotoCollage categories={[GALLERY.kids, GALLERY.personal, GALLERY.public]} />
+
 
 
           </div>
@@ -228,6 +252,18 @@ export default function KidsPartiesPage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney
+        title="How a VR party works"
+        steps={[
+          { title: "Book your date", text: "Tell us the age group, number of kids and your address. A 50% deposit secures the party." },
+          { title: "We bring the arcade", text: "We arrive 30–45 minutes before the party to set up headsets, a big screen for spectators and safe play zones." },
+          { title: "Kids take turns", text: "Our friendly supervisors rotate every child through the games and keep the excitement high." },
+          { title: "You relax", text: "We clean, pack up and leave while you enjoy cake with very happy kids." },
+        ]}
+      />
+
+      <ServiceReviews prefer={["birthday", "service"]} title="Parents love it, and the kids won’t stop talking about it" />
 
       {/* FAQs */}
       <section className="py-20 bg-background/50 border-y border-border/30">
