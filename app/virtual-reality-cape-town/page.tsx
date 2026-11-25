@@ -8,6 +8,11 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
+import { ServiceHighlights, ServiceGames, EventPhotoStrip, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: `Virtual Reality Cape Town | Mobile VR${fromSuffix()} — We Come To You`,
@@ -182,6 +187,15 @@ export default function CapeTownVRPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ games", label: "Something for every age" },
+          { icon: "users", value: "Parties to expos", label: "Homes, schools & venues" },
+          { icon: "shield", value: "Supervised & safe", label: "Trained staff, sanitised gear" },
+          { icon: "star", value: "5★ on Google", label: "Real client reviews" },
+        ]}
+      />
+
       {/* Feature grid */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -248,6 +262,14 @@ export default function CapeTownVRPage() {
           </div>
         </div>
       </section>
+
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Inside the headset"
+        title="Step into 60+ worlds without leaving Cape Town"
+        subtitle="Our most-loved experiences, from rhythm battles and treetop tag to space tours and heart-stopping plank walks. Click any game to see the trailer."
+        gameIds={["beat-saber", "gorilla-tag", "richies-plank", "population-one", "rollercoasters-coastal", "titans-of-space", "z-race", "escape-room"]}
+      />
 
       {/* Why Choose Mobile VR Over a VR Arcade? */}
       <section className="py-20 bg-secondary/10 border-t border-border/30">
@@ -336,6 +358,10 @@ export default function CapeTownVRPage() {
           </div>
         </div>
       </section>
+
+      <EventPhotoStrip categories={[GALLERY.public, GALLERY.kids, GALLERY.schools]} />
+
+      <ServiceReviews prefer={["service", "birthday", "school"]} title="Loved by Cape Town families, schools & hosts" />
 
       {/* Localized FAQ Section */}
       <section className="py-20 bg-background/50 border-y border-border/30">

@@ -8,6 +8,11 @@ import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
 import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
+import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'VR Birthday Party Activities Cape Town | Gaming Event Entertainment',
@@ -148,6 +153,15 @@ export default function BirthdayActivitiesPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ games", label: "For kids, teens & adults" },
+          { icon: "users", value: "Up to 20 players", label: "Per session" },
+          { icon: "clock", value: "2–4 hour sessions", label: "Fits any party plan" },
+          { icon: "star", value: "5★ from parents", label: "Real Google reviews" },
+        ]}
+      />
+
       {/* Propositions */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -181,6 +195,14 @@ export default function BirthdayActivitiesPage() {
         </div>
       </section>
 
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Birthday hits"
+        title="Birthday experiences guests remember"
+        subtitle="Whether they’re turning 8 or 38, these are the games that turn a birthday into the one everyone talks about."
+        gameIds={["gorilla-tag", "beat-saber", "ninja-legends", "speed-racer", "coaster-combat", "escape-room", "pistol-whip", "cooking-games"]}
+      />
+
       {/* Details */}
       <section className="py-20 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -210,6 +232,8 @@ export default function BirthdayActivitiesPage() {
               </ul>
             </div>
 
+            <EventPhotoCollage categories={[GALLERY.kids, GALLERY.personal, GALLERY.public]} />
+
 
 
           </div>
@@ -229,6 +253,10 @@ export default function BirthdayActivitiesPage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney />
+
+      <ServiceReviews prefer={["birthday", "service"]} title="Real birthday stories from our clients" />
 
       {/* FAQs */}
       <section className="py-20 bg-background/50 border-y border-border/30">

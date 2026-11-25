@@ -7,6 +7,11 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'VR Team Building Activities Cape Town | Corporate Event Ideas',
@@ -147,6 +152,15 @@ export default function TeamBuildingPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ games", label: "Co-op & competitive titles" },
+          { icon: "users", value: "10–50+ players", label: "Rotations & tournaments" },
+          { icon: "trophy", value: "Live leaderboards", label: "Bragging rights included" },
+          { icon: "star", value: "5★ on Google", label: "Real client reviews" },
+        ]}
+      />
+
       {/* Corporate Value Propositions */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -180,6 +194,14 @@ export default function TeamBuildingPage() {
         </div>
       </section>
 
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Team challenges"
+        title="Games your team will be talking about all week"
+        subtitle="From rhythm battles to squad shooters and escape rooms, every title is chosen to get colleagues communicating, competing and laughing together."
+        gameIds={["beat-saber", "population-one", "escape-room", "pistol-whip", "creed-rise-glory", "richies-plank", "formula-x", "space-pirate"]}
+      />
+
       {/* Detailed Section */}
       <section className="py-20 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -209,6 +231,8 @@ export default function TeamBuildingPage() {
               </ul>
             </div>
 
+            <EventPhotoCollage categories={[GALLERY.public, GALLERY.personal]} />
+
 
 
           </div>
@@ -228,6 +252,18 @@ export default function TeamBuildingPage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney
+        title="Your team building day, sorted"
+        steps={[
+          { title: "Plan the session", text: "Tell us your headcount, venue and goals. We build a rotation and tournament format that fits your schedule." },
+          { title: "We set up on site", text: "Our crew arrives 15–20 minutes early at your office or venue with headsets, a spectator screen and safety zones ready." },
+          { title: "Compete & collaborate", text: "Teams rotate through co-op challenges and head-to-head rounds while a live leaderboard keeps everyone invested." },
+          { title: "Crown the winners", text: "We announce the top scorers, then sanitise, pack up and leave your space exactly as we found it." },
+        ]}
+      />
+
+      <ServiceReviews prefer={["service", "birthday"]} title="Trusted by teams, hosts and parents across Cape Town" />
 
       {/* Service specific FAQs */}
       <section className="py-20 bg-background/50 border-y border-border/30">

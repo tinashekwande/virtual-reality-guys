@@ -63,6 +63,12 @@ const getShortCategory = (category: string) => {
 
 export default function VRCatalogueClient() {
   const [activeCategory, setActiveCategory] = useState<string>("all")
+
+  // Allow links like /vr-games-catalogue?category=Shooting%20Games to open pre-filtered
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("category")
+    if (requested && gamesData.some((g) => g.category === requested)) setActiveCategory(requested)
+  }, [])
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedGame, setSelectedGame] = useState<Game | null>(null)
   const [bookingGame, setBookingGame] = useState<Game | null>(null)

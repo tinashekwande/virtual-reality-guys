@@ -7,6 +7,11 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Family Fun Day Activities Cape Town | VR Event Entertainment',
@@ -147,6 +152,15 @@ export default function FamilyFunDayPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ games", label: "Something for every age" },
+          { icon: "users", value: "All ages welcome", label: "From kids to grandparents" },
+          { icon: "shield", value: "Supervised & safe", label: "Trained staff on every headset" },
+          { icon: "star", value: "5★ on Google", label: "Real client reviews" },
+        ]}
+      />
+
       {/* Value props */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-12">
@@ -183,6 +197,14 @@ export default function FamilyFunDayPage() {
         </div>
       </section>
 
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="For the whole family"
+        title="Something for every age at your fun day"
+        subtitle="Gentle ocean dives and world tours for the little ones, rhythm games and racing for teens, and roller coasters for the brave."
+        gameIds={["beat-saber", "ocean-rift", "rollercoasters-coastal", "cooking-games", "just-drive", "the-blue", "google-earth-vr", "motion-soccer-pro"]}
+      />
+
       {/* Detailed Section */}
       <section className="py-20 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -212,6 +234,8 @@ export default function FamilyFunDayPage() {
               </ul>
             </div>
 
+            <EventPhotoCollage categories={[GALLERY.public, GALLERY.kids, GALLERY.schools]} />
+
 
 
           </div>
@@ -226,6 +250,10 @@ export default function FamilyFunDayPage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney />
+
+      <ServiceReviews prefer={["birthday", "service"]} title="Families, schools and hosts love it" />
 
       {/* FAQs */}
       <section className="py-20 bg-background/50 border-y border-border/30">

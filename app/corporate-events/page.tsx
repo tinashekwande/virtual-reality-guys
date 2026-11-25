@@ -7,6 +7,11 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
+import { GALLERY } from "@/lib/event-photos"
+
+// Re-fetch gallery photos at most once an hour so new event photos appear automatically
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Corporate Event Entertainment Cape Town | Premium VR Hire',
@@ -147,6 +152,15 @@ export default function CorporateEventsPage() {
         </div>
       </section>
 
+      <ServiceHighlights
+        items={[
+          { icon: "games", value: "60+ games", label: "Crowd-pleasing VR titles" },
+          { icon: "users", value: "Up to 50+ guests", label: "Scales to big functions" },
+          { icon: "shield", value: "Sanitised & supervised", label: "Every headset, every player" },
+          { icon: "star", value: "5★ on Google", label: "Real client reviews" },
+        ]}
+      />
+
       {/* Value Propositions */}
       <section className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-12">
@@ -183,6 +197,14 @@ export default function CorporateEventsPage() {
         </div>
       </section>
 
+      {/* Featured VR experiences → catalogue */}
+      <ServiceGames
+        eyebrow="Crowd favourites"
+        title="Experiences that pull a crowd at any function"
+        subtitle="Year-end functions, product launches and expos all have one thing in common: a queue forms the moment guests see these on the big screen."
+        gameIds={["beat-saber", "richies-plank", "formula-x", "rollercoasters-coastal", "everest-vr", "space-pirate", "the-blue", "escape-room"]}
+      />
+
       {/* Testimonials */}
       <section className="py-20 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -211,6 +233,8 @@ export default function CorporateEventsPage() {
               </ul>
             </div>
 
+            <EventPhotoCollage categories={[GALLERY.public, GALLERY.personal]} />
+
 
           </div>
           
@@ -229,6 +253,18 @@ export default function CorporateEventsPage() {
           </div>
         </div>
       </section>
+
+      <ServiceJourney
+        title="From booking to wow, we handle it all"
+        steps={[
+          { title: "Brief us", text: "Share your event date, venue, guest numbers and vibe. We recommend the right setup and send a formal quote." },
+          { title: "Seamless setup", text: "We arrive early, mark safe play zones and connect live gameplay feeds to a spectator screen." },
+          { title: "Guests play", text: "Supervisors onboard every guest in seconds, manage the queue and run optional leaderboard challenges." },
+          { title: "Discreet pack-down", text: "When the function winds down we sanitise and pack away quickly and quietly." },
+        ]}
+      />
+
+      <ServiceReviews prefer={["service", "birthday"]} title="What hosts say about working with us" />
 
       {/* FAQs */}
       <section className="py-20 bg-background/50 border-y border-border/30">
