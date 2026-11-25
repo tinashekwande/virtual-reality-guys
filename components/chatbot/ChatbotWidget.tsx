@@ -305,7 +305,7 @@ export default function ChatbotWidget() {
         <button
           onClick={openChat}
           aria-label="Open chat"
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-cyan-500/40 active:scale-95 animate-[chatbot-pulse-glow_2s_ease-in-out_infinite] md:bottom-8 md:right-8 md:h-16 md:w-16"
+          className="fixed bottom-24 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-cyan-500/40 active:scale-95 animate-[chatbot-pulse-glow_2s_ease-in-out_infinite] md:bottom-8 md:right-8 md:h-16 md:w-16"
         >
           <MessageCircle size={24} className="md:hidden" />
           <MessageCircle size={28} className="hidden md:block" />

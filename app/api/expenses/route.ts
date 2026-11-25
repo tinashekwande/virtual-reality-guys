@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { buildExpenseExtras, withoutExtras } from '@/lib/accounts/expense-fields'
 
 // GET — list expenses (admin only)
 export async function GET(request: Request) {
@@ -40,21 +41,38 @@ export async function POST(request: Request) {
     const body = await request.json()
     const admin = createAdminClient()
 
+    const title = (body.title || '').toString().trim()
+    if (!title) return NextResponse.json({ error: 'Give the expense a title (what was it for?).' }, { status: 400 })
+    if (/^[\d\s.,R]+$/.test(title)) {
+      return NextResponse.json({ error: 'The title looks like just a number. Say what it was for, e.g. "Batteries" or "Fuel to Durbanville".' }, { status: 400 })
+    }
+    if (!(Number(body.amount) > 0)) return NextResponse.json({ error: 'Enter an amount greater than zero.' }, { status: 400 })
+
     const insertPayload = {
       event_id: body.event_id || null,
       invoice_id: body.invoice_id || null,
-      title: body.title || 'General Expense',
+      title,
       category: body.category || 'Other',
       amount: body.amount !== undefined ? Number(body.amount) : 0,
       date: body.date || new Date().toISOString().split('T')[0],
       notes: body.notes || '',
     }
 
-    const { data, error } = await admin
+    const extras = buildExpenseExtras(body)
+    if (extras.error) return NextResponse.json({ error: extras.error }, { status: 400 })
+
+    let { data, error } = await admin
       .from('expenses')
-      .insert([insertPayload])
+      .insert([{ ...insertPayload, ...extras.fields }])
       .select()
       .single()
+
+    // Database not upgraded yet (supabase/accounts_v2.sql): save without the new fields
+    if (error && /column|schema cache/i.test(error.message)) {
+      const retry = await admin.from('expenses').insert([withoutExtras(insertPayload)]).select().single()
+      data = retry.data
+      error = retry.error
+    }
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })

@@ -5,6 +5,7 @@ import { Check, Phone, Mail, MapPin, Star, Sparkles, Trophy, Calendar, Loader2 }
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 export const metadata: Metadata = {
   title: 'Book VR Experience Cape Town | Virtual Reality Guys Contact',
@@ -152,8 +153,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Email Address</p>
-                  <a href="mailto:virtualrealityguyz@gmail.com" className="font-bold hover:text-primary transition-colors text-lg break-all">
-                    virtualrealityguyz@gmail.com
+                  <a href="mailto:bookings@virtualrealityguyz.co.za" className="font-bold hover:text-primary transition-colors text-lg break-all">
+                    bookings@virtualrealityguyz.co.za
                   </a>
                 </div>
               </div>
@@ -177,24 +178,24 @@ export default function ContactPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-foreground">Starter Package</span>
-                  <span className="text-primary font-bold">R 899</span>
+                  <span className="text-primary font-bold">{SHOW_PRICES ? rand(PRICES.starter) : "Free quote"}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">2 hours of VR gaming, 4 VR headsets, up to 5 players</p>
+                <p className="text-xs text-muted-foreground">2 hours of VR gaming, 4 VR headsets, up to 8 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Standard Package</span>
-                  <span className="text-primary font-bold">R 1,299</span>
+                  <span className="text-primary font-bold">{SHOW_PRICES ? rand(PRICES.standard) : "Free quote"}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">3 hours of VR gaming, 5 VR headsets, up to 10 players</p>
+                <p className="text-xs text-muted-foreground">3 hours of VR gaming, 5 VR headsets, up to 12 players</p>
                 
                 <div className="flex justify-between items-center pt-2 border-t border-border/20">
                   <span className="font-semibold text-foreground">Premium Package</span>
-                  <span className="text-primary font-bold">R 1,499</span>
+                  <span className="text-primary font-bold">{SHOW_PRICES ? rand(PRICES.premium) : "Free quote"}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">4 hours of VR gaming, 6 VR headsets, up to 15 players</p>
+                <p className="text-xs text-muted-foreground">4 hours of VR gaming, 6 VR headsets, up to 20 players</p>
               </div>
               <p className="text-xs text-muted-foreground/80 leading-relaxed border-t border-border/20 pt-4">
-                <strong>*Note:</strong> Free delivery/transport to Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst, and Buh-Rein Estate. Other areas require transport fees.
+                <strong>*Note:</strong> {TRANSPORT_TEXT} {SHOW_PRICES ? `Add-ons: ${ADDONS_TEXT}. ` : "Extra hours and headsets can be added. "}Schools and corporate events are quoted separately.
               </p>
             </div>
 
@@ -227,6 +228,7 @@ export default function ContactPage() {
             <div className="space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Explore Our Services</h4>
               <div className="flex flex-wrap gap-2">
+                <Link href="/school-vr-demonstrations" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">School VR &amp; Custom Builds</Link>
                 <Link href="/vr-team-building" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Team Building</Link>
                 <Link href="/kids-parties" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Kids Parties</Link>
                 <Link href="/corporate-events" className="text-xs px-3 py-1.5 rounded-lg bg-secondary border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground transition-all">Corporate Events</Link>

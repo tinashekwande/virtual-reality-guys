@@ -91,7 +91,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound()
   }
 
-  // Setup Custom Renderer for Marked to inject IDs in headings
+  // Setup Custom Renderer for Marked to inject IDs in headings and prevent duplicate H1 tags
   const renderer = new marked.Renderer();
   (renderer as any).heading = function (arg1: any, arg2?: any, arg3?: any) {
     let text = ""
@@ -103,9 +103,15 @@ export default async function BlogPostPage({ params }: PageProps) {
       text = arg1
       depth = arg2
     }
-    const id = text
+    const cleanText = text.replace(/<[^>]*>/g, "").trim()
+    if (depth === 1) {
+      if (cleanText.toLowerCase() === post.title.trim().toLowerCase()) {
+        return ""
+      }
+      depth = 2
+    }
+    const id = cleanText
       .toLowerCase()
-      .replace(/<[^>]*>/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "")
     return `<h${depth} id="${id}">${text}</h${depth}>`
@@ -145,10 +151,15 @@ export default async function BlogPostPage({ params }: PageProps) {
       "@id": `https://virtualrealityguyz.co.za/blog/${post.slug}`,
     },
     "headline": post.title,
-    "description": post.excerpt,
+    "description": post.seo_description || post.excerpt,
     "image": post.featured_image || "https://virtualrealityguyz.co.za/images/logo.png",
     "datePublished": post.published_at,
     "dateModified": post.updated_at,
+    "articleSection": post.category,
+    "inLanguage": "en-ZA",
+    ...(Array.isArray(post.tags) && post.tags.length > 0
+      ? { "keywords": post.tags.join(", ") }
+      : {}),
     "author": {
       "@type": "Organization",
       "name": "Virtual Reality Guys",
@@ -313,38 +324,73 @@ export default async function BlogPostPage({ params }: PageProps) {
             <ShareButtons title={post.title} slug={post.slug} />
 
             {/* Strong Call to Action */}
-            <div className="relative overflow-hidden bg-card border border-primary/20 rounded-2xl p-8 text-center space-y-6">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(6,182,212,0.1),transparent_60%)] pointer-events-none" />
-              <div className="max-w-md mx-auto space-y-3 relative z-10">
-                <Sparkles className="h-8 w-8 text-primary mx-auto animate-pulse" />
-                <h3 className="font-tech text-xl font-bold text-foreground">
-                  Ready to bring Virtual Reality to your next event?
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  We supply premium mobile VR packages, gaming catalogues, and complete event coordination in Cape Town and surrounding areas.
-                </p>
+            {post.category === "Schools" || post.slug === "educational-vr-experiences-for-schools" ? (
+              <div className="relative overflow-hidden bg-card border-2 border-primary/30 rounded-2xl p-8 sm:p-10 text-center space-y-6 shadow-xl">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(6,182,212,0.14),transparent_65%)] pointer-events-none" />
+                <div className="max-w-2xl mx-auto space-y-3 relative z-10">
+                  <Sparkles className="h-8 w-8 text-primary mx-auto animate-pulse" />
+                  <h3 className="font-tech text-2xl sm:text-3xl font-bold text-foreground">
+                    Let&apos;s Bring Your Curriculum to Life
+                  </h3>
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                    Whether your school wants to book a supervised demonstration using our existing educational VR library or propose a custom VR learning experience informed by the South African curriculum, our team is ready to collaborate.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-4 relative z-10 pt-2">
+                  <Link
+                    href="/school-vr-demonstrations#book-school-demo"
+                    className="px-6 py-3 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] cursor-pointer"
+                  >
+                    Request a School Demonstration
+                  </Link>
+                  <Link
+                    href="/school-vr-demonstrations#propose-custom-vr"
+                    className="px-6 py-3 rounded-xl text-sm font-semibold bg-secondary border border-primary/30 text-foreground hover:border-primary transition-all cursor-pointer"
+                  >
+                    Propose a Custom VR Experience
+                  </Link>
+                  <Link
+                    href="/school-vr-demonstrations"
+                    className="px-4 py-2.5 rounded-lg text-sm font-semibold bg-transparent text-primary hover:underline transition-all cursor-pointer"
+                  >
+                    Explore School VR Hub &rarr;
+                  </Link>
+                </div>
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 relative z-10 pt-2">
-                <Link
-                  href="/contact"
-                  className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] cursor-pointer"
-                >
-                  Request a Quote
-                </Link>
-                <Link
-                  href="/contact"
-                  className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-secondary border border-border text-foreground hover:border-primary/30 transition-all cursor-pointer"
-                >
-                  Contact Us
-                </Link>
-                <Link
-                  href="/vr-games-catalogue"
-                  className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-transparent text-primary hover:underline transition-all cursor-pointer"
-                >
-                  View Packages &rarr;
-                </Link>
+            ) : (
+              <div className="relative overflow-hidden bg-card border border-primary/20 rounded-2xl p-8 text-center space-y-6">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(6,182,212,0.1),transparent_60%)] pointer-events-none" />
+                <div className="max-w-md mx-auto space-y-3 relative z-10">
+                  <Sparkles className="h-8 w-8 text-primary mx-auto animate-pulse" />
+                  <h3 className="font-tech text-xl font-bold text-foreground">
+                    Ready to bring Virtual Reality to your next event?
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    We supply premium mobile VR packages, gaming catalogues, and complete event coordination in Cape Town and surrounding areas.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-4 relative z-10 pt-2">
+                  <Link
+                    href="/contact"
+                    className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] cursor-pointer"
+                  >
+                    Request a Quote
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-secondary border border-border text-foreground hover:border-primary/30 transition-all cursor-pointer"
+                  >
+                    Contact Us
+                  </Link>
+                  <Link
+                    href="/vr-games-catalogue"
+                    className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-transparent text-primary hover:underline transition-all cursor-pointer"
+                  >
+                    View Packages &rarr;
+                  </Link>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Related Articles */}
             {relatedPosts.length > 0 && (

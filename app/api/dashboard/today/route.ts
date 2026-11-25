@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { summarisePayments } from '@/lib/accounts/calc'
+import type { Invoice, PaymentItem } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,7 +30,7 @@ export async function GET() {
     admin.from('events').select('id, title, event_date, event_time, location, status, description').in('event_date', dates).neq('status', 'cancelled'),
     admin.from('personal_calendar_events').select('id, title, date, start_time, end_time, location, is_all_day').in('date', dates),
     admin.from('form_requests').select('id, name, email, phone, suburb, message, form_type, status, created_at').in('status', ['new', 'new_request']).order('created_at', { ascending: false }),
-    admin.from('invoices').select('id, doc_number, client_name, client_phone, event_date, status, total, deposit_percentage').in('status', ['sent', 'pending', 'draft', 'deposit_paid']).order('event_date', { ascending: true }).limit(40),
+    admin.from('invoices').select('id, type, doc_number, client_name, client_phone, event_date, due_date, status, total, deposit_percentage').eq('type', 'invoice').in('status', ['sent', 'pending', 'deposit_paid']).order('event_date', { ascending: true }),
     admin.from('follow_ups').select('id, client_name, client_email, client_phone, stage, scheduled_for, channel, message_draft, invoice_id, request_id').eq('status', 'pending').lt('scheduled_for', `${dayAfter}T00:00:00Z`).order('scheduled_for', { ascending: true }).limit(50),
   ])
 
@@ -43,15 +45,15 @@ export async function GET() {
     personal: personal.filter((p: any) => p.date === d),
   })
 
-  // Deposits due: unpaid invoices with a status that still owes money
-  const unpaid = (unpaidRes.data || []).filter((i: any) => i.status !== 'paid')
-  const depositsOutstanding = unpaid.reduce((acc: number, i: any) => {
-    if (i.status === 'deposit_paid') {
-      const pct = (Number(i.deposit_percentage) || 50) / 100
-      return acc + Number(i.total || 0) * (1 - pct)
-    }
-    return acc + Number(i.total || 0)
-  }, 0)
+  // Money still owed, measured against the payments log (same numbers as Accounts)
+  const unpaidRows = (unpaidRes.data || []) as Invoice[]
+  const { data: unpaidPayments } = unpaidRows.length
+    ? await admin.from('payments').select('invoice_id, amount').in('invoice_id', unpaidRows.map((i) => i.id))
+    : { data: [] as PaymentItem[] }
+  const unpaid = unpaidRows
+    .map((i) => ({ ...i, balance: summarisePayments(i, (unpaidPayments || []) as PaymentItem[], today).balance }))
+    .filter((i) => i.balance > 0.005)
+  const depositsOutstanding = Math.round(unpaid.reduce((acc, i) => acc + i.balance, 0) * 100) / 100
 
   return NextResponse.json({
     today,

@@ -65,7 +65,7 @@ function defaultDraft(stage: FollowUpStage, ctx: { name: string; date?: string |
     case 'deposit_reminder':
       return `Hi ${name}, to secure ${date} a 50% deposit is needed. Banking: FNB, Panashe Majinga, 63124445502, branch 250655, ref ${ctx.doc || name}. Send proof of payment once done — thanks!`
     case 'event_prep':
-      return `Hi ${name}, your VR event on ${date} is almost here! Please confirm the venue address and start time. We arrive 30–45 min early to set up (need ~2x2m clear space per headset + a power outlet).`
+      return `Hi ${name}, your VR event on ${date} is almost here! Please confirm the venue address and start time. We arrive 15–20 min early to set up (need ~2x2m clear space per headset + a power outlet).`
     case 'payment_balance':
       return `Hi ${name}, a reminder that the outstanding balance${ctx.outstanding ? ` of ${money(ctx.outstanding)}` : ''} for ${date} is due on/before the day. FNB 63124445502, ref ${ctx.doc || name}. Thank you!`
     case 'review_request':

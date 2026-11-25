@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { Invoice, EventItem, FormRequest, TeamMember } from '@/types'
+import { Invoice, EventItem, FormRequest, TeamMember, ExpenseItem, PaymentItem } from '@/types'
+import { invoiceMoneyTotals, overallTotals, summarisePayments, totalExpenses } from '@/lib/accounts/calc'
 import { EquipmentItem, EquipmentLog, AiAction, FollowUpItem } from '@/types/ai'
 
 /**
@@ -61,26 +62,27 @@ export async function getUnpaidInvoicesTool(args: { overdue_only?: boolean }) {
   const admin = createAdminClient()
   const now = new Date().toISOString().split('T')[0]
 
-  let query = admin
-    .from('invoices')
-    .select('*')
-    .in('status', ['pending', 'deposit_paid', 'sent', 'draft'])
-    .order('due_date', { ascending: true })
+  const [{ data }, { data: pays }] = await Promise.all([
+    admin
+      .from('invoices')
+      .select('*')
+      .eq('type', 'invoice')
+      .in('status', ['pending', 'deposit_paid', 'sent'])
+      .order('due_date', { ascending: true }),
+    admin.from('payments').select('*'),
+  ])
+  const payments = (pays || []) as PaymentItem[]
 
-  if (args.overdue_only) {
-    query = query.lt('due_date', now)
-  }
+  // Balance = total minus money actually received (payments log)
+  const list = ((data || []) as Invoice[])
+    .map((inv) => {
+      const s = summarisePayments(inv, payments, now)
+      return { ...inv, amount_received_zar: s.received, balance_due_zar: s.balance, overdue: s.overdue }
+    })
+    .filter((inv) => inv.balance_due_zar > 0.005)
+    .filter((inv) => !args.overdue_only || inv.overdue)
 
-  const { data } = await query
-  const list = (data || []) as Invoice[]
-
-  const totalOutstanding = list.reduce((acc, inv) => {
-    if (inv.status === 'deposit_paid') {
-      const pct = (inv.deposit_percentage || 50) / 100
-      return acc + (Number(inv.total) * (1 - pct))
-    }
-    return acc + Number(inv.total || 0)
-  }, 0)
+  const totalOutstanding = Math.round(list.reduce((acc, inv) => acc + inv.balance_due_zar, 0) * 100) / 100
 
   return {
     invoices: list,
@@ -108,9 +110,11 @@ export async function getCustomerHistoryTool(args: { query: string }) {
   ])
 
   const invList = (invoices || []) as Invoice[]
-  const totalSpent = invList
-    .filter((i) => i.status === 'paid' || i.status === 'deposit_paid')
-    .reduce((acc, i) => acc + (Number(i.total) || 0), 0)
+  // What the client has actually paid (payments log), not invoice totals
+  const { data: custPays } = invList.length
+    ? await admin.from('payments').select('*').in('invoice_id', invList.map((i) => i.id))
+    : { data: [] as PaymentItem[] }
+  const totalSpent = invoiceMoneyTotals(invList, (custPays || []) as PaymentItem[]).received
 
   return {
     customer_name: invList[0]?.client_name || (requests as any)?.[0]?.name || args.query,
@@ -122,50 +126,40 @@ export async function getCustomerHistoryTool(args: { query: string }) {
   }
 }
 
-// 5. Get Revenue Summary
+// 5. Get Revenue Summary — the same numbers as the Accounts page (All time)
 export async function getRevenueSummaryTool(args: { period?: 'all' | 'this_month' | 'last_month' | 'year' }) {
   const admin = createAdminClient()
-  const [{ data: invoices }, { data: events }, { data: expenses }] = await Promise.all([
+  const [{ data: invoices }, { data: events }, { data: expenses }, { data: payments }] = await Promise.all([
     admin.from('invoices').select('*'),
     admin.from('events').select('*'),
     admin.from('expenses').select('*'),
+    admin.from('payments').select('*'),
   ])
 
   const invList = (invoices || []) as Invoice[]
   const evtList = (events || []) as EventItem[]
-  const expList = (expenses || []) as any[]
+  const expList = (expenses || []) as ExpenseItem[]
+  const payList = (payments || []) as PaymentItem[]
 
-  // Paid Revenue
-  const invoiceRevenue = invList.reduce((acc, inv) => {
-    if (inv.status === 'paid') return acc + Number(inv.total || 0)
-    if (inv.status === 'deposit_paid') {
-      const pct = (inv.deposit_percentage || 50) / 100
-      return acc + (Number(inv.total || 0) * pct)
-    }
-    return acc
-  }, 0)
-
-  const eventRevenue = evtList.reduce((acc, evt) => acc + Number(evt.total_revenue || 0), 0)
-  const totalRevenue = invoiceRevenue + eventRevenue
-
-  // Pending Pipeline
-  const pendingPipeline = invList
-    .filter((i) => i.status === 'pending' || i.status === 'sent')
-    .reduce((acc, i) => acc + Number(i.total || 0), 0)
-
-  // Expenses & Net Profit
-  const totalExpenses = expList.reduce((acc, e) => acc + (Number(e.amount) || 0), 0)
-  const netProfit = totalRevenue - totalExpenses
-  const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0
+  const totals = overallTotals(invList, evtList, expList, payList)
+  const exp = totalExpenses(expList)
 
   return {
-    total_confirmed_revenue_zar: totalRevenue,
-    pending_pipeline_zar: pendingPipeline,
-    total_expenses_zar: totalExpenses,
-    net_profit_zar: netProfit,
-    profit_margin_pct: Number(profitMargin.toFixed(1)),
+    // Money actually received (invoice payments + standalone event takings)
+    total_confirmed_revenue_zar: totals.revenue,
+    // Still owed on sent / deposit-paid invoices
+    pending_pipeline_zar: totals.outstanding,
+    overdue_zar: totals.overdue,
+    // Running costs + equipment depreciation to date (what profit is measured against)
+    total_expenses_zar: totals.expenses,
+    net_profit_zar: totals.netProfit,
+    profit_margin_pct: totals.profitMargin,
+    // Cash view: everything paid out, equipment at full purchase price
+    cash_paid_out_zar: exp.cashOut,
+    equipment_purchases_zar: exp.assetPurchases,
     invoice_count: invList.length,
     event_count: evtList.length,
+    note: 'Revenue = payments received. Expenses = running costs + equipment depreciation. Matches the Accounts page (All time).',
   }
 }
 

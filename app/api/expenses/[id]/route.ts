@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { requireAdmin } from '@/lib/auth'
+import { buildExpenseExtras } from '@/lib/accounts/expense-fields'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -34,12 +35,22 @@ export async function PUT(request: Request, { params }: Props) {
   if (body.event_id !== undefined) updatePayload.event_id = body.event_id ? body.event_id : null
   if (body.invoice_id !== undefined) updatePayload.invoice_id = body.invoice_id ? body.invoice_id : null
 
-  const { data, error } = await admin
+  const extras = buildExpenseExtras(body, true)
+  if (extras.error) return NextResponse.json({ error: extras.error }, { status: 400 })
+
+  let { data, error } = await admin
     .from('expenses')
-    .update(updatePayload)
+    .update({ ...updatePayload, ...extras.fields })
     .eq('id', id)
     .select()
     .single()
+
+  // Database not upgraded yet (supabase/accounts_v2.sql): save without the new fields
+  if (error && /column|schema cache/i.test(error.message)) {
+    const retry = await admin.from('expenses').update(updatePayload).eq('id', id).select().single()
+    data = retry.data
+    error = retry.error
+  }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

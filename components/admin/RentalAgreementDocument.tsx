@@ -1221,7 +1221,7 @@ export default function RentalAgreementDocument({
         <div>
           <p className="font-bold text-slate-900">Virtual Reality Guyz (Pty) Ltd</p>
           <p>Cape Town, Western Cape, South Africa • virtualrealityguyz.co.za</p>
-          <p>WhatsApp/Tel: +27 71 780 0323 • Email: virtualrealityguyz@gmail.com</p>
+          <p>WhatsApp/Tel: +27 71 780 0323 • Email: bookings@virtualrealityguyz.co.za</p>
         </div>
         <div className="text-right mt-2 sm:mt-0 text-[11px] text-slate-500">
           <p><strong>Agreement Version:</strong> {data.version}</p>

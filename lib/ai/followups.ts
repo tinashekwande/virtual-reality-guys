@@ -46,7 +46,7 @@ export async function generateCustomerMessage(
   const name = recipient.name || 'Valued Customer'
   const dateStr = recipient.event_date || 'your upcoming date'
   const pkg = recipient.package_name || 'Standard VR Package'
-  const total = recipient.amount_zar ? `R${recipient.amount_zar.toLocaleString()}` : 'R899'
+  const total = recipient.amount_zar ? `R${recipient.amount_zar.toLocaleString()}` : 'R1,499'
   const outstanding = recipient.outstanding_zar ? `R${recipient.outstanding_zar.toLocaleString()}` : total
   const docNum = recipient.doc_number || 'VRG-Q-2026'
   const rawMsg = recipient.customer_message?.trim() || ''
@@ -81,7 +81,7 @@ CLIENT & EVENT DETAILS:
 - Event Date: ${dateStr}
 - Event Type: ${recipient.event_type || 'VR Event'}
 - Location: ${recipient.location || 'Cape Town'}
-- Recommended Package: ${pkg} (${total} Incl. 15% VAT)
+- Recommended Package: ${pkg} (${total})
 - Outstanding Balance: ${outstanding}
 - Quotation / Document Number: ${docNum}
 - Customer's Original Enquiry: "${rawMsg || 'Inquiry about VR entertainment'}"
@@ -97,7 +97,7 @@ BANKING DETAILS (FNB) IF RELEVANT (for deposit or payment reminders):
 REQUIREMENTS:
 1. Genuinely address what the client said in their enquiry. Acknowledge their event type, guest count, and specifics.
 2. If there are missing details (like specific venue address, exact date/start time, player count/ages), politely and clearly list them as bullet points or numbered questions so we can finalize everything.
-3. If giving a quote, state the package name (${pkg}) and price (${total} Incl. 15% VAT), and explain why it fits their group.
+3. If giving a quote, state the package name (${pkg}) and price (${total}), and explain why it fits their group.
 4. Keep the tone warm, modern, exciting, and professional (great for South African WhatsApp and email). Use tasteful emojis (🎮, 🕶️, 🚀, 👋).
 5. Do NOT include markdown code blocks. Just provide the ready-to-send message text directly.
 6. End with:
@@ -126,7 +126,7 @@ Virtual Reality Guys Team
 
     switch (template) {
       case 'quote_delivery':
-        body = `Hi ${name} 👋\n\nThank you for reaching out to Virtual Reality Guys! We are excited to bring our mobile VR experience to your event.\n\n📋 **Customized Quotation:**\n- Package: ${pkg}\n- Total Investment: ${total} (Incl. 15% VAT)\n- Includes: VR Headsets, dedicated supervisors, and 60+ games.${missingSection}\n\nTo secure your booking date on our calendar, a 50% deposit is required. Please let us know if this looks good to you!\n\nBest regards,\n**Virtual Reality Guys Team**\n📞 +27 71 780 0323\n🌐 www.virtualrealityguyz.co.za`
+        body = `Hi ${name} 👋\n\nThank you for reaching out to Virtual Reality Guys! We are excited to bring our mobile VR experience to your event.\n\n📋 **Customized Quotation:**\n- Package: ${pkg}\n- Total Investment: ${total}\n- Includes: VR Headsets, dedicated supervisors, and 60+ games.${missingSection}\n\nTo secure your booking date on our calendar, a 50% deposit is required. Please let us know if this looks good to you!\n\nBest regards,\n**Virtual Reality Guys Team**\n📞 +27 71 780 0323\n🌐 www.virtualrealityguyz.co.za`
         break
 
       case 'deposit_request':
@@ -134,7 +134,7 @@ Virtual Reality Guys Team
         break
 
       case 'booking_confirmation':
-        body = `Hi ${name} 🎉\n\nGreat news! Your mobile VR booking for **${dateStr}** is officially confirmed! Our team will arrive 30-45 minutes before start time to set up the equipment and calibrate the safety boundaries.\n\n📍 We look forward to delivering an unforgettable immersive experience!\n\nSee you soon,\n**Virtual Reality Guys Team**\n📞 +27 71 780 0323`
+        body = `Hi ${name} 🎉\n\nGreat news! Your mobile VR booking for **${dateStr}** is officially confirmed! Our team will arrive 15-20 minutes before start time to set up the equipment and calibrate the safety boundaries.\n\n📍 We look forward to delivering an unforgettable immersive experience!\n\nSee you soon,\n**Virtual Reality Guys Team**\n📞 +27 71 780 0323`
         break
 
       case 'day_before_reminder':

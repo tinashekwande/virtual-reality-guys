@@ -253,7 +253,7 @@ export interface JourneyStep {
 
 const DEFAULT_STEPS: JourneyStep[] = [
   { icon: CalendarCheck, title: "Pick your date & package", text: "Tell us about your event and group size. We confirm availability and send a quote — a 50% deposit locks in your date." },
-  { icon: Truck, title: "We arrive & set up", text: "Our crew arrives 30–45 minutes early with headsets, a spectator screen and safety boundaries all calibrated." },
+  { icon: Truck, title: "We arrive & set up", text: "Our crew arrives 15–20 minutes early with headsets, a spectator screen and safety boundaries all calibrated." },
   { icon: PartyPopper, title: "Everyone plays", text: "Trained supervisors guide every player, run tournaments and keep the energy high — you just enjoy it." },
   { icon: PackageCheck, title: "We pack up", text: "When the fun is over we sanitise, pack everything away and leave your venue exactly as we found it." },
 ]

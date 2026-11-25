@@ -245,13 +245,19 @@ export default function EducationalVrCapeTownPage() {
           </div>
 
           <div className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-border/30">
-            <div className="w-full mb-4">
-              <Link href="/school-vr-demonstrations" className="text-primary font-semibold hover:underline">
-                Ready to bring this to your school? Book a School VR Demonstration &rarr;
+            <div className="w-full mb-4 space-y-2">
+              <Link href="/school-vr-demonstrations" className="text-primary font-semibold hover:underline block">
+                Explore our School VR Experiences &amp; Custom Educational VR Development Hub &rarr;
+              </Link>
+              <Link href="/blog/educational-vr-experiences-for-schools" className="text-muted-foreground hover:text-primary text-sm hover:underline block">
+                Read our Educator Guide: Educational VR Experiences for South African Schools &rarr;
               </Link>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href="/school-vr-demonstrations">School VR Demonstrations <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              <Link href="/school-vr-demonstrations">School VR &amp; Custom Development <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/blog/educational-vr-experiences-for-schools">South African Curriculum VR Guide <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/vr-games-catalogue">Games Catalogue <ArrowRight className="ml-1 h-4 w-4" /></Link>

@@ -24,23 +24,23 @@ export const DEFAULT_BUSINESS_CONTEXT: AiBusinessSettings['business_context'] = 
       headsets: 4,
       hours: 2,
       staff: 1,
-      players: 5,
+      players: 8,
     },
     {
       name: 'Standard Package',
-      price: 1399,
+      price: 1499,
       headsets: 5,
       hours: 3,
       staff: 2,
-      players: 10,
+      players: 12,
     },
     {
       name: 'Premium Package',
-      price: 1599,
+      price: 1999,
       headsets: 6,
       hours: 4,
-      staff: 3,
-      players: 15,
+      staff: 2,
+      players: 20,
     },
   ],
 }
@@ -185,7 +185,7 @@ export async function getMasterSystemInstruction(): Promise<string> {
   const packagesList = ctx.packages
     .map(
       (p) =>
-        `- ${p.name}: R${p.price} (Incl. 15% VAT) | ${p.headsets} VR Headsets, ${p.hours} Hours, ${p.staff} Staff, up to ${p.players} players`
+        `- ${p.name}: R${p.price} | ${p.headsets} VR Headsets, ${p.hours} Hours, ${p.staff} Staff, up to ${p.players} players`
     )
     .join('\n')
 
@@ -201,7 +201,7 @@ COMPANY OVERVIEW & RULES:
 - Hardware Inventory: Standard fleet of 8 Meta Quest VR Headsets (Kiwi Elite Straps, silicone hygiene covers), 55" 4K Spectator TV Displays, Wi-Fi 6 Dedicated Routers, High-Capacity Power Docks.
 - Target Audiences: Birthday parties (ages 8+), School demonstrations & workshops, Corporate team building & activations, Brand expos, Festivals & community pop-ups.
 
-CURRENT PACKAGE PRICING (INCL. 15% VAT):
+CURRENT PACKAGE PRICING (NOT REGISTERED FOR VAT — NO VAT CHARGED, NEVER MENTION VAT):
 ${packagesList}
 
 YOUR CAPABILITIES & PRINCIPLES:

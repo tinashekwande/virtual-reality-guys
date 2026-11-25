@@ -48,7 +48,7 @@ import type { Invoice, FormRequest, RentalAgreementRecord, RentalAgreementStatus
 const DEFAULT_BLANK_AGREEMENT: RentalAgreementData = {
   companyName: "Virtual Reality Guyz (Pty) Ltd",
   website: "virtualrealityguyz.co.za",
-  email: "virtualrealityguyz@gmail.com",
+  email: "bookings@virtualrealityguyz.co.za",
   phone: "+27 71 780 0323",
   businessAddress: "Cape Town, Western Cape, South Africa",
   regNumber: "2024/VRG/ZA",

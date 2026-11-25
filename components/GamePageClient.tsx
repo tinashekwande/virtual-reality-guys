@@ -35,6 +35,7 @@ import {
 import { Button } from "@/components/ui/button"
 import GameBookingModal from "@/components/GameBookingModal"
 import type { Game } from "@/lib/gamesData"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 
 interface GamePageClientProps {
   game: Game
@@ -523,13 +524,13 @@ export default function GamePageClient({ game, relatedGames, moreGames }: GamePa
             {/* Quick Pricing Card */}
             <div className="bg-gradient-to-br from-secondary/40 to-primary/10 border border-primary/30 rounded-3xl p-6 space-y-3">
               <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
-                Turnkey Event Pricing
+                Turnkey Event Packages
               </span>
               <h4 className="text-lg font-bold font-tech text-white">
                 Book for Parties & Events
               </h4>
               <p className="text-xs text-muted-foreground">
-                Pricing starts from just <strong className="text-white">R899</strong> for 2-hour starter packages with headsets, game library, TV casting, and full staff supervision.
+                {SHOW_PRICES ? <>Party packages start from just <strong className="text-white">{FROM_PRICE}</strong> for 2 hours</> : <>Party packages come</>} with headsets, game library, TV casting, and full staff supervision.
               </p>
               <Link 
                 href="/pricing"
@@ -679,7 +680,7 @@ export default function GamePageClient({ game, relatedGames, moreGames }: GamePa
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold text-white truncate">{game.title}</p>
-            <p className="text-[10px] text-primary truncate">From R899 • Mobile Setup</p>
+            <p className="text-[10px] text-primary truncate">{SHOW_PRICES ? `From ${FROM_PRICE} • Mobile Setup` : "Free quote • Mobile Setup"}</p>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
 import { GALLERY } from "@/lib/event-photos"
 
@@ -155,7 +156,7 @@ export default function BirthdayActivitiesPage() {
       <ServiceHighlights
         items={[
           { icon: "games", value: "60+ games", label: "For kids, teens & adults" },
-          { icon: "users", value: "Up to 15 players", label: "Per session" },
+          { icon: "users", value: "Up to 20 players", label: "Per session" },
           { icon: "clock", value: "2–4 hour sessions", label: "Fits any party plan" },
           { icon: "star", value: "5★ from parents", label: "Real Google reviews" },
         ]}
@@ -303,7 +304,7 @@ export default function BirthdayActivitiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Packages starting from just R899</span>
+                <span>{SHOW_PRICES ? `Packages starting from just ${FROM_PRICE}` : "Free, no-obligation quotes"}</span>
               </p>
             </div>
           </div>

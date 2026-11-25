@@ -15,6 +15,7 @@ import {
 import * as marketing from '@/lib/marketing/service'
 import { getConfiguredEmailProvider } from '@/lib/email/sender'
 import { scheduleFollowUpsForInvoice, reconcileFollowUpsForInvoice } from '@/lib/followups/scheduler'
+import { getPricingBaseline } from '@/lib/pricing-catalog'
 
 /**
  * Virtual Reality Guys — Admin Portal MCP server.
@@ -27,9 +28,9 @@ import { scheduleFollowUpsForInvoice, reconcileFollowUpsForInvoice } from '@/lib
 
 export const MCP_ACTOR = 'Claude (MCP)'
 
-const INSTRUCTIONS = `You are connected to the Virtual Reality Guys (VR Guyz) admin portal — a mobile VR entertainment business in Cape Town, South Africa. Currency is ZAR (R). All prices include 15% VAT.
+const INSTRUCTIONS = `You are connected to the Virtual Reality Guys (VR Guyz) admin portal — a mobile VR entertainment business in Cape Town, South Africa. Currency is ZAR (R). Virtual Reality Guys is NOT registered for VAT: no VAT is charged, so never add VAT or write "incl. VAT" / "Tax Invoice" in quotes, invoices or client emails.
 
-Before writing to any client, call get_business_knowledge for packages, pricing, payment terms, coverage areas and tone.
+Before writing to any client, call get_business_knowledge for packages, pricing, payment terms, coverage areas and tone. Its "pricing" section comes from the portal's Pricing page and is the baseline for every price you quote: it overrides any figures in the knowledge_base text. Only quote items under pricing.active; never quote pricing.drafts_not_for_clients. If an event type has no active pricing, say it will be quoted individually and check with the owner before giving a number.
 
 REPLYING TO A NEW REQUEST
 1. list_requests (status "new") → get_request for full details, past history, previous emails and the availability check for the requested date.
@@ -101,7 +102,7 @@ const AD_PLATFORMS = [
 const lineItem = z.object({
   description: z.string(),
   quantity: z.number().positive().default(1),
-  unit_price: z.number().nonnegative().describe('Price per unit in ZAR, VAT inclusive'),
+  unit_price: z.number().nonnegative().describe('Price per unit in ZAR (no VAT; not a VAT vendor)'),
 })
 
 function computeTotals(items: { description: string; quantity: number; unit_price: number }[], discount = 0, transport = 0) {
@@ -173,16 +174,20 @@ export function createPortalMcpServer() {
     'get_business_knowledge',
     {
       title: 'Business knowledge & pricing',
-      description: 'Company facts for writing to clients: packages and prices, deposit and banking details, areas covered, venue requirements, safety, games, plus the portal\'s business settings.',
+      description: 'Company facts for writing to clients. The pricing section (from the portal Pricing page) is the baseline for all prices. Also: packages, deposit and banking details, areas covered, venue requirements, safety, games, plus the portal\'s business settings.',
       inputSchema: {},
       annotations: READ,
     },
     run(async () => {
-      const settings = await getAiBusinessContext().catch(() => null)
+      const [settings, pricing] = await Promise.all([
+        getAiBusinessContext().catch(() => null),
+        getPricingBaseline().catch((err) => ({ error: `Could not load pricing table: ${err?.message || err}` })),
+      ])
       return {
+        pricing,
         knowledge_base: COMPANY_KNOWLEDGE_BASE.trim(),
         portal_settings: settings?.business_context ?? null,
-        email_signature: 'The Virtual Reality Guys team\n+27 71 780 0323 (call / WhatsApp)\nvirtualrealityguyz@gmail.com\nhttps://virtualrealityguyz.co.za',
+        email_signature: 'The Virtual Reality Guys team\n+27 71 780 0323 (call / WhatsApp)\nbookings@virtualrealityguyz.co.za\nhttps://virtualrealityguyz.co.za',
       }
     })
   )

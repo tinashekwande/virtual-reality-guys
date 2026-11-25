@@ -257,7 +257,7 @@ export default function TeamBuildingPage() {
         title="Your team building day, sorted"
         steps={[
           { title: "Plan the session", text: "Tell us your headcount, venue and goals. We build a rotation and tournament format that fits your schedule." },
-          { title: "We set up on site", text: "Our crew arrives 30–45 minutes early at your office or venue with headsets, a spectator screen and safety zones ready." },
+          { title: "We set up on site", text: "Our crew arrives 15–20 minutes early at your office or venue with headsets, a spectator screen and safety zones ready." },
           { title: "Compete & collaborate", text: "Teams rotate through co-op challenges and head-to-head rounds while a live leaderboard keeps everyone invested." },
           { title: "Crown the winners", text: "We announce the top scorers, then sanitise, pack up and leave your space exactly as we found it." },
         ]}

@@ -24,12 +24,14 @@ interface InvoiceFormProps {
 }
 
 const PRESET_PACKAGES = [
-  { description: "Starter VR Package (4 Headsets, 2 Hours, up to 5 players)", price: 999 },
-  { description: "Standard VR Package (5 Headsets, 3 Hours, up to 10 players)", price: 1399 },
-  { description: "Premium VR Package (6 Headsets, 4 Hours, up to 15 players)", price: 1599 },
-  { description: "Additional VR Headset (Per Hour)", price: 150 },
-  { description: "Additional Event Hour", price: 250 },
-  { description: "Travel / Transport Fee (Outside Kraaifontein area)", price: 200 },
+  { description: "Starter VR Package (4 Headsets, 2 Hours, up to 8 players)", price: 999 },
+  { description: "Standard VR Package (5 Headsets, 3 Hours, up to 12 players)", price: 1499 },
+  { description: "Premium VR Package (6 Headsets, 4 Hours, up to 20 players)", price: 1999 },
+  { description: "Additional VR Headset (Per Event)", price: 150 },
+  { description: "Additional Event Hour", price: 350 },
+  { description: "Transport Fee (Up to ~25 km)", price: 200 },
+  { description: "Transport Fee (Outer Areas)", price: 350 },
+  { description: "Transport Fee (Far Areas)", price: 500 },
 ];
 
 export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFormProps) {
@@ -78,7 +80,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
   );
   const [notes, setNotes] = useState<string>(
     initialData?.notes ||
-      "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 45 minutes prior to event start time."
+      "50% deposit required upon booking confirmation.\nAll equipment cleaned and medical-grade sanitized between sessions.\nSetup begins 15-20 minutes prior to event start time."
   );
 
   // Update doc number prefix when type changes if unchanged
@@ -388,7 +390,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="quote">Quote</SelectItem>
-                      <SelectItem value="invoice">Tax Invoice</SelectItem>
+                      <SelectItem value="invoice">Invoice</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -546,7 +548,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
               <div className="hidden sm:grid grid-cols-12 gap-3 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-tech">
                 <div className="col-span-6">Item Description</div>
                 <div className="col-span-2 text-center">Qty</div>
-                <div className="col-span-3 text-right">Price (Incl. 15% VAT)</div>
+                <div className="col-span-3 text-right">Price (R)</div>
                 <div className="col-span-1"></div>
               </div>
 
@@ -630,7 +632,7 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
 
               <div className="space-y-4 text-xs">
                 <div className="flex justify-between items-center text-muted-foreground">
-                  <span>Subtotal (Incl. VAT):</span>
+                  <span>Subtotal:</span>
                   <span className="font-semibold text-foreground text-sm font-mono">
                     R {subtotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
                   </span>
@@ -656,21 +658,6 @@ export default function InvoiceForm({ initialData, onSave, onCancel }: InvoiceFo
                     onChange={(e) => setDiscount(Number(e.target.value))}
                     className="rounded-xl border-border bg-secondary/50 text-right font-mono text-xs text-emerald-400"
                   />
-                </div>
-
-                <div className="border-t border-border/60 pt-3 space-y-2 text-xs">
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Net (Excl. 15% VAT):</span>
-                    <span className="font-mono">
-                      R {(grandTotal - (grandTotal * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-cyan-400 font-medium">
-                    <span>VAT (15% Included):</span>
-                    <span className="font-mono">
-                      R {((grandTotal * 15) / 115).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="border-t border-border pt-4 flex justify-between items-center">

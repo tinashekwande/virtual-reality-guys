@@ -14,13 +14,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export default function Header() {
+/**
+ * @param transparentOnTop Fade the nav into the page's hero photo until the
+ *   visitor scrolls. Passed explicitly by the page rather than worked out from
+ *   the URL, because cached homepage renders don't always report "/".
+ */
+export default function Header({ transparentOnTop = false }: { transparentOnTop?: boolean } = {}) {
   const [scrolled, setScrolled] = useState(false);
+  const overHero = transparentOnTop && !scrolled;
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -28,7 +35,9 @@ export default function Header() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        overHero
+          ? "bg-gradient-to-b from-black/55 to-transparent border-b border-transparent"
+          : scrolled
           ? "bg-background/90 backdrop-blur-xl border-b border-border/80 shadow-lg shadow-black/20"
           : "bg-background/60 backdrop-blur-md border-b border-border/40"
       }`}
@@ -104,8 +113,8 @@ export default function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="focus:bg-secondary cursor-pointer rounded-lg">
                   <Link href="/school-vr-demonstrations" className="w-full px-3 py-2 block">
-                    <p className="font-semibold text-sm">School VR Demos</p>
-                    <p className="text-xs text-muted-foreground">Educational showcases</p>
+                    <p className="font-semibold text-sm">School VR &amp; Education</p>
+                    <p className="text-xs text-muted-foreground">Curriculum VR &amp; custom builds</p>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="focus:bg-secondary cursor-pointer rounded-lg">
@@ -118,6 +127,12 @@ export default function Header() {
                   <Link href="/vr-games-catalogue" className="w-full px-3 py-2 block">
                     <p className="font-semibold text-sm">VR Games Catalogue</p>
                     <p className="text-xs text-muted-foreground">Browse games & experiences</p>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="focus:bg-secondary cursor-pointer rounded-lg">
+                  <Link href="/repairs" className="w-full px-3 py-2 block">
+                    <p className="font-semibold text-sm">VR Repairs</p>
+                    <p className="text-xs text-muted-foreground">Headset &amp; controller repairs</p>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

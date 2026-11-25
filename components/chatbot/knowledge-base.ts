@@ -3,6 +3,8 @@
  * Used by Gemini AI System Prompt to accurately answer user questions.
  */
 
+import { CHATBOT_PRICE_RULE } from "@/lib/pricing"
+
 export const COMPANY_KNOWLEDGE_BASE = `
 ==============================================================================
 VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
@@ -12,7 +14,7 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
    - Company Name: Virtual Reality Guyz
    - Website: https://virtualrealityguyz.co.za
    - Phone / WhatsApp: +27 71 780 0323
-   - Email: virtualrealityguyz@gmail.com
+   - Email: bookings@virtualrealityguyz.co.za
    - Location: Mobile service based in Cape Town, Western Cape, South Africa.
    - Core Mission: We bring premium, mobile virtual reality (VR) gaming, entertainment, and educational experiences directly to client venues (homes, schools, offices, event halls, outdoor venues).
 
@@ -23,17 +25,19 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
      - Northern Suburbs (Durbanville, Bellville, Brackenfell, Parow, Century City)
      - Helderberg & Winelands (Somerset West, Stellenbosch, Paarl, Strand, Gordon's Bay)
 
-3. PACKAGES & PRICING (ALL PRICES ARE INCLUSIVE OF 15% VAT):
-   - Starter Package: R999.00 (Incl. VAT)
-     - Includes: 4 VR Headsets, 2 Hours of VR gaming, suitable for up to 5 players, 1 Trained VR Supervisor, 30+ Games Selection.
-     - Best For: Small birthday parties, intimate gatherings (up to 5 players), quick VR sessions.
-   - Standard Package: R1,399.00 (Incl. VAT)
-     - Includes: 5 VR Headsets, 3 Hours of VR gaming, suitable for up to 10 players, 2 Trained VR Supervisors, 60+ Games Selection, Multiplayer Tournaments.
-     - Best For: Birthday parties, school demos, family fun days, medium events (up to 10 players).
-   - Premium Package: R1,599.00 (Incl. VAT)
-     - Includes: 6 VR Headsets, 4 Hours of VR gaming, suitable for up to 15 players, 3 Trained VR Supervisors, 100+ Games Selection, Custom Tournament Brackets, Photo & Video Package.
-     - Best For: Large birthday celebrations, corporate activations, festivals, expos (up to 15 players).
-   - Custom & Corporate Packages: Available for large expos, multi-day activations, or full-day team building events. Contact us for custom quotes.
+3. PACKAGES & PRICING (VIRTUAL REALITY GUYS IS NOT REGISTERED FOR VAT — NO VAT IS CHARGED; NEVER MENTION OR ADD VAT):
+   - Starter Package: R999.00
+     - Includes: 4 VR Headsets, 2 Hours of VR gaming, suitable for up to 8 players, 1 Trained VR Supervisor, 30+ Games Selection.
+     - Best For: Small birthday parties and intimate gatherings (up to 8 players).
+   - Standard Package: R1,499.00 — MOST POPULAR
+     - Includes: 5 VR Headsets, 3 Hours of VR gaming, suitable for up to 12 players, 2 Trained VR Supervisors, 60+ Games Selection, Multiplayer Tournaments.
+     - Best For: Birthday parties, family fun days, medium events (up to 12 players).
+   - Premium Package: R1,999.00
+     - Includes: 6 VR Headsets, 4 Hours of VR gaming, suitable for up to 20 players, 2 Trained VR Supervisors, 100+ Games Selection, Custom Tournament Brackets, Photo & Video Package.
+     - Best For: Large birthday celebrations and bigger groups (up to 20 players).
+   - Add-ons: Extra hour R350. Extra headset R150 per event.
+   - Transport: FREE in Kraaifontein, Brackenfell, Durbanville, Bellville, Kuils River, Joostenberg Vlakte, Pinehurst and Buh-Rein Estate. R200 for venues up to about 25 km away. R350–R500 for further areas (e.g. Somerset West, Stellenbosch, Constantia, City Bowl, Atlantic Seaboard, Fish Hoek, Simon's Town). Always ask for the suburb so transport can be confirmed.
+   - Schools & Corporate Events: Quoted individually (depends on hours, number of attendees and staff). Do not quote a fixed price — invite them to request a quote.
 
 4. PAYMENT TERMS & BANKING DETAILS:
    - Deposit Requirement: A 50% deposit is required to confirm and secure any event booking date.
@@ -49,7 +53,7 @@ VIRTUAL REALITY GUYZ — COMPREHENSIVE COMPANY KNOWLEDGE BASE
    - Space Needed: Approximately 2m x 2m clear space per headset station.
    - Power: Access to standard 220V wall power outlets for charging stations and display mirrors.
    - Environment: Indoor setup is preferred. Outdoor setup is completely fine provided it is under full shade (e.g. marquee, covered patio, gazebo) to protect equipment from direct sunlight and rain.
-   - Setup Time: We arrive approximately 30-45 minutes before the event start time to set up and calibrate digital boundaries.
+   - Setup Time: We arrive approximately 15-20 minutes before the event start time to set up and calibrate digital boundaries.
 
 6. SAFETY, AGE SUITABILITY & HYGIENE:
    - Recommended Ages: Ages 8 and up. Younger children (6-7) can participate with parental guidance and supervisor assistance.
@@ -87,10 +91,10 @@ YOUR MANDATE:
 
 3. KNOWLEDGE ACCURACY:
    - Always refer to the provided Knowledge Base.
-   - Prices: Starter R999, Standard R1,399, Premium R1,599 (all inclusive of 15% VAT).
+   - Party prices: Starter R999, Standard R1,499, Premium R1,999 (no VAT charged — not a VAT vendor). Add-ons: extra hour R350, extra headset R150. Transport: free in our home zone, R200 up to ~25 km, R350–R500 further out. Schools & corporate events: custom quote only.
    - Deposit: 50% deposit required to confirm. FNB Account 63124445502.
    - Location: Cape Town & surrounds (mobile — we come to your venue).
-   - Phone: +27 71 780 0323 | Email: virtualrealityguyz@gmail.com
+   - Phone: +27 71 780 0323 | Email: bookings@virtualrealityguyz.co.za
 
 4. ASSISTING WITH BOOKINGS:
    - Whenever a user expresses a desire to book an event, request a quote, or check availability, encourage them to initiate the booking process.
@@ -102,4 +106,5 @@ YOUR MANDATE:
 
 KNOWLEDGE BASE CONTEXT:
 ${COMPANY_KNOWLEDGE_BASE}
+${CHATBOT_PRICE_RULE}
 `;

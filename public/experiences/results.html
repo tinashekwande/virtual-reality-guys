@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Class Results | VR Guys</title>
+<meta name="robots" content="noindex" />
+<style>
+  :root { --bg: #02040c; --card: #0a1328; --line: #1e2b4a; --text: #e8f1ff; --muted: #9db3d6; --accent: #22d3ee; --good: #34d399; --mid: #fbbf24; --bad: #f87171; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: "Trebuchet MS", system-ui, sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { color: var(--accent); margin: 0 0 4px; font-size: 28px; }
+  h2 { font-size: 19px; margin: 28px 0 10px; }
+  p { color: var(--muted); margin: 6px 0; line-height: 1.45; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button, label.btn { background: #1b2a4a; color: var(--text); border: 1px solid #ffffff30; border-radius: 12px; padding: 10px 16px; font: inherit; font-weight: 700; cursor: pointer; }
+  button.primary { background: var(--accent); color: #04121f; border: none; }
+  button.danger { background: #3b1220; border-color: #f8717166; color: #fecaca; }
+  button:disabled { opacity: .45; cursor: default; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 30px; color: #fff; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .q { display: grid; grid-template-columns: minmax(0, 1fr) 160px 56px; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .bar { height: 12px; border-radius: 6px; background: #ffffff18; overflow: hidden; }
+  .bar i { display: block; height: 100%; }
+  .q em { font-style: normal; text-align: right; font-weight: 700; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 700; background: var(--card); }
+  td.ticks { letter-spacing: 2px; }
+  .ok { color: var(--good); } .no { color: var(--bad); }
+  .empty { padding: 28px; text-align: center; color: var(--muted); }
+  .note { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; margin-top: 14px; }
+  #msg { color: var(--good); min-height: 1.4em; }
+  @media (max-width: 560px) { .q { grid-template-columns: minmax(0, 1fr) 90px 48px; } h1 { font-size: 23px; } }
+</style>
+  <script type="module" crossorigin src="./assets/results-BY42heb0.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="modulepreload" crossorigin href="./assets/results-store-BlUfglbG.js">
+</head>
+<body>
+<main>
+  <h1>Class results: Journey through the Solar System</h1>
+  <p>Quiz scores saved on this device by the VR lesson. Only learner numbers are stored, never names.</p>
+  <div class="row" style="margin-top:14px">
+    <button class="primary" id="export">Export CSV</button>
+    <label class="btn" for="import">Import CSV from another headset</label>
+    <input type="file" id="import" accept=".csv,text/csv" multiple hidden />
+    <button class="danger" id="clear">Clear class</button>
+    <a href="./index.html" style="color:var(--muted);margin-left:auto">Back to the experiences</a>
+  </div>
+  <div id="msg"></div>
+  <div class="stats" id="stats"></div>
+  <h2>Each question: % answered correctly</h2>
+  <div id="questions"></div>
+  <h2>Sessions</h2>
+  <div class="table-wrap"><table id="sessions"></table></div>
+  <div class="note">
+    <p><b style="color:var(--text)">Using several headsets?</b> Each headset keeps its own results. Open this page in each headset's browser,
+    tap <b>Export CSV</b>, then on one device use <b>Import CSV</b> to add the other files and see the whole class together.</p>
+    <p>Teacher mode in the headset: on the welcome panel, point at the small <b>VR GUYS</b> badge (top right) and hold the trigger
+    or pinch for 2 seconds. You can choose the starting stop and turn learner numbers on or off.</p>
+  </div>
+</main>
+</body>
+</html>

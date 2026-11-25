@@ -111,6 +111,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/repairs" className="hover:text-primary transition-colors">
+                  VR Headset Repairs
+                </Link>
+              </li>
+              <li>
                 <Link href="/gallery" className="hover:text-primary transition-colors">
                   Event Gallery
                 </Link>
@@ -135,8 +140,8 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <a href="mailto:virtualrealityguyz@gmail.com" className="hover:text-primary transition-colors font-medium break-all">
-                  virtualrealityguyz@gmail.com
+                <a href="mailto:bookings@virtualrealityguyz.co.za" className="hover:text-primary transition-colors font-medium break-all">
+                  bookings@virtualrealityguyz.co.za
                 </a>
               </li>
               <li className="flex items-start gap-3">

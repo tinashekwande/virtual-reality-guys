@@ -88,7 +88,7 @@ const FAQ_RESPONSES: PatternResponse[] = [
       /\breach/i, /\bwhatsapp/i, /\bnumber/i,
     ],
     response:
-      'You can reach us at:\n\uD83D\uDCDE +27 71 780 0323\n\u2709\uFE0F virtualrealityguyz@gmail.com\n\uD83D\uDCCD Cape Town, South Africa\n\nOr just tell me what you need and I\'ll help you get started!',
+      'You can reach us at:\n\uD83D\uDCDE +27 71 780 0323\n\u2709\uFE0F bookings@virtualrealityguyz.co.za\n\uD83D\uDCCD Cape Town, South Africa\n\nOr just tell me what you need and I\'ll help you get started!',
   },
   {
     patterns: [
@@ -289,7 +289,7 @@ export function handleQuickReply(
     case 'Contact Support':
       return {
         response:
-          'You can reach us at:\n\uD83D\uDCDE +27 71 780 0323\n\u2709\uFE0F virtualrealityguyz@gmail.com\n\uD83D\uDCCD Cape Town, South Africa\n\nOr just tell me what you need and I\'ll help!',
+          'You can reach us at:\n\uD83D\uDCDE +27 71 780 0323\n\u2709\uFE0F bookings@virtualrealityguyz.co.za\n\uD83D\uDCCD Cape Town, South Africa\n\nOr just tell me what you need and I\'ll help!',
         triggerBooking: false,
       }
     default:

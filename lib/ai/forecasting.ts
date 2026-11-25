@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { Invoice, EventItem } from '@/types'
+import { Invoice, EventItem, PaymentItem } from '@/types'
+import { summarisePayments } from '@/lib/accounts/calc'
 
 export interface RevenueForecastResult {
   month_name: string
@@ -24,10 +25,12 @@ export async function calculateRevenueForecast(): Promise<RevenueForecastResult>
   const currentYear = now.getFullYear()
   const currentMonthStr = `${currentYear}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
-  const [{ data: invoices }, { data: events }] = await Promise.all([
+  const [{ data: invoices }, { data: events }, { data: payments }] = await Promise.all([
     admin.from('invoices').select('*'),
     admin.from('events').select('*'),
+    admin.from('payments').select('*'),
   ])
+  const payList = (payments || []) as PaymentItem[]
 
   const invList = (invoices || []) as Invoice[]
   const evtList = (events || []) as EventItem[]
@@ -43,29 +46,18 @@ export async function calculateRevenueForecast(): Promise<RevenueForecastResult>
     return d.startsWith(currentMonthStr)
   })
 
-  // Confirmed Revenue
-  const confirmedInvoiceRev = thisMonthInvoices.reduce((acc, inv) => {
-    if (inv.status === 'paid') return acc + Number(inv.total || 0)
-    if (inv.status === 'deposit_paid') {
-      const pct = (inv.deposit_percentage || 50) / 100
-      return acc + (Number(inv.total || 0) * pct)
-    }
-    return acc
-  }, 0)
+  // Confirmed Revenue: money actually received for this month's bookings (payments log)
+  const confirmedInvoiceRev = thisMonthInvoices
+    .filter((inv) => inv.type !== 'quote')
+    .reduce((acc, inv) => acc + summarisePayments(inv, payList).received, 0)
 
   const confirmedEventRev = thisMonthEvents.reduce((acc, e) => acc + Number(e.total_revenue || 0), 0)
   const totalConfirmed = confirmedInvoiceRev + confirmedEventRev
 
-  // Pending Pipeline
+  // Pending Pipeline: what is still owed on this month's bookings
   const pendingPipeline = thisMonthInvoices
-    .filter((i) => i.status === 'pending' || i.status === 'sent' || i.status === 'deposit_paid')
-    .reduce((acc, inv) => {
-      if (inv.status === 'deposit_paid') {
-        const pct = (inv.deposit_percentage || 50) / 100
-        return acc + (Number(inv.total || 0) * (1 - pct))
-      }
-      return acc + Number(inv.total || 0)
-    }, 0)
+    .filter((i) => i.type !== 'quote' && (i.status === 'pending' || i.status === 'sent' || i.status === 'deposit_paid'))
+    .reduce((acc, inv) => acc + summarisePayments(inv, payList).balance, 0)
 
   // AI Estimated Additional Pipeline based on historical lead conversion
   const aiProjected = Math.round(pendingPipeline * 0.72 + (totalConfirmed > 0 ? totalConfirmed * 0.15 : 4500))

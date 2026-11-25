@@ -7,6 +7,7 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 import { ServiceHighlights, ServiceGames, EventPhotoStrip, ServiceReviews } from "@/components/services/ServiceSections"
 import { GALLERY } from "@/lib/event-photos"
 
@@ -15,7 +16,7 @@ export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Mobile VR Hire Cape Town | Rent VR Equipment for Events',
-  description: 'Hire premium mobile VR setups in Cape Town from R899. Includes headsets, spectator screens, trained supervisors, 100+ games, delivery, setup & cleanup. Book today!',
+  description: `Hire premium mobile VR setups in Cape Town${SHOW_PRICES ? ` from ${FROM_PRICE}` : ''}. Includes headsets, spectator screens, trained supervisors, 100+ games, setup & cleanup. ${SHOW_PRICES ? 'Book today!' : 'Get a free quote today!'}`,
   alternates: {
     canonical: '/mobile-vr-hire',
   },
@@ -36,7 +37,7 @@ export default function MobileVRHirePage() {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
       "telephone": "+27717800323",
-      "email": "virtualrealityguyz@gmail.com",
+      "email": "bookings@virtualrealityguyz.co.za",
       "url": "https://virtualrealityguyz.co.za",
       "address": {
         "@type": "PostalAddress",
@@ -54,23 +55,20 @@ export default function MobileVRHirePage() {
         {
           "@type": "Offer",
           "name": "Starter Package",
-          "price": "899",
-          "priceCurrency": "ZAR",
-          "description": "4 VR headsets, 2 hours of VR gaming, up to 5 players"
+          ...offerPrice(PRICES.starter),
+          "description": "4 VR headsets, 2 hours of VR gaming, up to 8 players"
         },
         {
           "@type": "Offer",
           "name": "Standard Package",
-          "price": "1299",
-          "priceCurrency": "ZAR",
-          "description": "5 VR headsets, 3 hours of VR gaming, up to 10 players"
+          ...offerPrice(PRICES.standard),
+          "description": "5 VR headsets, 3 hours of VR gaming, up to 12 players"
         },
         {
           "@type": "Offer",
           "name": "Premium Package",
-          "price": "1499",
-          "priceCurrency": "ZAR",
-          "description": "6 VR headsets, 4 hours of VR gaming, up to 15 players"
+          ...offerPrice(PRICES.premium),
+          "description": "6 VR headsets, 4 hours of VR gaming, up to 20 players"
         }
       ]
     }
@@ -93,7 +91,7 @@ export default function MobileVRHirePage() {
         "name": "How much does mobile VR hire cost in Cape Town?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our mobile VR hire packages start from R899 for 4 headsets (Starter), R1,299 for 5 headsets (Standard), and R1,499 for 6 headsets (Premium). All packages include professional setup, trained supervisors, and cleanup."
+          "text": PACKAGES_PRICE_TEXT
         }
       },
       {
@@ -187,7 +185,7 @@ export default function MobileVRHirePage() {
             Mobile VR <span className="text-primary">Hire</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Hire a complete virtual reality setup for your next event — headsets, spectator screens, trained supervisors, and 100+ games delivered directly to your venue in Cape Town. From just R899.
+            Hire a complete virtual reality setup for your next event — headsets, spectator screens, trained supervisors, and 100+ games delivered directly to your venue in Cape Town.{SHOW_PRICES ? ` From just ${FROM_PRICE}.` : " Free, no-obligation quotes."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <CyberButton href="#booking" size="lg" variant="primary">
@@ -198,7 +196,7 @@ export default function MobileVRHirePage() {
             </CyberButton>
           </div>
           <div className="flex flex-wrap justify-center gap-6 pt-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" /> Free Delivery</span>
+            <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" /> Free Local Delivery</span>
             <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" /> Full Setup & Cleanup</span>
             <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" /> Trained Supervisors</span>
             <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-primary" /> 100+ Games</span>
@@ -210,7 +208,7 @@ export default function MobileVRHirePage() {
         items={[
           { icon: "games", value: "60+ games", label: "Action, racing, learning & more" },
           { icon: "users", value: "4–6 headsets", label: "Plus a spectator screen" },
-          { icon: "clock", value: "Setup in 45 min", label: "Delivered to your venue" },
+          { icon: "clock", value: "Setup in 15–20 min", label: "Delivered to your venue" },
           { icon: "star", value: "5★ on Google", label: "Real client reviews" },
         ]}
       />
@@ -320,13 +318,15 @@ export default function MobileVRHirePage() {
         </div>
       </section>
 
-      {/* Packages & Pricing */}
+      {/* Packages */}
       <section id="packages" className="py-20 bg-background/50 border-t border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-bold">VR Hire Packages & Pricing</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold">{SHOW_PRICES ? "VR Hire Packages & Pricing" : "VR Hire Packages"}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Transparent pricing with no hidden fees. Every package includes delivery, setup, supervision, and cleanup across Cape Town.
+              {SHOW_PRICES
+                ? `Transparent pricing with no hidden fees. Every package includes setup, supervision, and cleanup. Transport is free in our home zone and from ${rand(PRICES.transportNear)} elsewhere.`
+                : "No hidden fees. Every package includes setup, supervision, and cleanup. Transport is free in our home zone. Tell us about your event for a free quote."}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -336,21 +336,20 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Starter</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R899</span>
-                  <span className="text-muted-foreground">/event</span>
+                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.starter)}</> : "Contact us for a quote"}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>2 hours of VR gaming</span>
                 </div>
                 <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" /> <span>Suitable for up to 5 players</span>
+                  <Users className="h-4 w-4" /> <span>Suitable for up to 8 players</span>
                 </div>
                 <ul className="space-y-2 mb-8 text-sm">
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 4 VR headsets</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Professional setup & supervision</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Spectator display</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 30+ game selection</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Delivery, setup & cleanup</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Setup & cleanup</li>
                 </ul>
               </div>
               <Button asChild className="w-full">
@@ -366,14 +365,13 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Standard</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R1,299</span>
-                  <span className="text-muted-foreground">/event</span>
+                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.standard)}</> : "Contact us for a quote"}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>3 hours of VR gaming</span>
                 </div>
                 <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" /> <span>Suitable for up to 10 players</span>
+                  <Users className="h-4 w-4" /> <span>Suitable for up to 12 players</span>
                 </div>
                 <ul className="space-y-2 mb-8 text-sm">
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 5 VR headsets</li>
@@ -381,7 +379,7 @@ export default function MobileVRHirePage() {
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Spectator displays</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 60+ game selection</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Multiplayer tournaments</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Delivery, setup & cleanup</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Setup & cleanup</li>
                 </ul>
               </div>
               <Button asChild className="w-full">
@@ -394,14 +392,13 @@ export default function MobileVRHirePage() {
               <div>
                 <h3 className="text-2xl font-bold mb-2">Premium</h3>
                 <div className="mb-4">
-                  <span className="text-4xl font-bold">R1,499</span>
-                  <span className="text-muted-foreground">/event</span>
+                  <span className="text-xl font-bold">{SHOW_PRICES ? <>{rand(PRICES.premium)}</> : "Contact us for a quote"}</span>
                 </div>
                 <div className="flex items-center gap-2 mb-1 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" /> <span>4 hours of VR gaming</span>
                 </div>
                 <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" /> <span>Suitable for up to 15 players</span>
+                  <Users className="h-4 w-4" /> <span>Suitable for up to 20 players</span>
                 </div>
                 <ul className="space-y-2 mb-8 text-sm">
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 6 VR headsets</li>
@@ -410,7 +407,7 @@ export default function MobileVRHirePage() {
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> 100+ game selection</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Custom tournament brackets</li>
                   <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Photo & video package</li>
-                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Delivery, setup & cleanup</li>
+                  <li className="flex items-center gap-2"><Check className="h-4 w-4 text-primary shrink-0" /> Setup & cleanup</li>
                 </ul>
               </div>
               <Button asChild className="w-full">
@@ -421,6 +418,9 @@ export default function MobileVRHirePage() {
           </div>
           <p className="text-center text-sm text-muted-foreground">
             Need a custom setup for a larger event? <Link href="#booking" className="text-primary hover:underline">Contact us</Link> for tailored packages with 8-10+ headsets for festivals, expos, and corporate conferences.
+          </p>
+          <p className="text-center text-xs text-muted-foreground/80 max-w-3xl mx-auto">
+            {SHOW_PRICES ? `Add-ons: ${ADDONS_TEXT}. ` : "Add-ons: extra hours and extra headsets available. "}{TRANSPORT_TEXT}
           </p>
         </div>
       </section>
@@ -535,7 +535,7 @@ export default function MobileVRHirePage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How much does mobile VR hire cost in Cape Town?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our mobile VR hire packages start from R899 for 4 headsets (Starter), R1,299 for 5 headsets (Standard), and R1,499 for 6 headsets (Premium). All packages include professional setup, trained supervisors, and cleanup. Custom packages are available for larger events.
+                {PACKAGES_PRICE_TEXT} Custom packages are available for larger events.
               </p>
             </div>
 
@@ -582,7 +582,7 @@ export default function MobileVRHirePage() {
             <div className="space-y-4 font-semibold text-sm">
               <p className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
-                <span>Free delivery across all Cape Town suburbs</span>
+                <span>{SHOW_PRICES ? `Free delivery in our home zone, from ${rand(PRICES.transportNear)} elsewhere` : "Free delivery in our home zone"}</span>
               </p>
               <p className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-primary" />

@@ -37,7 +37,7 @@ export default function VirtualRealitySomersetWestPage() {
       "@type": "LocalBusiness",
       "name": "Virtual Reality Guys",
       "telephone": "+27717800323",
-      "email": "virtualrealityguyz@gmail.com",
+      "email": "bookings@virtualrealityguyz.co.za",
       "priceRange": "$$",
       "address": {
         "@type": "PostalAddress",
@@ -89,7 +89,7 @@ export default function VirtualRealitySomersetWestPage() {
         "name": "How quickly can you set up and pack down the equipment?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Our team arrives roughly 45 to 60 minutes before the scheduled start time to set up, test, and calibrate the virtual safety walls. Pack-down takes about 30 minutes. None of this setup/cleanup time cuts into your paid event hours."
+          "text": "Our team arrives roughly 15 to 20 minutes before the scheduled start time to set up, test, and calibrate the virtual safety walls. Pack-down takes about 30 minutes. None of this setup/cleanup time cuts into your paid event hours."
         }
       },
       {
@@ -257,7 +257,7 @@ export default function VirtualRealitySomersetWestPage() {
             <div className="bg-secondary/30 p-6 rounded-xl border border-border">
               <h3 className="font-bold text-lg text-foreground">How quickly can you set up and pack down the equipment?</h3>
               <p className="text-muted-foreground text-sm mt-2">
-                Our team arrives roughly 45 to 60 minutes before the scheduled start time to set up, test, and calibrate the virtual safety walls. Pack-down takes about 30 minutes. None of this setup/cleanup time cuts into your paid event hours.
+                Our team arrives roughly 15 to 20 minutes before the scheduled start time to set up, test, and calibrate the virtual safety walls. Pack-down takes about 30 minutes. None of this setup/cleanup time cuts into your paid event hours.
               </p>
             </div>
 

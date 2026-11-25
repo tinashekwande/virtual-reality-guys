@@ -7,6 +7,7 @@ import { CyberButton } from "@/components/ui/cyber-button"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BookingForm from "@/components/BookingForm"
+import { SHOW_PRICES, PRICES, rand, FROM_PRICE, fromSuffix, PACKAGES_PRICE_TEXT, ADDONS_TEXT, TRANSPORT_TEXT, offerPrice } from "@/lib/pricing"
 import { ServiceHighlights, ServiceGames, EventPhotoCollage, ServiceJourney, ServiceReviews } from "@/components/services/ServiceSections"
 import { GALLERY } from "@/lib/event-photos"
 
@@ -155,7 +156,7 @@ export default function KidsPartiesPage() {
       <ServiceHighlights
         items={[
           { icon: "games", value: "60+ kid-friendly games", label: "Age-appropriate picks" },
-          { icon: "users", value: "Up to 15 players", label: "Everyone gets a turn" },
+          { icon: "users", value: "Up to 20 players", label: "Everyone gets a turn" },
           { icon: "clock", value: "2–4 hour sessions", label: "We stay the whole party" },
           { icon: "star", value: "5★ from parents", label: "Real Google reviews" },
         ]}
@@ -257,7 +258,7 @@ export default function KidsPartiesPage() {
         title="How a VR party works"
         steps={[
           { title: "Book your date", text: "Tell us the age group, number of kids and your address. A 50% deposit secures the party." },
-          { title: "We bring the arcade", text: "We arrive 30–45 minutes before the party to set up headsets, a big screen for spectators and safe play zones." },
+          { title: "We bring the arcade", text: "We arrive 15–20 minutes before the party to set up headsets, a big screen for spectators and safe play zones." },
           { title: "Kids take turns", text: "Our friendly supervisors rotate every child through the games and keep the excitement high." },
           { title: "You relax", text: "We clean, pack up and leave while you enjoy cake with very happy kids." },
         ]}
@@ -311,7 +312,7 @@ export default function KidsPartiesPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Affordable packages starting from just R899</span>
+                <span>{SHOW_PRICES ? `Affordable packages starting from just ${FROM_PRICE}` : "Affordable packages with free, no-obligation quotes"}</span>
               </p>
             </div>
           </div>
